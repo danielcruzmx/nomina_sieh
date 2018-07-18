@@ -7,3 +7,6 @@
 **/*.war
 **/*.jar
 **/*.lst
+
+# Ignora directorio Build/deploy
+**/Build/deploy/**
