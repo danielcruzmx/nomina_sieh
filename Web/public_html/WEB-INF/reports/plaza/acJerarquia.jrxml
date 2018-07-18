@@ -1,0 +1,570 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="AC02 autorizado por jerarquia" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT UR,DESCRIPCION, FUNCION, SUM("SERVIDOR PÚBLICO SUPERIOR") "SERVIDOR PÚBLICO SUPERIOR",SUM("MANDO MEDIO") "MANDO MEDIO",SUM("ENLACE ALTA RESPONSABILIDAD") "ENLACE ALTA RESPONSABILIDAD",SUM("OPERATIVO DE CONFIANZA") "OPERATIVO DE CONFIANZA",SUM("OPERATIVO DE BASE") "OPERATIVO DE BASE",
+SUM("SERVIDOR PÚBLICO SUPERIOR")+SUM("MANDO MEDIO")+SUM("ENLACE ALTA RESPONSABILIDAD")+SUM("OPERATIVO DE CONFIANZA")+SUM("OPERATIVO DE BASE") TOTAL,
+PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+(SELECT
+    ID_UNIDAD_PRE UR, DESC_UNIDAD DESCRIPCION, FUNCION,
+    case when ID_JERARQUIA||ID_NOMBRAMIENTO='4B' then '4C'
+	     when ID_JERARQUIA||ID_NOMBRAMIENTO='5B' then '5C'
+         else ID_JERARQUIA||ID_NOMBRAMIENTO
+    end PLAZA
+FROM
+(
+select 'AC02' GRUPO, upper(g.desc_grupo_pago) desc_grupo_pago, upper(cla.desc_clasifica) FUNCION, --p.id_unidad_nom,
+           p.id_unidad_pre, upper(uu.DESC_UNIDAD) DESC_UNIDAD, upper(uu.DESC_UNIDAD_ABREV) DESC_UNIDAD_ABREV,
+           p.id_puesto_pre,
+           upper(pp.desc_puesto) desc_puesto, aa.id_nivel_pto,
+           aa.id_nombramiento, upper(nn.desc_nombramiento) desc_nombramiento, aa.id_jerarquia,
+          case when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(jj.desc_jerarquia) end JERARQUIA,
+          case when aa.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when aa.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when aa.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when aa.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when aa.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when aa.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza,
+           case when p.id_unidad_nom like 'X%' then p.id_unidad_pre
+           else p.id_unidad_nom end ur_fisica_a,
+           case when p.id_unidad_nom like 'X%' then upper(uu.DESC_UNIDAD)
+           else upper(u.DESC_UNIDAD) end describe_ur_fisica_a,
+           p.id_unidad_nom, upper(u.DESC_UNIDAD) DESC_UNIDAD_2, upper(u.DESC_UNIDAD_ABREV) DESC_UNIDAD_ABREV_1,
+           p.id_puesto_nom, upper(ppp.desc_puesto) desc_puesto_1, a.id_nivel_pto id_nivel_pto_1,
+           a.id_nombramiento id_nombramiento_1, upper(n.desc_nombramiento) desc_nombramiento_1, a.id_jerarquia id_jerarquia_1,
+          case when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(j.desc_jerarquia) end DESC_UNIDAD_3,
+          case when a.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when a.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when a.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when a.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when a.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when a.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza_1,
+          p.id_sit_plaza, upper(s.desc_sit_plaza) desc_sit_plaza,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+          else 'VACANTE' end situacion_plaza_reporte,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+                  when p.id_unidad_nom like 'X%' then 'RESERVA'
+          else 'VACANTE' end situacion_plaza_reporte_a,
+          p.id_plaza, p.plaza_rfc, e.nombre_empleado, e.primer_apellido, e.segundo_apellido,
+          f.CODIGO_PUESTO, f.NOMBRE_PUESTO,
+          case when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(f.OBSERVACIONES) end DESC_UNIDAD_4
+from sireh.TD_PLAZA p, sireh.TC_UNIDAD u, sireh.TC_ATRIBUTO_PUESTO a, sireh.TC_JERARQUIA j, sireh.TC_NOMBRAMIENTO n, sireh.TC_PUESTO pp, sireh.TC_CLASIFICA cla, sireh.TC_UNIDAD_CLASIFICA ucla,
+         sireh.TC_SIT_PLAZA s, sireh.TC_GRUPO_PAGO g,
+         sireh.TC_UNIDAD uu, sireh.TC_ATRIBUTO_PUESTO aa, sireh.TC_JERARQUIA jj, sireh.TC_NOMBRAMIENTO nn, TC_PUESTO ppp,
+         sireh.TD_ESCENARIO f, sireh.TD_EMPLEADO e
+where p.id_grupo_pago in ('E', 'J')
+and p.id_grupo_pago = g.id_grupo_pago
+and p.id_unidad_nom = u.id_unidad
+and u.uni_ciclo = 2014
+and p.id_puesto_nom = a.id_atributo_puesto
+and p.id_puesto_nom = ppp.id_puesto
+and a.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and a.id_jerarquia = j.id_jerarquia
+and a.id_nombramiento = n.id_nombramiento
+and p.id_sit_plaza = s.id_sit_plaza
+and p.id_unidad_pre = uu.id_unidad
+and uu.uni_ciclo = 2014
+and p.id_puesto_pre = pp.id_puesto
+and p.id_puesto_pre = aa.id_atributo_puesto
+and aa.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and aa.id_jerarquia = jj.id_jerarquia
+and aa.id_nombramiento = nn.id_nombramiento
+and p.id_plaza = f.PLAZA_ESCENARIO (+)
+and f.fin_escenario(+) = TO_DATE('31/12/2099','DD/MM/YYYY')
+and p.plaza_rfc = e.rfc_empleado (+)
+and (ucla.UNI_CICLO = to_char(sysdate,'yyyy')
+and p.id_unidad_pre = ucla.ID_UNIDAD
+and ucla.ID_CLASIFICA = cla.ID_CLASIFICA))
+WHERE GRUPO='AC02'
+)
+PIVOT (COUNT(*) FOR PLAZA IN('1C' "SERVIDOR PÚBLICO SUPERIOR" ,'4C' "MANDO MEDIO",'5C' "ENLACE ALTA RESPONSABILIDAD" ,'7C' "OPERATIVO DE CONFIANZA",'7B' "OPERATIVO DE BASE"))
+group by UR, DESCRIPCION, FUNCION
+order by FUNCION, UR]]>
+	</queryString>
+	<field name="UR" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="FUNCION" class="java.lang.String"/>
+	<field name="SERVIDOR PÚBLICO SUPERIOR" class="java.math.BigDecimal"/>
+	<field name="MANDO MEDIO" class="java.math.BigDecimal"/>
+	<field name="ENLACE ALTA RESPONSABILIDAD" class="java.math.BigDecimal"/>
+	<field name="OPERATIVO DE CONFIANZA" class="java.math.BigDecimal"/>
+	<field name="OPERATIVO DE BASE" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="TOTSPS" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SERVIDOR PÚBLICO SUPERIOR}]]></variableExpression>
+	</variable>
+	<variable name="TOTMM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MANDO MEDIO}]]></variableExpression>
+	</variable>
+	<variable name="TOTENL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{ENLACE ALTA RESPONSABILIDAD}]]></variableExpression>
+	</variable>
+	<variable name="TOTBASE" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OPERATIVO DE BASE}]]></variableExpression>
+	</variable>
+	<variable name="TOTCONF" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{OPERATIVO DE CONFIANZA}]]></variableExpression>
+	</variable>
+	<variable name="TOTGRAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<variable name="FUNSPS" class="java.lang.Number" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{SERVIDOR PÚBLICO SUPERIOR}]]></variableExpression>
+	</variable>
+	<variable name="FUNMM" class="java.lang.Number" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{MANDO MEDIO}]]></variableExpression>
+	</variable>
+	<variable name="FUNENL" class="java.lang.Number" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{ENLACE ALTA RESPONSABILIDAD}]]></variableExpression>
+	</variable>
+	<variable name="FUNBASE" class="java.lang.Number" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{OPERATIVO DE BASE}]]></variableExpression>
+	</variable>
+	<variable name="FUNCONF" class="java.lang.Number" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{OPERATIVO DE CONFIANZA}]]></variableExpression>
+	</variable>
+	<variable name="FUNTOT" class="java.lang.Number" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL}]]></variableExpression>
+	</variable>
+	<group name="FUNCION">
+		<groupExpression><![CDATA[$F{FUNCION}]]></groupExpression>
+		<groupHeader>
+			<band height="5"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="362" y="0" width="88" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total por función :]]></text>
+				</staticText>
+				<textField pattern="#,##0">
+					<reportElement x="451" y="0" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNSPS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="500" y="0" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNMM}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="551" y="0" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNENL}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="601" y="0" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNBASE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="653" y="0" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNCONF}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="700" y="0" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNTOT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="47" splitType="Stretch">
+			<textField>
+				<reportElement x="509" y="10" width="239" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="509" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="232" y="17" width="265" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[AC02 autorizado x jerarquía]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="749" height="30" forecolor="#999999" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="127" y="0" width="322" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="50" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Servidor Público Superior]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="500" y="0" width="50" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mando Medio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="0" width="50" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personal de Enlace]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="600" y="0" width="50" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Operativo de base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="652" y="0" width="50" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Operativo de Confianza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="699" y="0" width="50" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="0" width="31" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<line>
+				<reportElement x="126" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="500" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="549" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="598" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="650" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="702" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="93" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement x="2" y="0" width="91" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Función]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="451" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement x="1" y="0" width="749" height="14" forecolor="#CCCCCC" backcolor="#FFFFFF"/>
+			</rectangle>
+			<textField>
+				<reportElement x="129" y="0" width="321" height="14" backcolor="#E3E3E3"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="451" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SERVIDOR PÚBLICO SUPERIOR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="500" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MANDO MEDIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="551" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENLACE ALTA RESPONSABILIDAD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="601" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OPERATIVO DE BASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="653" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OPERATIVO DE CONFIANZA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="700" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="97" y="0" width="31" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UR}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="93" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="500" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="549" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="598" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="650" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="702" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="126" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<textField pattern="#,##0">
+				<reportElement isPrintRepeatedValues="false" x="2" y="0" width="91" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FUNCION}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="451" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="29" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="7" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="600" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="36" splitType="Stretch">
+			<rectangle>
+				<reportElement x="359" y="1" width="391" height="14" forecolor="#CCCCCC" backcolor="#E3E3E3"/>
+			</rectangle>
+			<textField pattern="#,##0">
+				<reportElement x="500" y="1" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTMM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="551" y="1" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTENL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="357" y="1" width="88" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totales :]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="601" y="1" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTBASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="653" y="1" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTCONF}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="700" y="1" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTGRAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="451" y="1" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTSPS}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="702" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="649" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="598" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="549" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="500" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="449" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

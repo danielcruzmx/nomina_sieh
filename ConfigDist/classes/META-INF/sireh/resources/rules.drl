@@ -1,0 +1,28 @@
+package gob.shcp.sireh.service.nomina;
+import gob.shcp.sireh.domain.jdbc.Pago;
+
+expander calculoNomina.dsl
+
+# PERCEPCIONES
+
+rule "Sueldo y compensacion personal de estructura"
+    salience 200
+    when
+        Pago
+        -estructura
+    then
+    	Asignar concepto "P" "07" con valor SUELDO
+    	Asignar concepto "P" "06" con valor COMPENSACION
+    	Integra sueldo base ISSSTE con SUELDO 
+end
+
+rule "Sueldo y compensacion personal eventual"
+    salience 200
+    when
+        Pago
+	-eventual
+    then
+        Asignar concepto "P" "02" con valor SUELDO
+        Asignar concepto "P" "06" con valor COMPENSACION
+    	Integra sueldo base ISSSTE con SUELDO
+end

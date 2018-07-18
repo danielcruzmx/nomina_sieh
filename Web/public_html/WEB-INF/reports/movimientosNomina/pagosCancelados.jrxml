@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="15-De detalle de pagos cancelados" pageWidth="936" pageHeight="612" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="896" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_UNIDAD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_TIPO_NOMINA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_COMPLEMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 'Pagos Cancelados y Descancelados de la Quincena ' ||substr(x2.hp_qna_pago,5,2)||'/'||substr(x2.hp_qna_pago,1,4) titulo,
+'Tipo nómina: ' || x5.desc_tipo_nomina nomina, 'Complemento: ' || x2.hp_num_complem comple,
+'Unidad: ' ||x2.id_unidad_nom || ' ' || trim(x3.DESC_UNIDAD) unidad,
+'Situación del pago: ' || X6.DESC_SIT_PAGO situacion_pago,
+lpad(x2.HP_FOLIO,10,'0') FOL_CHEQ_COMPROBA,
+x2.hp_rfc RFC,
+trim(trim(x4.primer_apellido)||' '||trim(x4.segundo_apellido))||' ' ||trim(x4.nombre_empleado) nombre,
+substr(x0.cpc_qna_captura,5,2)||'/'||substr(x0.cpc_qna_captura,1,4) QNA_CANCELA,
+x1.desc_motivo_cancela,
+to_char(x2.hp_ini_pago, 'dd') || ' ' ||
+trim(to_char(x2.hp_ini_pago, 'Month')) || ' ' ||
+to_char(x2.hp_ini_pago, 'yyyy')||' al '||
+to_char(x2.hp_fin_pago, 'dd') || ' ' ||
+trim(to_char(x2.hp_fin_pago, 'Month')) || ' ' ||
+to_char(x2.hp_fin_pago, 'yyyy') periodo_PAGO,
+x2.hp_num_pension NUM_PENSION,
+x2.hp_neto_pago IMPT_LIQUIDO,
+x0.usuario||' '||
+to_char(x0.fec_modifico, 'dd') || ' ' ||
+trim(to_char(x0.fec_modifico, 'Month')) || ' ' ||
+to_char(x0.fec_modifico, 'yyyy') CAPTURADO_POR, x2.id_unidad_nom num_uni, substr(x2.hp_qna_pago,5,2)||substr(x2.hp_qna_pago,1,4) num_qna, x5.desc_tipo_nomina tip_nom, X6.DESC_SIT_PAGO sit_pago,
+x2.id_unidad_nom,
+
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+from
+tn_captura_pago_canc x0,
+tc_motivo_cancela x1,
+tn_historico_pago x2,
+tc_unidad x3,
+td_empleado x4,
+tc_tipo_nomina x5,
+tc_sit_pago x6
+where
+x0.CPC_FOLIO = x2.HP_FOLIO
+and x0.cpc_dif_folio = x2.hp_dif_folio
+and x0.id_sit_pago = x2.id_sit_pago
+and x0.id_motivo_cancela = x1.id_motivo_cancela
+and trim(x2.id_tipo_nomina) = trim(x5.id_tipo_nomina(+))
+and trim(x2.id_tipo_nomina) = $P{PAR_TIPO_NOMINA}
+and x2.hp_rfc = x4.rfc_empleado(+)
+and trim(x0.id_sit_pago) = trim(x6.id_sit_pago)
+and x2.id_unidad_nom = x3.id_unidad
+and x2.id_unidad_nom IN ($P!{PAR_UNIDAD})
+and x3.uni_ciclo in (select SUBSTR(RC_QNA_CAPTURA,0,4)
+                       from TN_REG_CONTROL
+                      where TN_REG_CONTROL.RC_VIGENTE   = 'S') --2010
+AND TRIM(x2.hp_num_complem) = NVL($P{PAR_COMPLEMENTO},TRIM(x2.hp_num_complem))
+AND X0.cpc_qna_aplica = $P{PAR_MES}
+ORDER BY unidad, num_qna asc]]>
+	</queryString>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="NOMINA" class="java.lang.String"/>
+	<field name="COMPLE" class="java.lang.String"/>
+	<field name="UNIDAD" class="java.lang.String"/>
+	<field name="SITUACION_PAGO" class="java.lang.String"/>
+	<field name="FOL_CHEQ_COMPROBA" class="java.lang.String"/>
+	<field name="RFC" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="QNA_CANCELA" class="java.lang.String"/>
+	<field name="DESC_MOTIVO_CANCELA" class="java.lang.String"/>
+	<field name="PERIODO_PAGO" class="java.lang.String"/>
+	<field name="NUM_PENSION" class="java.math.BigDecimal"/>
+	<field name="IMPT_LIQUIDO" class="java.math.BigDecimal"/>
+	<field name="CAPTURADO_POR" class="java.lang.String"/>
+	<field name="NUM_UNI" class="java.lang.String"/>
+	<field name="NUM_QNA" class="java.lang.String"/>
+	<field name="TIP_NOM" class="java.lang.String"/>
+	<field name="SIT_PAGO" class="java.lang.String"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="impcomplemento" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{IMPT_LIQUIDO}]]></variableExpression>
+	</variable>
+	<variable name="impunidad" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_uni" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPT_LIQUIDO}]]></variableExpression>
+	</variable>
+	<variable name="impnomina" class="java.math.BigDecimal" resetType="None">
+		<variableExpression><![CDATA[$F{IMPT_LIQUIDO}]]></variableExpression>
+	</variable>
+	<variable name="impqna" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPT_LIQUIDO}]]></variableExpression>
+	</variable>
+	<variable name="Casos_uni" class="java.lang.Number" resetType="Group" resetGroup="Gpo_uni" calculation="Count">
+		<variableExpression><![CDATA[$F{RFC}]]></variableExpression>
+	</variable>
+	<variable name="casos" class="java.lang.Number" calculation="Count">
+		<variableExpression><![CDATA[$F{RFC}]]></variableExpression>
+	</variable>
+	<group name="Gpo_uni">
+		<groupExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<textField>
+					<reportElement x="10" y="2" width="427" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{UNIDAD}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="450" y="2" width="339" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SITUACION_PAGO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="27">
+				<textField pattern="#,##0.00">
+					<reportElement x="757" y="14" width="84" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{impunidad}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="642" y="14" width="100" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total por Unidad]]></text>
+				</staticText>
+				<textField pattern="#,##0">
+					<reportElement x="757" y="3" width="84" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Casos_uni}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="642" y="3" width="100" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Casos Unidad]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="251" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="205" y="14" width="429" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="12" isBold="true" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Pagos cancelados y descancelados de la quincena]]></text>
+			</staticText>
+			<image isLazy="true">
+				<reportElement x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="678" y="0" width="218" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="678" y="20" width="218" height="30"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="28" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="896" height="28" forecolor="#FFFFFF" backcolor="#F1F1F1"/>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="14" y="0" width="212" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMINA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="266" y="0" width="171" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPLE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="15" width="73" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cheque/Comp]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="93" y="15" width="100" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="343" y="15" width="75" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qna Cancela]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="424" y="15" width="100" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo Cancela]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="541" y="15" width="100" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Periodo de pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="704" y="15" width="74" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. Pensión]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="785" y="15" width="43" height="13"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="834" y="15" width="59" height="13"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capturado]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="13" width="893" height="1" forecolor="#F1F1F1"/>
+			</line>
+			<textField>
+				<reportElement x="8" y="2" width="62" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FOL_CHEQ_COMPROBA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="2" width="72" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RFC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="153" y="2" width="211" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="2" width="43" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{QNA_CANCELA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="418" y="2" width="100" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_MOTIVO_CANCELA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="524" y="2" width="206" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PERIODO_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="740" y="2" width="23" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUM_PENSION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="768" y="2" width="59" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPT_LIQUIDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="833" y="2" width="58" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPTURADO_POR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="789" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="854" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEE dd/MMM/yyyy HH:mm">
+				<reportElement x="793" y="15" width="89" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="893" height="1" forecolor="#999999"/>
+			</line>
+			<textField>
+				<reportElement x="93" y="5" width="659" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement x="642" y="3" width="110" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de Casos Nómina]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="642" y="15" width="110" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total por Nómina]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="757" y="15" width="84" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{impqna}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="757" y="3" width="84" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{casos}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="0" y="23" width="896" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO SE ENCONTRO INFORMACIÓN COINCIDENTE CON LOS FILTROS PROPORCIONADOS]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

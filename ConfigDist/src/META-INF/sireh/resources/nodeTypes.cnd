@@ -1,0 +1,45 @@
+<mix = 'http://www.jcp.org/jcr/mix/1.0'>
+<nt = 'http://www.jcp.org/jcr/nt/1.0'>
+<fsn = 'http://www.fsn.com'>
+[fsn:resource] > nt:resource, mix:referenceable
+    - fsn:fileName (STRING)
+    - fsn:dataSize (LONG)
+    
+[fsn:fsntestResource] > fsn:resource
+    - fsn:rfc (STRING)
+    - fsn:tipoDoc (STRING)
+    - fsn:cadena (STRING)
+    - fsn:long (LONG)
+    - fsn:decimal (DECIMAL)
+    - fsn:booleano (BOOLEAN)
+    - fsn:doble (DOUBLE)
+    - fsn:fecha (DATE) 
+    
+[fsn:expedienteSirehResource] > fsn:resource
+    - fsn:rfc (STRING)
+    - fsn:tipoDoc (STRING)
+    - fsn:cadena (STRING)
+    - fsn:long (LONG)
+    - fsn:decimal (DECIMAL)
+    - fsn:booleano (BOOLEAN)
+    - fsn:doble (DOUBLE)
+    - fsn:fecha (DATE) 
+    - fsn:rfc_meta (STRING)
+    - fsn:doc_meta (STRING)
+    
+[fsn:constanciaSirehResource] > fsn:resource
+    - fsn:rfc (STRING)
+    - fsn:tipoDoc (STRING)
+    - fsn:cadena (STRING)
+    - fsn:long (LONG)
+    - fsn:decimal (DECIMAL)
+    - fsn:booleano (BOOLEAN)
+    - fsn:doble (DOUBLE)
+    - fsn:fecha (DATE) 
+    - fsn:rfc_meta (STRING)
+    - fsn:doc_meta (STRING)    
+    
+[fsn:fsntest2Resource] > fsn:resource
+    - fsn:region (STRING)
+    - fsn:pais (STRING)
+    

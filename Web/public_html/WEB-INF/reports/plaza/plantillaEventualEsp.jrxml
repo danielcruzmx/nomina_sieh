@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PlantillaEventualesEspeciales" pageWidth="1872" pageHeight="612" orientation="Landscape" columnWidth="1872" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="841"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select p.id_UNIDAD_PRE as ur,
+ case when upper(t.DESC_TIPO_SERV_PUB) like 'VIGILANTES%' then 'VIGILANTES' else upper(t.DESC_TIPO_SERV_PUB) end programa,
+  p.id_UNIDAD_PRE, p.ID_PLAZA, ap.ID_NIVEL_PTO,
+upper(trim(e.NOMBRE_EMPLEADO))||' '||upper(trim(e.PRIMER_APELLIDO))||' '||upper(trim(e.SEGUNDO_APELLIDO)) nombre,p.PLAZA_RFC,
+to_char(p.PLAZA_INI_CONT,'dd/mm/YYYY') fec_ini_contrato,to_char(p.PLAZA_FIN_CONT,'dd/mm/YYYY') fec_fin_contrato,
+'ESPECIAL' tipo_programa, upper(t.DESC_TIPO_SERV_PUB) INFO_TABLA, p.id_UNIDAD_PRE UR_VALIDADA, p.id_UNIDAD_NOM UR_FISICA,
+upper(s.DESC_SIT_PLAZA) STATUS_PLAZA,nvl(p.PLAZA_RESPALDO,0) plaza_respaldo, ap.ID_JERARQUIA, c.CA_COSTO_ANUAL
+From TD_PLAZA p, TC_ATRIBUTO_PUESTO ap, TC_UNIDAD u, TC_SIT_PLAZA s, TD_COSTO_ANUALIZADO c,
+  TD_EMPLEADO e,  TC_TIPO_SERV_PUB t
+Where p.id_UNIDAD_PRE = U.ID_UNIDAD
+and u.UNI_CICLO = $P{PAR_CICLO}
+and p.ID_GRUPO_PAGO in ('V')
+and p.ID_SIT_PLAZA like 'O%'
+and p.ID_SERV_PUB not in ('VVVVV','VVV21','VVV22')
+and p.ID_PUESTO_PRE = ap.ID_ATRIBUTO_PUESTO
+and ap.AP_FIN = '01/01/2099'
+and p.ID_SERV_PUB = t.ID_SERV_PUB(+)
+and p.ID_SIT_PLAZA = s.ID_SIT_PLAZA
+and ap.ID_NIVEL_PTO = c.ID_NIVEL_PTO
+and p.ID_ZONA_ECO_PRE = c.ID_ZONA_ECON
+and p.PLAZA_RFC = e.RFC_EMPLEADO(+)
+order by p.ID_SERV_PUB, p.id_UNIDAD_PRE, AP.ID_JERARQUIA, ap.ID_NIVEL_PTO, p.ID_PLAZA]]>
+	</queryString>
+	<field name="UR" class="java.lang.String"/>
+	<field name="PROGRAMA" class="java.lang.String"/>
+	<field name="ID_UNIDAD_PRE" class="java.lang.String"/>
+	<field name="ID_PLAZA" class="java.math.BigDecimal"/>
+	<field name="ID_NIVEL_PTO" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="PLAZA_RFC" class="java.lang.String"/>
+	<field name="FEC_INI_CONTRATO" class="java.lang.String"/>
+	<field name="FEC_FIN_CONTRATO" class="java.lang.String"/>
+	<field name="TIPO_PROGRAMA" class="java.lang.String"/>
+	<field name="INFO_TABLA" class="java.lang.String"/>
+	<field name="UR_VALIDADA" class="java.lang.String"/>
+	<field name="UR_FISICA" class="java.lang.String"/>
+	<field name="STATUS_PLAZA" class="java.lang.String"/>
+	<field name="PLAZA_RESPALDO" class="java.math.BigDecimal"/>
+	<field name="ID_JERARQUIA" class="java.lang.String"/>
+	<field name="CA_COSTO_ANUAL" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="55" y="0" width="185" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Programa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="55" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="291" y="0" width="69" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="951" y="0" width="102" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo Programa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="0" width="337" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1053" y="0" width="351" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Información de Tabla]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1404" y="0" width="67" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1471" y="0" width="49" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Física]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1520" y="0" width="97" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estatus Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1762" y="0" width="85" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Costo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1700" y="0" width="62" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jerarquía]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1617" y="0" width="83" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza Respaldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="240" y="0" width="51" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="697" y="0" width="85" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="782" y="0" width="86" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Inicio Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="868" y="0" width="83" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Final Contrato]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="0" width="185" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="55" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="240" y="0" width="51" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="291" y="0" width="69" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_NIVEL_PTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="360" y="0" width="337" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="697" y="0" width="85" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PLAZA_RFC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="782" y="0" width="86" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FEC_INI_CONTRATO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="868" y="0" width="83" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FEC_FIN_CONTRATO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="951" y="0" width="102" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{TIPO_PROGRAMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1053" y="0" width="351" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{INFO_TABLA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1404" y="0" width="67" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR_VALIDADA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1471" y="0" width="49" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR_FISICA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1520" y="0" width="97" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{STATUS_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1617" y="0" width="83" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PLAZA_RESPALDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1700" y="0" width="62" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_JERARQUIA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="1762" y="0" width="85" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CA_COSTO_ANUAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

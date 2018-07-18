@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="01-D10 (agrupado)" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select 'ORDINARIA' as tipoNom, cla.desc_clasifica funcion,
+    case when gp.DESC_GRUPO_PAGO = 'Consejerias' then 'Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end as descripcion,
+    hp.HP_QNA_PAGO, hp.ID_TIPO_NOMINA, hp.HP_NUM_COMPLEM, hp.ID_GRUPOPAGO_NOM,
+    sum(case when cf.ID_PARTIDA in ('11301', '12201', '12101') then  nvl(CP.CP_monto,0) else 0 end) as sueldo,
+    sum(case when cf.ID_PARTIDA in ('15402') then nvl(CP.CP_monto,0) else 0 end) as compensacion,
+    sum(case when cf.ID_PARTIDA not in ('11301', '12201', '12101', '15402') then  nvl(CP.Cp_monto,0) else 0  end) as prestaciones,
+    PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+    PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+    PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+From SIREH.TN_HISTORICO_PAGO hp, SIREH.TN_CONCEPTO_PAGADO cp, SIREH.TC_ATRIBUTO_PUESTO ap, SIREH.TN_CXLC_FISICA cf, SIREH.TC_GRUPO_PAGO gp, SIREH.TC_CLASIFICA cla, SIREH.TC_UNIDAD_CLASIFICA ucla
+Where
+hp.HP_QNA_PAGO>=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES}) AND
+hp.HP_QNA_PAGO<=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES})
+    and hp.HP_NUM_PENSION = '0'
+    and hp.HP_NUM_COMPLEM < '90'
+    and hp.ID_PUESTO_NOM = ap.ID_ATRIBUTO_PUESTO
+    and ap.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and hp.HP_FOLIO = cp.CP_FOLIO
+    and hp.HP_DIF_FOLIO = cp.CP_DIF_FOLIO
+    and cp.ID_TIPO_CPTO = 'P'
+    and hp.ID_GRUPOPAGO_NOM = cf.ID_GRUPOPAGO
+    and cf.CF_CICLO = $P{PAR_CICLO}
+    and hp.ID_EDO_NOM =cf.ID_EDO
+    and hp.ID_UNIDAD_NOM = cf.ID_UNIDAD
+    and cp.ID_TIPO_CPTO = cf.ID_TIPO_CPTO
+    and cp.ID_CPTO_PAGO = cf.ID_CPTO_PAGO
+    and cf.CF_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.ID_PARTIDA <> '0000'
+    and cf.CF_GUIA_CONT_EJER < '3000'
+    and cf.CF_GUIA_CONT_EJER not in(2227,2427,2297,2488,2298,2489)
+    and hp.ID_GRUPOPAGO_NOM = gp.ID_GRUPO_PAGO
+    and cf.ID_UNIDAD not in ('AYI','G00')
+    and (hp.ID_UNIDAD_PRE <> 'AYI' or hp.ID_UNIDAD_NOM <> 'AYI' or  hp.ID_UNIDAD_NOM <> 'G00')
+    and (ucla.UNI_CICLO = $P{PAR_CICLO}
+    and hp.id_unidad_nom = ucla.ID_UNIDAD
+    and ucla.ID_CLASIFICA = cla.ID_CLASIFICA)
+group by 'ORDINARIA', cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' then 'Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end, hp.HP_QNA_PAGO, hp.ID_TIPO_NOMINA, hp.HP_NUM_COMPLEM, hp.ID_GRUPOPAGO_NOM
+order by hp.HP_QNA_PAGO, funcion, 'ORDINARIA' desc,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' then 'Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end]]>
+	</queryString>
+	<field name="TIPONOM" class="java.lang.String"/>
+	<field name="FUNCION" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="HP_QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="ID_TIPO_NOMINA" class="java.lang.String"/>
+	<field name="HP_NUM_COMPLEM" class="java.lang.String"/>
+	<field name="ID_GRUPOPAGO_NOM" class="java.lang.String"/>
+	<field name="SUELDO" class="java.math.BigDecimal"/>
+	<field name="COMPENSACION" class="java.math.BigDecimal"/>
+	<field name="PRESTACIONES" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="totgral" class="java.math.BigDecimal"/>
+	<variable name="SUELDO_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUELDO}]]></variableExpression>
+	</variable>
+	<variable name="COMPENSACION_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMPENSACION}]]></variableExpression>
+	</variable>
+	<variable name="PRESTACIONES_1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRESTACIONES}]]></variableExpression>
+	</variable>
+	<variable name="total" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUELDO}.doubleValue()+$F{COMPENSACION}.doubleValue()+$F{PRESTACIONES}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="FUNSDO" class="java.math.BigDecimal" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUELDO}]]></variableExpression>
+	</variable>
+	<variable name="FUNCOMP" class="java.math.BigDecimal" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMPENSACION}]]></variableExpression>
+	</variable>
+	<variable name="FUNPRES" class="java.math.BigDecimal" resetType="Group" resetGroup="FUNCION" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRESTACIONES}]]></variableExpression>
+	</variable>
+	<variable name="QNASDO" class="java.math.BigDecimal" resetType="Group" resetGroup="QUINCENA" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUELDO}]]></variableExpression>
+	</variable>
+	<variable name="QNACOMP" class="java.math.BigDecimal" resetType="Group" resetGroup="QUINCENA" calculation="Sum">
+		<variableExpression><![CDATA[$F{COMPENSACION}]]></variableExpression>
+	</variable>
+	<variable name="QNAPRES" class="java.math.BigDecimal" resetType="Group" resetGroup="QUINCENA" calculation="Sum">
+		<variableExpression><![CDATA[$F{PRESTACIONES}]]></variableExpression>
+	</variable>
+	<group name="QUINCENA">
+		<groupExpression><![CDATA[$F{HP_QNA_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="5"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="246" y="0" width="100" height="14"/>
+					<textElement/>
+					<text><![CDATA[Total por Quincena]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="492" y="1" width="83" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{QNACOMP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="408" y="1" width="80" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{QNASDO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="663" y="1" width="82" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{QNASDO}.doubleValue()+$V{QNACOMP}.doubleValue()+$V{QNAPRES}.doubleValue()]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="581" y="1" width="77" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{QNAPRES}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="FUNCION">
+		<groupExpression><![CDATA[$F{FUNCION}]]></groupExpression>
+		<groupHeader>
+			<band height="5"/>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<staticText>
+					<reportElement x="246" y="1" width="100" height="14"/>
+					<textElement/>
+					<text><![CDATA[Total por Función]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="492" y="1" width="83" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNCOMP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="581" y="1" width="77" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNPRES}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="663" y="1" width="82" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNSDO}.doubleValue()+$V{FUNCOMP}.doubleValue()+$V{FUNPRES}.doubleValue()]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="408" y="1" width="80" height="13"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{FUNSDO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="500" y="10" width="239" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="500" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="231" y="17" width="291" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[D-10 Agrupado]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="89" y="0" width="47" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nómina]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="142" y="0" width="87" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grupo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="255" y="0" width="26" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qna]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="299" y="0" width="27" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="331" y="0" width="35" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comp.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="371" y="0" width="32" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grupo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="0" width="80" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sueldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="493" y="0" width="83" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Compensación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="581" y="0" width="77" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prestaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="663" y="0" width="82" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total General]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="0" width="81" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Función]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="14" width="752" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField>
+				<reportElement x="89" y="1" width="47" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPONOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="141" y="1" width="108" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="253" y="1" width="40" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_QNA_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="301" y="1" width="24" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="330" y="1" width="25" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_NUM_COMPLEM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="376" y="1" width="24" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_GRUPOPAGO_NOM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="408" y="1" width="80" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUELDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="493" y="1" width="83" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPENSACION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="581" y="0" width="77" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRESTACIONES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="663" y="1" width="82" height="11"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUELDO}.doubleValue()+$F{COMPENSACION}.doubleValue()+$F{PRESTACIONES}.doubleValue()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="5" y="1" width="79" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FUNCION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="6" width="600" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="408" y="8" width="80" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUELDO_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="493" y="8" width="83" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{COMPENSACION_1}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="581" y="7" width="77" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PRESTACIONES_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="246" y="7" width="100" height="14"/>
+				<textElement/>
+				<text><![CDATA[Total General]]></text>
+			</staticText>
+			<textField pattern="#,##0.00">
+				<reportElement x="663" y="8" width="82" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

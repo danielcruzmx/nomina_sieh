@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Fonac" printOrder="Horizontal" columnDirection="RTL" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_QNA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 'Cifras Control del Concepto 21 y 58 de la Quincena '||$P{P_QNA} titulo,
+       'NOMINA' PAGO,
+        case when c.id_tipo_nomina = 'FO' then 'NOMINAS DE FONAC (FO)'
+             when c.id_tipo_nomina = 'FS' then 'NOMINAS DE FSTSE (FS)'
+             when c.id_tipo_nomina = 'SD' then 'NOMINAS DE SINDICATO (SD)'
+        end TIPO,
+        c.cxlc_qna_pago QNA, c.id_tipo_nomina TIPO_NOMINA, to_char(c.cxlc_complemento) COMPLEMENTO,c.cxlc ,c.nomina_origen, c.cxlc_monto MONTO,
+        NULL tit_cpto, NULL CPTO, NULL tit_tc, NULL TC, NULL FOLIO, NULL TIT_RFC, NULL RFC, NULL TIT_CANCELA, NULL QNA_APLICACION,
+        'CxLC' TIT_CXLC, 'Origen' tit_origen
+from td_cxlc c
+where c.cxlc_ciclo = substr($P{P_QNA},1,4)
+and c.cxlc_qna_pago = $P{P_QNA}
+and c.id_tipo_nomina in ('FO', 'FS', 'SD')
+UNION
+select 'Cifras Control del Concepto 21 y 58 de la Quincena '||$P{P_QNA} titulo,
+       'RECUPERACIONES' PAGO,
+       'RECUPERACIONES DE FONAC (FO)' TIPO,
+       h.hp_qna_pago QNA, h.id_tipo_nomina TIPO_NOMINA, h.hp_num_complem COMPLEMENTO,null cxlc, null nomina_origen,
+       case when c.id_cpto_pago in ('21','FE') then c.cp_monto
+            when c.id_cpto_pago in ('58','S8','L8') then (c.cp_monto*0.25)
+        end MONTO,
+       'CPTO.' tit_cpto,
+       c.id_cpto_pago CPTO, 'T.C.' tit_tc,h.id_grupopago_nom TC,
+       h.HP_FOLIO FOLIO,
+       'Filiación' tit_rfc, h.hp_rfc RFC, 'Qna. aplicación' tit_cancela, pc.cpc_qna_aplica QNA_APLICACION,
+        NULL TIT_CXLC, NULL tit_origen
+from tn_captura_pago_canc pc, tn_historico_pago h, tn_concepto_pagado c
+where pc.cpc_qna_aplica = $P{P_QNA}
+and pc.id_sit_pago = 'C'
+and pc.cpc_folio = h.hp_folio
+and pc.cpc_dif_folio = h.hp_dif_folio
+and h.HP_FOLIO = c.CP_FOLIO
+and h.HP_DIF_FOLIO = c.CP_DIF_FOLIO
+and c.id_tipo_cpto = 'D'
+and c.id_cpto_pago in ('21','58','S8','L8','FE')
+UNION
+select 'Cifras Control del Concepto 21 y 58 de la Quincena '||$P{P_QNA} titulo,
+       'RECUPERACIONES' PAGO, 'RECUPERACIONES DE FSTSE (FS)' TIPO,
+       h.hp_qna_pago QNA, h.id_tipo_nomina TIPO_NOMINA, h.hp_num_complem COMPLEMENTO,null cxlc, null nomina_origen,
+       case when c.id_cpto_pago in ('58','S8','L8') then ((c.cp_monto*0.75)*.10)
+        end MONTO,
+       'CPTO.' tit_cpto,c.id_cpto_pago CPTO, 'T.C.' tit_tc,
+       h.id_grupopago_nom TC, h.HP_FOLIO FOLIO,
+       'Filiación' tit_rfc, h.hp_rfc RFC, 'Qna. aplicación' tit_cancela, pc.cpc_qna_aplica QNA_APLICACION,
+       NULL TIT_CXLC, NULL tit_origen
+from tn_captura_pago_canc pc, tn_historico_pago h, tn_concepto_pagado c
+where pc.cpc_qna_aplica = $P{P_QNA}
+and pc.id_sit_pago = 'C'
+and pc.cpc_folio = h.hp_folio
+and pc.cpc_dif_folio = h.hp_dif_folio
+and h.HP_FOLIO = c.CP_FOLIO
+and h.HP_DIF_FOLIO = c.CP_DIF_FOLIO
+and c.id_tipo_cpto = 'D'
+and c.id_cpto_pago in ('58','S8','L8')
+UNION
+select 'Cifras Control del Concepto 21 y 58 de la Quincena '||$P{P_QNA} titulo,
+       'RECUPERACIONES' PAGO, 'RECUPERACIONES DE SINDICATO (SD)' TIPO,
+       h.hp_qna_pago QNA, h.id_tipo_nomina TIPO_NOMINA, h.hp_num_complem COMPLEMENTO,null cxlc, null nomina_origen,
+       case when c.id_cpto_pago in ('58','S8','L8') then c.cp_monto - ( ((c.cp_monto*0.75)*.10)+(c.cp_monto*0.25))
+        end MONTO,
+       'CPTO.' tit_cpto,c.id_cpto_pago CPTO, 'T.C.' tit_tc, h.id_grupopago_nom TC, h.HP_FOLIO FOLIO,
+       'Filiación' tit_rfc, h.hp_rfc RFC, 'Qna. aplicación' tit_cancela, pc.cpc_qna_aplica QNA_APLICACION,
+       NULL TIT_CXLC, NULL tit_origen
+from tn_captura_pago_canc pc, tn_historico_pago h, tn_concepto_pagado c
+where pc.cpc_qna_aplica = $P{P_QNA}
+and pc.id_sit_pago = 'C'
+and pc.cpc_folio = h.hp_folio
+and pc.cpc_dif_folio = h.hp_dif_folio
+and h.HP_FOLIO = c.CP_FOLIO
+and h.HP_DIF_FOLIO = c.CP_DIF_FOLIO
+and c.id_tipo_cpto = 'D'
+and c.id_cpto_pago in ('58','S8','L8')
+order by 2,3,4,5,6,8,9]]>
+	</queryString>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="PAGO" class="java.lang.String"/>
+	<field name="TIPO" class="java.lang.String"/>
+	<field name="QNA" class="java.math.BigDecimal"/>
+	<field name="TIPO_NOMINA" class="java.lang.String"/>
+	<field name="COMPLEMENTO" class="java.lang.String"/>
+	<field name="CXLC" class="java.math.BigDecimal"/>
+	<field name="NOMINA_ORIGEN" class="java.lang.String"/>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<field name="TIT_CPTO" class="java.lang.String"/>
+	<field name="CPTO" class="java.lang.String"/>
+	<field name="TIT_TC" class="java.lang.String"/>
+	<field name="TC" class="java.lang.String"/>
+	<field name="FOLIO" class="java.math.BigDecimal"/>
+	<field name="TIT_RFC" class="java.lang.String"/>
+	<field name="RFC" class="java.lang.String"/>
+	<field name="TIT_CANCELA" class="java.lang.String"/>
+	<field name="QNA_APLICACION" class="java.math.BigDecimal"/>
+	<field name="TIT_CXLC" class="java.lang.String"/>
+	<field name="TIT_ORIGEN" class="java.lang.String"/>
+	<group name="Pago">
+		<groupExpression><![CDATA[$F{PAGO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="Tipo">
+		<groupExpression><![CDATA[$F{TIPO}]]></groupExpression>
+		<groupHeader>
+			<band height="24">
+				<textField>
+					<reportElement x="0" y="0" width="246" height="10"/>
+					<textElement>
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TIPO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="101" y="14" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qna.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="151" y="14" width="58" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tipo nómina]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="209" y="14" width="61" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Complemento]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="347" y="14" width="51" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Importe]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="270" y="14" width="32" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TIT_CPTO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="302" y="14" width="45" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TIT_TC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="487" y="14" width="84" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TIT_CANCELA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="398" y="14" width="89" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TIT_RFC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="470" y="14" width="102" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="1" y="14" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TIT_CXLC}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="51" y="14" width="50" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TIT_ORIGEN}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="23"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="81" y="198" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="72" splitType="Stretch">
+			<staticText>
+				<reportElement x="108" y="24" width="464" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Sistema de Recursos Humanos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="108" y="4" width="464" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Secretaría de Hacienda y Crédito Público]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="0" y="5" width="108" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="51" width="572" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{TITULO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Stretch">
+			<textField>
+				<reportElement x="101" y="0" width="50" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{QNA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="151" y="0" width="58" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{TIPO_NOMINA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="209" y="0" width="61" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{COMPLEMENTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="347" y="0" width="51" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{MONTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="398" y="0" width="89" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{RFC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="487" y="0" width="84" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{QNA_APLICACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="270" y="0" width="32" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CPTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="302" y="0" width="45" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{TC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="50" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CXLC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="0" width="50" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMINA_ORIGEN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

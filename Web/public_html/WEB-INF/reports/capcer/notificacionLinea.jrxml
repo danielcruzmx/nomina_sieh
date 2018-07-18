@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
+<!-- 2015-09-24T16:44:25 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="notificacionPresencial" printOrder="Horizontal" columnDirection="RTL" pageWidth="612" pageHeight="792" whenNoDataType="AllSectionsNoDetail" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2b28e847-5a74-4108-a3cf-f18d08e758d3">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_ID_CURSO" class="java.lang.Integer"/>
+	<parameter name="PAR_CICLO" class="java.lang.Integer"/>
+	<parameter name="PAR_RFC_EMPLEADO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT CU.ID_CURSO, CU.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL, UPPER(UN.DESC_UNIDAD),
+       CU.ID_SEDE, SE.DESC_SEDE, CU.CURSO_FEC_INI, CU.CURSO_FEC_FIN, CU.CURSO_DURACION,
+       PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(CU.ID_CURSO, ',') AS HORARIO_CURSO, 
+       CU.ID_AULA, AU.DESC_AULA, PA.RFC_EMPLEADO,
+       PA.PARTICIPANTE_NOMBRE || ' ' || PA.PARTICIPANTE_PRIMER_APELLIDO || ' ' || PA.PARTICIPANTE_SEGUNDO_APELLIDO AS NOMBRE_PARTICIPANTE
+  FROM TN_CAP_CURSO CU, TC_CAP_CURSO_PRINCP CP,
+       TC_CAP_SEDE SE, ---TC_CAP_HORARIO_CURSO HC,
+       TC_CAP_AULA AU, TN_CAP_PARTICIPANTE PA,
+       TC_UNIDAD UN,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+ WHERE CU.ID_CURSO = $P{PAR_ID_CURSO}
+   AND CU.CICLO_EJE_TEMATICO = $P{PAR_CICLO}
+   AND CU.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+   AND CU.ID_SEDE = SE.ID_SEDE
+   AND CU.ID_CURSO = PA.ID_CURSO(+)
+   AND CU.ID_AULA = AU.ID_AULA ---AND CU.ID_CURSO = 98
+   AND PA.ID_UNIDAD = UN.ID_UNIDAD
+   AND TO_CHAR(CU.CURSO_FEC_INI, 'YYYY') = UN.UNI_CICLO
+   AND (PA.RFC_EMPLEADO = $P{PAR_RFC_EMPLEADO} OR ROWNUM = 1)
+---   AND PA.ID_SITUACION_PARTICIPANTE = 2]]>
+	</queryString>
+	<field name="ID_CURSO" class="java.math.BigDecimal"/>
+	<field name="ID_CURSO_PRINCIPAL" class="java.lang.String"/>
+	<field name="DESC_CURSO_PRINCIPAL" class="java.lang.String"/>
+	<field name="UPPER(UN.DESC_UNIDAD)" class="java.lang.String"/>
+	<field name="ID_SEDE" class="java.lang.String"/>
+	<field name="DESC_SEDE" class="java.lang.String"/>
+	<field name="CURSO_FEC_INI" class="java.sql.Timestamp"/>
+	<field name="CURSO_FEC_FIN" class="java.sql.Timestamp"/>
+	<field name="CURSO_DURACION" class="java.lang.String"/>
+	<field name="HORARIO_CURSO" class="java.lang.String"/>
+	<field name="ID_AULA" class="java.lang.String"/>
+	<field name="DESC_AULA" class="java.lang.String"/>
+	<field name="RFC_EMPLEADO" class="java.lang.String"/>
+	<field name="NOMBRE_PARTICIPANTE" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="53" splitType="Stretch">
+			<textField>
+				<reportElement x="362" y="10" width="210" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40" uuid="71aaaa7e-49f8-41cb-8955-20f112108d3a"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="322" y="32" width="250" height="13" uuid="2e112149-9d87-4240-aff4-c2bbc667bffb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="10"/>
+				</textElement>
+				<text><![CDATA[Dirección General Adjunta de Desarrollo Profesional]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="626" splitType="Stretch">
+			<rectangle>
+				<reportElement x="113" y="151" width="70" height="20" uuid="124d7c50-0245-4cd4-9d58-5f06d633ea95"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="12" y="210" width="550" height="246" uuid="76bba3a0-d28a-4e6d-be55-89f13af253c8"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Adobe Caslon Pro" size="12"/>
+				</textElement>
+				<text><![CDATA[El presente curso está dirigido a las y los servidores públicos, en puestos de nivel operativo, enlace y mando.
+
+Los datos de acceso a la plataforma, así como su usuario,  contraseña  e instructivo, le serán remitidos por correo
+electrónico  previo  inicio  del  curso,  por  lo  cual  le  invitamos  a  permanecer  pendiente  de  dicho  medio de
+comunicación.
+
+Recuerde que para el caso de servidores públicos de carrera, su carácter es obligatorio.
+
+Su acreditación le otorgará horas de capacitación en este ejercicio, por lo cual recomendamos destinar un tiempo
+diario para el estudio de los contenidos temáticos del curso, así como realizar todas las actividades programadas.
+
+Para  cualquier  aclaración  o  información  adicional,  favor  de  comunicarse con el Enlace de Capacitación o
+Coordinación Administrativa en su Unidad Responsable, en caso de prevalecer la inquietud, puede escribir al
+correo electrónico cursos_enlinea@hacienda.gob.mx.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="151" width="68" height="20" backcolor="#CCCCCC" uuid="01dfead9-cd6e-4674-adea-220bf1ac1cad"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<text><![CDATA[ PERÍODO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="189" y="151" width="22" height="20" uuid="fe4edc71-60ab-4a94-8939-695380493965"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<text><![CDATA[ AL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="427" y="151" width="80" height="20" backcolor="#CCCCCC" uuid="d9df7709-3125-451d-9d8f-9bf490c9d479"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10"/>
+				</textElement>
+				<text><![CDATA[ No. DE HORAS:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="10" y="178" width="68" height="20" backcolor="#CCCCCC" uuid="e9a08f34-78e2-4b9d-a068-ede629a8b97d"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<text><![CDATA[ ACCESO:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="78" y="178" width="1" height="20" uuid="56f7f6bd-f703-43c5-952b-c13e0d20d103"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<rectangle>
+				<reportElement x="78" y="122" width="482" height="20" uuid="725d8512-a196-493c-899f-b0bc8054b8db"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="198" y="599" width="364" height="20" uuid="609d0011-bfe1-4b06-a46e-4bebcc583cbf"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro Bold" size="12" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Atentamente.- Dirección de Capacitación y Certificación]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="77" y="178" width="483" height="20" uuid="0357b51b-c138-4f3c-bfc9-9b53b9b555fc"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="84" y="122" width="469" height="20" uuid="174bd0c8-6f60-47dd-842c-011db8757b3c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_CURSO_PRINCIPAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yyyy">
+				<reportElement x="114" y="151" width="65" height="20" uuid="df51e2b9-da0f-44e2-9e78-0676d623c081"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURSO_FEC_INI}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="215" y="151" width="70" height="20" uuid="8db286e0-d1c1-4817-a2f8-ec44ffbaa662"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="79" y="178" width="474" height="20" uuid="6ad60446-282d-418c-b998-cb969e891cb1"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORARIO_CURSO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="507" y="151" width="53" height="20" uuid="782bd948-ecb4-4fa7-abf1-e08fbf077228"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="84" y="151" width="29" height="20" uuid="799871aa-c6b7-4b6e-b1a1-05420a2f4486"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<text><![CDATA[ DEL]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Opaque" x="10" y="122" width="68" height="20" backcolor="#CCCCCC" uuid="3d12065e-c9ff-4f28-8354-b61000e103ed"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="10" y="123" width="68" height="20" backcolor="#CCCCCC" uuid="a63e1d9b-bc4c-43ca-a109-585dd303da8b"/>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<text><![CDATA[  CURSO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="82" width="550" height="33" uuid="44b62733-459b-4a37-808a-72a0068bbd93"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Adobe Caslon Pro" size="12"/>
+				</textElement>
+				<text><![CDATA[Para dar cumplimiento con el Programa Anual de Capacitación 2015, se le informa el detalle del curso en el
+que está Inscrito(a) así como la fecha programada en que debe asistir:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="514" y="151" width="34" height="20" uuid="bda27b8c-83c0-49d3-8c47-50ac4c9669ea"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURSO_DURACION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd-MMM-yyyy">
+				<reportElement x="216" y="151" width="65" height="20" uuid="cf0e4456-2d62-4308-9436-3003ab9b5a83"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURSO_FEC_FIN}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="49" width="100" height="20" uuid="074a0cb8-96a1-4260-8f31-640fc8edb119"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<text><![CDATA[P R E S E N T E]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="11" y="28" width="405" height="20" uuid="ed170d28-a4ed-4b84-b595-c581c8467175"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_PARTICIPANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="11" y="7" width="194" height="20" uuid="7da16d20-7d7f-4a02-82ba-10b28c6fe2f5"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RFC_EMPLEADO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="477" y="16" width="95" height="10" uuid="3e7c5bc4-341e-44fb-9038-e3f55506e476"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20" uuid="f7b55c93-6243-49b8-9898-574dd08a4d9e"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="300" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="477" y="6" width="60" height="10" uuid="9ed8b1ab-4a9e-4631-88ae-123ecfb9766e"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="537" y="6" width="35" height="10" uuid="d8a93dff-49e4-413e-89fb-fb7b5ae03af8"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="572" height="1" forecolor="#999999" uuid="f2a098cb-6038-44c6-8df4-c821fc67a97e"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

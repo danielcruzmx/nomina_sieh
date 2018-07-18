@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- SCM:DATA SERVICES -->
+    
+    <!-- DAO DEFINITIONS - ANUNCIO -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnAnuncioDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.anuncio.QueryTnAnuncioDAO"/>
+    
+    <!-- DAO DEFINITIONS - NOTIFICACION -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnNotificacionDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.notificacion.QueryTnNotificacionDAO"/>
+    
+    <!-- DAO DEFINITIONS - RUSP -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.rusp.QueryDatosEmpleadoPlazaRuspDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.rusp.QueryTdRuspInfoBasicaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.rusp.TdRuspHijoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.rusp.QueryTdRuspHijoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.rusp.TdRuspLenguaDAO"/>
+    
+    <!-- DAO DEFINITIONS - SPC -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapBitacoraCurDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapBitacoraContDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapBitacoraInstDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.QueryTnCapBitacoraInstDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapCursoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.QueryTnCapCursoDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TcCapCursoPrincpDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.QueryTcCapCursoPrincpDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapParticipanteDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.QueryTnCapParticipanteDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TcCapProveedorDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TcCapAulaDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TcCapInstructorDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TcCapNotifCursoDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapContratoCurDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.QueryTnCapContratoCurDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapFacturaCursoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapEvaluaCursoDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.TnCapCalCursoDAO"/>    
+    <s:dao id="gob.shcp.sireh.data.jdbc.spc.QueryTnCapCalCursoDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTncalculoNominaQnaDAO"/>
+ 
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomConnectionDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomConnectionDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.spc.ConsultaSPCDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.spc.ConsultaSPCDAOImpl"/>
+    
+    <!-- DAO DEFINITIONS - EXPEDIENTE -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpRfcDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpRfcDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpBeneficiariosDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpBeneficiariosDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpFamiliarDepsBenefDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpFamiliarDepsBenefDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpCurpDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpCurpDAO"/>
+
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpCuentasBancariaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpCuentasBancariasDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpExperienciaLaboralDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpExperienciaLaboralDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpDoctosSinDatoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpDoctosSinDatoDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpAvisoAccidenteDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpAvisoAccidenteDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpDomicilioParticularDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpDomicilioParticularDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpUsuarioDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpControlExpedienteDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpDatosNacimientoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpDatosNacimientoDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpAntecedentesAcademicoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpAntecedentesAcademicoDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpFechasLaboralesDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpFechasLaboralesDAO"/>
+	
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpCapacitacionDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpCapacitacionCursosDAO"/>
+
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpCartillaMilitarDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdExpCartillaMilitarDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdExpDatosComplementariosDAO"/>
+    
+
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcVacanciaDAO"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcPuestoVacanciaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTcPuestoVacanciaDAO"/>
+    
+    
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomDocExpedienteDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomDocExpedienteDAOImpl"/>
+    
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdCurriculoEscDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdCurriculoCurDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdCurriculoExplDAO"/>
+    
+    
+    <!-- DAO DEFINITIONS - PLAZAS -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdPlazaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnMovtosEmpPlaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcMovsPersonalDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcAtributoPuestoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcTabuladorDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcSitPlazaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcSituacionOkDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcTipoPlazaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcTipoServPubDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdPlazaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTcAtributoPuestoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.plaza.estructura.TdPlazaConcursoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.plaza.estructura.QueryTdPlazaConcursoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.plaza.estructura.TdHistoriaDesiertaDAO"/>
+    
+    
+    <!-- DAO DEFINITIONS - CLC -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdCxlcDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdSecCxlcDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdCxlcDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcBeneficiarioSicopDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcTipoNominaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcUnidadEdoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcPartidaDAO"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdCxlcDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdCxlcDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdSecCxlcDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdSecCxlcDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdCxlcErrorDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdCxlcErrorDAOImpl"/>
+    
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomHistoricoRevisionDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomHistoricoRevisionDAOImpl"/>
+    
+    <!-- DAO DEFINITIONS -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnRegControlDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnHistoricoPagoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdEmpleadoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdPensionDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnMovtoConceptoPagoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdEmpleadoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTnMovtoConceptoPagoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdPensionDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTcTabuladorDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTnHistoricoPagoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcConceptoPagoCapturaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcConceptoPagoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTnComprobanteDigDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnNominaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcGrupoPagoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.support.QueryTcIsptDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdNmHistoricoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdNmResumenDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdNmHistoricoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdNmPlantillaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnComprobanteDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryExpedienteDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTnMovtosEmpPlaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdPlazaAfectacionDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTnPlantillaPlazaEstructuraDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTnNominaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcProyRegularizaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdOficioAfectacionDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnCalculoNominaQnaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcBancoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnComprobanteDigDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.nomina.terceros.TnComprobantePdfDAO"/>
+    
+    <!-- SERVICIOS -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.servicios.TdBitacoraUpdateTablaDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.servicios.QueryTdBitacoraUpdateTablaDAO"/>
+    
+    <!-- DAO implementado programaticamente -->
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTnHistoricoPagoDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTnHistoricoPagoDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdCapturaConceptosEmpleadoDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdCapturaConceptosEmpleadoDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTnNominaDao" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTnNominaDaoImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomCalculoDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomCalculoDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomConceptoPagoDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomConceptoPagoDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdNmPlantillaDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdNmPlantillaDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomConceptoPagoCapturaDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomConceptoPagoCapturaDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdPlazaAfectacionDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdPlazaAfectacionDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTnMovtosEmpPlaDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTnMovtosEmpPlaDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTnPlantillaPlazaEstructuraDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTnPlantillaPlazaEstructuraDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdPlazaDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdPlazaDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdHistoricoDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdHistoricoDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.EnterosDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.EnterosDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomArmaArchivoTercerosDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomArmaArchivoTercerosDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomConceptosNominaExtraDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomConceptosNominaExtraDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.rusp.CustomTdRuspInfoBasicaDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.rusp.CustomTdRuspInfoBasicaDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustoTnComprobanteDigDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustoTnComprobanteDigDAOImpl"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTnComprobantePdfDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTnComprobantePdfDAOImpl"/>
+
+    
+    <!-- DAO DEFINITIONS TERCEROS-->
+    <s:dao id="gob.shcp.sireh.data.jdbc.TcTerceroDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdCaptCptoErrDAO"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomTdResumenDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomTdResumenDAOImpl"/>    
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryGeneraTercerosDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnDescuentosFonacotDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TnCxlcCanceladosDAO"/>
+    
+    <!-- DAO DEFINITIONS - TERCEROS - SAR-FOVISSSTE -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.QueryTdSarNvoDAO"/>
+    <s:dao id="gob.shcp.sireh.data.jdbc.TdSarNvoDAO"/>
+    <bean id="gob.shcp.sireh.data.jdbc.support.CustomSarFovisssteDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.support.CustomSarFovisssteDAOImpl"/>
+    
+    <!-- IMPUESTO ANUAL -->
+    <s:dao id="gob.shcp.sireh.data.jdbc.support.QueryImpuestoAnualDAO"/>
+    <bean id="gob.shcp.sireh.data.jdbc.ImpuestoAnualDAO" parent="jdbcDAO" class="gob.shcp.sireh.data.jdbc.ImpuestoAnualDAOImpl"/>
+        
+</beans>

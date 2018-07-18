@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+<!-- CATALOG PLUGIN (CORE COMPONENT + WEB APP) -->
+    <!-- SCM:admonCat -->
+    <import resource="catalog/applicationContext.xml"/>
+    <!-- SCM:admonCat -->
+
+<!-- BATCH PLUGIN (CORE COMPONENT + ENTERPRISE APP) -->
+    <!-- SCM:batchMgr -->
+    <!-- <import resource="batch/applicationContext.xml"/> -->
+    <!-- SCM:batchMgr -->
+
+<!-- BPM PLUGIN (CORE COMPONENT + ENTERPRISE APP) -->
+    <!-- SCM:fsnjBPM -->
+    <!-- <import resource="bpm/applicationContext.xml"/> -->
+    <!-- SCM:fsnjBPM -->
+    
+<!-- PKI PLUGIN (CORE COMPONENT + WS CLIENT) -->
+    <!-- SCM:ccpki -->
+    <!--import resource="pki/applicationContext.xml"/-->
+    <!-- SCM:ccpki -->
+    
+<!-- INTWEB PLUGIN (CORE COMPONENT) -->
+    <!-- SCM:intWeb -->
+    <!--<import resource="web-integration-service.xml"/>-->
+    <!-- SCM:intWeb -->
+    
+<!-- JCR PLUGIN (CORE COMPONENT) -->
+    <!-- SCM:fsnJCR -->
+    <import resource="fsnjcr/applicationContext.xml"/>
+    <!-- SCM:fsnJCR -->
+    
+<!-- Rules PLUGIN (CORE COMPONENT) -->
+    <!-- SCM:fsnRules -->
+    <import resource="rules/applicationContext.xml"/>
+    <!-- SCM:fsnRules -->
+    
+<!-- sireh APP -->
+    <import resource="sireh/applicationContext.xml"/>
+</beans>

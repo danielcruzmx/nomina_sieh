@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="no"?>
+<file-format>
+    <converter class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" name="char" return-type="java.lang.String"/>
+	<converter class="com.blackbear.flatworm.converters.CoreConverters" method="convertDecimal" name="decimal" return-type="java.lang.Double"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertDecimalIssste" name="monto" return-type="java.lang.Double"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertRFC" name="rfc" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMovIssste" name="tipoMov" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertQna" name="qna" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertQnaFin" name="qnaFin" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertCharCptoFovi" name="charCptoFovi" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMovIssste" name="tipoMovIssste" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertFechaIncidencia" name="fechaIncidencia" return-type="java.lang.String"/>
+    <record name="">
+        <record-definition>
+            <bean class="gob.shcp.sireh.model.nomina.terceros.DatosArchivoDTO" name="datosDTO"/>
+            <line>
+            	
+            </line>
+        </record-definition>
+    </record>
+</file-format>

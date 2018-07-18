@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pagosCanceladosPeriodoArch" pageWidth="1644" pageHeight="612" orientation="Landscape" columnWidth="1644" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" isIgnorePagination="true">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="1664"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_QNA_INI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_QNA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select h.hp_ciclo_unidad,
+       h.id_unidad_nom,
+       h.hp_qna_pago,
+       h.hp_folio,
+       h.id_tipo_nomina,
+       h.hp_num_complem,
+       h.hp_rfc,
+       trim(trim(e.primer_apellido)||' '||trim(e.segundo_apellido))||' '||trim(e.nombre_empleado) nombre,
+       g.desc_grupo_pago,
+       h.hp_neto_pago,
+       c.cpc_folio,
+       c.cpc_qna_aplica,
+       m.desc_motivo_cancela,
+       c.usuario,
+       to_char(c.fec_modifico, 'dd/mm/yyyy hh24:mi:ss') fec_modifico
+from tn_historico_pago h, tn_captura_pago_canc c, tc_motivo_cancela m, td_empleado e, tc_grupo_pago g
+where hp_qna_pago >= $P{PAR_QNA_INI}
+  and hp_qna_pago <= $P{PAR_QNA_FIN}
+  and h.id_sit_pago = 'C'
+  and h.hp_folio = c.cpc_folio(+)
+  and h.hp_dif_folio = c.cpc_dif_folio(+)
+  and c.id_sit_pago(+) = 'C'
+  and h.hp_rfc = e.rfc_empleado
+  and c.id_motivo_cancela = m.id_motivo_cancela
+  and h.id_grupopago_nom = g.id_grupo_pago
+order by h.id_unidad_nom, h.hp_qna_pago, h.hp_rfc]]>
+	</queryString>
+	<field name="HP_CICLO_UNIDAD" class="java.math.BigDecimal"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="HP_QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="HP_FOLIO" class="java.math.BigDecimal"/>
+	<field name="ID_TIPO_NOMINA" class="java.lang.String"/>
+	<field name="HP_NUM_COMPLEM" class="java.lang.String"/>
+	<field name="HP_RFC" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="DESC_GRUPO_PAGO" class="java.lang.String"/>
+	<field name="HP_NETO_PAGO" class="java.math.BigDecimal"/>
+	<field name="CPC_FOLIO" class="java.math.BigDecimal"/>
+	<field name="CPC_QNA_APLICA" class="java.math.BigDecimal"/>
+	<field name="DESC_MOTIVO_CANCELA" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="FEC_MODIFICO" class="java.lang.String"/>
+	<group name="Qna_pago">
+		<groupExpression><![CDATA[$F{HP_QNA_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="1637" height="12" forecolor="#FFFFFF" backcolor="#F1F1F1"/>
+			</rectangle>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="852" y="0" width="89" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Neto de pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="941" y="0" width="134" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Comprobante cancelado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1075" y="0" width="110" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Qna. aplicación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1185" y="0" width="207" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Motivo cancelación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1392" y="0" width="118" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Usuario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="35" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="466" y="0" width="276" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Nombre del empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="379" y="0" width="87" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="35" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ciclo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="66" y="0" width="64" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Qna. pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="742" y="0" width="110" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Grupo de pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="130" y="0" width="78" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Comprobante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="306" y="0" width="73" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Complemento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="208" y="0" width="98" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tipo de nómina]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1510" y="0" width="127" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fecha de cancelación]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="35" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_CICLO_UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="35" y="0" width="31" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="66" y="0" width="64" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_QNA_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="130" y="0" width="78" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_FOLIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="208" y="0" width="98" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="306" y="0" width="73" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_NUM_COMPLEM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="379" y="0" width="87" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_RFC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="466" y="0" width="276" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="742" y="0" width="110" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_GRUPO_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="852" y="0" width="89" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_NETO_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="941" y="0" width="134" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CPC_FOLIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1075" y="0" width="110" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CPC_QNA_APLICA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1185" y="0" width="207" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_MOTIVO_CANCELA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1392" y="0" width="118" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1510" y="0" width="127" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEC_MODIFICO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Percepciones" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_QNAPAGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="P_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="P_UNIDAD" class="java.lang.String"/>
+	<parameter name="P_CICLO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+case when n.id_grupo_pago_nom = 'V' and p.id_tipo_nomina <> 'AG' and p.id_tipo_nomina <> 'LA' then '12201' else e.id_partida end id_partida, p.id_cpto_pago, c.desc_con_pag, p.pe_casos pf_casos, p.pe_monto pf_monto
+from td_perded_edo p, tn_eco_cpto_pago e, tc_concepto_pago c, tn_nomina n
+where p.pe_qna_pago = $P{P_QNAPAGO}
+  and p.id_edo = $P{P_UNIDAD}
+  and p.id_tipo_nomina = $P{P_TIPONOMINA}
+  and p.pe_num_comple = $P{P_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto = 'P'
+  and p.id_cpto_pago <> '62'
+  and p.id_tipo_cpto = e.id_tipo_cpto(+)
+  and p.id_cpto_pago = e.id_cpto_pago(+)
+  and e.ecp_ciclo(+) = $P{P_CICLO}
+  and e.id_partida <> '00000'
+  and p.id_tipo_cpto = c.id_tipo_cpto(+)
+  and p.id_cpto_pago = c.id_concepto(+)
+  and p.pe_qna_pago = n.nom_qna_captura
+  and p.id_tipo_nomina = n.id_tipo_nomina
+  and p.pe_num_comple = n.nom_num_complem
+order by NLSSORT(p.ID_CPTO_PAGO,'NLS_SORT=BINARY_AI')]]>
+	</queryString>
+	<field name="ID_PARTIDA" class="java.lang.String"/>
+	<field name="ID_CPTO_PAGO" class="java.lang.String"/>
+	<field name="DESC_CON_PAG" class="java.lang.String"/>
+	<field name="PF_CASOS" class="java.math.BigDecimal"/>
+	<field name="PF_MONTO" class="java.math.BigDecimal"/>
+	<variable name="SUMA" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PF_MONTO}]]></variableExpression>
+	</variable>
+	<group name="concepto">
+		<groupExpression><![CDATA[$F{ID_CPTO_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="9">
+				<textField>
+					<reportElement x="0" y="0" width="27" height="9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_PARTIDA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="27" y="0" width="22" height="9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_CPTO_PAGO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="49" y="0" width="178" height="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_CON_PAG}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="270" y="0" width="63" height="9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="227" y="0" width="43" height="9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_CASOS}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="6" width="27" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Partida]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="4" width="333" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="15" width="333" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="27" y="6" width="200" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[P  e  r  c  e  p  c  i  o  n  e  s]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="6" width="43" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="6" width="63" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="15" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="270" y="5" width="63" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{SUMA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="70" y="5" width="200" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de Percepciones con Presupuesto]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Plazas Viegntes al Momento Personal Estructura" printOrder="Horizontal" columnDirection="RTL" pageWidth="4530" pageHeight="612" orientation="Landscape" columnWidth="4530" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select p.ID_UNIDAD_NOM, upper(u.DESC_UNIDAD),
+       upper(j.DESC_JERARQUIA),
+       p.ID_PLAZA,
+       p.PLAZA_RFC,
+       e.curp_empleado,
+       e.CURP_EMPLEADO,
+       e.PRIMER_APELLIDO,
+       e.SEGUNDO_APELLIDO,
+       e.NOMBRE_EMPLEADO,
+       p.ID_PUESTO_NOM,
+       upper(pp.DESC_PUESTO),
+       a.ID_NIVEL_PTO,
+       n.DESC_NOMBRAMIENTO,
+       t.TAB_SUELDO,
+       t.TAB_COMPENSACION,
+       t.ID_RANGO,
+       ac.codigo_puesto,
+       ac.nombre_puesto,
+       ac.observaciones,
+       p.PLAZA_INI_CONT fec_ini_contrato,
+       p.PLAZA_FIN_CONT fec_fin_contrato,
+       i.INMUEBLE_CALLE||' N° '|| i.INMUEBLE_NUM_EXT||' Col. '|| i.INMUEBLE_COLONIA|| ' C.P. ' || lpad(trim(i.INMUEBLE_CP),6,'0') as domicilio
+  From TD_PLAZA p,
+       TD_EMPLEADO e,
+       TC_ATRIBUTO_PUESTO a,
+       TC_UNIDAD u,
+       TC_PUESTO pp,
+       TC_TABULADOR t,
+       TC_GRUPO_PAGO g,
+       TC_JERARQUIA j,
+       TC_NOMBRAMIENTO n,
+       TD_ESCENARIO ac,
+       TC_INMUEBLE i
+   Where p.PLAZA_RFC = e.RFC_EMPLEADO
+   and p.ID_PUESTO_NOM = a.ID_ATRIBUTO_PUESTO
+   and a.AP_FIN = '01/01/2099'
+   and p.ID_UNIDAD_NOM = u.ID_UNIDAD
+   and u.UNI_CICLO = $P{PAR_CICLO}
+   and p.ID_SIT_PLAZA like 'O%'
+   and p.ID_GRUPO_PAGO in ('E','J')
+   and p.ID_PUESTO_NOM = pp.ID_PUESTO
+   and a.ID_NIVEL_PTO = t.ID_NIVEL_PTO
+   and p.ID_ZONA_ECO_NOM = t.ID_ZONA_ECON
+   and p.ID_RANGO_NOM = t.ID_RANGO
+   and t.TAB_FIN = '01/01/2099'
+   and p.ID_GRUPO_PAGO = g.ID_GRUPO_PAGO
+   and a.ID_JERARQUIA = j.ID_JERARQUIA
+   and a.ID_NOMBRAMIENTO = n.ID_NOMBRAMIENTO
+   and p.ID_PLAZA = ac.PLAZA_ESCENARIO(+)
+   and ac.FIN_ESCENARIO(+) = '31/12/2099'
+   and p.ID_INMUEBLE = i.ID_INMUEBLE(+)
+   order by p.ID_GRUPO_PAGO,p.ID_UNIDAD_NOM,a.ID_JERARQUIA,p.ID_PLAZA]]>
+	</queryString>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="UPPER(U.DESC_UNIDAD)" class="java.lang.String"/>
+	<field name="UPPER(J.DESC_JERARQUIA)" class="java.lang.String"/>
+	<field name="ID_PLAZA" class="java.math.BigDecimal"/>
+	<field name="PLAZA_RFC" class="java.lang.String"/>
+	<field name="CURP_EMPLEADO" class="java.lang.String"/>
+	<field name="PRIMER_APELLIDO" class="java.lang.String"/>
+	<field name="SEGUNDO_APELLIDO" class="java.lang.String"/>
+	<field name="NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<field name="ID_PUESTO_NOM" class="java.lang.String"/>
+	<field name="UPPER(PP.DESC_PUESTO)" class="java.lang.String"/>
+	<field name="ID_NIVEL_PTO" class="java.lang.String"/>
+	<field name="DESC_NOMBRAMIENTO" class="java.lang.String"/>
+	<field name="TAB_SUELDO" class="java.math.BigDecimal"/>
+	<field name="TAB_COMPENSACION" class="java.math.BigDecimal"/>
+	<field name="ID_RANGO" class="java.math.BigDecimal"/>
+	<field name="CODIGO_PUESTO" class="java.lang.String"/>
+	<field name="NOMBRE_PUESTO" class="java.lang.String"/>
+	<field name="OBSERVACIONES" class="java.lang.String"/>
+	<field name="FEC_INI_CONTRATO" class="java.sql.Timestamp"/>
+	<field name="FEC_FIN_CONTRATO" class="java.sql.Timestamp"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<title>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="45" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="45" y="0" width="469" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="514" y="0" width="245" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jerarquía]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="759" y="0" width="45" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="804" y="0" width="85" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1039" y="0" width="118" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Paterno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1157" y="0" width="118" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Materno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1275" y="0" width="118" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1393" y="0" width="142" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2032" y="0" width="76" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1535" y="0" width="497" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción del Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2108" y="0" width="221" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombramiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2329" y="0" width="81" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sueldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2410" y="0" width="82" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Compensación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2492" y="0" width="67" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Herramienta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2559" y="0" width="237" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2796" y="0" width="797" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre del Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3900" y="0" width="86" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Inicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3986" y="0" width="83" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Final]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4069" y="0" width="430" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dirección Oficial]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3593" y="0" width="307" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[División de escenario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="889" y="0" width="150" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CURP]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="45" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="514" y="0" width="245" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UPPER(J.DESC_JERARQUIA)}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="759" y="0" width="45" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="804" y="0" width="85" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PLAZA_RFC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1039" y="0" width="118" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PRIMER_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1157" y="0" width="118" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{SEGUNDO_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1275" y="0" width="118" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1393" y="0" width="142" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_PUESTO_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1535" y="0" width="497" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UPPER(PP.DESC_PUESTO)}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2032" y="0" width="76" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_NIVEL_PTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2108" y="0" width="221" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESC_NOMBRAMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="2329" y="0" width="81" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TAB_SUELDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="2410" y="0" width="82" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TAB_COMPENSACION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="2492" y="0" width="67" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_RANGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2559" y="0" width="237" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CODIGO_PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2796" y="0" width="797" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE_PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="3900" y="0" width="86" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{FEC_INI_CONTRATO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="3986" y="0" width="83" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.sql.Timestamp"><![CDATA[$F{FEC_FIN_CONTRATO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="4069" y="0" width="430" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="0" width="469" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UPPER(U.DESC_UNIDAD)}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="3593" y="0" width="307" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{OBSERVACIONES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="889" y="0" width="150" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CURP_EMPLEADO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

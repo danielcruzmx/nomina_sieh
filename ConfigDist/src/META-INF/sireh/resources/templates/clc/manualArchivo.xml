@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<workbook>
+    <worksheet idx="0">
+        <section startRow="0" endRow="0">
+            <mapping cell="A1">encabezadoDTO.a</mapping>
+            <mapping cell="B1">encabezadoDTO.b</mapping>
+            <mapping cell="C1">encabezadoDTO.c</mapping>
+            <mapping cell="D1">encabezadoDTO.d</mapping>
+            <mapping cell="E1">encabezadoDTO.e</mapping>
+            <mapping cell="F1">encabezadoDTO.f</mapping>
+        </section>
+        <loop startRow="1" endRow="1" items="clcManualesArchivoDTO.listModel" var="p" varType="gob.shcp.sireh.model.clc.proceso.ClcManualesArchivoDTO">
+            <section startRow="1" endRow="1">
+                <mapping row="1" col="0">p.unidadArchivo</mapping>
+                <mapping row="1" col="1">p.estadoArchivo</mapping>
+                <mapping row="1" col="2">p.montoArchivo</mapping>
+                <mapping row="1" col="3">p.partidaArchivo</mapping>
+                <mapping row="1" col="4">p.tipoCptoArchivo</mapping>
+                <mapping row="1" col="5">p.tipoMovtoArchivo</mapping>
+            </section>
+            <loopbreakcondition>
+                <rowcheck offset="0">
+                    <cellcheck offset="0"></cellcheck>
+                </rowcheck>
+            </loopbreakcondition>
+        </loop>
+    </worksheet>
+</workbook>

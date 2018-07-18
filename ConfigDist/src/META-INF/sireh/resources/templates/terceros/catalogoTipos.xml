@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<catalogos>
+	<tipos>
+		<tipo 	name="char"
+				desc="acepta caracteres"
+				class="com.blackbear.flatworm.converters.CoreConverters"
+				method="convertChar"
+				return-type="java.lang.String"/>
+		<tipo 	name="decimal"
+				desc="acepta numeros"
+				class="com.blackbear.flatworm.converters.CoreConverters"
+				method="convertDecimal"
+				return-type="java.lang.Double"/>
+		<tipo 	name="monto"			
+				desc="acepta numeros y formatea el monto con punto decimal"
+				class="gob.shcp.sireh.service.parser.ConvertType"
+				method="convertDecimalIssste"
+				return-type="java.lang.Double"/>
+		<tipo 	name="rfc"
+				desc="acepta caracteres y valida RFC en formato AAAA999999"
+				class="gob.shcp.sireh.service.parser.ConvertType"
+				method="convertRFC" 
+				return-type="java.lang.String"/>
+		<tipo 	name="tipoMov" 		
+				desc="acepta caracteres y valida que sean letras"				
+				class="gob.shcp.sireh.service.parser.ConvertType" 
+				method="convertTipoMovIssste" 
+				return-type="java.lang.String"/>
+		<tipo 	name="qna" 			
+				desc="acepta caracteres y valida el numero de quincena en formato YYYYDD"	
+				class="gob.shcp.sireh.service.parser.ConvertType" 
+				method="convertQna"
+				return-type="java.lang.String"/>
+		<tipo 	name="qnaFin"
+				desc="acepta caracteres y valida el numero de quincena en formato YYYYDD" 	
+				class="gob.shcp.sireh.service.parser.ConvertType" 
+				method="convertQnaFin"
+				return-type="java.lang.String"/>
+		<tipo 	name="charCptoFovi"
+				desc="acepta caracteres y valida que el concepto para fovissste" 
+				class="gob.shcp.sireh.service.parser.ConvertType" 
+				method="convertCharCptoFovi"
+				return-type="java.lang.String"/>
+		<tipo 	name="tipoMovIssste"
+				desc="acepta caracteres y valida que sean numeros"				
+				class="gob.shcp.sireh.service.parser.ConvertType" 
+				method="convertTipoMovIssste"
+				return-type="java.lang.String"/>
+		<tipo 	name="fechaIncidencia"
+				desc="acepta 8 digitos; Valida que sea una fecha con formato yyyyMMdd ó ddMMyyyy"
+				class="gob.shcp.sireh.service.parser.ConvertType"
+				method="convertFechaIncidencia"
+				return-type="java.lang.String"/>
+	</tipos>
+	<campos>
+		<campo>RFC</campo>
+		<campo>curp</campo>
+		<campo>tipoMovto</campo>
+		<campo>importe</campo>
+		<campo>referencia</campo>
+		<campo>qna</campo>
+		<campo>qnaFin</campo>
+		<campo>numQuincenas</campo>
+		<campo>porcentaje</campo>
+		<campo>fechaIncidencia</campo>
+	</campos>
+</catalogos>

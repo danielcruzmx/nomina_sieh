@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="INEGI" printOrder="Horizontal" columnDirection="RTL" pageWidth="1080" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="1080" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="768"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_QNA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT NVL(SUBSTR(BASE,2), 'TOTAL') TOTAL_REG, SUM(CASOS) PERSONAS, SUM(SUELDO_BASE) SUELDO_BASE,
+SUM(PRESTACIONES_SOCIALES) PRESTACIONES_SOCIALES, SUM(OTRAS_PRESTACIONES) OTRAS_PRESTACIONES,
+SUM(SUELDO_BASE)+ SUM(PRESTACIONES_SOCIALES)+ SUM(OTRAS_PRESTACIONES) TOTAL_COL,
+PKG_DATOS_DEPENDENCIA.FUNC_RAZON AS DEP_NOM
+FROM
+(
+select '1 BASE' BASE, nvl(round(sum(casos)),0) casos,
+       nvl(round(sum(sueldo_base) /1000),0) sueldo_base,
+       nvl(round(sum(prestaciones_sociales)/1000),0) prestaciones_sociales,
+       nvl(round(sum(otras_prestaciones)/1000),0) otras_prestaciones
+from
+(select hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem,
+           hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento,
+
+          nvl(case when (((hp.id_tipo_nomina = 'CJ' ) and (hp.hp_num_complem in ('0' ,'1' ,'2' )) )
+                            or ((hp.id_tipo_nomina = 'OR' ) and (hp.hp_num_complem in ('0' ,'2' ,'10' )) ) )
+                then count(distinct hp.id_plaza )  end, 0) casos,
+         nvl(sum(case when ((cf.id_partida not in ('12401' ,'13405' ,'13413' ,'15501' ,'15201' ,'15202' ,'15301' ,'15901' ,'15902' ))
+                                  and (cf.id_partida not like '14%' ) )
+               then cp.cp_monto end), 0) sueldo_base,
+        nvl(sum(case when (cf.id_partida like '14%' ) then cp.cp_monto end), 0) prestaciones_sociales,
+        nvl(sum(case when (cf.id_partida in ('15501' ,'15901' ,'15902' )) then cp.cp_monto end), 0) otras_prestaciones
+from tn_historico_pago hp, tn_concepto_pagado cp, tc_atributo_puesto ap, tn_cxlc_fisica cf,
+         tc_nombramiento n,  tc_grupo_pago gp
+where hp.id_tipo_nomina in ('AC' ,'AG' ,'CJ' ,'OR' ,'SA' ,'VE' ,'VA' )
+    and hp.hp_num_pension = 0
+    and hp.id_puesto_nom = ap.id_atributo_puesto
+    and ap.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and ap.id_nombramiento = n.id_nombramiento
+    and hp.id_grupopago_nom = gp.id_grupo_pago
+    and hp.HP_folio = cp.cp_folio
+    and hp.hp_dif_folio = cp.cp_dif_folio
+    and ( (cp.id_tipo_cpto = 'P' ) or ( cp.id_tipo_cpto = 'C' and cp.id_cpto_pago IN ('AP','FV' ,'RC' ,'SA' ,'IS' ) )  )
+    and HP.HP_CICLO_UNIDAD = cf.cf_ciclo
+    and trim(cp.id_cpto_pago) = trim(cf.id_cpto_pago)
+    and hp.id_edo_nom = cf.id_edo
+    and hp.id_grupopago_nom = cf.id_grupopago
+    and trim(cp.id_tipo_cpto) = trim(cf.id_tipo_cpto)
+    and hp.id_unidad_nom = cf.id_unidad
+    and cf.cf_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.id_partida != '00000'
+    and cf.cf_guia_cont_ejer < 3000
+    and cf.cf_guia_cont_ejer not in (2227 ,2427 ,2297,2488 ,2298 ,2489 )
+    and hp.hp_qna_pago = $P{PAR_QNA}
+    and hp.id_grupopago_nom ='E'
+    and ap.id_nombramiento ='B'
+group by hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem, hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento
+)
+union all
+--Confianza
+select '2 CONFIANZA' CONFIANZA, nvl(round(sum(casos)),0) casos,
+           nvl(round(sum(sueldo_base) /1000),0) sueldo_base,
+           nvl(round(sum(prestaciones_sociales)/1000),0) prestaciones_sociales,
+           nvl(round(sum(otras_prestaciones)/1000),0) otras_prestaciones
+from
+(
+select hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem,
+           hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento,
+          nvl(case when (((hp.id_tipo_nomina = 'CJ' ) and (hp.hp_num_complem in ('0' ,'1' ,'2' )) )
+                            or ((hp.id_tipo_nomina = 'OR' ) and (hp.hp_num_complem in ('0' ,'2' ,'10' )) ) )
+                then count(distinct hp.id_plaza )  end, 0) casos,
+         nvl(sum(case when ((cf.id_partida not in ('12401' ,'13405' ,'13413' ,'15501' ,'15201' ,'15202' ,'15301' ,'15901' ,'15902' ))
+                                  and (cf.id_partida not like '14%' ) )
+               then cp.cp_monto end), 0) sueldo_base,
+        nvl(sum(case when (cf.id_partida like '14%' ) then cp.cp_monto end), 0) prestaciones_sociales,
+        nvl(sum(case when (cf.id_partida in ('15501' ,'15901' ,'15902' )) then cp.cp_monto end), 0) otras_prestaciones
+from tn_historico_pago hp, tn_concepto_pagado cp, tc_atributo_puesto ap, tn_cxlc_fisica cf,
+         tc_nombramiento n,  tc_grupo_pago gp
+where
+        hp.id_tipo_nomina in ('AC' ,'AG' ,'CJ' ,'OR' ,'SA' ,'VE' ,'VA' )
+    and hp.hp_num_pension = 0
+    and hp.id_puesto_nom = ap.id_atributo_puesto
+    and ap.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and ap.id_nombramiento = n.id_nombramiento
+    and hp.id_grupopago_nom = gp.id_grupo_pago
+    and hp.HP_folio = cp.cp_folio
+    and hp.hp_dif_folio = cp.cp_dif_folio
+    and ( (cp.id_tipo_cpto = 'P' ) or ( cp.id_tipo_cpto = 'C' and cp.id_cpto_pago IN ('AP','FV' ,'RC' ,'SA' ,'IS' ) )  )
+    and HP.HP_CICLO_UNIDAD = cf.cf_ciclo
+    and trim(cp.id_cpto_pago) = trim(cf.id_cpto_pago)
+    and hp.id_edo_nom = cf.id_edo
+    and hp.id_grupopago_nom = cf.id_grupopago
+    and trim(cp.id_tipo_cpto) = trim(cf.id_tipo_cpto)
+    and hp.id_unidad_nom = cf.id_unidad
+    and cf.cf_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.id_partida != '00000'
+    and cf.cf_guia_cont_ejer < 3000
+    and cf.cf_guia_cont_ejer not in (2227 ,2427 ,2297,2488 ,2298 ,2489 )
+    and hp.hp_qna_pago = $P{PAR_QNA}
+     and  hp.id_grupopago_nom ='E'
+     and ap.id_nombramiento ='C'
+     group by hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem, hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento
+)
+union all
+-- Honorarios
+select '3 HONORARIOS' HONORARIOS, nvl(round(sum(casos)),0) casos,
+           nvl(round(sum(sueldo_base) /1000),0) sueldo_base,
+           nvl(round(sum(prestaciones_sociales)/1000),0) prestaciones_sociales,
+           nvl(round(sum(otras_prestaciones)/1000),0) otras_prestaciones
+from
+(
+select hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem,
+           hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento,
+          nvl(case when (((hp.id_tipo_nomina = 'CJ' ) and (hp.hp_num_complem in ('0' ,'1' ,'2' )) )
+                            or ((hp.id_tipo_nomina = 'OR' ) and (hp.hp_num_complem in ('0' ,'2' ,'10' )) ) )
+                then count(distinct hp.id_plaza )  end, 0) casos,
+         nvl(sum(case when ((cf.id_partida not in ('12401' ,'13405' ,'13413' ,'15501' ,'15201' ,'15202' ,'15301' ,'15901' ,'15902' ))
+                                  and (cf.id_partida not like '14%' ) )
+               then cp.cp_monto end), 0) sueldo_base,
+        nvl(sum(case when (cf.id_partida like '14%' ) then cp.cp_monto end), 0) prestaciones_sociales,
+        nvl(sum(case when (cf.id_partida in ('15501' ,'15901' ,'15902' )) then cp.cp_monto end), 0) otras_prestaciones
+from tn_historico_pago hp, tn_concepto_pagado cp, tc_atributo_puesto ap, tn_cxlc_fisica cf,
+         tc_nombramiento n,  tc_grupo_pago gp
+where
+        hp.id_tipo_nomina in ('AC' ,'AG' ,'CJ' ,'OR' ,'SA' ,'VE' ,'VA' )
+    and hp.hp_num_pension = 0
+    and hp.id_puesto_nom = ap.id_atributo_puesto
+    and ap.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and ap.id_nombramiento = n.id_nombramiento
+    and hp.id_grupopago_nom = gp.id_grupo_pago
+    and hp.HP_folio = cp.cp_folio
+    and hp.hp_dif_folio = cp.cp_dif_folio
+    and ( (cp.id_tipo_cpto = 'P' ) or ( cp.id_tipo_cpto = 'C' and cp.id_cpto_pago IN ('AP','FV' ,'RC' ,'SA' ,'IS' ) )  )
+    and HP.HP_CICLO_UNIDAD = cf.cf_ciclo
+    and trim(cp.id_cpto_pago) = trim(cf.id_cpto_pago)
+    and hp.id_edo_nom = cf.id_edo
+    and hp.id_grupopago_nom = cf.id_grupopago
+    and trim(cp.id_tipo_cpto) = trim(cf.id_tipo_cpto)
+    and hp.id_unidad_nom = cf.id_unidad
+    and cf.cf_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.id_partida != '00000'
+    and cf.cf_guia_cont_ejer < 3000
+    and cf.cf_guia_cont_ejer not in (2227 ,2427 ,2297,2488 ,2298 ,2489 )
+    and hp.hp_qna_pago = $P{PAR_QNA}
+     and  hp.id_grupopago_nom ='H'
+     group by hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem, hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento
+)
+union all
+--Comisionados especial
+select '4 COMISIONADOS ESPECIALES' COMISIONADOS, nvl(round(sum(casos)),0) casos,
+           nvl(round(sum(sueldo_base) /1000),0) sueldo_base,
+           nvl(round(sum(prestaciones_sociales)/1000),0) prestaciones_sociales,
+           nvl(round(sum(otras_prestaciones)/1000),0) otras_prestaciones
+from
+(
+select hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem,
+           hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento,
+          nvl(case when (((hp.id_tipo_nomina = 'CJ' ) and (hp.hp_num_complem in ('0' ,'1' ,'2' )) )
+                            or ((hp.id_tipo_nomina = 'OR' ) and (hp.hp_num_complem in ('0' ,'2' ,'10' )) ) )
+                then count(distinct hp.id_plaza )  end, 0) casos,
+         nvl(sum(case when ((cf.id_partida not in ('12401' ,'13405' ,'13413' ,'15501' ,'15201' ,'15202' ,'15301' ,'15901' ,'15902' ))
+                                  and (cf.id_partida not like '14%' ) )
+               then cp.cp_monto end), 0) sueldo_base,
+        nvl(sum(case when (cf.id_partida like '14%' ) then cp.cp_monto end), 0) prestaciones_sociales,
+        nvl(sum(case when (cf.id_partida in ('15501' ,'15901' ,'15902' )) then cp.cp_monto end), 0) otras_prestaciones
+from tn_historico_pago hp, tn_concepto_pagado cp, tc_atributo_puesto ap, tn_cxlc_fisica cf,
+         tc_nombramiento n,  tc_grupo_pago gp
+where
+        hp.id_tipo_nomina in ('AC' ,'AG' ,'CJ' ,'OR' ,'SA' ,'VE' ,'VA' )
+    and hp.hp_num_pension = 0
+    and hp.id_puesto_nom = ap.id_atributo_puesto
+    and ap.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and ap.id_nombramiento = n.id_nombramiento
+    and hp.id_grupopago_nom = gp.id_grupo_pago
+    and hp.HP_folio = cp.cp_folio
+    and hp.hp_dif_folio = cp.cp_dif_folio
+    and ( (cp.id_tipo_cpto = 'P' ) or ( cp.id_tipo_cpto = 'C' and cp.id_cpto_pago IN ('AP','FV' ,'RC' ,'SA' ,'IS' ) )  )
+    and HP.HP_CICLO_UNIDAD = cf.cf_ciclo
+    and trim(cp.id_cpto_pago) = trim(cf.id_cpto_pago)
+    and hp.id_edo_nom = cf.id_edo
+    and hp.id_grupopago_nom = cf.id_grupopago
+    and trim(cp.id_tipo_cpto) = trim(cf.id_tipo_cpto)
+    and hp.id_unidad_nom = cf.id_unidad
+    and cf.cf_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.id_partida != '00000'
+    and cf.cf_guia_cont_ejer < 3000
+    and cf.cf_guia_cont_ejer not in (2227 ,2427 ,2297,2488 ,2298 ,2489 )
+    and hp.hp_qna_pago = $P{PAR_QNA}
+     and  hp.id_grupopago_nom ='J'
+     group by hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem, hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento
+)
+union all
+select '5 EVENTUALES' EVENTUALES, nvl(round(sum(casos)),0) casos,
+           nvl(round(sum(sueldo_base) /1000),0) sueldo_base,
+           nvl(round(sum(prestaciones_sociales)/1000),0) prestaciones_sociales,
+           nvl(round(sum(otras_prestaciones)/1000),0) otras_prestaciones
+from
+(
+select hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem,
+           hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento,
+          nvl(case when (((hp.id_tipo_nomina = 'CJ' ) and (hp.hp_num_complem in ('0' ,'1' ,'2' )) )
+                            or ((hp.id_tipo_nomina = 'OR' ) and (hp.hp_num_complem in ('0' ,'2' ,'10' )) ) )
+                then count(distinct hp.id_plaza )  end, 0) casos,
+         nvl(sum(case when ((cf.id_partida not in ('12401' ,'13405' ,'13413' ,'15501' ,'15201' ,'15202' ,'15301' ,'15901' ,'15902' ))
+                                  and (cf.id_partida not like '14%' ) )
+               then cp.cp_monto end), 0) sueldo_base,
+        nvl(sum(case when (cf.id_partida like '14%' ) then cp.cp_monto end), 0) prestaciones_sociales,
+        nvl(sum(case when (cf.id_partida in ('15501' ,'15901' ,'15902' )) then cp.cp_monto end), 0) otras_prestaciones
+from tn_historico_pago hp, tn_concepto_pagado cp, tc_atributo_puesto ap, tn_cxlc_fisica cf,
+         tc_nombramiento n,  tc_grupo_pago gp
+where
+        hp.id_tipo_nomina in ('AC' ,'AG' ,'CJ' ,'OR' ,'SA' ,'VE' ,'VA' )
+    and hp.hp_num_pension = 0
+    and hp.id_puesto_nom = ap.id_atributo_puesto
+    and ap.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and ap.id_nombramiento = n.id_nombramiento
+    and hp.id_grupopago_nom = gp.id_grupo_pago
+    and hp.HP_folio = cp.cp_folio
+    and hp.hp_dif_folio = cp.cp_dif_folio
+    and ( (cp.id_tipo_cpto = 'P' ) or ( cp.id_tipo_cpto = 'C' and cp.id_cpto_pago IN ('AP','FV' ,'RC' ,'SA' ,'IS' ) )  )
+    and HP.HP_CICLO_UNIDAD = cf.cf_ciclo
+    and trim(cp.id_cpto_pago) = trim(cf.id_cpto_pago)
+    and hp.id_edo_nom = cf.id_edo
+    and hp.id_grupopago_nom = cf.id_grupopago
+    and trim(cp.id_tipo_cpto) = trim(cf.id_tipo_cpto)
+    and hp.id_unidad_nom = cf.id_unidad
+    and cf.cf_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.id_partida != '00000'
+    and cf.cf_guia_cont_ejer < 3000
+    and cf.cf_guia_cont_ejer not in (2227 ,2427 ,2297,2488 ,2298 ,2489 )
+    and hp.hp_qna_pago = $P{PAR_QNA}
+     and  hp.id_grupopago_nom ='V'
+     group by  hp.hp_qna_pago, hp.id_tipo_nomina, hp.hp_num_complem, hp.id_grupopago_nom, gp.desc_grupo_pago, ap.id_nombramiento, n.desc_nombramiento
+ ))
+group by rollup (BASE)
+order by base]]>
+	</queryString>
+	<field name="TOTAL_REG" class="java.lang.String"/>
+	<field name="PERSONAS" class="java.math.BigDecimal"/>
+	<field name="SUELDO_BASE" class="java.math.BigDecimal"/>
+	<field name="PRESTACIONES_SOCIALES" class="java.math.BigDecimal"/>
+	<field name="OTRAS_PRESTACIONES" class="java.math.BigDecimal"/>
+	<field name="TOTAL_COL" class="java.math.BigDecimal"/>
+	<field name="DEP_NOM" class="java.lang.String"/>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="1045" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Gobierno Federal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="15" width="1045" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Personal ocupado (Plazas laborales) y remuneraciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="30" width="1045" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[(En No. de personas y en miles de pesos)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="70" splitType="Stretch">
+			<staticText>
+				<reportElement x="407" y="44" width="75" height="13"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prestaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="57" width="75" height="13"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sociales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="333" y="57" width="74" height="13"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sueldo Base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="283" y="57" width="50" height="13"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="482" y="57" width="78" height="13"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prestaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="482" y="44" width="78" height="13"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Otras]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="560" y="57" width="78" height="13"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="57" width="407" height="13"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Observaciones]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="70" height="13"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dependencia : ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="74" y="0" width="283" height="13"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEP_NOM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="638" y="0" width="407" height="13"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Quincena ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="638" y="13" width="407" height="13"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{PAR_QNA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="283" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{TOTAL_REG}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="283" y="0" width="50" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PERSONAS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="333" y="0" width="74" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{SUELDO_BASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="407" y="0" width="75" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PRESTACIONES_SOCIALES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="482" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{OTRAS_PRESTACIONES}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="560" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TOTAL_COL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="39" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="283" height="13"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[Elaboró:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="13" width="283" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[Cargo:    DIRECTOR DE PROGRAMACIÓN Y CONTROL PRESUPUESTARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="26" width="283" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[Teléfono: 3688-5315]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="0" width="407" height="13"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[Vo.Bo.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="13" width="407" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[Cargo:    DIRECTOR GENERAL ADJUNTO DE ADMINISTRACIÓN DE PERSONAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="638" y="26" width="407" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<text><![CDATA[Teléfono: 3688-5396]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

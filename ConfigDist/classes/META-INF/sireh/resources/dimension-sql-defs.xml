@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- DATA ACCESS QUERY DEFINITIONS -->
+    
+    <!-- Define los catalogos que esta aplicacion expone como servicios para que sean accedidos desde seguridad (MSSN) y se puedan definir las dimensiones de acceso a datos -->
+    <bean class="gob.shcp.fsn.service.factory.holder.DataAccessQueriesHolder">
+        <property name="dataAccessQueryDefinitions">
+            <props>
+                <prop key="SIREHUNIDAD">
+                    select id_unidad ID_DATA, 
+                    id_unidad CODIGO,
+                    desc_unidad_abrev||' '||DESC_UNIDAD descripcion 
+                    from tc_unidad
+                    where uni_ciclo=?
+                    ORDER BY ID_UNIDAD DESC
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

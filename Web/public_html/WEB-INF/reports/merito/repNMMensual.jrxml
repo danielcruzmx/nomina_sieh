@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="NM x mes" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="343"/>
+	<property name="ireport.y" value="100"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_FECINI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_FECFIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     A.NMH_CICLO CICLO, A.NMH_CAUSAL CVECAU, B.DESC_NM_CAUSAL DESCAU,
+     	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),1,1,0)) ENE,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),2,1,0)) FEB,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),3,1,0)) MAR,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),4,1,0)) ABR,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),5,1,0)) MAY,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),6,1,0)) JUN,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),7,1,0)) JUL,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),8,1,0)) AGO,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),9,1,0)) SEP,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),10,1,0)) OCT,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),11,1,0)) NOV,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),12,1,0)) DIC,
+	SUM(DECODE((TO_CHAR(A.NMH_FECHA_REG,'MM')),1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12,0,1)) NODEF,
+          SUM(1) TOTREN,
+
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+
+FROM  TD_NM_HISTORICO A, TC_NM_CAUSAL B
+WHERE A.NMH_CAUSAL =B.ID_NM_CAUSAL
+and A.NMH_FECHA_AGRE between to_date($P{PAR_FECINI},'dd/mm/yyyy') and to_date($P{PAR_FECFIN},'dd/mm/yyyy')
+GROUP BY A.NMH_CICLO, A.NMH_CAUSAL, B.DESC_NM_CAUSAL
+ORDER BY A.NMH_CICLO DESC, A.NMH_CAUSAL DESC]]>
+	</queryString>
+	<field name="CICLO" class="java.math.BigDecimal"/>
+	<field name="CVECAU" class="java.math.BigDecimal"/>
+	<field name="DESCAU" class="java.lang.String"/>
+	<field name="ENE" class="java.math.BigDecimal"/>
+	<field name="FEB" class="java.math.BigDecimal"/>
+	<field name="MAR" class="java.math.BigDecimal"/>
+	<field name="ABR" class="java.math.BigDecimal"/>
+	<field name="MAY" class="java.math.BigDecimal"/>
+	<field name="JUN" class="java.math.BigDecimal"/>
+	<field name="JUL" class="java.math.BigDecimal"/>
+	<field name="AGO" class="java.math.BigDecimal"/>
+	<field name="SEP" class="java.math.BigDecimal"/>
+	<field name="OCT" class="java.math.BigDecimal"/>
+	<field name="NOV" class="java.math.BigDecimal"/>
+	<field name="DIC" class="java.math.BigDecimal"/>
+	<field name="NODEF" class="java.math.BigDecimal"/>
+	<field name="TOTREN" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="TCENE" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{ENE}]]></variableExpression>
+	</variable>
+	<variable name="TCFEB" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{FEB}]]></variableExpression>
+	</variable>
+	<variable name="TCMAR" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{MAR}]]></variableExpression>
+	</variable>
+	<variable name="TCABR" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{ABR}]]></variableExpression>
+	</variable>
+	<variable name="TCMAY" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{MAY}]]></variableExpression>
+	</variable>
+	<variable name="TCJUN" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{JUN}]]></variableExpression>
+	</variable>
+	<variable name="TCJUL" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{JUL}]]></variableExpression>
+	</variable>
+	<variable name="TCAGO" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{AGO}]]></variableExpression>
+	</variable>
+	<variable name="TCSEP" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{SEP}]]></variableExpression>
+	</variable>
+	<variable name="TCOCT" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{OCT}]]></variableExpression>
+	</variable>
+	<variable name="TCNOV" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{NOV}]]></variableExpression>
+	</variable>
+	<variable name="TCDIC" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIC}]]></variableExpression>
+	</variable>
+	<variable name="TCND" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{NODEF}]]></variableExpression>
+	</variable>
+	<variable name="TCTOT" class="java.lang.Number" resetType="Group" resetGroup="CICLO" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTREN}]]></variableExpression>
+	</variable>
+	<variable name="TOTALENE" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{ENE}]]></variableExpression>
+	</variable>
+	<variable name="TOTALFEB" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{FEB}]]></variableExpression>
+	</variable>
+	<variable name="TOTALMAR" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{MAR}]]></variableExpression>
+	</variable>
+	<variable name="TOTALABR" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{ABR}]]></variableExpression>
+	</variable>
+	<variable name="TOTALMAY" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{MAY}]]></variableExpression>
+	</variable>
+	<variable name="TOTALJUN" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{JUN}]]></variableExpression>
+	</variable>
+	<variable name="TOTALJUL" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{JUL}]]></variableExpression>
+	</variable>
+	<variable name="TOTALAGO" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{AGO}]]></variableExpression>
+	</variable>
+	<variable name="TOTALSEP" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{SEP}]]></variableExpression>
+	</variable>
+	<variable name="TOTALOCT" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{OCT}]]></variableExpression>
+	</variable>
+	<variable name="TOTALNOV" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{NOV}]]></variableExpression>
+	</variable>
+	<variable name="TOTALDIC" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{DIC}]]></variableExpression>
+	</variable>
+	<variable name="TOTALND" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{NODEF}]]></variableExpression>
+	</variable>
+	<variable name="TOTALTOT" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTREN}]]></variableExpression>
+	</variable>
+	<group name="CICLO">
+		<groupExpression><![CDATA[$F{CICLO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="30">
+				<textField pattern="###,###" isBlankWhenNull="true">
+					<reportElement x="177" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCENE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="218" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCFEB}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="259" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCMAR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="300" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCABR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="341" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCMAY}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="382" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCJUN}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="423" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCJUL}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="464" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCAGO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="505" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCSEP}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="546" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCOCT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="587" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCNOV}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="628" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCDIC}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="710" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCTOT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###,###">
+					<reportElement mode="Transparent" x="669" y="4" width="40" height="13"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCND}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="101" y="4" width="75" height="13"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total Año :]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image>
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="231" y="10" width="291" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro Bold" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Notas de mérito"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="231" y="25" width="291" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro Bold" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Resúmen por año, causa y mes"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="627" y="0" width="125" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="546" y="18" width="206" height="32"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="3" y="3" width="30" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Año]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="218" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Feb]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mzo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Abr]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="341" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[May]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="382" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jun]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="423" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jul]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="464" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="505" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sep]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="546" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Oct]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="587" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nov]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="628" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dic]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="708" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="177" y="3" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ene]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="46" y="3" width="130" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Causa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="669" y="3" width="38" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[N/D]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="0" width="30" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CICLO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="0" width="12" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CVECAU}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="46" y="0" width="130" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESCAU}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="177" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="218" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEB}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="259" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="300" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ABR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="341" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MAY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="382" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="423" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{JUL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="464" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="505" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="546" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="587" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="628" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="710" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTREN}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="14" width="752" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField pattern="#,###" isBlankWhenNull="true">
+				<reportElement x="669" y="0" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NODEF}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<elementGroup/>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="5" width="585" height="25" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="46" y="1" width="129" height="14"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Totales por columna:]]></text>
+			</staticText>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="505" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALSEP}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="382" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALJUN}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="710" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALTOT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="341" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALMAY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="587" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALNOV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###" isBlankWhenNull="true">
+				<reportElement x="177" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALENE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="628" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALDIC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="423" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALJUL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="546" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALOCT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="669" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALND}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="464" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALAGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="300" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALABR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="259" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALMAR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###,###">
+				<reportElement mode="Transparent" x="218" y="1" width="40" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTALFEB}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

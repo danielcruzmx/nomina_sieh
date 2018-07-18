@@ -1,0 +1,136 @@
+<xml version="1.0" encoding="ISO-8859-1"></xml>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html;charset=ISO_8859-1"/>
+        <META HTTP-EQUIV="Pragma" CONTENT="no-cache"/>
+        <META HTTP-EQUIV="Expires" CONTENT="-1"/>
+        <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache"/>
+        <base target="_self"/>
+        <link rel="stylesheet" type="text/css" href="/resources/css/login.css"/>
+        <script type="text/javascript">
+            // This function is used to check whether the username and password are entered.
+            function validate(thisForm) {
+                var usrName = thisForm.j_username.value;
+                var passwrd = thisForm.j_password.value;
+                
+                if (usrName == "" || (usrName == null)) {
+                    alert("User Name can not be blank");
+                    thisForm.j_username.focus();
+                    return false;  
+                }
+                if (passwrd == "" || (passwrd == null)) {
+                    alert("Password can not be blank");
+                    thisForm.j_password.focus();
+                    return false;   
+                }     
+            }
+            
+            function setPass(user) {
+                if (user == "" || (user == null)) {
+                    alert("User Name can not be blank");
+                } else if (user == 'autorizarautorizara') {
+                    document.getElementById("j_password").value = 'autorizar';
+                } else if (user == 'registrarsirehr') {
+                    document.getElementById("j_password").value = 'registrar';
+                } else if (user == 'testadmincapc') {
+                    document.getElementById("j_password").value = 'TestadminCap1#';
+                } else if (user == 'testadmincerc') {
+                    document.getElementById("j_password").value = 'TestadminCer1#';
+                } else if (user == 'capcapc') {
+                    document.getElementById("j_password").value = 'Capcapc1#';
+                } else if (user == 'coordadminc') {
+                    document.getElementById("j_password").value = 'Coordinacion1#';
+                } else if (user == 'ejecutivocontratacionc') {
+                    document.getElementById("j_password").value = 'Ejecutivo1#';
+                } else if (user == 'carlosquezadam') {
+                    document.getElementById("j_password").value = '#kot#8FW8p';
+                } else if (user == 'carolinahernandezl') {
+                    document.getElementById("j_password").value = 'Carolina01#';
+                } else if (user == 'alejandrohguzmant') {
+                    document.getElementById("j_password").value = 'Alejandrohguzmant1#';
+                } else if (user == 'gaoocao') {
+                    document.getElementById("j_password").value = 'gaoocao1#';
+                } else if (user == 'egresoscoordinaciona') {
+                    document.getElementById("j_password").value = 'Egresos01#';
+                } else if (user == 'subsecretariacoordinaciona') {
+                    document.getElementById("j_password").value = 'Subse01#';
+                } else {
+                    document.getElementById("j_password").value = 'testadmin1';
+                } 
+            }
+            //-->
+        </script>
+    </head>
+    <body bgcolor="#FFFFFF" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+        <form method="post" action="j_security_check" onsubmit="return validate(this)">
+            <table class="login" align="center">
+                <tr>
+                    <td class="header" align="center"><img src="/resources/images/login/header.jpg" alt="header" width="504" height="88"/></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr> 
+                    <td>
+                        <fieldset>
+                            <table>
+                                <tr>
+                                    <td colspan="4"><span class="boldred">&nbsp;</span></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">&nbsp;</td>
+                                </tr>
+                                <tr> 
+                                    <td width="10%">&nbsp;</td>
+                                    <td width="30%" align="right" class="bold">Usuario&nbsp;</td>
+                                    <td width="40%" align="left">
+                                        <select name="j_username" id="j_username" onchange="setPass(this.value)" style="font-size:10px;width:120px;">
+                                            <option value="">SELECCIONE...</option>
+                                            <option value="testadmin">User testadmin</option>
+                                            <option value="carlosquezadam">User carlosquezadam</option>
+                                            <option value="carolinahernandezl">User carolinahernandezl</option>
+                                            <option value="alejandrohguzmant">User alejandrohguzmant</option>
+                                            <option value="gaoocao">User gaoocao</option>
+                                            <option value="registrarsirehr">User registrar</option>
+                                            <option value="autorizarautorizara">User autorizar</option>
+                                            <option value="testadmincapc">User testadmin (Capacitacion)</option>
+                                            <option value="testadmincerc">User testadmin (Certificacion)</option>
+                                            <option value="capcapc">Operador Capacitación</option>
+                                            <option value="coordadminc">Operador Coordinación Administrativa</option>
+                                            <option value="ejecutivocontratacionc">Operador Ejecutivo de Contratación</option>
+                                            <option value="egresoscoordinaciona">egresos coordinaciona</option>
+                                            <option value="subsecretariacoordinaciona">subsecretaria coordinaciona</option>
+                                        </select>
+                                        <!--<input type="text" name="j_username" size="20" value="testadmin"/>-->
+                                    </td>
+                                    <td width="20%">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td width="10%">&nbsp;</td>
+                                    <td width="30%" align="right" class="bold">Contraseña&nbsp;</td>
+                                    <td width="40%" align="left">
+                                        <input type="password" name="j_password" id="j_password" size="20" style="font-size:10px;width:120px;"/>
+                                    </td>
+                                    <td width="20%">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" align="right"><input name="login" type="submit" value="Aceptar"/></td>
+                                    <td width="20%">&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">&nbsp;</td>
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <script language="JavaScript" type="text/javascript">
+            window.document.forms[0].j_username.focus();
+        </script>
+    </body>
+</html>

@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Formato 542 Personal ocupado y remuneración" printOrder="Horizontal" columnDirection="RTL" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5394743546921197"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT C.NOMINA, $P{PAR_CICLO} ,
+$P{PAR_MES} "JULIO",
+--C.GRUPO,
+C.FUNCION,
+CASE WHEN C.FUNCION IS NULL AND C.GRADO IS NULL THEN 'Total'
+     WHEN C.GRADO IS NULL THEN C.FUNCION ELSE C.GRADO END GRADO,
+    SUM(C.CASOS)/2 CASOS,  SUM(P.TOTAL) MONTO,
+    PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+    PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+    PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+(
+SELECT 'ORDINARIA' AS NOMINA, TN_HISTORICO_PAGO.HP_QNA_PAGO QNA_PAGO,
+           CASE WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO = 'Consejerias' THEN 'Estructura'
+                   WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO <> 'Consejerias' THEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO
+           END AS GRUPO,
+           CASE WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM NOT IN ( '113','700','710','711','712','716') THEN 'Funciones Sustantivas'
+                   WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM IN ( '113','700','710','711','712','716')
+                    THEN 'Funciones Adjetivas' END AS FUNCION,
+           CASE WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'G%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'H%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'I%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'J%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'K%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'L%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'M%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'N%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'O%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'P%' THEN 'C Enlace'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'C' THEN 'D Operativo de Confianza'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'B' THEN 'E Operativo de Base'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = 'S' THEN 'F Servicio Social'
+           END AS GRADO,
+           COUNT(UNIQUE TN_HISTORICO_PAGO.ID_PLAZA) AS CASOS
+FROM TN_HISTORICO_PAGO, TN_CONCEPTO_PAGADO, TC_ATRIBUTO_PUESTO, TN_CXLC_FISICA, TC_GRUPO_PAGO
+WHERE
+TN_HISTORICO_PAGO.HP_QNA_PAGO IN (
+SELECT TO_NUMBER($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09')))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES})
+AND TN_HISTORICO_PAGO.HP_NUM_PENSION = '0'
+AND TN_HISTORICO_PAGO.HP_NUM_COMPLEM < '90'
+AND TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM = 'E'
+AND TN_HISTORICO_PAGO.ID_PUESTO_NOM = TC_ATRIBUTO_PUESTO.ID_ATRIBUTO_PUESTO
+AND TC_ATRIBUTO_PUESTO.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+AND TN_HISTORICO_PAGO.HP_FOLIO = TN_CONCEPTO_PAGADO.CP_FOLIO
+AND TN_HISTORICO_PAGO.HP_DIF_FOLIO = TN_CONCEPTO_PAGADO.CP_DIF_FOLIO
+AND TN_CONCEPTO_PAGADO.ID_TIPO_CPTO = 'P'
+AND TN_CONCEPTO_PAGADO.ID_CPTO_PAGO IN ('02','05','07','16')
+AND TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM = TN_CXLC_FISICA.ID_GRUPOPAGO
+AND TN_CXLC_FISICA.CF_CICLO =$P{PAR_CICLO}
+AND TN_HISTORICO_PAGO.ID_EDO_NOM = TN_CXLC_FISICA.ID_EDO
+AND TN_HISTORICO_PAGO.ID_UNIDAD_NOM = TN_CXLC_FISICA.ID_UNIDAD
+AND TN_CONCEPTO_PAGADO.ID_TIPO_CPTO = TN_CXLC_FISICA.ID_TIPO_CPTO
+AND TN_CONCEPTO_PAGADO.ID_CPTO_PAGO = TN_CXLC_FISICA.ID_CPTO_PAGO
+AND TN_CXLC_FISICA.CF_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+AND TN_CXLC_FISICA.ID_PARTIDA <> '0000'
+AND TN_CXLC_FISICA.CF_GUIA_CONT_EJER < 3000
+AND TN_CXLC_FISICA.CF_GUIA_CONT_EJER NOT IN(2227,2427,2297,2488,2298,2489)
+AND TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+AND TN_CXLC_FISICA.ID_UNIDAD not in ('AYI','G00')
+AND (TN_HISTORICO_PAGO.ID_UNIDAD_PRE <> 'AYI' OR TN_HISTORICO_PAGO.ID_UNIDAD_NOM <> 'AYI' OR TN_HISTORICO_PAGO.ID_UNIDAD_NOM <> 'G00')
+GROUP BY 'ORDINARIA', TN_HISTORICO_PAGO.HP_QNA_PAGO, CASE WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO = 'Consejerias' THEN 'Estructura'
+                   WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO <> 'Consejerias' THEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO
+           END,
+           CASE WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM NOT IN ( '113','700','710','711','712','716') THEN 'Funciones Sustantivas'
+                   WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM IN ( '113','700','710','711','712','716')
+                    THEN 'Funciones Adjetivas' END,
+                    CASE WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'G%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'H%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'I%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'J%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'K%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'L%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'M%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'N%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'O%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'P%' THEN 'C Enlace'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'C' THEN 'D Operativo de Confianza'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'B' THEN 'E Operativo de Base'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = 'S' THEN 'F Servicio Social'
+           END
+ORDER BY 'ORDINARIA' DESC , TN_HISTORICO_PAGO.HP_QNA_PAGO, CASE WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO = 'Consejerias' THEN 'Estructura'
+                   WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO <> 'Consejerias' THEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO
+           END,
+           CASE WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM NOT IN ( '113','700','710','711','712','716') THEN 'Funciones Sustantivas'
+                   WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM IN ( '113','700','710','711','712','716')
+                    THEN 'Funciones Adjetivas' END  DESC
+) C,
+(
+SELECT 'ORDINARIA' AS NOMINA, TN_HISTORICO_PAGO.HP_QNA_PAGO QNA_PAGO,
+           CASE WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO = 'Consejerias' THEN 'Estructura'
+                    WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO <> 'Consejerias' THEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO
+           END AS GRUPO,
+           CASE WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM IN ( '113','700','710','711','712','716') THEN 'Funciones Adjetivas'
+                   WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM NOT IN ( '113','700','710','711','712','716') THEN 'Funciones Sustantivas'
+           END AS FUNCION,
+           CASE WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'G%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'H%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'I%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'J%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'K%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'L%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'M%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'N%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'O%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'P%' THEN 'C Enlace'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'C' THEN 'D Operativo de Confianza'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'B' THEN 'E Operativo de Base'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = 'S' THEN 'F Servicio Social'
+           END AS GRADO,
+           SUM(TN_CONCEPTO_PAGADO.CP_MONTO) TOTAL
+FROM TN_HISTORICO_PAGO, TN_CONCEPTO_PAGADO, TC_ATRIBUTO_PUESTO, TN_CXLC_FISICA, TC_GRUPO_PAGO
+WHERE
+TN_HISTORICO_PAGO.HP_QNA_PAGO IN (SELECT TO_NUMBER($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09')))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES}
+UNION ALL
+SELECT TO_NUMBER($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09')))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES})
+AND TN_HISTORICO_PAGO.HP_NUM_PENSION = '0'
+AND TN_HISTORICO_PAGO.HP_NUM_COMPLEM < '90'
+AND TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM = 'E'
+AND TN_HISTORICO_PAGO.ID_PUESTO_NOM = TC_ATRIBUTO_PUESTO.ID_ATRIBUTO_PUESTO
+AND TC_ATRIBUTO_PUESTO.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+AND TN_HISTORICO_PAGO.HP_FOLIO = TN_CONCEPTO_PAGADO.CP_FOLIO
+AND TN_HISTORICO_PAGO.HP_DIF_FOLIO = TN_CONCEPTO_PAGADO.CP_DIF_FOLIO
+AND TN_CONCEPTO_PAGADO.ID_TIPO_CPTO = 'P'
+AND TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM = TN_CXLC_FISICA.ID_GRUPOPAGO
+AND TN_CXLC_FISICA.CF_CICLO = $P{PAR_CICLO}
+AND TN_HISTORICO_PAGO.ID_EDO_NOM=TN_CXLC_FISICA.ID_EDO
+AND TN_HISTORICO_PAGO.ID_UNIDAD_NOM = TN_CXLC_FISICA.ID_UNIDAD
+AND TN_CONCEPTO_PAGADO.ID_TIPO_CPTO = TN_CXLC_FISICA.ID_TIPO_CPTO
+AND TN_CONCEPTO_PAGADO.ID_CPTO_PAGO = TN_CXLC_FISICA.ID_CPTO_PAGO
+AND TN_CXLC_FISICA.CF_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+AND TN_CXLC_FISICA.ID_PARTIDA <> '0000'
+AND TN_CXLC_FISICA.CF_GUIA_CONT_EJER < 3000
+AND TN_CXLC_FISICA.CF_GUIA_CONT_EJER NOT IN(2227,2427,2297,2488,2298,2489)
+AND TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+AND TN_CXLC_FISICA.ID_UNIDAD not in ('AYI','G00')
+AND (TN_HISTORICO_PAGO.ID_UNIDAD_PRE <> 'AYI' OR TN_HISTORICO_PAGO.ID_UNIDAD_NOM <> 'AYI' OR TN_HISTORICO_PAGO.ID_UNIDAD_NOM <> 'G00')
+GROUP BY 'ORDINARIA',
+TN_HISTORICO_PAGO.HP_QNA_PAGO,
+CASE WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO = 'Consejerias' THEN 'Estructura'
+                    WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO <> 'Consejerias' THEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO
+           END,
+CASE WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM IN ( '113','700','710','711','712','716') THEN 'Funciones Adjetivas'
+                   WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM NOT IN ( '113','700','710','711','712','716') THEN 'Funciones Sustantivas'
+           END,
+CASE WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'G%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'H%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'I%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'J%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'K%' THEN 'A Mandos Superiores'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'L%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'M%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'N%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'O%' THEN 'B Mando Medio'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO LIKE 'P%' THEN 'C Enlace'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'C' THEN 'D Operativo de Confianza'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = '7' AND TC_ATRIBUTO_PUESTO.ID_NOMBRAMIENTO = 'B' THEN 'E Operativo de Base'
+                   WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA = 'S' THEN 'F Servicio Social'
+           END
+ORDER BY 'ORDINARIA' DESC ,
+TN_HISTORICO_PAGO.HP_QNA_PAGO,
+CASE WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO = 'Consejerias' THEN 'Estructura'
+                    WHEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO <> 'Consejerias' THEN TC_GRUPO_PAGO.DESC_GRUPO_PAGO
+           END,
+CASE WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM IN ( '113','700','710','711','712','716') THEN 'Funciones Adjetivas'
+                   WHEN TN_HISTORICO_PAGO.ID_UNIDAD_NOM NOT IN ( '113',
+'700','710','711','712','716') THEN 'Funciones Sustantivas'
+           END DESC
+) P
+WHERE C.NOMINA = P.NOMINA
+AND C.GRUPO = P.GRUPO
+AND C.FUNCION = P.FUNCION
+AND C.GRADO = P.GRADO
+AND C.QNA_PAGO IN (SELECT TO_NUMBER($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09')))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES}
+UNION ALL
+SELECT TO_NUMBER($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09')))
+FROM TC_MES_QNA
+WHERE ID_MES = $P{PAR_MES})
+GROUP BY C.NOMINA, $P{PAR_CICLO}, $P{PAR_MES}, C.GRUPO,ROLLUP (C.FUNCION, C.GRADO)
+ORDER BY  C.FUNCION,   CASE WHEN C.FUNCION IS NULL AND C.GRADO IS NULL THEN 'Total'
+     WHEN C.GRADO IS NULL THEN C.FUNCION ELSE C.GRADO END]]>
+	</queryString>
+	<field name="NOMINA" class="java.lang.String"/>
+	<field name=":1" class="java.lang.String"/>
+	<field name="JULIO" class="java.lang.String"/>
+	<field name="FUNCION" class="java.lang.String"/>
+	<field name="GRADO" class="java.lang.String"/>
+	<field name="CASOS" class="java.math.BigDecimal"/>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="81" y="198" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="149" y="1" width="199" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Formato 542 Personal ocupado y remuneración]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="335" y="10" width="239" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="335" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Opaque" x="0" y="0" width="572" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="156" y="0" width="100" height="20"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="293" y="0" width="100" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="398" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Monto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="0" width="100" height="20"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Función]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="20" width="572" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField>
+				<reportElement x="155" y="5" width="137" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GRADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement x="292" y="5" width="100" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASOS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="409" y="5" width="100" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MONTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="22" y="5" width="127" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FUNCION}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="477" y="16" width="95" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="95" y="6" width="300" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="477" y="6" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="537" y="6" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="572" height="1" forecolor="#999999"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="30" splitType="Stretch"/>
+	</summary>
+</jasperReport>

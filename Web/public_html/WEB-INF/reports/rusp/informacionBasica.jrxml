@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="informacionBasica1" pageWidth="2500" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="2490" leftMargin="5" rightMargin="5" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="P_QNA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT SUBSTR($P{P_QNA},1,4) CICLO, TO_CHAR(R.RIB_RAMO,'999') RAMO, R.ID_UNIDAD,
+       TO_CHAR(R.RIB_CONS_PTO,'999999') CONS_PTO,
+       TO_CHAR(R.RIB_CONS_PTO_JEFE,'999999') CONS_JEFE,
+       R.RIB_NOMBRE_PUESTO,
+       CASE WHEN R.ID_PUESTO = 'HONORAR' THEN 'HONORARIOS'
+            ELSE R.ID_PUESTO
+       END PUESTO,
+       CASE WHEN R.ID_NIVEL_PTO = 'HONO' THEN 'HONORARIOS'
+            ELSE R.ID_NIVEL_PTO
+       END NIVEL,
+       TO_CHAR(R.ID_ZONA_ECON,'9') ZONA_ECO, TO_CHAR(R.RIB_SUELDO,'9,999,990.00') SUELDO,
+       TO_CHAR(R.RIB_COMPENSACION,'9,999,990.00') COMPENSACION,
+       LPAD(TO_CHAR(R.ID_EDO),2,'0')||LPAD(TO_CHAR(R.ID_MUNICIPIO),3,'0') ENT_FED_PLAZA,
+       TO_CHAR(R.RIB_PAIS_PLAZA,'999') PAIS_PLAZA, TO_CHAR(R.RIB_TIPO_PLAZA,'999') TIPO_PLAZA,
+       TO_CHAR(R.RIB_PUESTO_ESTR,'999') PTO_ESTRATEGICO,
+       TO_CHAR(R.RIB_FUNCION_PUESTO,'999') FUNCION_PTO,
+       TO_CHAR(R.RIB_TIPO_PERSONAL,'999') TIPO_PERSONAL,
+       NVL(R.RIB_CODIGO_PUESTO,'NULL') CODIGO_PTO_RHNET,
+       TO_CHAR(R.RIB_ESTATUS_OCUPACIONAL,'999') ESTATUS_OCUPACION,
+       R.RIB_RFC RFC, R.RIB_CURP CURP, NVL(R.RIB_NOMBRE,'NULL') NOMBRE,
+       NVL(R.RIB_PRIMER_APELLIDO,'NULL') PRIMER_APELLIDO,
+       NVL(R.RIB_SEGUNDO_APELLIDO,'NULL') SEGUNDO_APELLIDO,
+       NVL(TO_CHAR(R.RIB_FECHA_NACIMIENTO,'DD/MM/YYYY'),'NULL') FECHA_NACIMIENTO,
+       NVL(TO_CHAR(R.RIB_GENERO), 'NULL') SEXO, NVL(TO_CHAR(R.ID_EDO_NAC),'NULL') EDO_NAC,
+       NVL(TO_CHAR(R.RIB_PAIS_NAC),'NULL') PAIS_NACIMIENTO,
+       NVL(R.RIB_E_MAIL,'NULL') E_MAIL,
+       NVL(TO_CHAR(R.RIB_INST_SEG_SOCIAL),'NULL') INST_SEG_SOC,
+       NVL(R.RIB_NUM_SEG_SOCIAL,'NULL') NUM_SEG_SOC,
+       NVL(R.RIB_CLAVE_SEP,'NULL') CLAVE_SEP,
+       CASE WHEN R.RIB_ESTATUS_OCUPACIONAL = 1 THEN E.DISCAPACIDAD
+            WHEN R.RIB_ESTATUS_OCUPACIONAL = 2 THEN 'NULL'
+            ELSE 'NULL'
+       END TIPO_DISCAPACIDAD,
+       NVL( (CASE WHEN R.RIB_NIVEL_TABULAR_PAGADO = 'HONO' THEN 'HONORARIOS'
+                  ELSE R.RIB_NIVEL_TABULAR_PAGADO
+             END),'NULL' ) NIVEL_TAB_PAGADO,
+       NVL(TO_CHAR(R.RIB_TIPO_CONTRATACION),'NULL') TIPO_CONTRATACION,
+       NVL(R.RIB_DECLARACION_PATRIMONIAL,'NULL') DECLARA_PATRIMONIAL,
+       NVL(TO_CHAR(R.RIB_MOTIVO_DECLARACION),'NULL') MOTIVO_DECLARA,
+       NVL(R.RIB_NUMERO_EMPLEADO,'NULL') NUM_EMPLEADO,
+       NVL(TO_CHAR(R.RIB_INGRESO_APF,'DD/MM/YYYY'),'NULL') INGRESO_APF,
+       NVL(TO_CHAR(R.RIB_INGRESO_SPC,'DD/MM/YYYY'),'NULL') INGRESO_SPC,
+       NVL(TO_CHAR(R.RIB_INGRESO_INSTITUCION,'DD/MM/YYYY'),'NULL') INGRESO_INSTITUCION,
+       NVL(TO_CHAR(R.RIB_ALTA_ULTIMO_PUESTO,'DD/MM/YYYY'),'NULL') ALTA_ULTIMO_PTO,
+       NVL(TO_CHAR(R.RIB_OBLIGACION_DECL_PAT,'DD/MM/YYYY'),'NULL') OBLIGA_DECLARA_PATRIMONIAL,
+       RR.ID_AREA_RUSP AREA, RR.ID_CONTRATA_PUBLICA CONTRATA_PUBLICAS, 'NULL' CON_LIC_AUT_PER,
+       RR.ID_ENAJENACION, 'NULL' AVA_JUS_DE_RENTAS,
+       TO_CHAR(P.ID_INMUEBLE,'9999999') ID_LUGAR_TRABAJO,
+       NVL(P.ID_SERV_PUB,'NULL') TIPO_SER_PUB,
+       TO_CHAR(R.RIB_PLAZA,'000000') PLAZA,
+       CASE WHEN R.ID_NIVEL_PTO = 'HONO' THEN 'HONORARIOS'
+            ELSE R.ID_NIVEL_PTO
+       END NIVEL,
+       R.RIB_PLAZA||CASE WHEN R.ID_NIVEL_PTO = 'HONO' THEN 'HONORARIOS'
+                         ELSE R.ID_NIVEL_PTO
+                    END NIVELPLAZA
+FROM TD_RUSP_INFO_BASICA R, TD_PLAZA P, TD_EMPLEADO E, TC_RUSP_RESPONSAB RR
+WHERE R.RIB_QNA_PAGO = $P{P_QNA}
+AND R.RIB_PLAZA = P.ID_PLAZA
+AND R.RIB_RFC = E.RFC_EMPLEADO(+)
+AND R.RIB_RFC = RR.RFC_EMPLEADO(+)
+ORDER BY 3,4,5]]>
+	</queryString>
+	<field name="CICLO" class="java.lang.String"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="ID_UNIDAD" class="java.lang.String"/>
+	<field name="CONS_PTO" class="java.lang.String"/>
+	<field name="CONS_JEFE" class="java.lang.String"/>
+	<field name="RIB_NOMBRE_PUESTO" class="java.lang.String"/>
+	<field name="PUESTO" class="java.lang.String"/>
+	<field name="NIVEL" class="java.lang.String"/>
+	<field name="ZONA_ECO" class="java.lang.String"/>
+	<field name="SUELDO" class="java.lang.String"/>
+	<field name="COMPENSACION" class="java.lang.String"/>
+	<field name="ENT_FED_PLAZA" class="java.lang.String"/>
+	<field name="PAIS_PLAZA" class="java.lang.String"/>
+	<field name="TIPO_PLAZA" class="java.lang.String"/>
+	<field name="PTO_ESTRATEGICO" class="java.lang.String"/>
+	<field name="FUNCION_PTO" class="java.lang.String"/>
+	<field name="TIPO_PERSONAL" class="java.lang.String"/>
+	<field name="CODIGO_PTO_RHNET" class="java.lang.String"/>
+	<field name="ESTATUS_OCUPACION" class="java.lang.String"/>
+	<field name="RFC" class="java.lang.String"/>
+	<field name="CURP" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="PRIMER_APELLIDO" class="java.lang.String"/>
+	<field name="SEGUNDO_APELLIDO" class="java.lang.String"/>
+	<field name="FECHA_NACIMIENTO" class="java.lang.String"/>
+	<field name="SEXO" class="java.lang.String"/>
+	<field name="EDO_NAC" class="java.lang.String"/>
+	<field name="PAIS_NACIMIENTO" class="java.lang.String"/>
+	<field name="E_MAIL" class="java.lang.String"/>
+	<field name="INST_SEG_SOC" class="java.lang.String"/>
+	<field name="NUM_SEG_SOC" class="java.lang.String"/>
+	<field name="CLAVE_SEP" class="java.lang.String"/>
+	<field name="TIPO_DISCAPACIDAD" class="java.lang.String"/>
+	<field name="NIVEL_TAB_PAGADO" class="java.lang.String"/>
+	<field name="TIPO_CONTRATACION" class="java.lang.String"/>
+	<field name="DECLARA_PATRIMONIAL" class="java.lang.String"/>
+	<field name="MOTIVO_DECLARA" class="java.lang.String"/>
+	<field name="NUM_EMPLEADO" class="java.lang.String"/>
+	<field name="INGRESO_APF" class="java.lang.String"/>
+	<field name="INGRESO_SPC" class="java.lang.String"/>
+	<field name="INGRESO_INSTITUCION" class="java.lang.String"/>
+	<field name="ALTA_ULTIMO_PTO" class="java.lang.String"/>
+	<field name="OBLIGA_DECLARA_PATRIMONIAL" class="java.lang.String"/>
+	<field name="AREA" class="java.lang.String"/>
+	<field name="CONTRATA_PUBLICAS" class="java.lang.String"/>
+	<field name="CON_LIC_AUT_PER" class="java.lang.String"/>
+	<field name="ID_ENAJENACION" class="java.lang.String"/>
+	<field name="AVA_JUS_DE_RENTAS" class="java.lang.String"/>
+	<field name="ID_LUGAR_TRABAJO" class="java.lang.String"/>
+	<field name="TIPO_SER_PUB" class="java.lang.String"/>
+	<field name="PLAZA" class="java.lang.String"/>
+	<field name="NIVELPLAZA" class="java.lang.String"/>
+	<group name="MEP_RFC">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="251" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="2490" height="20" forecolor="#FFFFFF" backcolor="#F1F1F1"/>
+			</rectangle>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="55" y="1" width="25" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="79" y="1" width="27" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="1" width="38" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONS_PTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="141" y="1" width="38" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONS_JEFE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="178" y="1" width="80" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RIB_NOMBRE_PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="22" y="1" width="34" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_QNA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="1" width="23" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CICLO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="257" y="1" width="42" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="298" y="1" width="22" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="319" y="1" width="15" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ZONA_ECO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="1" width="65" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SUELDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="1" width="65" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COMPENSACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="461" y="1" width="29" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ENT_FED_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="489" y="1" width="29" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAIS_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="517" y="1" width="14" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="530" y="1" width="14" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PTO_ESTRATEGICO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="543" y="1" width="14" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FUNCION_PTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="556" y="1" width="14" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_PERSONAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="569" y="1" width="22" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_PTO_RHNET}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="590" y="1" width="14" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTATUS_OCUPACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="603" y="1" width="66" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RFC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="668" y="1" width="91" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="758" y="1" width="100" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="857" y="1" width="100" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRIMER_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="956" y="1" width="100" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEGUNDO_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1055" y="1" width="61" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA_NACIMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1115" y="1" width="12" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEXO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1126" y="1" width="20" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EDO_NAC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1145" y="1" width="32" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PAIS_NACIMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1176" y="1" width="105" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{E_MAIL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1280" y="1" width="11" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INST_SEG_SOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1290" y="1" width="61" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUM_SEG_SOC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1350" y="1" width="28" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CLAVE_SEP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1377" y="1" width="29" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_DISCAPACIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1405" y="1" width="26" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVEL_TAB_PAGADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1430" y="1" width="22" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_CONTRATACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1451" y="1" width="29" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DECLARA_PATRIMONIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1479" y="1" width="67" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MOTIVO_DECLARA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1545" y="1" width="73" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUM_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1617" y="1" width="51" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO_APF}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1667" y="1" width="51" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO_SPC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1717" y="1" width="51" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO_INSTITUCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1767" y="1" width="51" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ALTA_ULTIMO_PTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1817" y="1" width="51" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OBLIGA_DECLARA_PATRIMONIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1867" y="1" width="100" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AREA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1966" y="1" width="57" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONTRATA_PUBLICAS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2022" y="1" width="100" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CON_LIC_AUT_PER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2121" y="1" width="65" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_ENAJENACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2185" y="1" width="77" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AVA_JUS_DE_RENTAS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2261" y="1" width="59" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_LUGAR_TRABAJO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2319" y="1" width="51" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_SER_PUB}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2369" y="1" width="41" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2437" y="1" width="53" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVELPLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2409" y="1" width="29" height="11"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

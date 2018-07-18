@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Pensiones Alimenticias" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_UNIDAD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    'Unidad física : '||TD_PLAZA.ID_UNIDAD_NOM||'  '||TC_UNIDAD.DESC_UNIDAD UNI_FISC_DESC,
+    SUBSTR(TD_PLAZA.PLAZA_RFC,0,4)||'-'||SUBSTR(TD_PLAZA.PLAZA_RFC,5,6)||'-'||SUBSTR(TD_PLAZA.PLAZA_RFC,11,3)||' '||
+    TRIM(TRIM(TD_EMPLEADO.PRIMER_APELLIDO) || ' '||TRIM(TD_EMPLEADO.SEGUNDO_APELLIDO))||' '||TRIM(TD_EMPLEADO.NOMBRE_EMPLEADO)  RFC_NOM,
+    TD_PLAZA.ID_PUESTO_NOM PUESTO,
+    LPAD(TD_PLAZA.ID_PLAZA,6,'0') PLAZA,
+    TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO NIVEL,
+    TD_PENSION.USUARIO||' '||TO_CHAR(TD_PENSION.FEC_MODIFICO, 'dd/mm/yyyy') CAPTURADO_POR,
+    TD_PENSION.BENEFICIARIA_PENSION,
+    TD_PENSION.NUM_PENSION,
+    CASE
+        WHEN TD_PENSION.PORCENTAJE_PENSION = 0 THEN  'Monto fijo de la pensión : $ ' || TRIM(TO_CHAR(TD_PENSION.MONTO_PENSION, '9,999.99'))
+        ELSE  'Porcentaje de la pensión : ' || TD_PENSION.PORCENTAJE_PENSION||'%'
+    END PORCENTAJE,
+   TO_CHAR(TD_PENSION.MONTO_ADEUDO, '0,000.00') MONTO_ADEUDO,
+   TD_PENSION.QNA_APLICA_ADEUDO QNA_APLICADA,
+   TD_PENSION.QNA_DESC_ADEUDO QNA_ADEUDO,
+   TD_PENSION.MONTO_ADEUDO,
+   TD_PENSION.QNA_DESC_ADEUDO,
+   CASE
+        WHEN NVL(TD_PENSION.MONTO_ADEUDO, 0) = 0 AND NVL(TD_PENSION.QNA_DESC_ADEUDO, 0) = 0 THEN '0,000.00'
+        ELSE TO_CHAR(NVL(TD_PENSION.MONTO_ADEUDO, 0) / NVL(TD_PENSION.QNA_DESC_ADEUDO, 0), '0,000.00')
+    END IMPTE_QNAL,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+    TD_PLAZA,
+    TC_ATRIBUTO_PUESTO,
+    TD_EMPLEADO,
+    TD_PENSION,
+    TC_UNIDAD
+WHERE
+    TD_PLAZA.ID_SIT_PLAZA LIKE 'O%' AND
+    TD_PLAZA.ID_PUESTO_NOM = TC_ATRIBUTO_PUESTO.ID_ATRIBUTO_PUESTO AND
+    TC_ATRIBUTO_PUESTO.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY') AND
+    TD_PLAZA.PLAZA_RFC = TD_EMPLEADO.RFC_EMPLEADO AND
+    TD_PLAZA.PLAZA_RFC = TD_PENSION.RFC_PENSION AND
+    TD_PENSION.STATUS_PENSION = 'V' AND
+    TD_PLAZA.ID_UNIDAD_NOM = TC_UNIDAD.ID_UNIDAD AND
+    --TD_PLAZA.ID_UNIDAD_NOM IN ('711') AND
+    td_plaza.id_unidad_nom in ($P!{PAR_UNIDAD}) and
+    TC_UNIDAD.UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE   = 'S')
+ ORDER BY
+    TD_PLAZA.ID_UNIDAD_NOM ASC,
+    TD_PLAZA.PLAZA_RFC ASC,
+    TD_PENSION.NUM_PENSION ASC]]>
+	</queryString>
+	<field name="UNI_FISC_DESC" class="java.lang.String"/>
+	<field name="RFC_NOM" class="java.lang.String"/>
+	<field name="PUESTO" class="java.lang.String"/>
+	<field name="PLAZA" class="java.lang.String"/>
+	<field name="NIVEL" class="java.lang.String"/>
+	<field name="CAPTURADO_POR" class="java.lang.String"/>
+	<field name="BENEFICIARIA_PENSION" class="java.lang.String"/>
+	<field name="NUM_PENSION" class="java.math.BigDecimal"/>
+	<field name="PORCENTAJE" class="java.lang.String"/>
+	<field name="MONTO_ADEUDO" class="java.lang.String"/>
+	<field name="QNA_APLICADA" class="java.math.BigDecimal"/>
+	<field name="QNA_ADEUDO" class="java.math.BigDecimal"/>
+	<field name="IMPTE_QNAL" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<group name="UNIDAD">
+		<groupExpression><![CDATA[$F{UNI_FISC_DESC}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<textField>
+					<reportElement x="9" y="6" width="484" height="12"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{UNI_FISC_DESC}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="50"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="231" y="25" width="291" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro" size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Personal con Pensión Alimenticia]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="529" y="0" width="223" height="23"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="529" y="23" width="223" height="27"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="33" y="6" width="292" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="333" y="6" width="74" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="428" y="6" width="40" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="486" y="6" width="40" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="538" y="6" width="190" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capturado por]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="53" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="50" width="752" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField>
+				<reportElement x="33" y="4" width="292" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RFC_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="4" width="74" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="428" y="4" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="486" y="4" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="540" y="4" width="190" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CAPTURADO_POR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="36" width="252" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BENEFICIARIA_PENSION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="326" y="35" width="37" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NUM_PENSION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="427" y="35" width="239" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PORCENTAJE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="19" width="252" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre Beneficiaria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="302" y="19" width="80" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número Pensión]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="428" y="19" width="238" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Porcentaje]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="5" width="554" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch"/>
+	</summary>
+</jasperReport>

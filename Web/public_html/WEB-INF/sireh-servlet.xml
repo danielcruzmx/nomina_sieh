@@ -1,0 +1,835 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.fsn.shcp.gob/schema/control"
+       xmlns:bpm="http://www.fsn.shcp.gob/schema/bpm"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/control http://www.fsn.shcp.gob/schema/control/control.xsd">
+
+    <import resource="control-config.xml"/>
+
+    <util:list id="viewResources.properties">
+        <value>WEB-INF/resources/bundles/application</value>
+        <value>WEB-INF/resources/bundles/validation</value>
+    </util:list>
+    <!-- SCM:CONTROLLERS & VIEWS -->
+    
+    <!-- Oficina virtual - Expediente -->
+    <c:controller id="expediente" class="gob.shcp.sireh.control.expediente.ExpedienteController">
+        <c:views>
+            consultaEmpleados=tiles:/nomina/comunes/consultaEmpleados
+            consultaGeneral=tiles:/expediente/consultas/consultaGeneral
+            expediente=tiles:/expediente/expediente
+            firmaElectronica=tframe:/expediente/firmaElectronica
+            curriculumPublico=tiles:/expediente/curriculumPublico
+            consultarEmpleados=tiles:/expediente/consultarEmpleados
+            consultarEmpleadosHis=tiles:/expediente/consultarEmpleadosHis
+        </c:views>
+    </c:controller>
+    
+    <!-- Oficina virtual - Expediente - Gestion de documentos-->
+    <c:controller id="gestionDocumentos" class="gob.shcp.sireh.control.expediente.GestionDocumentosController">
+        <c:views>
+            faltantesObligatorios=tiles:/expediente/gestion/documentos/faltantesObligatorios
+            faltantesLaborales=tiles:/expediente/gestion/documentos/faltantesLaborales
+            
+            busquedaDocEmpleado=tiles:/expediente/gestion/documentos/busquedaDocEmpleado
+            altaDocumentosSinCaptura=tiles:/expediente/gestion/documentos/altaDocumentosSinCaptura
+            altaDatosNacimiento=tiles:/expediente/gestion/documentos/altaDatosNacimiento
+            altaCartillaMilitar=tiles:/expediente/gestion/documentos/altaCartillaMilitar
+            altaAntecedentesAcademicos=tiles:/expediente/gestion/documentos/altaAntecedentesAcademicos
+            altaCurp=tiles:/expediente/gestion/documentos/altaCurp
+            altaRfc=tiles:/expediente/gestion/documentos/altaRfc
+            altaDomicilio=tiles:/expediente/gestion/documentos/altaDomicilio
+            altaDependientes=tiles:/expediente/gestion/documentos/altaDependientes
+            altaDepBenef=tiles:/expediente/gestion/documentos/altaDepBenef
+            altaFechasLaborales=tiles:/expediente/gestion/documentos/altaFechasLaborales
+            altaCuentasBancarias=tiles:/expediente/gestion/documentos/altaCuentasBancarias
+            altaDatosComplementarios=tiles:/expediente/gestion/documentos/altaDatosComplementarios
+            altaAvisoAccidente=tiles:/expediente/gestion/documentos/altaAvisoAccidente
+            altaExperienciaLaboral=tiles:/expediente/gestion/documentos/altaExperienciaLaboral
+            altaCapacitacionCursos=tiles:/expediente/gestion/documentos/altaCapacitacionCursos
+            
+            busquedaModDescripcion=tiles:/expediente/gestion/documentos/busquedaModificacion
+            expModDescripcion=tiles:/expediente/gestion/documentos/modificacionDescripcion
+            
+            busquedaModEstatus=tiles:/expediente/gestion/documentos/busquedaModificacion
+            expModEstatus=tiles:/expediente/gestion/documentos/modificacionEstatus
+            modDescripcionMasiva=tiles:/expediente/gestion/documentos/modDescripcionMasiva
+            buscaDocumentosExpediente=tiles:/expediente/gestion/documentos/buscaDocumentosExpediente
+            eliminaDocumentosExpediente=tiles:/expediente/gestion/documentos/eliminaDocumentosExpediente
+        </c:views>
+    </c:controller>
+    
+    <!-- Oficina virtual - Expediente - Gestion de expediente-->
+    <c:controller id="gestionExpediente" class="gob.shcp.sireh.control.expediente.GestionExpedienteController">
+        <c:views>
+            busquedaUsuarios=tiles:/expediente/gestion/expedientes/busquedaUsuarios
+            edicionUsuarios=tiles:/expediente/gestion/expedientes/edicionUsuarios
+            busquedaExpedientes=tiles:/expediente/gestion/expedientes/busquedaExpedientes
+            controlExpedientes=tiles:/expediente/gestion/expedientes/controlExpedientes
+            husCaratula=tiles:/oficinaVirtual/tramites/hojasUnicasDeServicio/husCaratula
+            husDetalle=tiles:/oficinaVirtual/tramites/hojasUnicasDeServicio/husDetalle
+        </c:views>
+    </c:controller>
+    
+    <!-- JCR -->
+    <c:controller id="jcrTest" class="gob.shcp.sireh.control.expediente.JcrController">
+        <c:views>
+            searchFiles=tiles:/expediente/gestion/documentos/searchFiles
+            uploadFiles=tiles:/expediente/gestion/documentos/uploadFiles
+            updateFiles=tiles:/expediente/gestion/documentos/updateFiles
+            uploadMultipleFiles=tiles:/expediente/gestion/documentos/uploadMultipleFiles
+            search2Files=tiles:/expediente/gestion/documentos/jcr2/searchFiles
+            upload2Files=tiles:/expediente/gestion/documentos/jcr2/uploadFiles
+            update2Files=tiles:/expediente/gestion/documentos/jcr2/updateFiles
+        </c:views>
+    </c:controller>
+    
+    <!-- Oficina virtual -  Tramites - Solicitud Individual de Vacaciones -->
+    <c:controller id="tramites" class="gob.shcp.sireh.control.oficinaVirtual.TramitesController">
+        <c:views>
+            autorizacionIndividualVacaciones=tiles:/oficinaVirtual/tramites/autorizacionIndividualVacaciones
+            solicitudIndividualVacaciones=tiles:/oficinaVirtual/tramites/solicitudIndividualVacaciones
+        </c:views>
+    </c:controller>
+    
+    <!-- CONSULTAS -->
+    <c:controller id="consultas" class="gob.shcp.sireh.control.consultas.ConsultasController">
+        <c:views>
+            datosPersonales=tiles:/consultas/datosPersonales
+            familiaresDependientes=tiles:/consultas/familiaresDependientes
+            comprobantesPago=tiles:/consultas/comprobantesPago
+            incidenciasLaborales=tiles:/consultas/incidenciasLaborales
+            notasMerito=tiles:/consultas/notasMerito
+            capacitacionCursos=tiles:/consultas/capacitacionCursos
+            servicioProfesional=tiles:/consultas/servicioProfesional            
+            firmaElectronica=tframe:/consultas/firmaElectronica
+        </c:views>
+    </c:controller>
+    
+    <!-- SERVICIOS a empleados -->
+    <c:controller id="servicios" class="gob.shcp.sireh.control.consultas.ServiciosController">
+        <c:views>
+            constanciaDeSueldo=tiles:/consultas/constanciaDeSueldo
+            curriculumVitae=tiles:/servicios/curriculumVitae
+            updateTdEmpleado=tiles:/servicios/updateTdEmpleado
+            updateTdPlaza=tiles:/servicios/updateTdPlaza
+            updateTnMovtosEmplPlaza=tiles:/servicios/updateTnMovtosEmplPlaza
+        </c:views>
+    </c:controller>
+    
+    <!-- Oficina virtual - Notificaciones-->
+    <c:controller id="notificacion" class="gob.shcp.sireh.control.oficinaVirtual.NotificacionController">
+        <c:views>
+            consultaNotificaciones=tiles:/oficinaVirtual/notificaciones/consultaNotificaciones
+            consultaNotificacionesHome=tiles:/comun/home
+            detalleNotificacion=tiles:/oficinaVirtual/notificaciones/detalleNotificacion
+        </c:views>
+    </c:controller>
+    
+    <!-- SPC - Capacitación y certificación -->
+    <c:controller id="registroCursoSPC" class="gob.shcp.sireh.control.spc.capcer.RegistroCursoSPCController">
+        <c:views>
+            consultaCurso=tiles:/spc/capcer/registro/consultaCurso
+            registrarCurso=tiles:/spc/capcer/registro/registrarCurso
+            
+            consultaAsignarCalendario=tiles:/spc/capcer/registro/consultaAsignarCalendario
+            asignarCalendario=tiles:/spc/capcer/registro/asignarCalendario
+            
+            consultaAsignarParticipante=tiles:/spc/capcer/registro/consultaAsignarParticipante
+            asignarParticipante=tiles:/spc/capcer/registro/asignarParticipante
+            
+            consultaAsignarInstructor=tiles:/spc/capcer/registro/consultaAsignarInstructor
+            asignarInstructor=tiles:/spc/capcer/registro/asignarInstructor
+            
+            consultaContrato=tiles:/spc/capcer/registro/consultaContrato
+            altaContrato=tiles:/spc/capcer/registro/altaContrato
+            
+            consultaAsignarContrato=tiles:/spc/capcer/registro/consultaAsignarContrato
+            asignarContrato=tiles:/spc/capcer/registro/asignarContrato
+        </c:views>
+    </c:controller>
+    
+    <!-- SPC - Capacitación y certificación - Consultas -->
+    <c:controller id="consultaCursoSPC" class="gob.shcp.sireh.control.spc.capcer.ConsultaCursoSPCController">
+        <c:views>
+            consultaCalendario=tiles:/spc/capcer/consultas/consultaCalendario
+            consultaPACSHCP=tiles:/spc/capcer/consultas/consultaPACSHCP
+            consultaReporteRHNet=tiles:/spc/capcer/consultas/consultaReporteRHNet
+            consultaLayoutRHNet=tiles:/spc/capcer/consultas/consultaLayoutRHNet
+            consultaPresupuesto=tiles:/spc/capcer/consultas/consultaPresupuesto
+            consultaAvancePAC=tiles:/spc/capcer/consultas/consultaAvancePAC
+            consultaAvanceCertificacion=tiles:/spc/capcer/consultas/consultaAvanceCertificacion
+            consultaCursoSPCBuscaEmpl=tiles:/spc/capcer/consultas/consultaCursoSPCBuscaEmpl
+            consultaEmpleados=tiles:/spc/capcer/consultas/consultaEmpleados
+            secuenciaEmpleados=tiles:/spc/capcer/consultas/secuenciaEmpleados
+            secuenciaEmpleadoDetalle=tiles:/spc/capcer/consultas/secuenciaEmpleadoDetalle
+            secuenciaInstructor=tiles:/spc/capcer/consultas/secuenciaInstructor
+            secuenciaInstructorDetalle=tiles:/spc/capcer/consultas/secuenciaInstructorDetalle
+        </c:views>
+    </c:controller>
+    
+    <!-- SPC - Capacitación y certificación - Reportes -->
+    <c:controller id="reportesCursoSPC" class="gob.shcp.sireh.control.spc.reporte.ReportesCursoSPCController">
+        <c:views>
+            listaAsistencia=tiles:/reportes/capcer/listaAsistencia  
+            cartaCompromiso=tiles:/reportes/capcer/cartaCompromiso 
+            evaluacionReaccion=tiles:/reportes/capcer/evaluacionReaccion 
+            informeCurso=tiles:/reportes/capcer/informeCurso 
+            reporteEvaluaciones=tiles:/reportes/capcer/reporteEvaluaciones 
+            acuerdos=tiles:/reportes/capcer/acuerdos
+            cartaNotificacion=tiles:/reportes/capcer/cartaNotificacion
+            relacionFirmas=tiles:/reportes/capcer/relacionFirmas
+            entregaConstancias=tiles:/reportes/capcer/entregaConstancias
+            verificacionServicio=tiles:/reportes/capcer/verificacionServicio
+            movtosSpc=tiles:/reportes/capcer/movtosSpc
+        </c:views>
+    </c:controller>
+    
+    <!-- SPC - Capacitación y certificación - Seguimiento y Control -->
+    <c:controller id="seguimientoCursoSPC" class="gob.shcp.sireh.control.spc.capcer.SeguimientoCursoSPCController">
+        <c:views>
+            consultaCurso=tiles:/spc/capcer/seguimiento/consultaCurso
+            registrarCurso=tiles:/spc/capcer/seguimiento/registrarCurso
+            
+            consultaEvaluarParticipante=tiles:/spc/capcer/seguimiento/consultaEvaluarParticipante
+            evaluarParticipante=tiles:/spc/capcer/seguimiento/evaluarParticipante
+            
+            consultaCargarConstancia=tiles:/spc/capcer/seguimiento/consultaCargarConstancia
+            cargarConstancia=tiles:/spc/capcer/seguimiento/cargarConstancia
+            
+            consultaEvaluacionReaccion=tiles:/spc/capcer/seguimiento/consultaEvaluacionReaccion
+            evaluacionReaccion=tiles:/spc/capcer/seguimiento/evaluacionReaccion
+            
+            consultaBitacora=tiles:/spc/capcer/seguimiento/consultaBitacora
+        </c:views>
+    </c:controller>
+    
+
+    <!-- RUSP - Gestion -->
+    <c:controller id="gestionRusp" class="gob.shcp.sireh.control.rusp.GestionRuspController">
+        <c:views>
+            pInformacionBasica=tiles:/rusp/proceso/pInformacionBasica
+            pBajas=tiles:/rusp/proceso/pBajas
+            pDatosPersonales=tiles:/rusp/proceso/pDatosPersonales
+            pBorrar=tiles:/rusp/proceso/pBorrar
+            iInformacionBasica=tiles:/rusp/interfaz/iInformacionBasica
+            iBajas=tiles:/rusp/interfaz/iBajas
+            iDatosPersonales=tiles:/rusp/interfaz/iDatosPersonales
+            interfazInfoBasica=tiles:/rusp/interfaz/informacionBasica
+            interfazBajas=tiles:/rusp/interfaz/bajas
+            interfazDatosPersonales=tiles:/rusp/interfaz/datosPersonales
+            informacionBasica=tiles:/rusp/interfaz/informacionBasica
+            consultarEmpleadosHis=tiles:/rusp/interfaz/consultarEmpleadosHis
+            cambioHijosCurp=tiles:/rusp/interfaz/cambioHijosCurp
+            cambioCurpHijos=tiles:/rusp/interfaz/cambioCurpHijos
+            cambioLengua=tiles:/rusp/interfaz/cambioLengua
+        </c:views>
+    </c:controller>
+    <!-- RUSP - Herramientas -->
+    <c:controller id="herramientasRusp" class="gob.shcp.sireh.control.rusp.HerramientasRuspController">
+        <c:views>
+            consultaPadronObligados=tiles:/rusp/herramientas/consultaEmpleados
+            padronObligados=tiles:/rusp/herramientas/padronObligados
+            
+            consultaTipoDiscapacidad=tiles:/rusp/herramientas/consultaEmpleados
+            tipoDiscapacidad=tiles:/rusp/herramientas/tipoDiscapacidad
+            
+            consultaNivelesResp=tiles:/rusp/herramientas/consultaEmpleados
+            nivelesResp=tiles:/rusp/herramientas/nivelesResponsabilidad
+        </c:views>
+    </c:controller>
+    
+    
+    <!-- Gestion de plazas - Consulta -->
+    <c:controller id="plazaGestion" class="gob.shcp.sireh.control.plaza.gestion.PlazaGestionController">
+        <c:views>
+            consultaGeneral=tiles:/plaza/plazaGestion/consultaGeneral
+            consultaLinea=tiles:/plaza/plazaGestion/consultaLinea
+            consultaPlazaSoporte=tiles:/plaza/plazaGestion/consultaPlazaSoporte
+            consultaPlazaAdecuacion=tiles:/plaza/plazaGestion/consultaPlazaAdecuacion
+            consultaAdecuacionPlaza=tiles:/plaza/plazaGestion/consultaAdecuacionPlaza
+            consultaMovtosPersonal=tiles:/plaza/plazaGestion/consultaMovtosPersonal
+            consultaVigentesDinamico=tiles:/plaza/plazaGestion/consultaVigentesDinamico
+            consultaPlazaSpc=tiles:/plaza/plazaGestion/consultaPlazaSpc
+        </c:views>
+    </c:controller>
+    
+    <!-- Gestion de plazas - Presupuestales -->
+    <c:controller id="plazaEstructuraMasiva" class="gob.shcp.sireh.control.plaza.estructura.masivos.PlazaEstructuraMasivaController">
+        <c:views>
+            initPlazaEstructuraMasiva=tiles:/plaza/estructura/plazaEstructuraMasivos/creacionPlazaEstructuraMasivosInicio
+            validPlazaEstructuraMasiva=tiles:/plaza/estructura/plazaEstructuraMasivos/creacionPlazaEstructuraMasivosProcesa
+            resultPlazaEstructuraMasiva=tiles:/plaza/estructura/plazaEstructuraMasivos/creacionPlazaEstructuraMasivosResultado
+        </c:views>
+    </c:controller>
+    <c:controller id="plazaEstructura" class="gob.shcp.sireh.control.plaza.estructura.PlazaEstructuraController">
+        <c:views>
+            consultaPlaza=tiles:/plaza/estructura/plazaEstructura/consultaPlaza
+            liberaPlaza=tiles:/plaza/estructura/plazaEstructura/liberaPlaza
+            cambioSitPlaza=tiles:/plaza/estructura/plazaEstructura/cambioSitPlaza
+            cambioPtoFisicoPlaza=tiles:/plaza/estructura/plazaEstructura/cambioPtoFisicoPlaza
+            cambioURFisicaPlaza=tiles:/plaza/estructura/plazaEstructura/cambioURFisicaPlaza
+            modificaDenominacionFuncional=tiles:/plaza/estructura/plazaEstructura/modificaDenominacionFuncional
+            modificaTipoSP=tiles:/plaza/estructura/plazaEstructura/modificaTipoSP
+            asignaPlazaSoporte=tiles:/plaza/estructura/plazaEstructura/asignaPlazaSoporte
+            prorrogaArt34=tiles:/plaza/estructura/plazaEstructura/prorrogaArt34
+            modificaObservacionesPlaza=tiles:/plaza/estructura/plazaEstructura/modificaObservacionesPlaza
+            intercambioDatosPresupuestales=tiles:/plaza/estructura/plazaEstructura/intercambioDatosPresupuestales
+            promocionPermuta=tiles:/plaza/estructura/plazaEstructura/promocionPermuta
+            plazaEnConcurso=tiles:/plaza/estructura/plazaEstructura/plazaEnConcurso
+        </c:views>
+    </c:controller>
+    
+    <!-- Gestion de plazas - Eventuales -->
+    <c:controller id="plazaEventual" class="gob.shcp.sireh.control.plaza.eventual.PlazaEventualController">
+        <c:views>
+            consultaPlaza=tiles:/plaza/eventual/plazaEventual/consultaPlaza
+            liberaPlaza=tiles:/plaza/eventual/plazaEventual/liberaPlaza
+            cambioSitPlaza=tiles:/plaza/eventual/plazaEventual/cambioSitPlaza
+            cambioPtoFisicoPlaza=tiles:/plaza/eventual/plazaEventual/cambioPtoFisicoPlaza
+            cambioURFisicaPlaza=tiles:/plaza/eventual/plazaEventual/cambioURFisicaPlaza
+            creacionPlaza=tiles:/plaza/eventual/plazaEventual/creacionPlaza
+            modificaTipoSP=tiles:/plaza/eventual/plazaEventual/modificaTipoSP
+            prorrogaContrato=tiles:/plaza/eventual/plazaEventual/prorrogaContrato
+        </c:views>
+    </c:controller>
+    <c:controller id="plazaEventualMasiva" class="gob.shcp.sireh.control.plaza.eventual.masivos.PlazaEventualMasivaController">
+        <c:views>
+            processBaja=tiles:/plaza/eventual/plazaEventualMasivos/processBaja
+            resultBaja=tiles:/plaza/eventual/plazaEventualMasivos/resultBaja
+            initPlazaEventualesMasiva=tiles:/plaza/eventual/plazaEventualMasivos/initPlazaEventualesMasiva
+            validPlazaEventualesMasiva:tiles:/plaza/eventual/plazaEventualMasivos/validPlazaEventualesMasiva
+            resultPlazaEventualesMasiva=tiles:/plaza/eventual/plazaEventualMasivos/resultPlazaEventualesMasiva
+            processAlta=tiles:/plaza/eventual/plazaEventualMasivos/processAlta
+            resultAlta=tiles:/plaza/eventual/plazaEventualMasivos/resultAlta
+            processProrroga=tiles:/plaza/eventual/plazaEventualMasivos/processProrroga
+            resultProrroga=tiles:/plaza/eventual/plazaEventualMasivos/resultProrroga
+            processReduccion=tiles:/plaza/eventual/plazaEventualMasivos/processReduccion
+            resultReduccion=tiles:/plaza/eventual/plazaEventualMasivos/resultReduccion
+            processCambioAdscripcion=tiles:/plaza/eventual/plazaEventualMasivos/processCambioAdscripcion
+            resultCambioAdscripcion=tiles:/plaza/eventual/plazaEventualMasivos/resultCambioAdscripcion
+            initPromocion=tiles:/plaza/eventual/plazaEventualMasivos/initPromocion
+            validatePromocion=tiles:/plaza/eventual/plazaEventualMasivos/validatePromocion
+            resultPromocion=tiles:/plaza/eventual/plazaEventualMasivos/resultPromocion
+        </c:views>
+    </c:controller>
+    
+    <!-- Gestion de plazas - Honorarios -->
+    <c:controller id="plazaHonorarios" class="gob.shcp.sireh.control.plaza.honorarios.PlazaHonorariosController">
+        <c:views>
+            consultaPlaza=tiles:/plaza/honorarios/plazaHonorarios/consultaPlaza
+            liberaPlaza=tiles:/plaza/honorarios/plazaHonorarios/liberaPlaza
+            cambioSitPlaza=tiles:/plaza/honorarios/plazaHonorarios/cambioSitPlaza
+            creacionPlaza=tiles:/plaza/honorarios/plazaHonorarios/creacionPlaza
+            modificaImporte=tiles:/plaza/honorarios/plazaHonorarios/modificaImporte
+            prorrogaContrato=tiles:/plaza/honorarios/plazaHonorarios/prorrogaContrato
+            depuraPlazas=tiles:/plaza/honorarios/plazaHonorarios/depuraPlazas
+        </c:views>
+    </c:controller>
+    <c:controller id="plazaHonorarioMasiva" class="gob.shcp.sireh.control.plaza.honorarios.masivos.PlazaHonorarioMasivaController">
+        <c:views>
+            processBaja=tiles:/plaza/honorarios/plazaHonorarioMasivos/processBaja
+            resultBaja=tiles:/plaza/honorarios/plazaHonorarioMasivos/resultBaja
+            initFileUpload=tiles:/plaza/honorarios/plazaHonorarioMasivos/initFileUpload
+            validFileUpload:tiles:/plaza/honorarios/plazaHonorarioMasivos/validFileUpload
+            resultFileUpload=tiles:/plaza/honorarios/plazaHonorarioMasivos/resultFileUpload
+            processAlta=tiles:/plaza/honorarios/plazaHonorarioMasivos/processAlta
+            resultAlta=tiles:/plaza/honorarios/plazaHonorarioMasivos/resultAlta
+            processProrroga=tiles:/plaza/honorarios/plazaHonorarioMasivos/processProrroga
+            resultProrroga=tiles:/plaza/honorarios/plazaHonorarioMasivos/resultProrroga
+            processReduccion=tiles:/plaza/honorarios/plazaHonorarioMasivos/processReduccion
+            resultReduccion=tiles:/plaza/honorarios/plazaHonorarioMasivos/resultReduccion
+            processCambioAdscripcion=tiles:/plaza/honorarios/plazaHonorarioMasivos/processCambioAdscripcion
+            resultCambioAdscripcion=tiles:/plaza/honorarios/plazaHonorarioMasivos/resultCambioAdscripcion
+        </c:views>
+    </c:controller>
+    
+    
+    <!-- Movimientos Nomina -->
+    <c:controller id="cambioNomina" class="gob.shcp.sireh.control.nomina.movimientos.CambioNominaController">
+        <c:views>            
+            consultarEmpleados=tiles:/nomina/movimientos/cambioNomina/consultarEmpleados
+            cambioRfc=tiles:/nomina/movimientos/cambioNomina/cambioRfc
+            cambioNombreCurp=tiles:/nomina/movimientos/cambioNomina/cambioNombreCurp
+            cambioBancarios=tiles:/nomina/movimientos/cambioNomina/cambioBancarios
+            cambioDomicilio=tiles:/nomina/movimientos/cambioNomina/cambioDomicilio
+            cambioComplementarios=tiles:/nomina/movimientos/cambioNomina/cambioComplementarios
+        </c:views>
+    </c:controller>
+    <c:controller id="movimientoNomina" class="gob.shcp.sireh.control.nomina.movimientos.MovimientoNominaController">
+        <c:views>
+            consultaPlaza=tiles:/nomina/movimientos/movimientoNomina/consultaPlaza
+            cambioMovimientosPersonal=tiles:/nomina/movimientos/movimientoNomina/cambioMovimientosPersonal
+            consultarEmpleados=tiles:/nomina/movimientos/movimientoNomina/consultarEmpleados
+            cambioEmpleadoPensiones=tiles:/nomina/movimientos/movimientoNomina/cambioEmpleadoPensiones
+            cambioPension=tiles:/nomina/movimientos/movimientoNomina/cambioPension
+            cancelaPago=tiles:/nomina/movimientos/movimientoNomina/cancelaPago
+            bloqueoDeposito=tiles:/nomina/movimientos/movimientoNomina/bloqueoDeposito
+        </c:views>
+    </c:controller>
+    <c:controller id="actualizacionNomina" class="gob.shcp.sireh.control.nomina.movimientos.ActualizacionNominaController">
+        <c:views>
+            consultaEmpleados=tiles:/nomina/comunes/consultaEmpleados
+            consultaEmpleadosFonac=tiles:/nomina/movimientos/actualizacionNomina/consultaEmpleados
+            conceptosEmpleado=tiles:/nomina/movimientos/actualizacionNomina/conceptosEmpleado
+            eliminaConceptoEmpleado=tiles:/nomina/movimientos/actualizacionNomina/eliminaConceptoEmpleado
+            modificaConceptoEmpleado=tiles:/nomina/movimientos/actualizacionNomina/modificaConceptoEmpleado
+            agregaConceptoTipoC=tiles:/nomina/movimientos/actualizacionNomina/agregaConceptoTipoC
+            agregaConceptoTipoO=tiles:/nomina/movimientos/actualizacionNomina/agregaConceptoTipoO
+            agregaConceptoTipoS=tiles:/nomina/movimientos/actualizacionNomina/agregaConceptoTipoS
+            editaConceptoTipoO=tiles:/nomina/movimientos/actualizacionNomina/editaConceptoTipoO
+            editaConceptoTipoS=tiles:/nomina/movimientos/actualizacionNomina/editaConceptoTipoS
+            editaConceptoTipoC=tiles:/nomina/movimientos/actualizacionNomina/editaConceptoTipoC
+            adeudoConceptoEmpleado=tiles:/nomina/movimientos/actualizacionNomina/adeudoConceptoEmpleado
+            detalleConceptoEmpleado=tiles:/nomina/movimientos/actualizacionNomina/detalleConceptoEmpleado
+            cambioFonac=tiles:/nomina/movimientos/actualizacionNomina/cambioFonac
+            actualizaErarioFed=tiles:/nomina/movimientos/actualizacionNomina/actualizaErarioFed
+        </c:views>
+    </c:controller>
+    <c:controller id="movimientoPersonal" class="gob.shcp.sireh.control.configuracion.movimiento.MovimientoPersonalController">
+        <c:views>
+            movimientoPersonal=tiles:/configuracion/movimiento/movimientoPersonal
+            nuevoMovimientoPersonal=tiles:/configuracion/movimiento/nuevoMovimientoPersonal
+            editarMovimientoPersonal=tiles:/configuracion/movimiento/editarMovimientoPersonal
+        </c:views>
+    </c:controller>
+    <c:controller id="movimientoConceptosPago" class="gob.shcp.sireh.control.configuracion.movimiento.MovimientoConceptosPagoController">
+        <c:views>
+            listaConceptosPago=tiles:/configuracion/movimiento/conceptosPago/consultaConceptosPago
+            modificacionConceptoPago=tiles:/configuracion/movimiento/conceptosPago/mantenimientoConceptoPago
+        </c:views>
+    </c:controller>
+    <c:controller id="incidenciasNomina" class="gob.shcp.sireh.control.nomina.movimientos.IncidenciasNominaController">
+        <c:views>
+            consultaEmpleados=tiles:/nomina/comunes/consultaEmpleados
+            cambioIncidenciasPersonal=tiles:/nomina/movimientos/incidenciasNomina/cambioIncidenciasPersonal
+        </c:views>
+    </c:controller>
+    
+    
+    <!-- Calculo de nomina -->
+    <c:controller id="calculoNomina" class="gob.shcp.sireh.control.nomina.calculo.CalculoNominaController">
+        <c:views>
+            estructura=tiles:/nomina/calculo/calculoNomina/calculoNomina
+            listadoPorGrupo=tiles:/nomina/calculo/calculoNomina/listadoNomina
+            listadoRFCs=tiles:/nomina/calculo/calculoNomina/listadoRFCsPorGrupoPago
+            generacionCecoban=tiles:/nomina/calculo/productosNomina/generacionCecoban
+            altasYbajas=tiles:/nomina/calculo/productosNomina/altasYbajas
+            comparaCon=tiles:/nomina/calculo/productosNomina/comparaCon
+            comparaGral=tiles:/nomina/calculo/productosNomina/comparaGral
+            listaNegativos=tiles:/nomina/calculo/productosNomina/listaNegativos
+            cifrasPagoPorQnas=tiles:/nomina/calculo/calculoNomina/cifrasPagoPorQnas
+            consultaEmpleados=tiles:/nomina/calculo/calculoNomina/cifrasPagoPorQnas
+            consultaEmpleados=tiles:/nomina/comunes/consultaEmpleados
+            conceptosControl=tiles:/nomina/calculo/calculoNomina/conceptosControl
+            addConceptosControl=tiles:/nomina/calculo/calculoNomina/addConceptosControl
+            deleteConceptosControl=tiles:/nomina/calculo/calculoNomina/deleteConceptosControl
+            finContrato=tiles:/nomina/calculo/calculoNomina/finContrato
+            acumuladoTrabajador=tiles:/reportes/nominasEjercicioTrabajador/acumuladoTrabajador
+        </c:views>
+    </c:controller>
+    <c:controller id="reglasNomina" class="gob.shcp.sireh.control.nomina.calculo.ReglasNominaController">
+        <c:views>
+            mantenimientoReglasCalculo=tiles:/nomina/calculo/calculoNomina/reglasCalculoNomina
+        </c:views>
+    </c:controller>
+    <c:controller id="gestionNominas" class="gob.shcp.sireh.control.nomina.gestion.GestionNominaController">
+        <c:views>
+            listaNominas=tiles:/nomina/gestion/consultaNominas
+            cierreNomina=tiles:/nomina/gestion/cierreNomina
+            cierreNominaAfter=tiles:/comun/home
+            modificacionNomina=tiles:/nomina/gestion/mantenimientoNomina
+            acumuladoConcentradoPD=tiles:/nomina/gestion/acumuladoConcentradoPD
+        </c:views>
+    </c:controller>
+    <c:controller id="utilController" class="gob.shcp.sireh.control.SirehUtil">
+        <c:views>
+            pagadosConsultaGlobal=tframe:/nomina/calculo/calculoNomina/conceptosPagadosConsultaGlobal
+        </c:views>
+    </c:controller>
+    <c:controller id="calculoNominaExt" class="gob.shcp.sireh.control.nomina.calculo.CalculoNominaExtController">
+        <c:views>
+            listadoNomina=tiles:/nomina/calculo/calculoNominaExt/listadoNomina
+            listadoRFCs=tiles:/nomina/calculo/calculoNominaExt/listadoRFCs
+            conceptosNominaExt=tiles:/nomina/calculo/calculoNominaExt/conceptosNominaExt
+            listadoPlazas=tiles:/nomina/calculo/calculoNominaExt/listadoPlazas
+            asociacionEmpleadoPlaza=tiles:/nomina/calculo/calculoNominaExt/asociacionEmpleadoPlaza
+            sueldos=tiles:/nomina/calculo/calculoNominaExt/sueldos
+            sueldosMandos=tiles:/nomina/calculo/calculoNominaExt/sueldosMandos
+            candidatos=tiles:/nomina/calculo/calculoNominaExt/vales/candidatos
+            perseverancia=tiles:/nomina/calculo/calculoNominaExt/perseverancia
+        </c:views>
+    </c:controller>
+    
+    
+    <!-- Terceros -->
+    <c:controller id="cargarArchivo" class="gob.shcp.sireh.control.nomina.terceros.TercerosNominaController">
+        <c:views>
+            cargarArchivo=tiles:/nomina/terceros/cargarArchivo
+            generaArchivo=tiles:/nomina/terceros/generaArchivo
+            generaArchivoPrestIssste=tiles:/nomina/terceros/generaArchivoPrestIssste
+            serica=tiles:/nomina/terceros/tercerosNomina/serica
+            sericaC=tiles:/nomina/terceros/tercerosNomina/sericaC
+            isssterep=tiles:/nomina/terceros/tercerosNomina/isssterep
+	    isssteFiliacion=tiles:/nomina/terceros/isssteFiliacion
+            genArchFonacot=tiles:/nomina/terceros/genArchFonacot
+            padronFonacot=tiles:/nomina/terceros/padronFonacot
+            satTimbrado=tiles:/nomina/terceros/tercerosNomina/satTimbrado
+            satcancela=tiles:/nomina/terceros/tercerosNomina/satcancela
+            satListadoNominas=tiles:/nomina/terceros/tercerosNomina/satListadoNominas
+            satModificacionNomina=tiles:/nomina/terceros/tercerosNomina/satModificacionNomina
+            isssteSIPE=tiles:/nomina/terceros/tercerosNomina/isssteSIPE
+            fonacPadrones=tiles:/nomina/terceros/fonacNomina/aportacionesOrdinario
+            comprobanteFiscalUnidad=tiles:/nomina/terceros/tercerosNomina/comprobanteFiscalUnidad
+            comprobanteFiscalEmpleado=tiles:/nomina/terceros/tercerosNomina/comprobanteFiscalEmpleado
+            cfdiArchivoUnidad=tiles:/nomina/terceros/tercerosNomina/cfdiArchivoUnidad
+            cfdiArchivoEmpleado=tiles:/nomina/terceros/tercerosNomina/cfdiArchivoEmpleado
+            cargarArchivosPdf=tiles:/nomina/terceros/tercerosNomina/cargarArchivosPdf
+            listarNominasCarga=tiles:/nomina/terceros/tercerosNomina/listarNominasCarga
+        </c:views>
+    </c:controller>
+    <c:controller id="timbradoSat" class="gob.shcp.sireh.control.nomina.terceros.TimbradoSatController">
+        <c:views>
+            satTimbrado=tiles:/nomina/terceros/timbradoSat/satTimbrado
+            satModificacionNomina=tiles:/nomina/terceros/timbradoSat/satModificacionNomina
+            cancelPagosCancelados=tiles:/nomina/terceros/timbradoSat/cancelPagosCancelados
+            cancelPagosNoCancelados=tiles:/nomina/terceros/timbradoSat/cancelPagosNoCancelados
+            reenvioPagos=tiles:/nomina/terceros/timbradoSat/reenvioPagos
+            comprobanteFiscalUnidad=tiles:/nomina/terceros/timbradoSat/comprobanteFiscalUnidad
+            correoElectronico=tiles:/nomina/terceros/timbradoSat/correoElectronico
+            previoCorreoElectronico=tiles:/nomina/terceros/timbradoSat/previoCorreoElectronico
+            consultarEstatus=tiles:/nomina/terceros/timbradoSat/consultarEstatus
+            modificarEstatus=tiles:/nomina/terceros/timbradoSat/modificarEstatus
+        </c:views>
+    </c:controller>
+    <c:controller id="cargaPadronFonac" class="gob.shcp.sireh.control.nomina.terceros.FonacNominaController">
+        <c:views>
+            cargaPadronFonac=tiles:/nomina/terceros/fonacNomina/cargaPadronFonac
+            emisionChequesFonac=tiles:/nomina/terceros/fonacNomina/emisionChequesFonac
+            liquidaCifrasFonac=tiles:/nomina/terceros/fonacNomina/liquidaCifrasFonac
+            chequesFonac=tiles:/nomina/terceros/fonacNomina/chequesFonac
+            cifrasFonac=tiles:/nomina/terceros/fonacNomina/cifrasFonac
+            aportacionesFonac=tiles:/nomina/terceros/fonacNomina/aportacionesFonac
+        </c:views>
+    </c:controller>
+    
+    <c:controller id="cargarEnteros" class="gob.shcp.sireh.control.nomina.terceros.enteros.EnterosNominaController">
+        <c:views>
+            cargarEnteros=tiles:/nomina/terceros/cargarEnteros
+        </c:views>
+    </c:controller>
+    <c:controller id="sarFovissste" class="gob.shcp.sireh.control.nomina.terceros.aportaciones.SarFovisssteController">
+        <c:views>
+            consultaPeriodoSAR=tiles:/nomina/terceros/aportaciones/procesaPeriodoSAR
+            consultaArchivoInt=tiles:/nomina/terceros/aportaciones/consultaArchivoInt
+            cargaPlantilla=tiles:/nomina/terceros/aportaciones/cargaPlantilla
+        </c:views>
+    </c:controller>
+    
+    
+    <!-- Notas de merito -->
+    <c:controller id="notaDeMerito" class="gob.shcp.sireh.control.merito.NotaDeMeritoController">
+        <c:views>
+            ingresarArchivosDePuntualidad=tiles:/merito/ingresarArchivoPuntualidad
+            resultadoArchivoPuntualidad=tiles:/merito/resultadoArchivoPuntualidad
+            ingresarArchivosDeCapacitacion=tiles:/merito/ingresarArchivosDeCapacitacion
+            resultadoArchivoCapacitacion=tiles:/merito/resultadoArchivoCapacitacion
+            ingresarArchivosDeEvaluacionDesempeno=tiles:/merito/ingresarArchivosDeEvaluacion
+            resultadoArchivoEvaluacion=tiles:/merito/resultadoArchivoEvaluacion
+            ingresarManualmente=tiles:/merito/ingresarManualmente
+            resultadoManualmente=tiles:/merito/resultadoManualmente
+            generaArchivoPago=tiles:/merito/generaArchivoPago
+            resultadoArchivoPago=tiles:/merito/resultadoArchivoPago
+            ingresarManualmenteValCaptura=tiles:/merito/ingresarManualmenteValCaptura
+            historicoMerito=tiles:/merito/historicoMerito
+            resumenMerito=tiles:/merito/resumenMerito
+            detalleResumenMerito=tiles:/merito/detalleResumenMerito
+            detalleResumenGraficaMerito=tiles:/merito/detalleResumenGraficaMerito
+            procesarNm=tiles:/merito/procesarNm
+            procesarNmResultado=tiles:/merito/procesarNmResultado
+            actImporDepo=tiles:/merito/actImporDepo
+        </c:views>
+    </c:controller>
+    
+    
+    <!-- C L C -->
+    <c:controller id="clcProceso" class="gob.shcp.sireh.control.clc.ClcProcesoController">
+        <c:views>
+            clcOrdinaria=tiles:/clc/proceso/clcOrdinaria
+            clcTercerosGenera=tiles:/clc/proceso/clcTercerosGenera
+            clcTercerosCancelados=tiles:/clc/proceso/clcTercerosCancelados
+            clcTercerosAjustes=tiles:/clc/proceso/clcTercerosAjustes
+            clcManualesCaptura=tiles:/clc/proceso/clcManualesCaptura
+            clcManualesArchivo=tiles:/clc/proceso/clcManualesArchivo
+        </c:views>
+    </c:controller>
+    <c:controller id="clcProcesoPatronales" class="gob.shcp.sireh.control.clc.ClcProcesoPatronalesController">
+        <c:views>
+            clcPatronalesGenera=tiles:/clc/proceso/clcPatronalesGenera
+            clcPatronalesCancelados=tiles:/clc/proceso/clcPatronalesCancelados
+            clcPatronalesAjustes=tiles:/clc/proceso/clcPatronalesAjustes
+        </c:views>
+    </c:controller>
+    <c:controller id="clcInterfazSICOP" class="gob.shcp.sireh.control.clc.ClcInterfazSICOPController">
+        <c:views>
+            gestionBeneficiarios=tiles:clc/interfaz/gestionBeneficiarios
+            detalleBeneficiario=tiles:clc/interfaz/detalleBeneficiario
+            solicitudCompromiso=tiles:/clc/interfaz/solicitudCompromiso
+            solicitudPago=tiles:/clc/interfaz/solicitudPago
+            solicitudCLC=tiles:/clc/interfaz/solicitudCLC
+        </c:views>
+    </c:controller>
+    <c:controller id="clcHerramientas" class="gob.shcp.sireh.control.clc.ClcHerramientasController">
+        <c:views>
+            consultaClc=tiles:/clc/herramientas/consultaClc
+            registraCompromiso=tiles:/clc/herramientas/registraCompromiso
+            verificaRelClcComp=tiles:/clc/herramientas/verificaRelClcComp
+            registraSolicitudPago=tiles:/clc/herramientas/registraSolicitudPago
+            verificaRelSolPago=tiles:/clc/herramientas/verificaRelSolPago
+            registraCLC=tiles:/clc/herramientas/registraCLC
+            borraCLC=tiles:/clc/herramientas/borraCLC
+            busquedaErrores=tiles:/clc/herramientas/busquedaErrores
+        </c:views>
+    </c:controller>
+    <c:controller id="clcConsultas" class="gob.shcp.sireh.control.clc.ClcConsultasController">
+        <c:views>
+            consultaRegistroClc=tiles:/clc/consultas/consultaRegistroClc
+            consultaClc=tiles:/clc/consultas/consultaClc
+            clcProcesada=tiles:/clc/consultas/clcProcesada
+            consultaCasosImpNom=tiles:/clc/consultas/consultaCasosImpNom
+            ejercidoCptoPago=tiles:/clc/consultas/ejercidoCptoPago
+            fonacFstseSindi=tiles:/clc/consultas/fonacFstseSindi
+            fonacFSTSE=tiles:/reportes/cxlc/fonacFSTSE
+        </c:views>
+    </c:controller>
+    
+    
+    <!-- Reportes -->
+    <c:controller id="reporteMovimientos" class="gob.shcp.sireh.control.nomina.reporte.ReporteMoviminentosController">
+        <c:views>
+            situacionPlazas=tiles:/reportes/movimientosNomina/situacionPlazas
+            situacionPlazasRFC=tiles:/reportes/movimientosNomina/situacionPlazasRFC
+            situacionEmpleados=tiles:/reportes/movimientosNomina/situacionEmpleados
+            constanciaNombramiento=tiles:/reportes/movimientosNomina/constanciaNombramiento
+            avisoCambio=tiles:/reportes/movimientosNomina/avisoCambio
+            contratoHonorarios=tiles:/reportes/movimientosNomina/contratoHonorarios
+            datosPersonales=tiles:/reportes/movimientosNomina/datosPersonales
+            plantillaPersonal=tiles:/reportes/movimientosNomina/plantillaPersonal
+            plantillaPersonalx=tiles:/reportes/movimientosNomina/plantillaPersonalx
+            conceptosPago=tiles:/reportes/movimientosNomina/conceptosPago
+            movimientosEmpleado=tiles:/reportes/movimientosNomina/movimientosEmpleado
+            movimientosEmpleadoq=tiles:/reportes/movimientosNomina/movimientosEmpleadoq
+            movimientosEmpleadoqE=tiles:/reportes/movimientosNomina/movimientosEmpleadoqE
+            primaVacacional=tiles:/reportes/movimientosNomina/primaVacacional
+            primaVacacionalNoCon=tiles:/reportes/movimientosNomina/primaVacacionalNoCon
+            pensionAlimenticia=tiles:/reportes/movimientosNomina/pensionAlimenticia
+            terminosContrato=tiles:/reportes/movimientosNomina/terminosContrato
+            pagosCancelados=tiles:/reportes/movimientosNomina/pagosCancelados
+            movimientosABC=tiles:/reportes/movimientosNomina/movimientosABC
+            plantillaVigente=tiles:/reportes/movimientosNomina/plantillaVigente
+            pagosCanceladosA=tiles:/reportes/movimientosNomina/pagosCanceladosA
+            credencializacion=tiles:/reportes/movimientosNomina/credencializacion
+            altasbajasSFP=tiles:/reportes/movimientosNomina/altasbajasSFP
+        </c:views>
+    </c:controller>
+    <c:controller id="reporteNotasMerito" class="gob.shcp.sireh.control.merito.reporte.ReporteNotasMeritoController">
+        <c:views>
+            repHistoNM=tiles:/reportes/merito/repHistoNM
+            repNMPersonalAct=tiles:/reportes/merito/repNMPersonalAct
+            repNMEmpleado=tiles:/reportes/merito/repNMEmpleado
+            repNMGenero=tiles:/reportes/merito/repNMGenero
+            repNMMensual=tiles:/reportes/merito/repNMMensual
+            repPagosSoliRemesa=tiles:/reportes/merito/repPagosSoliRemesa
+            repImprimirNM=tiles:/reportes/merito/repImprimirNM
+        </c:views>
+    </c:controller>
+    <c:controller id="reporteCalculo" class="gob.shcp.sireh.control.nomina.reporte.ReporteCalculoController">
+        <c:views>
+            historico=tiles:/reportes/calculoNomina/historico
+            historicoTipo=tiles:/reportes/calculoNomina/historicoTipo
+            impresion=tiles:/reportes/calculoNomina/impresion
+            impresionuni=tiles:/reportes/calculoNomina/impresionuni
+            impresionGoo=tiles:/reportes/calculoNomina/impresionGoo
+            firmas=tiles:/reportes/calculoNomina/firmas
+            firmasuni=tiles:/reportes/calculoNomina/firmasuni
+            firmasGoo=tiles:/reportes/calculoNomina/firmasGoo
+            concentrado=tiles:/reportes/calculoNomina/concentrado
+            concentradoef=tiles:/reportes/calculoNomina/concentradoef
+            seguro=tiles:/reportes/calculoNomina/seguro
+            seguroP=tiles:/reportes/calculoNomina/seguroP
+            detalle=tiles:/reportes/calculoNomina/detalle
+            conceptoPago=tiles:/reportes/calculoNomina/conceptoPago
+            acumulado=tiles:/reportes/calculoNomina/acumulado
+            historicoPlaza=tiles:/reportes/calculoNomina/historicoPlaza
+            comparaCasos=tiles:/reportes/calculoNomina/comparaCasos
+            comparaMontos=tiles:/reportes/calculoNomina/comparaMontos
+            concentradoVales=tiles:/reportes/calculoNomina/concentradoVales
+            pensionadasVales=tiles:/reportes/calculoNomina/pensionadasVales
+            archivoFaltas=tiles:/reportes/incidencias/archivoFaltas
+            constanciaSueldos=tiles:/reportes/constanciaSueldos/constanciaSueldos
+            movsIntInc=tiles:/reportes/incidencias/movsIntInc
+            incidenciasQ=tiles:/reportes/incidencias/incidenciasQ
+            periodoLaborado=tiles:/reportes/periodosLaborados/periodoLaborado
+            defNomEjercicio=tiles:/reportes/nominasEjercicio/defNomEjercicio
+        </c:views>
+    </c:controller>
+    <c:controller id="reporteTerceros" class="gob.shcp.sireh.control.nomina.reporte.ReporteTercerosNominaController">
+        <c:views>
+            seguroVidaInstitucional=tiles:/reportes/terceros/seguroVida_Institucional
+            seguroVidaPago=tiles:/reportes/terceros/seguroVidaPago
+            seguroVidaAnticipado=tiles:/reportes/terceros/seguroVidaAnticipado
+            seguroColectivoRetiro=tiles:/reportes/terceros/seguroColectivo_Retiro
+            pagoTrimestralAnticipado=tiles:/reportes/terceros/pagoTrimestral_Anticipado
+            cifrasDeControlI=tiles:/reportes/terceros/cifrasControl_ISSSTE
+            cifrasDeControl=tiles:/reportes/terceros/cifrasControl_Metlife
+            cifrasDeControlF=tiles:/reportes/terceros/cifrasControl_FOVISSSTE
+            cifrasDeControlA=tiles:/reportes/terceros/cifrasControl_AXA
+            rechazos=tiles:/reportes/terceros/rechazos
+            cifrasDeControlC=tiles:/reportes/terceros/cifrasDeControlC
+            aportacionesFonac=tiles:/reportes/terceros/aportacionesFonac
+            terSarFovResumen=tiles:/reportes/terceros/sar_fov/terSarFovResumen
+            terSarFovTotalNom=tiles:/reportes/terceros/sar_fov/terSarFovTotalNom
+            terSarFovTotalPagos=tiles:/reportes/terceros/sar_fov/terSarFovTotalPagos
+            terSarFovRechazos=tiles:/reportes/terceros/sar_fov/terSarFovRechazos
+            aportacionesFonacQna=tiles:/reportes/terceros/aportacionesFonacQna
+            constanciasF=tiles:/reportes/terceros/constanciasF
+            padronSeguros=tiles:/reportes/terceros/padronSeguros
+            importesGnp=tiles:/reportes/terceros/importesGnp
+            movimientosGnp=tiles:/reportes/terceros/movimientosGnp
+            pensionIssste=tiles:/reportes/terceros/pensionIssste
+            comprobanteFiscal=tiles:/reportes/terceros/sat/comprobanteFiscal
+        </c:views>
+    </c:controller>
+    <c:controller id="reportePlaza" class="gob.shcp.sireh.control.plaza.reporte.ReportePlazaController">
+        <c:views>
+            dDiez=tiles:/reportes/plaza/dDiez
+            dDiezDetalle=tiles:/reportes/plaza/dDiezDetalle
+            dDiezAgrupado=tiles:/reportes/plaza/dDiezAgrupado
+            inegi=tiles:/reportes/plaza/inegi
+            plantillaEstructura=tiles:/reportes/plaza/plantillaEstructura
+            plantillaEventual=tiles:/reportes/plaza/plantillaEventual
+            plantillaEventualEsp=tiles:/reportes/plaza/plantillaEventualEsp
+            plantillaHonorarios=tiles:/reportes/plaza/plantillaHonorarios
+            plazasVigentes=tiles:/reportes/plaza/plazasVigentes
+            plazasVigentesEve=tiles:/reportes/plaza/plazasVigentesEve
+            plazasVigentesHon=tiles:/reportes/plaza/plazasVigentesHon
+            acJerarquia=tiles:/reportes/plaza/acJerarquia
+            acNivel=tiles:/reportes/plaza/acNivel
+            ocupacionPlazas=tiles:/reportes/plaza/ocupacionPlazas
+            ocupacionPlazasReserva=tiles:/reportes/plaza/ocupacionPlazasReserva
+            escenario=tiles:/reportes/plaza/escenario
+            escenarioSituacion=tiles:/reportes/plaza/escenarioSituacion
+            vacanciaNivel=tiles:/reportes/plaza/vacanciaNivel
+            reservaUrNivel=tiles:/reportes/plaza/reservaUrNivel
+            resumenMovPersonal=tiles:/reportes/plaza/resumenMovPersonal
+            detalleMovPersonal=tiles:/reportes/plaza/detalleMovPersonal
+            formato=tiles:/reportes/plaza/formato
+            pot=tiles:/reportes/plaza/pot
+            potEventual=tiles:/reportes/plaza/potEventual
+            potHonorarios=tiles:/reportes/plaza/potHonorarios
+            potOcupada=tiles:/reportes/plaza/potOcupada
+            potVacante=tiles:/reportes/plaza/potVacante
+            meg=tiles:/reportes/plaza/meg
+            pntestructura=tiles:/reportes/plaza/pntestructura
+            pntfacultadesarea=tiles:/reportes/plaza/pntfacultadesarea
+            pntdirectorio=tiles:/reportes/plaza/pntdirectorio
+            pntremuneracion=tiles:/reportes/plaza/pntremuneracion
+            pnttotalplazas=tiles:/reportes/plaza/pnttotalplazas
+            pntcontratacionhonorarios=tiles:/reportes/plaza/pntcontratacionhonorarios
+            pntjubiladospensionados=tiles:/reportes/plaza/pntjuniladospensionados
+            pntrecursospublicos=tiles:/reportes/plaza/pntrecursospublicos
+            pntconcursos=tiles:/reportes/plaza/pntconcursos
+            pntdatoscurriculares=tiles:/reportes/plaza/pntdatoscurriculares
+            pntcontratacionhonorarios=tiles:/reportes/plaza/pntcontratacionhonorarios
+            pntjubiladospensionados=tiles:/reportes/plaza/pntjubiladospensionados
+            pntrecursospublicos=tiles:/reportes/plaza/pntrecursospublicos
+            pntconcursos=tiles:/reportes/plaza/pntconcursos
+            pntdatoscurriculares=tiles:/reportes/plaza/pntdatoscurriculares
+            pntinmueble=tiles:/reportes/plaza/pntinmueble
+            pntaltas=tiles:/reportes/plaza/pntaltas
+            pntbajas=tiles:/reportes/plaza/pntbajas
+            curriculumVitae=tiles:/reportes/plaza/curriculumVitae
+        </c:views>
+    </c:controller>
+    <c:controller id="reporteCxlc" class="gob.shcp.sireh.control.clc.reporte.ReporteCxlcController">
+        <c:views>
+            SolRecu=tiles:/reportes/cxlc/solicitudRecursos
+            SolOrdi=tiles:/reportes/cxlc/solSufPresOrd
+            SolIssste=tiles:/reportes/cxlc/solSufPresISSSTE
+            repTerceros=tiles:/reportes/cxlc/repTerceros
+            fonacFSTSE=tiles:/reportes/cxlc/fonacFSTSE
+            prestacionesT=tiles:/reportes/cxlc/prestacionesT
+        </c:views>
+    </c:controller>
+    <c:controller id="reporteOficinaVirtual" class="gob.shcp.sireh.control.oficinaVirtual.reporte.OficinaVirtualController">
+        <c:views>
+            gestionDoctosExpediente=tiles:/reportes/expediente/gestionDoctosExpediente
+        </c:views>
+    </c:controller>
+   <c:controller id="reporteSpc" class="gob.shcp.sireh.control.spc.reporte.ReporteSpcController">
+        <c:views>
+            
+        </c:views>
+    </c:controller>
+    <!-- Configuracion y parametrizacion -->
+    <c:controller id="mantenimiento" class="gob.shcp.sireh.control.configuracion.mantenimiento.plantillas.MantenimientoPlantillasController">
+        <c:views>
+            mantoPlantillas=tiles:/configuracion/mantenimiento/plantillas/mantoPlantillasTerceros
+            crearPlantillas=tiles:/configuracion/mantenimiento/plantillas/crearPlantillasTerceros
+            editarPlantillas=tiles:/configuracion/mantenimiento/plantillas/editarPlantillasTerceros
+        </c:views>
+    </c:controller>
+    <c:controller id="mantoPlantillasMerito" class="gob.shcp.sireh.control.configuracion.mantenimiento.plantillas.MantenimientoPlantillaMeritoController">
+        <c:views>
+            initMantoPlantillasMerito=tiles:/configuracion/mantenimiento/plantillas/listaPlantillaMerito
+            cargaMantoPlantillasMerito=tiles:/configuracion/mantenimiento/plantillas/cargaPlantillaMerito
+            resultadoMantoPlantillaMerito=tiles:/configuracion/mantenimiento/plantillas/resultadoPlantillaMerito
+        </c:views>
+    </c:controller>
+    <c:controller id="mantoPlantillasPlazas" class="gob.shcp.sireh.control.configuracion.mantenimiento.plantillas.MantenimientoPlantillaPlazasController">
+        <c:views>
+            initMantoPlantillasPlazas=tiles:/configuracion/mantenimiento/plantillas/listaPlantillaPlazas
+            cargaMantoPlantillasPlazas=tiles:/configuracion/mantenimiento/plantillas/cargaPlantillaPlazas
+            resultadoMantoPlantillaPlazas=tiles:/configuracion/mantenimiento/plantillas/resultadoPlantillaPlazas
+        </c:views>
+    </c:controller>
+    <c:controller id="mantoPlantillasCorreo" class="gob.shcp.sireh.control.configuracion.mantenimiento.plantillas.MantenimientoPlantillaCorreoController">
+        <c:views>
+            initMantoPlantillasCorreo=tiles:/configuracion/mantenimiento/plantillas/listaPlantillaCorreo
+            cargaMantoPlantillasCorreo=tiles:/configuracion/mantenimiento/plantillas/cargaPlantillaCorreo
+            resultadoMantoPlantillaCorreo=tiles:/configuracion/mantenimiento/plantillas/resultadoPlantillaCorreo
+        </c:views>
+    </c:controller>
+    <c:controller id="mantoPlantillasClc" class="gob.shcp.sireh.control.configuracion.mantenimiento.plantillas.MantenimientoPlantillaClcController">
+        <c:views>
+            initMantoPlantillasClc=tiles:/configuracion/mantenimiento/plantillas/listaPlantillaClc
+            cargaMantoPlantillasClc=tiles:/configuracion/mantenimiento/plantillas/cargaPlantillaClc
+            resultadoMantoPlantillaClc=tiles:/configuracion/mantenimiento/plantillas/resultadoPlantillaClc
+        </c:views>
+    </c:controller>
+    <c:controller id="mantoPlantillasCliente" class="gob.shcp.sireh.control.configuracion.mantenimiento.plantillas.MantenimientoPlantillaTimbrarController">
+        <c:views>
+            initMantoPlantillaCliente=tiles:/configuracion/mantenimiento/plantillas/listaPlantillaCliente
+            cargaMantoPlantillaCliente=tiles:/configuracion/mantenimiento/plantillas/cargaPlantillaCliente
+            resultadoMantoPlantillaCliente=tiles:/configuracion/mantenimiento/plantillas/resultadoPlantillaCliente
+            initMantoPlantillaTimbrar=tiles:/configuracion/mantenimiento/plantillas/listaPlantillaTimbrar
+            cargaMantoPlantillaTimbrar=tiles:/configuracion/mantenimiento/plantillas/cargaPlantillaTimbrar
+            resultadoMantoPlantillaTimbrar=tiles:/configuracion/mantenimiento/plantillas/resultadoPlantillaTimbrar
+        </c:views>
+    </c:controller>
+    <c:controller id="impuestoAnual" class="gob.shcp.sireh.control.nomina.calculo.ImpuestoAnualController">
+        <c:views>
+            definicionNominas=tiles:/nomina/calculo/impuestoAnual/definicionNominas
+            acPerDeduc=tiles:/nomina/calculo/impuestoAnual/acPerDeduc
+            impuestoAnual=tiles:/nomina/calculo/impuestoAnual/impuestoAnual
+            generaArchivoDIM=tiles:/nomina/calculo/impuestoAnual/generaArchivoDIM
+            modificacionNomina=tiles:/nomina/calculo/impuestoAnual/modificacionNomina
+        </c:views>
+    </c:controller>
+</beans>

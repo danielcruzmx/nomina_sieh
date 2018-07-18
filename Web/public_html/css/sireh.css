@@ -1,0 +1,44 @@
+@charset "UTF-8";
+/*Menu cuztomization*/
+
+/* Submenus should appear below their parent (top: 0) with a higher z-index, but they are initially off the left side of the screen (-1000em) */
+ul.menuList ul {
+    width: 150px;
+    height: 16px;
+    margin: 0px;
+    padding: 0px;
+    float: left;
+    list-style-type: none;
+    z-index: 1020;
+    cursor: default;
+    position: absolute;
+    left: -2000px;
+}
+
+/* Menu item containers are same fixed width as parent */
+ul.menuList ul li {
+    width: 150px;
+    padding: 0px;
+}
+
+/* Submenus should appear slightly overlapping to the right and up */
+ul.menuList ul ul {
+    position: absolute;
+    margin: 1px 0px 0px 150px;
+}
+
+
+.container_headings{
+    padding:5px;
+    background:#F6F6F6;
+    color:#000000;
+    border-radius: 5px 15px 0 0;
+    cursor:pointer;
+    font-weight:bold;
+    border: thin solid gray;
+}
+
+.container_child {
+    padding:15px;
+   border: thin solid gray;
+}

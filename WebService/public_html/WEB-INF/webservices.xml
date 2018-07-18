@@ -1,0 +1,30 @@
+<webservices xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
+     version="1.1">
+    <webservice-description>
+        <webservice-description-name>MyWebService2</webservice-description-name>
+        <wsdl-file>WEB-INF/wsdl/MyWebService2.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/MyWebService2-java-wsdl-mapping.xml</jaxrpc-mapping-file>
+        <port-component>
+            <port-component-name>MyWebService2SoapHttpPort</port-component-name>
+            <wsdl-port xmlns:wsa0="http://gob.shcp.sireh.ws/">wsa0:MyWebService2SoapHttpPort</wsdl-port>
+            <service-endpoint-interface>gob.shcp.sireh.ws.MyWebService2</service-endpoint-interface>
+            <service-impl-bean>
+                <servlet-link>MyWebService2SoapHttpPort</servlet-link>
+            </service-impl-bean>
+        </port-component>
+    </webservice-description>
+    <webservice-description>
+        <webservice-description-name>MyWebService1</webservice-description-name>
+        <wsdl-file>WEB-INF/wsdl/MyWebService1.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/MyWebService1-java-wsdl-mapping.xml</jaxrpc-mapping-file>
+        <port-component>
+            <port-component-name>MyWebService1SoapHttpPort</port-component-name>
+            <wsdl-port xmlns:wsa0="http://gob.shcp.sireh.ws/">wsa0:MyWebService1SoapHttpPort</wsdl-port>
+            <service-endpoint-interface>gob.shcp.sireh.ws.MyWebService1</service-endpoint-interface>
+            <service-impl-bean>
+                <servlet-link>MyWebService1SoapHttpPort</servlet-link>
+            </service-impl-bean>
+        </port-component>
+    </webservice-description>
+</webservices>

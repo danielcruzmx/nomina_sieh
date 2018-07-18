@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Ocupación de plazas (vacante, ocupada)" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.853116706110014"/>
+	<property name="ireport.x" value="506"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT UR, DESCRIPCION,
+SUM(OCUPADA)ESTRUC_OCUPADA, SUM(VACANTE) ESTRUC_VACANTE,
+NVL(SUM(OCUPADA),0) + NVL(SUM(VACANTE),0) TOTAL_ESTRUC,
+SUM(EVENTUAL) EVENTUAL_OCUPADA, SUM(HONORARIOS) HONORARIOS_OCUPADA,
+NVL(SUM(OCUPADA),0) + NVL(SUM(VACANTE),0) + NVL(SUM(EVENTUAL),0) + NVL(SUM(HONORARIOS),0) TOTAL_GRAL,
+PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+(SELECT *
+FROM
+(SELECT
+ID_UNIDAD_PRE UR, DESC_UNIDAD DESCRIPCION,  desc_grupo_pago, situacion_plaza_reporte
+FROM
+
+(select 'AC02' GRUPO, upper(g.desc_grupo_pago) desc_grupo_pago,
+           p.id_unidad_pre, upper(uu.DESC_UNIDAD) DESC_UNIDAD, upper(uu.DESC_UNIDAD_ABREV) DESC_UNIDAD_ABREV,
+           p.id_puesto_pre,
+           upper(pp.desc_puesto) desc_puesto, aa.id_nivel_pto,
+           aa.id_nombramiento, upper(nn.desc_nombramiento) desc_nombramiento, aa.id_jerarquia,
+          case when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(jj.desc_jerarquia) end JERARQUIA,
+          case when aa.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when aa.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when aa.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when aa.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when aa.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when aa.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza,
+           case when p.id_unidad_nom like 'X%' then p.id_unidad_pre
+           else p.id_unidad_nom end ur_fisica_a,
+           case when p.id_unidad_nom like 'X%' then upper(uu.DESC_UNIDAD)
+           else upper(u.DESC_UNIDAD) end describe_ur_fisica_a,
+           p.id_unidad_nom, upper(u.DESC_UNIDAD) DESC_UNIDAD_2, upper(u.DESC_UNIDAD_ABREV) DESC_UNIDAD_ABREV_1,
+           p.id_puesto_nom, upper(ppp.desc_puesto) desc_puesto_1, a.id_nivel_pto id_nivel_pto_1,
+           a.id_nombramiento id_nombramiento_1, upper(n.desc_nombramiento) desc_nombramiento_1, a.id_jerarquia id_jerarquia_1,
+          case when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(j.desc_jerarquia) end DESC_UNIDAD_3,
+          case when a.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when a.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when a.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when a.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when a.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when a.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza_1,
+          p.id_sit_plaza, upper(s.desc_sit_plaza) desc_sit_plaza,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+          else 'VACANTE' end situacion_plaza_reporte,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+                  when p.id_unidad_nom like 'X%' then 'RESERVA'
+          else 'VACANTE' end situacion_plaza_reporte_a,
+          p.id_plaza, p.plaza_rfc, e.nombre_empleado, e.primer_apellido, e.segundo_apellido,
+          f.CODIGO_PUESTO, f.NOMBRE_PUESTO,
+          case when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(f.OBSERVACIONES) end DESC_UNIDAD_4
+from TD_PLAZA p, TC_UNIDAD u, TC_ATRIBUTO_PUESTO a, TC_JERARQUIA j, TC_NOMBRAMIENTO n, TC_PUESTO pp,
+         TC_SIT_PLAZA s, TC_GRUPO_PAGO g,
+         TC_UNIDAD uu, TC_ATRIBUTO_PUESTO aa, TC_JERARQUIA jj, TC_NOMBRAMIENTO nn, TC_PUESTO ppp,
+         TD_ESCENARIO f, TD_EMPLEADO e
+where p.id_grupo_pago in ('E', 'J')
+and p.id_grupo_pago = g.id_grupo_pago (+)
+and p.id_unidad_nom = u.id_unidad (+)
+and u.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_nom = a.id_atributo_puesto (+)
+and p.id_puesto_nom = ppp.id_puesto (+)
+and a.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and a.id_jerarquia = j.id_jerarquia (+)
+and a.id_nombramiento = n.id_nombramiento (+)
+and p.id_sit_plaza = s.id_sit_plaza (+)
+and p.id_unidad_pre = uu.id_unidad (+)
+and uu.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_pre = pp.id_puesto (+)
+and p.id_puesto_pre = aa.id_atributo_puesto (+)
+and aa.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and aa.id_jerarquia = jj.id_jerarquia (+)
+and aa.id_nombramiento = nn.id_nombramiento (+)
+and p.id_plaza = f.PLAZA_ESCENARIO (+)
+and (f.fin_escenario = TO_DATE('31/12/2099','DD/MM/YYYY') OR f.fin_escenario is null)
+and p.plaza_rfc = e.rfc_empleado (+)
+UNION all
+select 'EVENTUAL',
+upper(g.desc_grupo_pago),
+           p.id_unidad_pre, upper(uu.DESC_UNIDAD), upper(uu.DESC_UNIDAD_ABREV),
+           p.id_puesto_pre,
+           upper(pp.desc_puesto), aa.id_nivel_pto,
+           aa.id_nombramiento, upper(nn.desc_nombramiento), aa.id_jerarquia,
+          case when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(jj.desc_jerarquia) end DESC_UNIDAD,
+          case when aa.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when aa.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when aa.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when aa.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when aa.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when aa.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza,
+           case when p.id_unidad_nom like 'X%' then p.id_unidad_pre
+           else p.id_unidad_nom end ur_fisica_a,
+           case when p.id_unidad_nom like 'X%' then upper(uu.DESC_UNIDAD)
+           else upper(u.DESC_UNIDAD) end describe_ur_fisica_a,
+           p.id_unidad_nom, upper(u.DESC_UNIDAD), upper(u.DESC_UNIDAD_ABREV),
+           p.id_puesto_nom, upper(ppp.desc_puesto), a.id_nivel_pto,
+           a.id_nombramiento, upper(n.desc_nombramiento), a.id_jerarquia,
+          case when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(j.desc_jerarquia) end DESC_UNIDAD,
+          case when a.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when a.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when a.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when a.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when a.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when a.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza,
+          p.id_sit_plaza, upper(s.desc_sit_plaza),
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+          else 'VACANTE' end situacion_plaza_reporte,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+                  when p.id_unidad_nom like 'X%' then 'RESERVA'
+          else 'VACANTE' end situacion_plaza_reporte_a,
+          p.id_plaza, p.plaza_rfc, e.nombre_empleado, e.primer_apellido, e.segundo_apellido,
+          f.CODIGO_PUESTO, f.NOMBRE_PUESTO,
+
+          'PERSONAL EVENTUAL' --f.observaciones
+from TD_PLAZA p, TC_UNIDAD u, TC_ATRIBUTO_PUESTO a, TC_JERARQUIA j, TC_NOMBRAMIENTO n, TC_PUESTO pp,
+         TC_SIT_PLAZA s, TC_GRUPO_PAGO g,
+         TC_UNIDAD uu, TC_ATRIBUTO_PUESTO aa, TC_JERARQUIA jj, TC_NOMBRAMIENTO nn, TC_PUESTO ppp,
+         TD_ESCENARIO f, TD_EMPLEADO e
+where
+p.id_grupo_pago in ('V')
+and p.id_sit_plaza = 'O'
+and p.id_grupo_pago = g.id_grupo_pago (+)
+and p.id_unidad_nom = u.id_unidad (+)
+and u.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_nom = a.id_atributo_puesto (+)
+and p.id_puesto_nom = ppp.id_puesto
+and a.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and a.id_jerarquia = j.id_jerarquia (+)
+and a.id_nombramiento = n.id_nombramiento (+)
+and p.id_sit_plaza = s.id_sit_plaza (+)
+and p.id_unidad_pre = uu.id_unidad (+)
+and uu.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_pre = pp.id_puesto (+)
+and p.id_puesto_pre = aa.id_atributo_puesto (+)
+and aa.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and aa.id_jerarquia = jj.id_jerarquia (+)
+and aa.id_nombramiento = nn.id_nombramiento (+)
+and p.id_plaza = f.PLAZA_ESCENARIO  (+)
+and (f.fin_escenario = TO_DATE('31/12/2099','DD/MM/YYYY') OR f.fin_escenario is null)
+and p.plaza_rfc = e.rfc_empleado (+)
+UNION all
+
+select 'HONORARIOS',
+upper(g.desc_grupo_pago),
+           p.id_unidad_pre, upper(uu.DESC_UNIDAD), upper(uu.DESC_UNIDAD_ABREV),
+           p.id_puesto_pre,
+           upper(pp.desc_puesto), aa.id_nivel_pto,
+           aa.id_nombramiento, upper(nn.desc_nombramiento), aa.id_jerarquia,
+          case when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(jj.desc_jerarquia) end DESC_UNIDAD,
+          case when aa.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when aa.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when aa.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when aa.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when aa.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when aa.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza,
+           case when p.id_unidad_nom like 'X%' then p.id_unidad_pre
+           else p.id_unidad_nom end ur_fisica_a,
+           case when p.id_unidad_nom like 'X%' then upper(uu.DESC_UNIDAD)
+           else upper(u.DESC_UNIDAD) end describe_ur_fisica_a,
+           p.id_unidad_nom, upper(u.DESC_UNIDAD), upper(u.DESC_UNIDAD_ABREV),
+           p.id_puesto_nom, upper(ppp.desc_puesto), a.id_nivel_pto,
+           a.id_nombramiento, upper(n.desc_nombramiento), a.id_jerarquia,
+          case when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(j.desc_jerarquia) end DESC_UNIDAD,
+          case when a.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when a.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when a.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when a.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when a.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when a.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza,
+          p.id_sit_plaza, upper(s.desc_sit_plaza),
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+          else 'VACANTE' end situacion_plaza_reporte,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+                  when p.id_unidad_nom like 'X%' then 'RESERVA'
+          else 'VACANTE' end situacion_plaza_reporte_a,
+          p.id_plaza, p.plaza_rfc, e.nombre_empleado, e.primer_apellido, e.segundo_apellido,
+          f.CODIGO_PUESTO, f.NOMBRE_PUESTO,
+         'PERSONAL HONORARIOS' --f.observaciones
+from TD_PLAZA p, TC_UNIDAD u, TC_ATRIBUTO_PUESTO a, TC_JERARQUIA j, TC_NOMBRAMIENTO n, TC_PUESTO pp,
+         TC_SIT_PLAZA s, TC_GRUPO_PAGO g,
+         TC_UNIDAD uu, TC_ATRIBUTO_PUESTO aa, TC_JERARQUIA jj, TC_NOMBRAMIENTO nn, TC_PUESTO ppp,
+         TD_ESCENARIO f, TD_EMPLEADO e
+where p.id_grupo_pago in ('H')
+and p.id_sit_plaza = 'O'
+and p.id_grupo_pago = g.id_grupo_pago (+)
+and p.id_unidad_nom = u.id_unidad (+)
+and u.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_nom = a.id_atributo_puesto (+)
+and p.id_puesto_nom = ppp.id_puesto
+and a.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and a.id_jerarquia = j.id_jerarquia (+)
+and a.id_nombramiento = n.id_nombramiento (+)
+and p.id_sit_plaza = s.id_sit_plaza (+)
+and p.id_unidad_pre = uu.id_unidad (+)
+and uu.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_pre = pp.id_puesto (+)
+and p.id_puesto_pre = aa.id_atributo_puesto (+)
+and aa.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and aa.id_jerarquia = jj.id_jerarquia (+)
+and aa.id_nombramiento = nn.id_nombramiento (+)
+and p.id_plaza = f.PLAZA_ESCENARIO  (+)
+and (f.fin_escenario = TO_DATE('31/12/2099','DD/MM/YYYY') OR f.fin_escenario is null)
+and p.plaza_rfc = e.rfc_empleado (+)
+)
+)
+PIVOT (COUNT(*) FOR DESC_GRUPO_PAGO IN('PERSONAL ESTRUCTURA' AS ESTRUCTURA,'PERSONAL EVENTUAL' EVENTUAL,'PERSONAL HONORARIOS' HONORARIOS))
+)
+PIVOT (SUM(ESTRUCTURA) FOR situacion_plaza_reporte IN('OCUPADA' AS OCUPADA,'VACANTE' AS VACANTE))
+GROUP BY UR, DESCRIPCION
+order by UR]]>
+	</queryString>
+	<field name="UR" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="ESTRUC_OCUPADA" class="java.math.BigDecimal"/>
+	<field name="ESTRUC_VACANTE" class="java.math.BigDecimal"/>
+	<field name="TOTAL_ESTRUC" class="java.math.BigDecimal"/>
+	<field name="EVENTUAL_OCUPADA" class="java.math.BigDecimal"/>
+	<field name="HONORARIOS_OCUPADA" class="java.math.BigDecimal"/>
+	<field name="TOTAL_GRAL" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="TOTESTO" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{ESTRUC_OCUPADA}]]></variableExpression>
+	</variable>
+	<variable name="TOTESTV" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{ESTRUC_VACANTE}]]></variableExpression>
+	</variable>
+	<variable name="TOTESTT" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_ESTRUC}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="TOTEVEO" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{EVENTUAL_OCUPADA}]]></variableExpression>
+	</variable>
+	<variable name="TOTHONO" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{HONORARIOS_OCUPADA}]]></variableExpression>
+	</variable>
+	<variable name="TOTTOTT" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{TOTAL_GRAL}]]></variableExpression>
+	</variable>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="500" y="10" width="239" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="205" y="15" width="291" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Ocupación de plazas (Vacantes, ocupadas)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="76" y="5" width="352" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="435" y="10" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupadas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="484" y="10" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Vacante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="9" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupadas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="0" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Honorarios]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="697" y="5" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[   Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="9" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupadas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="590" y="1" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Eventual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="539" y="5" width="50" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[   Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="435" y="1" width="99" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estructura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="5" width="63" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="14" width="752" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField>
+				<reportElement x="0" y="2" width="63" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="2" width="352" height="10"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="2" width="38" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ESTRUC_OCUPADA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="486" y="2" width="35" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$F{ESTRUC_VACANTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="698" y="2" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TOTAL_GRAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="540" y="2" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TOTAL_ESTRUC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="591" y="2" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVENTUAL_OCUPADA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="641" y="2" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{HONORARIOS_OCUPADA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="600" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="436" y="6" width="38" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{TOTESTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="388" y="6" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total:]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="486" y="6" width="35" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{TOTESTV}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="540" y="6" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{TOTESTT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="591" y="6" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{TOTEVEO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="641" y="6" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{TOTHONO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="698" y="6" width="40" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Number"><![CDATA[$V{TOTTOTT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

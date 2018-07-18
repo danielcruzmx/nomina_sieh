@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<file-format>
+    <converter name="char" class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" return-type="java.lang.String"/>
+    <converter name="decimal" class="com.blackbear.flatworm.converters.CoreConverters" method="convertDecimal" return-type="java.lang.Double"/>
+    <converter name="rfc" class="gob.shcp.sireh.service.parser.ConvertType" method="convertRFC" return-type="java.lang.String"/>
+    <converter name="tipoMov" class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMov" return-type="java.lang.String"/>
+	    <record name="total">
+        <record-ident>
+            <field-ident field-start="0" field-length="108">
+                <match-string>                                                                                                             </match-string>
+            </field-ident>
+        </record-ident>
+        <record-definition>
+            <bean name="totalDTO" class="gob.shcp.sireh.model.nomina.terceros.TotalDTO"/>
+            <line>
+            	<record-element start="109"  end="147" 	beanref="totalDTO.total"  type="char"/>
+            </line>
+        </record-definition>
+    </record>
+    <record name="METLIFE_51_57">
+        <record-definition>
+            <bean name="datosDTO" class="gob.shcp.sireh.model.nomina.terceros.DatosArchivoDTO"/>
+            <line>
+            	<record-element start="0"  	end="18"   	beanref="datosDTO.curp" 			type="char"/>
+				<record-element start="22"  end="35"   	beanref="datosDTO.rfc" 				type="rfc"/>
+            	<record-element start="110" end="111"   beanref="datosDTO.tipoMovimiento" 	type="tipoMov"/>
+            	<record-element start="135" end="137"   beanref="datosDTO.concepto" 		type="char"/>
+            	<record-element start="137" end="147"   beanref="datosDTO.importe" 			type="decimal"/>
+				<record-element start="147" end="153"   beanref="datosDTO.referencia" 		type="char"/>
+            </line>
+        </record-definition>
+    </record>
+</file-format>

@@ -1,0 +1,41 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<file-format>
+    <converter class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" name="char" return-type="java.lang.String"/>
+	<converter class="com.blackbear.flatworm.converters.CoreConverters" method="convertDecimal" name="decimal" return-type="java.lang.Double"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertDecimalIssste" name="monto" return-type="java.lang.Double"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertRFC" name="rfc" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMovIssste" name="tipoMov" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertQnaInicio" name="qnaIni" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertQnaFin" name="qnaFin" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertCharCptoFovi" name="charCptoFovi" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMovIssste" name="tipoMovIssste" return-type="java.lang.String"/>
+    <record name="ISSSTE">
+        <record-definition>
+            <bean class="gob.shcp.sireh.model.nomina.terceros.DatosArchivoDTO" name="datosDTO"/>
+            <line>
+            	
+            
+            
+            
+            
+            
+            
+            
+         
+            
+            
+            
+            
+            
+            
+         <record-element beanref="datosDTO.rfc" end="31" start="18" type="rfc"/>
+            <record-element beanref="datosDTO.curp" end="164" start="146" type="char"/>
+            <record-element beanref="datosDTO.importe" end="126" start="119" type="monto"/>
+            <record-element beanref="datosDTO.tipoMovimiento" end="102" start="101" type="tipoMov"/>
+            <record-element beanref="datosDTO.referencia" end="132" start="126" type="char"/>
+            <record-element beanref="datosDTO.concepto" end="119" start="117" type="char"/>
+            <record-element beanref="datosDTO.qnaFin" end="117" start="111" type="qnaFin"/>
+         </line>
+        </record-definition>
+    </record>
+</file-format>

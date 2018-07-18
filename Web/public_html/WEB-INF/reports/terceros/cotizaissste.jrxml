@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cotizaissste" printOrder="Horizontal" columnDirection="RTL" pageWidth="572" pageHeight="752" whenNoDataType="NoDataSection" columnWidth="572" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_QNA_PAR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT X.ID_EDO,
+       NVL(SUM((SELECT COUNT(Z1.HP_RFC)
+        FROM TN_HISTORICO_PAGO Z1, TC_ATRIBUTO_PUESTO A1
+        WHERE X0.HP_FOLIO = Z1.HP_FOLIO
+          AND X0.HP_DIF_FOLIO = Z1.HP_DIF_FOLIO
+          AND Z1.ID_PUESTO_NOM = A1.ID_ATRIBUTO_PUESTO
+          AND A1.ID_NOMBRAMIENTO = 'B'
+          AND Z1.HP_FIN_PAGO >= A1.AP_INI
+          AND Z1.HP_FIN_PAGO <= A1.AP_FIN)),0) AS BASE,
+       0 LISTA_RAYA,
+       NVL(SUM((SELECT COUNT(Z4.HP_RFC)
+        FROM TN_HISTORICO_PAGO Z4, TC_ATRIBUTO_PUESTO A2
+        WHERE X0.HP_FOLIO = Z4.HP_FOLIO
+          AND X0.HP_DIF_FOLIO = Z4.HP_DIF_FOLIO
+          AND Z4.ID_PUESTO_NOM = A2.ID_ATRIBUTO_PUESTO
+          AND A2.ID_NOMBRAMIENTO = 'C'
+          AND Z4.ID_GRUPOPAGO_NOM = 'E'
+          AND Z4.HP_FIN_PAGO >= A2.AP_INI
+          AND Z4.HP_FIN_PAGO <= A2.AP_FIN)),0) AS CONFIANZA,
+       NVL(SUM((SELECT COUNT(Z2.HP_RFC)
+        FROM TN_HISTORICO_PAGO Z2
+        WHERE X0.HP_FOLIO = Z2.HP_FOLIO
+          AND X0.HP_DIF_FOLIO = Z2.HP_DIF_FOLIO
+          AND Z2.ID_GRUPOPAGO_NOM = 'V')),0) AS EVENTUALES,
+       0 LISTA_RAYA_N,
+       NVL(SUM((SELECT COUNT(Z3.HP_RFC)
+        FROM TN_HISTORICO_PAGO Z3
+        WHERE X0.HP_FOLIO = Z3.HP_FOLIO
+          AND X0.HP_DIF_FOLIO = Z3.HP_DIF_FOLIO
+          AND Z3.ID_GRUPOPAGO_NOM = 'H')),0) AS HONORARIOS,
+       0 NO_IDENTIFICADOS,
+       CASE WHEN SUBSTR($P{P_QNA_PAR},5,2) = '02' THEN 'Enero'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '04' THEN 'Febrero'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '06' THEN 'Marzo'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '08' THEN 'Abril'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '10' THEN 'Mayo'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '12' THEN 'Junio'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '14' THEN 'Julio'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '16' THEN 'Agosto'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '18' THEN 'Septiembre'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '20' THEN 'Octubre'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '22' THEN 'Noviembre'
+            WHEN SUBSTR($P{P_QNA_PAR},5,2) = '24' THEN 'Diciembre' END mes
+FROM TC_ESTADO X, TN_HISTORICO_PAGO X0, TN_CONCEPTO_PAGADO X1
+WHERE X.ID_EDO <> '33'
+  AND X.ID_EDO = X0.ID_EDO_NOM(+)
+  AND X0.HP_QNA_PAGO(+) = $P{P_QNA_PAR}       ---- (ESTA QUINCENA ES SIEMPRE LA PAR)
+  AND X0.ID_TIPO_NOMINA(+) = 'OR'            ---- (ESTE TIPO DE NÓMINA ES SIEMPRE)
+  AND X0.HP_NUM_COMPLEM(+) IN ('0','2','10') ---- (ESTOS COMPLEMENTOS SON SIEMPRE)
+  AND X0.ID_SIT_PAGO(+) <> 'C'
+  AND X0.HP_NUM_PENSION(+) = 0
+  AND X0.HP_FOLIO = X1.CP_FOLIO(+)
+  AND X0.HP_DIF_FOLIO = X1.CP_DIF_FOLIO(+)
+  AND X1.ID_TIPO_CPTO(+) = 'D'
+  AND X1.ID_CPTO_PAGO(+) = '0D'
+GROUP BY X.ID_EDO
+UNION
+SELECT 33,
+       0 AS BASE,
+       0 LISTA_RAYA,
+       NVL(SUM((SELECT COUNT(Z4.HP_RFC)
+        FROM TN_HISTORICO_PAGO Z4, TC_ATRIBUTO_PUESTO A2
+        WHERE X0.HP_FOLIO = Z4.HP_FOLIO
+          AND X0.HP_DIF_FOLIO = Z4.HP_DIF_FOLIO
+          AND Z4.ID_PUESTO_NOM = A2.ID_ATRIBUTO_PUESTO
+          AND A2.ID_NOMBRAMIENTO = 'C'
+          AND Z4.ID_GRUPOPAGO_NOM = 'J'
+          AND Z4.HP_FIN_PAGO >= A2.AP_INI
+          AND Z4.HP_FIN_PAGO <= A2.AP_FIN)),0) AS CONFIANZA,
+       0 EVENTUALES,
+       0 LISTA_RAYA_N,
+       0 HONORARIOS,
+       0 NO_IDENTIFICADOS,
+       '' as mes
+FROM TC_ESTADO X, TN_HISTORICO_PAGO X0, TN_CONCEPTO_PAGADO X1
+WHERE X.ID_EDO = X0.ID_EDO_NOM(+)
+  AND X0.HP_QNA_PAGO(+) = $P{P_QNA_PAR}-1     ---- (ESTA QUINCENA ES SIEMPRE LA NON)
+  AND X0.ID_TIPO_NOMINA(+) = 'CJ'           ---- (ESTE TIPO DE NÓMINA ES SIEMPRE)
+  AND X0.HP_NUM_COMPLEM(+) IN ('0','1','2') ---- (ESTOS COMPLEMENTOS SON SIEMPRE)
+  AND X0.ID_SIT_PAGO(+) <> 'C'
+  AND X0.HP_NUM_PENSION(+) = 0
+  AND X0.HP_FOLIO = X1.CP_FOLIO(+)
+  AND X0.HP_DIF_FOLIO = X1.CP_DIF_FOLIO(+)
+  AND X1.ID_TIPO_CPTO(+) = 'D'
+  AND X1.ID_CPTO_PAGO(+) = '0D'
+GROUP BY 1
+ORDER BY 1]]>
+	</queryString>
+	<field name="ID_EDO" class="java.math.BigDecimal"/>
+	<field name="BASE" class="java.math.BigDecimal"/>
+	<field name="LISTA_RAYA" class="java.math.BigDecimal"/>
+	<field name="CONFIANZA" class="java.math.BigDecimal"/>
+	<field name="EVENTUALES" class="java.math.BigDecimal"/>
+	<field name="LISTA_RAYA_N" class="java.math.BigDecimal"/>
+	<field name="HONORARIOS" class="java.math.BigDecimal"/>
+	<field name="NO_IDENTIFICADOS" class="java.math.BigDecimal"/>
+	<field name="MES" class="java.lang.String"/>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="453" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="12" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Reporte de Cotizantes al ISSSTE ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="453" y="0" width="107" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{MES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="28" y="0" width="57" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="10" width="47" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[Base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="131" y="10" width="72" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[Lista de Raya]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="203" y="10" width="77" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[Confianza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="10" width="70" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[Eventuales]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="350" y="10" width="70" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[Lista de Raya]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="0" width="70" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Otros]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="0" width="70" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Identif.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="0" width="118" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="203" y="0" width="217" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No Base]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="10" splitType="Prevent">
+			<textField>
+				<reportElement x="28" y="0" width="57" height="10"/>
+				<textElement textAlignment="Center" lineSpacing="Single">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_EDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="0" width="47" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{BASE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="131" y="0" width="72" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{LISTA_RAYA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="203" y="0" width="77" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CONFIANZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="70" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVENTUALES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="0" width="70" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{LISTA_RAYA_N}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="0" width="70" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{HONORARIOS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="490" y="0" width="70" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{NO_IDENTIFICADOS}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

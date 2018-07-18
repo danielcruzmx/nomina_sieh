@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="constancia_fonacot" printOrder="Horizontal" columnDirection="RTL" pageWidth="612" pageHeight="792" columnWidth="567" leftMargin="25" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="332"/>
+	<parameter name="IMAGES_URI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_OFICIO" class="java.lang.String"/>
+	<parameter name="P_QNA_INI" class="java.lang.String"/>
+	<parameter name="P_QNA_FIN" class="java.lang.String"/>
+	<parameter name="P_RESPONSABLE" class="java.lang.String"/>
+	<parameter name="P_PUESTO" class="java.lang.String"/>
+	<parameter name="P_RFC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT OFICIO,
+       ID_UNIDAD_NOM,
+       HP_RFC,
+       NOMBRE,
+       ID_PUESTO_NOM,
+       DESC_PUESTO,
+       CURP_EMPLEADO,
+       INGRESO,
+       IMSS_ISSSTE,
+       SUM(SUELDO) SUELDO,
+       SUM(PERCEPCIONES) PERCEPCIONES,
+       SUM(DEDUCCIONES) DEDUCCIONES,
+       SUM(NETO_PAGO) NETO_PAGO,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH,
+       PKG_REFERENCIA.FUNC_NOMBRE('01/01/2099','fonacot') AS NOMBRE_VOBO,
+       PKG_REFERENCIA.FUNC_TITULO('01/01/2099','fonacot') AS TITULO_VOBO
+FROM (select 'Oficio Núm.- '|| $P{P_OFICIO} oficio,
+       x0.id_unidad_nom, SUBSTR(x0.hp_rfc,1,4)||' - '||SUBSTR(x0.hp_rfc,5,6)||' - '||SUBSTR(x0.hp_rfc,11,3) HP_RFC,
+       TRIM(TRIM(x2.primer_apellido)||' '||TRIM(x2.segundo_apellido))||' '||TRIM(x2.nombre_empleado) nombre,
+       x0.id_puesto_nom,
+       case when substr(x2.curp_empleado,11,1) = 'M' then x3.desc_puestomu when substr(x2.curp_empleado,11,1) = 'H' then x3.desc_puestoho else x3.desc_puesto end desc_puesto,
+       SUBSTR(x2.curp_empleado,1,4)||' - '||SUBSTR(x2.curp_empleado,5,6)||' - '||SUBSTR(x2.curp_empleado,11,8) CURP_EMPLEADO,
+       to_char(x2.ingreso_dependencia, 'yyyy') || ' ' ||
+       trim(to_char(x2.ingreso_dependencia, 'Month')) || ' ' ||
+       to_char(x2.ingreso_dependencia, 'dd') ingreso,
+       x2.imss_issste,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P02') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P05') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P07') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P06') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PHO') THEN x1.cp_monto  END),0)) sueldo,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P02') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P05') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P07') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P06') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PHO') THEN x1.cp_monto  END),0))+
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA2') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA3') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA4') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P38') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P44') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P46') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P95') THEN x1.cp_monto  END),0)) percepciones,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAR') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAS') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DCP') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DFE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DML') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DSQ') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS8') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DXE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0A') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0B') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0C') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0D') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0E') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D01') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D03') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D08') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D21') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D26') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D29') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D5L') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D50') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D51') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D54') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D56') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D57') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D58') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D61') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D62') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D64') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D68') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D72') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D75') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D79') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D82') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D83') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D94') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D95') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D98') THEN x1.cp_monto  END),0)) deducciones,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P02') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P05') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P07') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P06') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PHO') THEN x1.cp_monto  END),0))+
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA2') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA3') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA4') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P38') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P44') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P46') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P95') THEN x1.cp_monto  END),0)) -
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAR') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAS') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DCP') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DFE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DML') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DSQ') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS8') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DXE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0A') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0B') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0C') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0D') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0E') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D01') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D03') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D08') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D21') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D26') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D29') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D5L') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D50') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D51') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D54') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D56') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D57') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D58') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D61') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D62') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D64') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D68') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D72') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D75') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D79') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D82') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D83') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D94') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D95') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D98') THEN x1.cp_monto  END),0))  neto_pago,
+       x0.hp_folio
+from tn_historico_pago x0,
+     tn_concepto_pagado x1,
+     td_empleado x2,
+     tc_puesto x3
+where x0.hp_rfc = $P{P_RFC}
+  and x0.hp_qna_pago = $P{P_QNA_INI}
+  and x0.hp_num_pension = 0
+  and x0.id_tipo_nomina IN ('CJ','OR')
+  and x0.hp_num_complem in ('0','2','10')
+  and x0.id_sit_pago <> 'C'
+  and x0.hp_folio = x1.cp_folio
+  AND x0.hp_dif_folio = x1.cp_dif_folio
+  AND x1.id_tipo_cpto||x1.id_cpto_pago IN ('PA1','PA2','PA3','PA4','PA5','PHO','P02','P05','P06',
+                                           'P07','P38','P44','P46','P77','P95','DAR','DAS','DCP',
+                                           'DFE','DML','DSQ','DS1','DS5','DS8','DXE','D0A','D0B',
+                                           'D0C','D0D','D0E','D01','D03','D08','D21','D26','D29',
+                                           'D5L','D50','D51','D54','D56','D57','D58','D61','D62',
+                                           'D64','D68','D72','D75','D77','D79','D82','D83',
+                                           'D94','D95','D98')
+  AND x0.id_puesto_nom = x3.id_puesto
+  AND x0.hp_rfc = x2.rfc_empleado
+group by x0.id_unidad_nom, x0.hp_rfc, x0.id_puesto_nom, x3.desc_puestoho,x3.desc_puestomu,x3.desc_puesto, x2.curp_empleado, x2.ingreso_dependencia, x2.imss_issste,
+         x2.primer_apellido, x2.segundo_apellido, x2.nombre_empleado,x0.hp_folio
+union
+select 'Oficio Núm.- '|| $P{P_OFICIO} oficio,
+       x0.id_unidad_nom, SUBSTR(x0.hp_rfc,1,4)||' - '||SUBSTR(x0.hp_rfc,5,6)||' - '||SUBSTR(x0.hp_rfc,11,3) HP_RFC,
+       TRIM(TRIM(x2.primer_apellido)||' '||TRIM(x2.segundo_apellido))||' '||TRIM(x2.nombre_empleado) nombre,
+       x0.id_puesto_nom,
+       case when substr(x2.curp_empleado,11,1) = 'M' then x3.desc_puestomu when substr(x2.curp_empleado,11,1) = 'H' then x3.desc_puestoho else x3.desc_puesto end desc_puesto,
+       SUBSTR(x2.curp_empleado,1,4)||' - '||SUBSTR(x2.curp_empleado,5,6)||' - '||SUBSTR(x2.curp_empleado,11,8) CURP_EMPLEADO,
+       to_char(x2.ingreso_dependencia, 'yyyy') || ' ' ||
+       trim(to_char(x2.ingreso_dependencia, 'Month')) || ' ' ||
+       to_char(x2.ingreso_dependencia, 'dd') ingreso,
+       x2.imss_issste,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P02') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P05') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P07') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P06') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PHO') THEN x1.cp_monto  END),0)) sueldo,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P02') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P05') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P07') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P06') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PHO') THEN x1.cp_monto  END),0))+
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA2') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA3') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA4') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P38') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P44') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P46') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P95') THEN x1.cp_monto  END),0)) percepciones,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAR') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAS') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DCP') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DFE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DML') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DSQ') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS8') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DXE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0A') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0B') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0C') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0D') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0E') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D01') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D03') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D08') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D21') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D26') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D29') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D5L') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D50') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D51') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D54') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D56') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D57') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D58') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D61') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D62') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D64') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D68') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D72') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D75') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D79') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D82') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D83') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D94') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D95') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D98') THEN x1.cp_monto  END),0)) deducciones,
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P02') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P05') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P07') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P06') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PHO') THEN x1.cp_monto  END),0))+
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA2') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA3') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA4') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'PA5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P38') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P44') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P46') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'P95') THEN x1.cp_monto  END),0)) -
+       (NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAR') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DAS') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DCP') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DFE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DML') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DSQ') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS1') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS5') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DS8') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'DXE') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0A') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0B') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0C') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0D') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D0E') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D01') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D03') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D08') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D21') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D26') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D29') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D5L') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D50') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D51') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D54') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D56') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D57') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D58') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D61') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D62') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D64') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D68') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D72') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D75') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D77') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D79') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D82') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D83') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D94') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D95') THEN x1.cp_monto  END),0)+
+       NVL (sum(CASE WHEN ((x1.id_tipo_cpto||x1.id_cpto_pago) = 'D98') THEN x1.cp_monto  END),0)) neto_pago,
+       x0.hp_folio
+from tn_historico_pago x0,
+     tn_concepto_pagado x1,
+     td_empleado x2,
+     tc_puesto x3
+where x0.hp_rfc = $P{P_RFC}
+  and x0.hp_qna_pago = $P{P_QNA_FIN}
+  and x0.hp_num_pension = 0
+  and x0.id_tipo_nomina IN ('CJ','OR')
+  and x0.hp_num_complem in ('0','2','10')
+  and x0.id_sit_pago <> 'C'
+  and x0.hp_folio = x1.cp_folio
+  AND x0.hp_dif_folio = x1.cp_dif_folio
+  AND x1.id_tipo_cpto||x1.id_cpto_pago IN ('PA1','PA2','PA3','PA4','PA5','PHO','P02','P05','P06',
+                                           'P07','P38','P44','P46','P77','P95','DAR','DAS','DCP',
+                                           'DFE','DML','DSQ','DS1','DS5','DS8','DXE','D0A','D0B',
+                                           'D0C','D0D','D0E','D01','D03','D08','D21','D26','D29',
+                                           'D5L','D50','D51','D54','D56','D57','D58','D61','D62',
+                                           'D64','D68','D72','D75','D77','D79','D82','D83',
+                                           'D94','D95','D98')
+  AND x0.id_puesto_nom = x3.id_puesto
+  AND x0.hp_rfc = x2.rfc_empleado
+group by x0.id_unidad_nom, x0.hp_rfc, x0.id_puesto_nom, x3.desc_puestoho,x3.desc_puestomu,x3.desc_puesto, x2.curp_empleado, x2.ingreso_dependencia, x2.imss_issste,
+         x2.primer_apellido, x2.segundo_apellido, x2.nombre_empleado,x0.hp_folio)
+GROUP BY OFICIO, ID_UNIDAD_NOM, HP_RFC, NOMBRE, ID_PUESTO_NOM, DESC_PUESTO, CURP_EMPLEADO, INGRESO, IMSS_ISSSTE]]>
+	</queryString>
+	<field name="OFICIO" class="java.lang.String"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="HP_RFC" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="ID_PUESTO_NOM" class="java.lang.String"/>
+	<field name="DESC_PUESTO" class="java.lang.String"/>
+	<field name="CURP_EMPLEADO" class="java.lang.String"/>
+	<field name="INGRESO" class="java.lang.String"/>
+	<field name="IMSS_ISSSTE" class="java.lang.String"/>
+	<field name="SUELDO" class="java.math.BigDecimal"/>
+	<field name="PERCEPCIONES" class="java.math.BigDecimal"/>
+	<field name="DEDUCCIONES" class="java.math.BigDecimal"/>
+	<field name="NETO_PAGO" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<field name="NOMBRE_VOBO" class="java.lang.String"/>
+	<field name="TITULO_VOBO" class="java.lang.String"/>
+	<group name="RFC">
+		<groupExpression><![CDATA[$F{HP_RFC}]]></groupExpression>
+		<groupHeader>
+			<band height="241">
+				<frame>
+					<reportElement x="30" y="26" width="533" height="110"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<frame>
+					<reportElement x="30" y="0" width="533" height="20"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement x="33" y="26" width="239" height="17"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Nombre]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="33" y="44" width="239" height="22"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[R.F.C. ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="33" y="67" width="239" height="22"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[C.U.R.P. ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="33" y="90" width="239" height="24"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Puesto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="36" y="0" width="239" height="20"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Número de Seguridad Social ]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="115" width="239" height="21"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Fecha de Ingreso del Trabajador (Año, Mes, Día)]]></text>
+				</staticText>
+				<line>
+					<reportElement x="278" y="26" width="1" height="110"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="30" y="43" width="533" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="30" y="66" width="533" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="30" y="89" width="533" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="30" y="114" width="533" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement x="289" y="44" width="277" height="22"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{HP_RFC}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="289" y="26" width="277" height="17"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="289" y="67" width="277" height="22"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{CURP_EMPLEADO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="289" y="90" width="277" height="24"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{DESC_PUESTO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="289" y="115" width="277" height="21"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{INGRESO}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="278" y="0" width="1" height="20"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<frame>
+					<reportElement x="30" y="141" width="533" height="98"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="289" y="219" width="277" height="22"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{NETO_PAGO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="31" y="143" width="234" height="25"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Sueldo Base (sin incluir prestaciones fijas en efectivo)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="33" y="169" width="234" height="26"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Sueldo Mensual Bruto (incluyendo prestaciones fijas en efectivo)]]></text>
+				</staticText>
+				<line>
+					<reportElement x="30" y="167" width="533" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="30" y="194" width="533" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="33" y="197" width="239" height="22"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Total de descuentos al mes]]></text>
+				</staticText>
+				<line>
+					<reportElement x="30" y="216" width="533" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="32" y="219" width="239" height="22"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Ingreso Neto]]></text>
+				</staticText>
+				<line>
+					<reportElement x="278" y="143" width="1" height="98"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="289" y="169" width="277" height="26"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PERCEPCIONES}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="289" y="197" width="277" height="22"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{DEDUCCIONES}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00">
+					<reportElement x="289" y="143" width="277" height="25"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{SUELDO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="289" y="0" width="277" height="20"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{IMSS_ISSSTE}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="248">
+				<frame>
+					<reportElement x="30" y="32" width="533" height="213"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement x="30" y="5" width="536" height="21"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="10" isBold="false" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Datos certificados de conformidad con lo establecido en el convenio de afiliación.]]></text>
+				</staticText>
+				<line>
+					<reportElement x="373" y="32" width="1" height="213"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="30" y="32" width="342" height="22"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="10" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Datos de quien certifica]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="390" y="32" width="167" height="32"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Sello autorizado del centro de trabajo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="64" width="76" height="26"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Nombre:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="101" width="76" height="22"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Puesto:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="144" width="76" height="22"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[ Lugar y fecha:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="205" width="75" height="22"/>
+					<textElement verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="9" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Firma:]]></text>
+				</staticText>
+				<line>
+					<reportElement x="115" y="227" width="243" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField pattern="&apos;México D.F., a &apos; dd &apos; de &apos; MMMM &apos; de &apos; yyyy">
+					<reportElement x="134" y="144" width="224" height="22"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="false" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="134" y="101" width="224" height="39"/>
+					<textElement textAlignment="Justified" verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{TITULO_VOBO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="134" y="64" width="224" height="28"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="9"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE_VOBO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="81" y="198" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="217" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="32" y="5" width="184" height="60"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="33" y="90" width="533" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Constancia de percepciones para trámite de crédito FONACOT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="156" width="533" height="27"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="9" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[La Dirección General de Recursos Humanos del centro de trabajo con número FONACOT E-700436,  con domicilio en Czda. de la Virgen Núm. 2799, Edif. "B", Planta Baja, Ala Norte, Col. C.T.M. Culhuacán, C.P. 04480.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="184" width="533" height="27"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="9" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Con la autorización que se me otorgó para certificar las solicitudes contrato de crédito, doy fe de la veracidad de los siguientes datos del trabajador:]]></text>
+			</staticText>
+			<textField pattern="&apos;México, D.F.,  a &apos; dd &apos; de &apos; MMMM &apos; de &apos; yyyy">
+				<reportElement x="331" y="114" width="235" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="51" width="120" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{OFICIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="444" y="0" width="123" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="20" width="209" height="31"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="65" width="533" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[“2017 Año del Centenario de la Promulgación de la Constitución Política de los Estados Unidos Mexicanos”]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="471" y="16" width="91" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="6" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="29" y="6" width="50" height="20"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="471" y="6" width="56" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="527" y="6" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="29" y="1" width="538" height="1" forecolor="#999999"/>
+			</line>
+			<textField>
+				<reportElement x="79" y="6" width="381" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

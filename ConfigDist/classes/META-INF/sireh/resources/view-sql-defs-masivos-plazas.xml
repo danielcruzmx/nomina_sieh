@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+<!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+                <prop key="tdPlazaTipoMovimientoProrroga">
+                SELECT 
+                    T.ID_MOVS_PERSONAL, T.ID_MOVS_PERSONAL || ' - ' || T.DESC_MOVS_PERSONAL
+                    FROM TC_MOVS_PERSONAL T
+                WHERE T.ID_MOVS_PERSONAL IN (522, 538)
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

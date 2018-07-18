@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ <definitions 
+ xmlns="http://schemas.xmlsoap.org/wsdl/" 
+ xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="mainclientconfig" 
+ >
+    <import location="NominaRecepcion.svc.singlewsdl.xml" namespace="http://tempuri.org/"/>
+    <import location="NominaConsulta.svc.singlewsdl.xml" namespace="http://tempuri.org/"/>
+    <import location="NominaCancelacion.svc.singlewsdl.xml" namespace="http://tempuri.org/"/>
+    <import location="NominaRecepcion.svc.xml" namespace="http://tempuri.org/"/>
+    <import location="NominaConsulta.svc.xml" namespace="http://tempuri.org/"/>
+</definitions>

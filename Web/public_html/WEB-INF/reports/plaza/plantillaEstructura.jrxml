@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Plantilla Estructura" printOrder="Horizontal" columnDirection="RTL" pageWidth="2880" pageHeight="612" orientation="Landscape" columnWidth="2880" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="147"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select p.ID_UNIDAD_PRE, case when p.ID_UNIDAD_PRE = '100' then 'OFICINA DEL C. SECRETARIO' else upper(u.DESC_UNIDAD) end
+|| ' UR'||' '||p.ID_UNIDAD_PRE descripcion,p.ID_PLAZA, ap.ID_NIVEL_PTO,
+case when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'OPERATIVO DE BASE'
+      when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'OPERATIVO DE CONFIANZA'
+else upper(a.NOMBRE_PUESTO) end denominacion, upper(trim(e.NOMBRE_EMPLEADO))||' '||upper(trim(e.PRIMER_APELLIDO))||' '
+||upper(trim(e.SEGUNDO_APELLIDO)) Ocupante,
+case    when p.ID_UNIDAD_NOM like 'X%' then upper(uv.desc_uni_virtual)
+        when p.ID_SIT_PLAZA = 'S' then upper('SOPORTE DE LA PLAZA EVENTUAL ')||p.PLAZA_RESPALDO
+        when ap.ID_NOMBRAMIENTO = 'C' and p.ID_SIT_PLAZA = 'C' then upper('VACANTE DISPONIBLE')
+else upper(s.DESC_SIT_PLAZA) end Situacion,p.ID_UNIDAD_PRE unidad_presupuestal, p.ID_UNIDAD_NOM unidad_fisica,
+upper(s.DESC_SIT_PLAZA) situacion_nomina, upper(s.DESC_SIT_PLAZA) etiqueta_plantilla,
+case when ((p.ID_SIT_PLAZA in ('O', 'OR', 'OT','V')  and p.ID_UNIDAD_NOM not like 'X%')
+or (p.ID_SIT_PLAZA = 'C' and ap.ID_NOMBRAMIENTO = 'C' and p.ID_UNIDAD_NOM not like 'X%' )
+or (p.ID_SIT_PLAZA = 'P' and ap.ID_NOMBRAMIENTO = 'C' and p.ID_UNIDAD_NOM not like 'X%')
+or (p.ID_SIT_PLAZA = 'S' and p.ID_UNIDAD_NOM not like 'X%')
+or (p.ID_SIT_PLAZA = 'VR' and p.ID_UNIDAD_NOM not like 'X%')
+or (p.ID_SIT_PLAZA = 'VT' and p.ID_UNIDAD_NOM not like 'X%')
+or (p.ID_SIT_PLAZA = 'F' and p.ID_UNIDAD_NOM not like 'X%')
+or (p.ID_SIT_PLAZA = 'L' and ap.ID_NOMBRAMIENTO = 'C' and p.ID_UNIDAD_NOM not like 'X%') ) then 'ACTIVA'
+when p.ID_UNIDAD_NOM like 'X%' then 'COMPROMETIDA'
+when p.ID_SIT_PLAZA = 'L' and ap.ID_NOMBRAMIENTO = 'B' and p.ID_UNIDAD_NOM not like 'X%' then 'COMPROMETIDA'
+when p.ID_SIT_PLAZA = 'P' and ap.ID_NOMBRAMIENTO = 'B' and p.ID_UNIDAD_NOM not like 'X%' then 'COMPROMETIDA'
+Else 'COMPROMETIDA' end Activa_Comprometida, ap.ID_NOMBRAMIENTO nombremiento_presupuestal, aa.ID_NIVEL_PTO nivel_fisico,
+p.PLAZA_RESPALDO plaza_respaldo, c.ID_JERARQUIA_NIVEL jerarquia, upper(j.DESC_JERARQUIA) MANDO
+From td_plaza p,
+     TC_SIT_PLAZA s,
+     TC_ATRIBUTO_PUESTO ap,
+     TC_ATRIBUTO_PUESTO aa,
+     TC_UNIDAD u,
+     TC_JERARQUIA j,
+     TD_COSTO_ANUALIZADO c,
+     TD_EMPLEADO e,
+     TC_UNIDAD_VIRTUAL uv,
+     TD_ESCENARIO a
+Where p.ID_UNIDAD_PRE = U.ID_UNIDAD
+and u.UNI_CICLO = $P{PAR_CICLO}
+and p.ID_GRUPO_PAGO in ('E','J')
+and p.ID_SIT_PLAZA = s.ID_SIT_PLAZA
+and p.ID_PUESTO_PRE = ap.ID_ATRIBUTO_PUESTO
+and ap.AP_FIN = '01/01/2099'
+and p.ID_PUESTO_NOM = aa.ID_ATRIBUTO_PUESTO
+and aa.AP_FIN = '01/01/2099'
+and ap.ID_JERARQUIA = j.ID_JERARQUIA
+and ap.ID_NIVEL_PTO = c.ID_NIVEL_PTO
+and p.ID_ZONA_ECO_PRE = c.ID_ZONA_ECON
+and p.id_unidad_nom = uv.id_uni_virtual(+)
+and uv.uv_ciclo(+) = $P{PAR_CICLO}
+and p.PLAZA_RFC = e.RFC_EMPLEADO(+)
+and p.ID_PLAZA = a.PLAZA_ESCENARIO(+)
+and a.FIN_ESCENARIO(+) = '31/12/2099'
+order by p.ID_UNIDAD_PRE, c.ID_JERARQUIA_NIVEL, ap.ID_NIVEL_PTO, p.ID_PLAZA]]>
+	</queryString>
+	<field name="ID_UNIDAD_PRE" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="ID_PLAZA" class="java.math.BigDecimal"/>
+	<field name="ID_NIVEL_PTO" class="java.lang.String"/>
+	<field name="DENOMINACION" class="java.lang.String"/>
+	<field name="OCUPANTE" class="java.lang.String"/>
+	<field name="SITUACION" class="java.lang.String"/>
+	<field name="UNIDAD_PRESUPUESTAL" class="java.lang.String"/>
+	<field name="UNIDAD_FISICA" class="java.lang.String"/>
+	<field name="SITUACION_NOMINA" class="java.lang.String"/>
+	<field name="ETIQUETA_PLANTILLA" class="java.lang.String"/>
+	<field name="ACTIVA_COMPROMETIDA" class="java.lang.String"/>
+	<field name="NOMBREMIENTO_PRESUPUESTAL" class="java.lang.String"/>
+	<field name="NIVEL_FISICO" class="java.lang.String"/>
+	<field name="PLAZA_RESPALDO" class="java.math.BigDecimal"/>
+	<field name="JERARQUIA" class="java.math.BigDecimal"/>
+	<field name="MANDO" class="java.lang.String"/>
+	<title>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="540" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="0" width="55" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="595" y="0" width="69" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="664" y="0" width="526" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Denominación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1190" y="0" width="337" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1527" y="0" width="418" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1945" y="0" width="67" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2012" y="0" width="49" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Física]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2061" y="0" width="62" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situación Nómina]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2192" y="0" width="95" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Actividad Comprometida]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2287" y="0" width="96" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombramiento Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2383" y="0" width="47" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel Físico]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2430" y="0" width="56" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza Respaldo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2486" y="0" width="62" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jerarquía]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2123" y="0" width="69" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Etiqueta Plantilla]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2548" y="0" width="171" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mando]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="664" y="0" width="526" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DENOMINACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1527" y="0" width="418" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{SITUACION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="540" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="540" y="0" width="55" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="595" y="0" width="69" height="14"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_NIVEL_PTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1945" y="0" width="67" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_UNIDAD_PRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2012" y="0" width="49" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UNIDAD_FISICA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2061" y="0" width="62" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{SITUACION_NOMINA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2486" y="0" width="62" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{JERARQUIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2430" y="0" width="56" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PLAZA_RESPALDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2383" y="0" width="47" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NIVEL_FISICO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2287" y="0" width="96" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBREMIENTO_PRESUPUESTAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2123" y="0" width="69" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_NIVEL_PTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2192" y="0" width="95" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ACTIVA_COMPROMETIDA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1190" y="0" width="337" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{OCUPANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2548" y="0" width="171" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{MANDO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

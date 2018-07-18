@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Contrato Honorarios" printOrder="Horizontal" columnDirection="RTL" pageWidth="612" pageHeight="792" whenNoDataType="NoDataSection" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" scriptletClass="gob.shcp.sireh.jasper.NumerosLetras">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="gob.shcp.sireh.jasper.NumerosLetras"/>
+	<parameter name="IMAGES_URI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_RFC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_DICTAMEN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CONTRATO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CARGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CONOCIMIENTOS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_ESTUDIOS" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_SERVICIOS" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_INFORME" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT DISTINCT
+    E.CURP_EMPLEADO,
+    P.PLAZA_RFC,
+    TRIM(TRIM(E.NOMBRE_EMPLEADO)||' '||TRIM(E.PRIMER_APELLIDO) ||' '||TRIM(E.SEGUNDO_APELLIDO)) NOMBRE,
+    U.DESC_UNIDAD,
+    TO_CHAR(ROUND((P.PLAZA_IMP_HONO/2) * ROUND((((P.PLAZA_FIN_CONT - P.PLAZA_INI_CONT) / 30)*2), 0),2),'999,990.00') IMP_HONO,
+    TO_CHAR((P.PLAZA_IMP_HONO/2),'999,990.00') IMP_QNAL,
+    TO_CHAR(P.PLAZA_INI_CONT, 'DD/MM/YYYY') PLAZA_INI_CONT,
+    TO_CHAR(P.PLAZA_FIN_CONT, 'DD/MM/YYYY') PLAZA_FIN_CONT,
+    CASE WHEN SUBSTR(E.CURP_EMPLEADO,12,2) = 'NE' THEN 'EXTRANJERO' ELSE 'MEXICANA' END NAC,
+    E.CALLE_PARTICULAR||', COLONIA '||E.COLONIA_PARTICULAR||', DELEGACIÓN O MUNICIPIO '||TRIM(M.DESC_MUNICIPIO)||', C.P. ' ||E.CODPOST_PARTICULAR DOMICILIO,
+    TRIM(R.REF_VOBO) REF_VOBO,
+    TRIM(R.REF_VOBO_TITULO) REF_VOBO_TITULO,
+    CASE WHEN SUBSTR(E.CURP_EMPLEADO,11,1) = 'H' THEN 'EL' ELSE 'LA' END SEXO,
+    P.ID_UNIDAD_NOM,
+    R.REF_AUTORIZO,
+    R.REF_AUTORIZO_TITULO
+FROM
+    TD_PLAZA P,
+    TD_EMPLEADO E,
+    TC_UNIDAD U,
+    TC_MUNICIPIO M,
+    TC_REFERENCIA R
+WHERE
+    P.PLAZA_RFC = $P{PAR_RFC}
+AND P.PLAZA_RFC = E.RFC_EMPLEADO
+AND E.ID_EDO_PARTICULAR = M.ID_EDO
+AND E.ID_MUNI_PARTICULAR = M.ID_MUNICIPIO
+AND P.ID_UNIDAD_NOM = R.ID_UNIDAD_FISICA
+AND R.REF_PROGRAMA = 'NOMBRAMIENTO'
+AND TO_CHAR(R.REF_FECHA_TRES, 'DD/MM/YYYY') = '01/01/2099'
+AND P.ID_UNIDAD_NOM = U.ID_UNIDAD
+AND U.UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')]]>
+	</queryString>
+	<field name="CURP_EMPLEADO" class="java.lang.String"/>
+	<field name="PLAZA_RFC" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="DESC_UNIDAD" class="java.lang.String"/>
+	<field name="IMP_HONO" class="java.lang.String"/>
+	<field name="IMP_QNAL" class="java.lang.String"/>
+	<field name="PLAZA_INI_CONT" class="java.lang.String"/>
+	<field name="PLAZA_FIN_CONT" class="java.lang.String"/>
+	<field name="NAC" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="REF_VOBO" class="java.lang.String"/>
+	<field name="REF_VOBO_TITULO" class="java.lang.String"/>
+	<field name="SEXO" class="java.lang.String"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="REF_AUTORIZO" class="java.lang.String"/>
+	<field name="REF_AUTORIZO_TITULO" class="java.lang.String"/>
+	<variable name="TITULAR" class="java.lang.String">
+		<variableExpression><![CDATA["Mtra. Marlen Morales Sánchez"]]></variableExpression>
+	</variable>
+	<variable name="CARGO" class="java.lang.String">
+		<variableExpression><![CDATA["Directora General de Recursos Humanos"]]></variableExpression>
+	</variable>
+	<variable name="TITULAR_MAY" class="java.lang.String">
+		<variableExpression><![CDATA["MTRA. MARLEN MORALES SÁNCHEZ"]]></variableExpression>
+	</variable>
+	<variable name="CARGO_MAY" class="java.lang.String">
+		<variableExpression><![CDATA["DIRECTORA GENERAL DE RECURSOS HUMANOS"]]></variableExpression>
+	</variable>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="81" y="198" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Prevent">
+			<staticText>
+				<reportElement x="147" y="20" width="284" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTRATO DE PRESTACIÓN DE SERVICIOS PROFESIONALES POR HONORARIOS]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SHCP.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="334" y="0" width="203" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Número.- " + $P{PAR_CONTRATO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="19" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="576" splitType="Stretch">
+			<textField>
+				<reportElement x="33" y="22" width="504" height="119"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CONTRATO DE PRESTACIÓN DE SERVICIOS PROFESIONALES POR HONORARIOS QUE CELEBRAN, POR UNA PARTE, EL EJECUTIVO FEDERAL POR CONDUCTO DE LA SECRETARÍA DE HACIENDA Y CRÉDITO PÚBLICO, REPRESENTADA POR LA "+$V{TITULAR_MAY}+", EN SU CARÁCTER DE "+$V{CARGO_MAY}+", Y POR LA OTRA, "+$P{REPORT_SCRIPTLET}.getCiudadanoGenero($F{CURP_EMPLEADO})+" "+$F{NOMBRE}+", A QUIENES EN LO SUCESIVO Y PARA LOS EFECTOS DEL PRESENTE CONTRATO SE LES DENOMINARÁ \"LA DEPENDENCIA\" Y \""+$P{REPORT_SCRIPTLET}.getPrestadorGeneroTitulo($F{CURP_EMPLEADO})+"\", RESPECTIVAMENTE AL TENOR DE LAS SIGUIENTES: "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="246" y="177" width="100" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DECLARACIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="265" width="504" height="55"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[I.a. Que la Secretaría de Hacienda y Crédito Público es una dependencia de la Administración Pública Federal Centralizada, conforme a lo dispuesto por los artículos 1°, 2°, 26 y 31 de la Ley Orgánica de la Administración Pública Federal.
+
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="33" y="339" width="504" height="84"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["I.b. Que su representante, la " + "<style isBold='true'>" + $V{TITULAR} + "</style>" +", quien ocupa el cargo de "+
+"<style isBold='true'>" + $V{CARGO} + "</style>" +" de la Secretaría de Hacienda y Crédito Público, cuenta con las facultades legales para suscribir y representar a "+
+"<style isBold='true'>\"La Dependencia\"</style> en los términos y condiciones del presente Contrato de conformidad con lo dispuesto en el artículo 67, fracción IX, del Reglamento Interior de la Secretaría de Hacienda y Crédito Público."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="423" width="504" height="86"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["I.c. Que para el cumplimiento de los programas a cargo de la " + "<style isBold='true'>" + $F{DESC_UNIDAD} + "</style>" +
+", se requiere temporalmente contar con los servicios de una persona física con conocimientos en " +
+"<style isBold='true'>" + $P{PAR_CONOCIMIENTOS} + "</style>" + ", por lo que ha determinado llevar a cabo la contratación de <style isBold='true'>\""+$P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO})+"\"</style>."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="509" width="504" height="63"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["I.d. Que cuenta con los recursos presupuestales necesarios para cubrir el importe de los honorarios de <style isBold='true'>\""+$P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO})+"\"</style> conforme a la partida 12101 <style isBold='true'>\"Honorarios\"</style> del Capítulo 1000 <style isBold='true'>\"Servicios personales\"</style> del clasificador por objeto del gasto."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="237" width="248" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[I. Declara "La Dependencia":]]></text>
+			</staticText>
+		</band>
+		<band height="653">
+			<staticText>
+				<reportElement x="33" y="12" width="504" height="123"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[I.e. Que este Contrato se celebra de conformidad con lo dispuesto, por los artículos 2606 al 2615 del Código Civil Federal, 69 de la Ley Federal de Presupuesto y Responsabilidad Hacendaria y el Decreto por el que se expide el Presupuesto de Egresos de la Federación para el Ejercicio Fiscal 2014, así como del Título Cuarto del "ACUERDO por el que se emiten las Disposiciones en materia de Recursos Humanos y del Servicio Profesional de Carrera, así como el Manual Administrativo de Aplicación General en materia de Recursos Humanos y Organización y Manual del Servicio Profesional de Carrera" publicado en el Diario Oficial de la Federación el pasado 23 de agosto de 2013.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="33" y="147" width="504" height="38"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["I.f. Que cuenta con el dictamen emitido por la Dirección de Programación y Control Presupuestario " + "<style isBold='true'>" + $P{PAR_DICTAMEN} + "</style>" +
+", para celebrar el presente Contrato."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="198" width="504" height="46"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[I.g. Que para los efectos del presente Contrato señala como su domicilio el ubicado en Calzada de la Virgen número 2799, Edificio B, Planta Baja, Colonia CTM Culhuacán, Delegación Coyoacán, C.P. 04480, en el Distrito Federal. ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="33" y="257" width="504" height="12"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>"+"II. Declara \""+$P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO})+"\": "+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="281" width="504" height="66"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["II.a. Que es de nacionalidad <style isBold='true'>mexicana</style>, en pleno uso y goce de las facultades que le otorga la ley, y que cuenta con los conocimientos y, en su caso, con la experiencia necesaria para prestar el servicio requerido por <style isBold='true'>\"La Dependencia\"</style>, a través de la "+ "<style isBold='true'>" + $F{DESC_UNIDAD} + "</style>" +"."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="31" y="347" width="504" height="48"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[II.b. Que manifiesta su conformidad para que el pago del impuesto sobre la renta que le corresponda como persona física, se efectúe en los términos del Capítulo I del Título IV de la Ley del Impuesto sobre la Renta.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="33" y="403" width="502" height="40"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["II.c. Que cuenta con el <style isBold='true'>Registro Federal de Contribuyentes número "+$F{PLAZA_RFC}+"</style>, otorgado por el Servicio de Administración Tributaria órgano desconcentrado de la Secretaría de Hacienda y Crédito Público."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="453" width="504" height="80"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["II.d. Que cuenta con estudios y conocimientos en materia de " +
+"<style isBold='true'>" + $P{PAR_CONOCIMIENTOS} + "</style>" +
+" de <style isBold='true'>" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO})+
+"</style>, y conoce plenamente las características y necesidades de los servicios en materia del presente Contrato, así como que ha considerado todos los factores que intervienen para desarrollar eficazmente las actividades que desempeñará."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="541" width="504" height="47"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["II.e Que de conformidad con lo dispuesto por el artículo 32-D del Código Fiscal de la Federación,"+
+"<style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style>"+
+" se encuentra al corriente en el cumplimiento de sus obligaciones fiscales."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="31" y="594" width="506" height="59"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[II.f Que manifiesta, bajo protesta de decir verdad, que no desempeña empleo, cargo o comisión en el servicio público ni se encuentra inhabilitado para el desempeño de éstos, así como que a la suscripción del presente documento no está prestando servicios profesionales por honorarios en la misma y/o en distinta dependencia o entidad de la Administración Pública  Federal, en la Procuraduría General de la]]></text>
+			</staticText>
+		</band>
+		<band height="617">
+			<staticText>
+				<reportElement x="31" y="12" width="504" height="86"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[República, en un Tribunal Administrativo o en la Presidencia de la República. Asimismo, que no es parte en un juicio del orden civil, mercantil o laboral en contra de alguna de las referidas Instituciones públicas, y que no se encuentra en algún otro supuesto o situación que pudiera generar conflicto de intereses para prestar los servicios profesionales objeto del presente contrato.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="31" y="107" width="504" height="49"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["II.g. Que para los efectos del presente Contrato, señala como su domicilio el ubicado en <style isBold='true'>"+ $F{DOMICILIO} +"</style>."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="31" y="167" width="504" height="32"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[Declaran las partes que es su voluntad celebrar el presente Contrato, para lo cual convienen en sujetarse a las siguientes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="189" y="250" width="187" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C L Á U S U L A S]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="31" y="305" width="502" height="105"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>PRIMERA.-</style> <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>" + $F{DESC_UNIDAD} +
+"</style>, encomienda a  <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style>," +
+" y éste se obliga a prestar los servicios profesionales consistentes en <style isBold='true'>" + $P{PAR_SERVICIOS} +
+"</style>, así como a rendir los informes de las actividades desarrolladas cuando se le requiera," +
+" mismos que deberá presentar al servidor público que designe <style isBold='true'>\"La Dependencia\"</style>" +
+", a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style>."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="429" width="500" height="84"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>SEGUNDA.-</style> <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) +
+"\"</style> se obliga a aplicar su capacidad y sus conocimientos para cumplir satisfactoriamente con las actividades que le encomiende <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style>, así como a responder  de la  calidad de los servicios y de cualquier otra responsabilidad en la que incurra, así como de los daños y perjuicios que por inobservancia o negligencia de su parte se causaran a <style isBold='true'>\"La Dependencia\"</style>."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="530" width="500" height="87"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>TERCERA.-</style> <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) +
+"\"</style> se obliga a desempeñar los servicios objeto del Contrato a favor de <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style>, en forma personal e independiente por lo que será el único responsable de la ejecución de los servicios cuando no se ajusten a los términos y condiciones de este Contrato."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="569">
+			<textField>
+				<reportElement x="33" y="21" width="500" height="99"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>CUARTA.-</b> <b>\"La Dependencia\"</b>, a través de la Dirección General de Recursos Humanos cubrirá a <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> por concepto de sus honorarios, la <b>cantidad total de $"+$F{IMP_HONO}.trim()+" M.N. ("+
+$P{REPORT_SCRIPTLET}.convertirLetras(new BigDecimal($F{IMP_HONO}.trim().replaceAll(",", "")).intValue()).toUpperCase()+ " PESOS " + $F{IMP_HONO}.trim().replaceAll(",", "").split("\\.")[1]
++ "/100" +")</b>, dicho importe será pagado en " + $P{REPORT_SCRIPTLET}.getQuincenas($F{PLAZA_INI_CONT},$F{PLAZA_FIN_CONT}) + " quincenas vencidas cada una por un importe bruto de <b>$"+$F{IMP_QNAL}.trim()+" M.N. ("+
+$P{REPORT_SCRIPTLET}.convertirLetras(new BigDecimal($F{IMP_QNAL}.trim().replaceAll(",", "")).intValue()).toUpperCase()+ " PESOS " + $F{IMP_QNAL}.trim().replaceAll(",", "").split("\\.")[1]
++ "/100" +")</b> previa entrega a la "+$F{DESC_UNIDAD}+", de los informes o de los servicios encomendados a satisfacción de <b>\"La Dependencia\"</b>, a través de la <b>"+$F{DESC_UNIDAD}+"</b>."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="141" width="498" height="141"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> está de acuerdo en que <b>\"La Dependencia\"</b>, a través de la Dirección General de Recursos Humanos le retendrá de los pagos que reciba por concepto de honorarios, la cantidad que resulte aplicable en los términos de la Ley del Impuesto sobre la Renta, por lo cual <b>\"La Dependencia\"</b>, a través de la Dirección General de Recursos Humanos, le extenderá la constancia de retención correspondiente. <br><br>" +
+"<b>\"La Dependencia\"</b>, cubrirá a <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> los gastos de viaje y pasajes, cuando requiera realizar actividades propias del Contrato fuera de la entidad en la que presta habitualmente sus servicios, homologando dichos gastos de acuerdo a lo dispuesto en los lineamientos internos para comisiones, viáticos y pasajes nacionales e internacionales."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="301" width="496" height="30"/>
+				<textElement markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>QUINTA.-</style> El presente Contrato observará una <style isBold='true'>vigencia de " +
+new SimpleDateFormat("dd/MMM/yyyy").format(new SimpleDateFormat("dd/MM/yyyy").parse($F{PLAZA_INI_CONT})) + " hasta " +
+new SimpleDateFormat("dd/MMM/yyyy").format(new SimpleDateFormat("dd/MM/yyyy").parse($F{PLAZA_FIN_CONT})) + "</style>."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="435" width="498" height="134"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>SÉPTIMA.-</b> <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> se obliga a no divulgar a terceras personas, por medio de publicaciones, informes o cualquier otro medio, los datos y resultados que obtenga con motivo de la prestación de los servicios objeto de este Contrato, ni la información que <b>\"La Dependencia\"</b> le proporcione o a la que tenga acceso en razón del objeto del presente Contrato.<br><br><br><br>" +
+"<b>OCTAVA.-</b> <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> no podrá ceder en forma parcial ni total en favor de cualquier otra persona física o moral, los derechos y obligaciones derivadas del presente Contrato."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="356" width="498" height="60"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>SEXTA.-</style> <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style> no podrá con motivo de la prestación de los servicios que realice a <style isBold='true'>\"La Dependencia\"</style> asesorar, patrocinar o constituirse como consultor de cualquier persona que tenga relaciones directas o indirectas con el objeto de las actividades que lleve a cabo."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="568">
+			<textField>
+				<reportElement x="31" y="3" width="498" height="44"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>NOVENA.-</b> <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> comunicará a <b>\"La Dependencia\"</b> cualquier hecho o circunstancia que por virtud de los servicios prestados pudieran beneficiar o evitar perjuicio a la misma."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="47" width="498" height="110"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>DÉCIMA.-</style> Para el cumplimiento del presente Contrato <style isBold='true'>\"La Dependencia\"</style>, designa a <style isBold='true'>" + $P{PAR_INFORME} + "</style>, <style isBold='true'>" + $P{PAR_CARGO} + "</style>, como administrador de este Contrato, quien tendrá las facultades para supervisar su estricto cumplimiento; revisar las actividades que desempeñe <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style>; girar las instrucciones que considere oportunas; verificar que los servicios profesionales se presten conforme a lo indicado en este Contrato; recibir a su entera satisfacción los informes de las actividades desarrolladas por <style isBold='true'>\"La Prestadora de los Servicios\"</style>, así como el resultado de los servicios pactados en el Contrato, y podrá solicitar, en su caso, ante las autoridades competentes su cumplimiento ó rescisión según corresponda."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="157" width="498" height="87"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>DÉCIMA PRIMERA.-</b> <b>\"La Dependencia\"</b> podrá rescindir el presente Contrato sin necesidad de juicio, por cualquiera de las siguientes causas imputables a <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b>.<br><br>" +
+"a)     Por prestar los servicios deficientemente, de manera inoportuna o por no apegarse a lo estipulado en el presente Contrato.<br><br>" +
+"b)     Por no observar la discreción debida respecto de la información a la que tenga acceso como consecuencia de la prestación de los servicios encomendados."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="247" width="500" height="39"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["c) Por suspender injustificadamente la prestación de los servicios o por negarse a corregir lo rechazado por <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style>."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="286" width="498" height="29"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["d) Por negarse a informar a <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style>, sobre la prestación y/o resultado de los servicios encomendados."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="31" y="325" width="498" height="98"/>
+				<textElement markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<text><![CDATA[e)   Por impedir el desempeño normal de las labores de <b>"La Dependencia"</b> durante la prestación de los servicios.<br><br>
+f)   Si se comprueba que la protesta a que se refiere la declaración II.f., se realizó con falsedad, o en su caso, por no acreditar la compatibilidad de empleo, y<br><br>
+g)   Por incumplimiento de cualquiera de las obligaciones establecidas en este Contrato.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="33" y="435" width="496" height="74"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Para los efectos a los que se refiere esta Cláusula <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>" + $F{DESC_UNIDAD}+"</style>, comunicará por escrito a <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style>, el incumplimiento en que éste haya incurrido, para que en un término de diez días hábiles, exponga lo que a su derecho convenga, y aporte, en su caso, las pruebas correspondientes."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="602">
+			<textField>
+				<reportElement x="33" y="21" width="496" height="74"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Transcurrido el término señalado en el párrafo anterior <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style>, tomando en cuenta los argumentos y pruebas ofrecidos por <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style> determinará de manera fundada y motivada si resulta procedente o no rescindir el Contrato y comunicará por escrito a <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style> dicha determinación."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="115" width="496" height="82"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>DÉCIMA SEGUNDA.-</b> <b>\"La Dependencia\"</b> en cualquier momento podrá dar por terminado anticipadamente el presente Contrato sin responsabilidad para ésta, y sin necesidad de que medie resolución judicial alguna, dando aviso por escrito a <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> con treinta días naturales de anticipación. En todo caso, <b>\"La Dependencia\"</b> deberá cubrir los honorarios que correspondan por los servicios prestados y que haya recibido a su entera satisfacción."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="213" width="496" height="91"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Asimismo <style isBold='true'>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</style> podrá darlo por concluido de manera anticipada previo aviso que por escrito realice a <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style> en el plazo señalado en el párrafo que antecede. <style isBold='true'>\"La Dependencia\"</style>, a través de la <style isBold='true'>"+$F{DESC_UNIDAD}+"</style> se reserva el derecho de aceptar la terminación anticipada del Contrato sin que ello implique la renuncia a la aplicación de las acciones legales que, en su caso, procedan."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="304" width="496" height="281"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>DÉCIMA TERCERA.-</b> <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> no será responsable por cualquier evento de caso fortuito o de fuerza mayor que le impida parcial o totalmente cumplir con las obligaciones contraídas por virtud del presente Contrato, en el entendido de que dichos supuestos deberán ser debidamente acreditados.<br><br><br>" +
+
+"<b>DÉCIMA CUARTA.-</b> <b>\"La Dependencia\"</b> no adquiere ni reconoce obligación alguna de carácter laboral en favor de <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> en virtud de no ser aplicables a la relación contractual que consta en este instrumento, los artículos 1° y 8° de la Ley Federal del Trabajo, así como 2° y 8° de la Ley Federal de los Trabajadores al Servicio del Estado, reglamentaria del apartado B) del artículo 123 constitucional, por lo que <b>\"" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "\"</b> no será considerado como trabajador para los efectos legales.<br><br><br>" +
+
+"<b>DÉCIMA QUINTA.-</b> Las partes aceptan que todo lo no previsto en el presente Contrato se regirá por las disposiciones contenidas en el Código Civil Federal, y en caso de controversia para su interpretación y cumplimiento, se someterán a la jurisdicción de los Tribunales Federales de la Ciudad de México, Distrito Federal, renunciando al fuero que les pudiera corresponder en razón de su domicilio presente, futuro o por cualquier otra causa."]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="343">
+			<textField>
+				<reportElement x="31" y="0" width="498" height="78"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LEÍDO QUE FUE POR LAS PARTES QUE EN EL PRESENTE CONTRATO INTERVIENEN Y SABEDORES DE SU CONTENIDO, ALCANCE Y EFECTOS LEGALES, " +
+"SE FIRMA EL MISMO AL CALCE Y AL MARGEN EN TODAS SUS FOJAS ÚTILES, EN LA CIUDAD DE MÉXICO, EL <style isBold='true'>" +
+new SimpleDateFormat("dd' de 'MMMMM' del año 'yyyy").format(new SimpleDateFormat("dd/MM/yyyy").parse($F{PLAZA_INI_CONT})).toUpperCase() + "</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="72" y="91" width="207" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Por la Dependencia]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="299" y="91" width="207" height="12"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font fontName="Adobe Caslon Pro" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style isBold='true'>" + $P{REPORT_SCRIPTLET}.getPrestadorGenero($F{CURP_EMPLEADO}) + "</style>"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="88" y="152" width="191" height="1"/>
+			</line>
+			<line>
+				<reportElement x="318" y="152" width="170" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="72" y="157" width="207" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TITULAR}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="72" y="103" width="207" height="29"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA["LA " + $V{CARGO}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="157" width="207" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA["C. " + $F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="72" y="211" width="207" height="36"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Por la Unidad Administrativa Responsable]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="72" y="251" width="207" height="36"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REF_VOBO_TITULO}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="299" y="211" width="207" height="36"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Responsable y Administrador del Cumplimiento del Contrato]]></text>
+			</staticText>
+			<line>
+				<reportElement x="88" y="323" width="191" height="1"/>
+			</line>
+			<line>
+				<reportElement x="318" y="322" width="170" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="299" y="251" width="207" height="36"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PAR_CARGO}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="324" width="207" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{PAR_INFORME}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="72" y="324" width="227" height="19"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REF_VOBO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="477" y="6" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="537" y="6" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band height="50">
+			<staticText>
+				<reportElement x="189" y="17" width="231" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<text><![CDATA[NO EXISTEN ELEMENTOS QUE MOSTRAR]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>

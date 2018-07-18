@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="250.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gob.shcp.certificados.nominaservice.AvisoFXMLController">
+  <children>
+    <VBox layoutX="14.0" layoutY="25.0" prefHeight="169.0" prefWidth="572.0">
+      <children>
+        <HBox prefHeight="30.999908447265625" prefWidth="572.0">
+          <children>
+            <Label minHeight="14.0" prefHeight="14.0" prefWidth="97.0" text="CodRespuesta" />
+            <TextField fx:id="codRespuesta" disable="false" editable="false" opacity="1.0" prefHeight="21.0" prefWidth="475.0" promptText="" />
+          </children>
+        </HBox>
+        <HBox prefHeight="72.0" prefWidth="572.0">
+          <children>
+            <Label prefHeight="59.0" prefWidth="97.0" text="UrlSalida" />
+            <TextArea fx:id="urlSalida" prefHeight="58.999900000002526" prefWidth="475.0" wrapText="true" />
+          </children>
+        </HBox>
+        <HBox prefHeight="79.0" prefWidth="572.0">
+          <children>
+            <Label prefHeight="88.0" prefWidth="97.0" text="Respuesta" />
+            <TextArea fx:id="respuesta" disable="false" editable="false" opacity="1.0" prefHeight="74.0" prefWidth="475.0" promptText="" wrapText="true" />
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+    <HBox layoutX="265.0" layoutY="209.0" minHeight="17.0" prefHeight="25.0" prefWidth="70.0">
+      <children>
+        <Button id="aceptar" mnemonicParsing="false" onAction="#handleOk" text="Aceptar" />
+      </children>
+    </HBox>
+  </children>
+</AnchorPane>

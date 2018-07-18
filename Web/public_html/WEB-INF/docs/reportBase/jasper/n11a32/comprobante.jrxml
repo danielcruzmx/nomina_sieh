@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report12" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.9965000000000037"/>
+	<property name="ireport.x" value="206"/>
+	<property name="ireport.y" value="135"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:/Users/jorge_medinar/Desktop/DESARROLLO/JAXB/workspace/ComprobanteFiscalPDF/jasper"]]></defaultValueExpression>
+	</parameter>
+	<field name="fechaEmision" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/@fecha]]></fieldDescription>
+	</field>
+	<field name="descuentoTotal" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/@descuento]]></fieldDescription>
+	</field>
+	<field name="ingresosTotal" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/@subTotal]]></fieldDescription>
+	</field>
+	<field name="liquido" class="java.lang.Double">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/@total]]></fieldDescription>
+	</field>
+	<field name="folio" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/@folio]]></fieldDescription>
+	</field>
+	<field name="certificado" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/@certificado]]></fieldDescription>
+	</field>
+	<field name="rfc" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Emisor/@rfc]]></fieldDescription>
+	</field>
+	<field name="nombreEmisor" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Emisor/@nombre]]></fieldDescription>
+	</field>
+	<field name="nombreReceptor" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Receptor/@nombre]]></fieldDescription>
+	</field>
+	<field name="rfcReceptor" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Receptor/@rfc]]></fieldDescription>
+	</field>
+	<field name="curpReceptor" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@CURP]]></fieldDescription>
+	</field>
+	<field name="NSS" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@NumSeguridadSocial]]></fieldDescription>
+	</field>
+	<field name="banco" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@Banco]]></fieldDescription>
+	</field>
+	<field name="clabe" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@CLABE]]></fieldDescription>
+	</field>
+	<field name="departamento" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@Departamento]]></fieldDescription>
+	</field>
+	<field name="calle" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Emisor/cfdi:DomicilioFiscal/@calle]]></fieldDescription>
+	</field>
+	<field name="tipoRegimen" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@TipoRegimen]]></fieldDescription>
+	</field>
+	<field name="fechaInicialPago" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@FechaInicialPago]]></fieldDescription>
+	</field>
+	<field name="fechaFinalPago" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@FechaFinalPago]]></fieldDescription>
+	</field>
+	<field name="fechaPago" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@FechaPago]]></fieldDescription>
+	</field>
+	<field name="totalGravado" class="java.lang.Double">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/nomina:Ingresos/@TotalGravado]]></fieldDescription>
+	</field>
+	<field name="selloCFD" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/tfd:TimbreFiscalDigital/@selloCFD]]></fieldDescription>
+	</field>
+	<field name="selloSAT" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/tfd:TimbreFiscalDigital/@selloSAT]]></fieldDescription>
+	</field>
+	<field name="folioFiscal" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/tfd:TimbreFiscalDigital/@UUID]]></fieldDescription>
+	</field>
+	<field name="fechaTimbrado" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/tfd:TimbreFiscalDigital/@FechaTimbrado]]></fieldDescription>
+	</field>
+	<field name="noCertificadoSAT" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/tfd:TimbreFiscalDigital/@noCertificadoSAT]]></fieldDescription>
+	</field>
+	<field name="generales" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/@Puesto]]></fieldDescription>
+	</field>
+	<field name="percepcionesTG" class="java.lang.Double">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/nomina:Percepciones/@TotalGravado]]></fieldDescription>
+	</field>
+	<field name="percepcionesTE" class="java.lang.Double">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/nomina:Percepciones/@TotalExento]]></fieldDescription>
+	</field>
+	<field name="deduccionesTG" class="java.lang.Double">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/nomina:Deducciones/@TotalGravado]]></fieldDescription>
+	</field>
+	<field name="deduccionesTE" class="java.lang.Double">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Complemento/nomina:Nomina/nomina:Deducciones/@TotalExento]]></fieldDescription>
+	</field>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="72" y="140" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="227" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="295" y="120" width="277" height="100" forecolor="#CCCCCC" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="138" width="42" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[RFC :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="151" width="42" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[CURP :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="138" width="198" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{rfcReceptor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="151" width="198" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{curpReceptor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="164" width="42" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[NSS :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="164" width="198" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NSS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="177" width="42" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Banco :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="177" width="198" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{banco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="190" width="42" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[CLABE :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="190" width="198" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{clabe}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="295" y="125" width="52" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[UR :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="125" width="199" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{departamento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="295" y="62" width="77" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha de Emisión :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="380" y="62" width="182" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fechaEmision}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="295" y="203" width="52" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[P.C.P. :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="88" width="121" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat( "dd/MMM/yyyy", new Locale("es","MX") ).format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( $F{fechaPago} ) )]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="7" y="3" width="120" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SHCP.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="107" width="277" height="13" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Datos del Empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="295" y="107" width="277" height="13" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Datos Laborales]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="1" y="120" width="277" height="100" forecolor="#CCCCCC" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="295" y="138" width="52" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Puesto :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="151" width="52" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Plaza :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="164" width="52" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Nivel :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="177" width="52" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Distribución :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="190" width="52" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[No. Pensión :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="75" width="77" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha  de Timbrado :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="380" y="75" width="182" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fechaTimbrado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="295" y="88" width="77" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[No. Certificado :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="380" y="88" width="182" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{noCertificadoSAT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="49" width="63" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Tipo de Nómina :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="295" y="49" width="77" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Folio Fiscal :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="380" y="49" width="182" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{folioFiscal}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="49" width="111" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generales}.substring( 0, 13 )]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="46" width="569" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="295" y="25" width="277" height="21" forecolor="#000000" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Comprobante de Pago de Nómina]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="125" width="42" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Nombre :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="62" width="63" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Folio :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="62" width="49" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{folio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="126" y="75" width="42" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat( "dd/MMM/yyyy", new Locale("es","MX") ).format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( $F{fechaFinalPago} ) )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="72" y="75" width="42" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[new SimpleDateFormat( "dd/MMM/yyyy", new Locale("es","MX") ).format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( $F{fechaInicialPago} ) )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="125" width="198" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nombreReceptor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="75" width="63" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Período de Pago :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="75" width="12" height="13"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[al]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="88" width="63" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha de Pago :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="151" width="199" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generales}.substring( 13, 19 )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="164" width="199" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generales}.substring( 19, 23 )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="177" width="199" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generales}.substring( 23, 33 )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="190" width="199" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generales}.substring( 33, 35 )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="203" width="199" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generales}.substring( 35, 45 )]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="354" y="138" width="199" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{generales}.substring( 45,52 ).concat(" ").concat($F{generales}.substring( 52))]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="117">
+			<subreport>
+				<reportElement x="0" y="0" width="278" height="117"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("//nomina:Percepcion")]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/nominaIngresos.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="295" y="0" width="276" height="117"/>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.JRXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("//nomina:Deduccion")]]></dataSourceExpression>
+				<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "/nominaDescuentos.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="199">
+			<staticText>
+				<reportElement x="0" y="104" width="51" height="45"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="9"/>
+				</textElement>
+				<text><![CDATA[Sello CFDI :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="104" width="373" height="45"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{selloCFD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="153" width="51" height="45"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="9"/>
+				</textElement>
+				<text><![CDATA[Sello SAT :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="153" width="373" height="45"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{selloSAT}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="-1" y="48" width="52" height="45"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="9"/>
+				</textElement>
+				<text><![CDATA[Certificado :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="51" y="48" width="373" height="45"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{certificado}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="100" width="423" height="1"/>
+			</line>
+			<line>
+				<reportElement x="1" y="150" width="423" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="121" y="13" width="83" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Total Percepciones :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="13" width="83" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Total Descuentos :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="405" y="26" width="83" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<text><![CDATA[Importe Neto :]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="488" y="13" width="67" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{deduccionesTG}+$F{deduccionesTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="204" y="13" width="67" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{percepcionesTG}+$F{percepcionesTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="488" y="26" width="68" height="13"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[($F{percepcionesTG}+$F{percepcionesTE})-($F{deduccionesTG}+$F{deduccionesTE})]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="12" width="569" height="1" forecolor="#CCCCCC"/>
+			</line>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="432" y="59" width="140" height="140"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/qr_png.png"]]></imageExpression>
+			</image>
+		</band>
+	</columnFooter>
+</jasperReport>

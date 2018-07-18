@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PlantillaHonorarios" printOrder="Horizontal" columnDirection="RTL" pageWidth="1512" pageHeight="612" orientation="Landscape" columnWidth="1512" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[Select p.id_UNIDAD_PRE,case when p.id_UNIDAD_PRE = '100' then 'OFICINA DEL C. SECRETARIO'
+else upper(u.DESC_UNIDAD) end || ' UR'||' '||p.id_UNIDAD_PRE  descripcion, p.ID_PLAZA, ap.ID_NIVEL_PTO,
+upper(trim(e.NOMBRE_EMPLEADO))||' '||upper(trim(e.PRIMER_APELLIDO))||' '||upper(trim(e.SEGUNDO_APELLIDO)) Ocupante,
+to_char(p.PLAZA_INI_CONT,'dd/mm/YYYY') fec_ini_contrato,to_char(p.PLAZA_FIN_CONT,'dd/mm/YYYY') fec_fin_contrato,
+ap.ID_JERARQUIA, p.id_UNIDAD_PRE UR_PTAL,  upper(s.DESC_SIT_PLAZA) situacion_plaza, p.PLAZA_RFC
+From TD_PLAZA p, TC_ATRIBUTO_PUESTO ap, TC_UNIDAD u, TC_SIT_PLAZA s, TD_EMPLEADO e
+Where p.id_UNIDAD_PRE = U.ID_UNIDAD
+and u.UNI_CICLO = $P{PAR_CICLO}
+and p.ID_GRUPO_PAGO in ('H')
+and p.ID_SIT_PLAZA like 'O%'
+and p.ID_PUESTO_PRE = ap.ID_ATRIBUTO_PUESTO
+and ap.AP_FIN = '01/01/2099'
+and p.ID_SIT_PLAZA = s.ID_SIT_PLAZA
+and p.PLAZA_RFC = e.RFC_EMPLEADO(+)
+order by p.id_UNIDAD_PRE, ap.ID_JERARQUIA, ap.ID_NIVEL_PTO, p.ID_PLAZA]]>
+	</queryString>
+	<field name="ID_UNIDAD_PRE" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="ID_PLAZA" class="java.math.BigDecimal"/>
+	<field name="ID_NIVEL_PTO" class="java.lang.String"/>
+	<field name="OCUPANTE" class="java.lang.String"/>
+	<field name="FEC_INI_CONTRATO" class="java.lang.String"/>
+	<field name="FEC_FIN_CONTRATO" class="java.lang.String"/>
+	<field name="ID_JERARQUIA" class="java.lang.String"/>
+	<field name="UR_PTAL" class="java.lang.String"/>
+	<field name="SITUACION_PLAZA" class="java.lang.String"/>
+	<field name="PLAZA_RFC" class="java.lang.String"/>
+	<title>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="55" y="0" width="540" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="595" y="0" width="55" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="650" y="0" width="69" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="719" y="0" width="337" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ocupante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="55" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1056" y="0" width="86" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Inicio Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1142" y="0" width="83" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha Final Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1225" y="0" width="62" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Jerarquía]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1287" y="0" width="67" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Presupuestal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1406" y="0" width="85" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1354" y="0" width="52" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situación Plaza]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="55" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_UNIDAD_PRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="55" y="0" width="540" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="595" y="0" width="55" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="650" y="0" width="69" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_NIVEL_PTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="719" y="0" width="337" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{OCUPANTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="1056" y="0" width="86" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FEC_INI_CONTRATO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="1142" y="0" width="83" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FEC_FIN_CONTRATO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1225" y="0" width="62" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_JERARQUIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1287" y="0" width="67" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR_PTAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1354" y="0" width="52" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{SITUACION_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1406" y="0" width="85" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PLAZA_RFC}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

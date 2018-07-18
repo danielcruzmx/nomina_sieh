@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+    
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+                <!--Catalogos-->
+                <prop key="tcGenero">
+                    SELECT ID_GENERO, ID_GENERO || ' - ' || DESC_GENERO 
+                    FROM TC_GENERO
+                </prop>
+                <prop key="tcEstado">
+                    SELECT ID_EDO, TO_CHAR(ID_EDO,'00') || ' - ' || DESC_ESTADO
+                    FROM TC_ESTADO
+                    ORDER BY ID_EDO
+                </prop>
+                <prop key="tcBanco">
+                    SELECT ID_BANCO, ID_BANCO || ' - ' || DESC_BANCOS DESCRIPCION
+                    FROM TC_BANCO
+                    ORDER BY ID_BANCO
+                </prop>
+                <prop key="tcDominioIdioma">
+                    SELECT ID_DOMINIO_IDIOMA, ID_DOMINIO_IDIOMA || ' - ' || DESC_DOMINIO_IDIOMA
+                    FROM TC_DOMINIO_IDIOMA
+                    ORDER BY ID_DOMINIO_IDIOMA
+                </prop>
+                <prop key="tcMunicipio">
+                        select a.ID_MUNICIPIO, a.ID_MUNICIPIO ||' - '|| a.DESC_MUNICIPIO
+                        from tc_municipio a, tc_estado b
+                        where a.ID_EDO = b.ID_EDO
+                        and b.ID_EDO = ?
+                        order by a.ID_MUNICIPIO asc
+                </prop>
+                <prop key="tcMuniNom">
+                        select a.ID_MUNICIPIO, a.ID_MUNICIPIO ||' - '|| a.DESC_MUNICIPIO
+                        from tc_municipio a, tc_estado b
+                        where a.ID_EDO = b.ID_EDO
+                        and ##b.ID_EDO##
+                        order by a.ID_MUNICIPIO asc
+                </prop>
+                <prop key="tcDistUnidadIdUnidad">
+                    SELECT ID_UNIDAD AS UNIDAD, ID_UNIDAD
+                        FROM TC_DIST_UNIDAD
+                       WHERE ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="tcDistUnidadIdDistUnidad">
+                    SELECT ID_DIST_UNIDAD AS DISTUNIDAD, ID_DIST_UNIDAD FROM TC_DIST_UNIDAD
+                        WHERE ID_UNIDAD = ?
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="tcDistUnidad">
+                    SELECT ID_DIST_UNIDAD AS DISTUNIDAD, ID_DIST_UNIDAD FROM TC_DIST_UNIDAD
+                </prop>
+                <prop key="tcTipoPago">
+                        select ID_TIPO_PAGO, ID_TIPO_PAGO ||' - '|| DESC_TIPO_PAGO
+                        from tc_tipo_pago
+                </prop>
+                <prop key="tcEstadoCivil">
+                        SELECT ID_EDO_CIVIL, ID_EDO_CIVIL|| ' - ' || DESC_EDO_CIVIL
+                        FROM TC_ESTADO_CIVIL
+                        ORDER BY ID_EDO_CIVIL
+                </prop>
+                <prop key="tcProfnCarrera">
+                        SELECT ID_PROFN_CARRERA, TO_CHAR(ID_PROFN_CARRERA,'0.00')|| ' - ' || DESC_PROFN_CARRERA
+                        FROM TC_PROFN_CARRERA
+                        ORDER BY ID_PROFN_CARRERA
+                </prop>
+                <prop key="tcProfnCarreraCurriculo">
+<!--                        SELECT ID_PROFN_CARRERA, ID_PROFN_CARRERA|| ' - ' || DESC_PROFN_CARRERA -->
+                        SELECT DESC_PROFN_CARRERA, ID_PROFN_CARRERA|| ' - ' || DESC_PROFN_CARRERA
+                        FROM TC_PROFN_CARRERA
+                        ORDER BY ID_PROFN_CARRERA
+                </prop>
+                <prop key="tcNivelEscolar">
+                    select ID_NIVEL_ESCOLAR, ID_NIVEL_ESCOLAR ||' - '|| DESC_NIVEL_ESCOLAR
+                    from tc_nivel_escolar
+                </prop>
+                <prop key="tcInstEducativa">
+                    select ID_INST_EDUCAT, TO_CHAR(ID_INST_EDUCAT, '00') ||' - '|| DESC_INST_EDUCAT
+                    from TC_INST_EDUCAT
+                </prop>
+                <prop key="tcEspProtCivil">
+                    SELECT ID_ESP_PROT_CIVIL, ID_ESP_PROT_CIVIL || ' - ' || DESC_ESP_PROT_CIVIL DESCRIPCION
+                    FROM TC_ESP_PROT_CIVIL
+                    ORDER BY ID_ESP_PROT_CIVIL
+                </prop>
+                <prop key="tcInstProtCiv">
+                    select ID_INST_PROT_CIV, ID_INST_PROT_CIV || ' - ' || DESC_INST_PROT_CIV
+                    from tc_inst_prot_civ
+                </prop>
+                <prop key="tcSitPlaza">
+                    select ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    from tc_sit_plaza
+                </prop>
+                <prop key="tcUnidadEdo">
+                    SELECT 
+                        a.ID_EDO, a.ID_EDO ||' - '|| b.DESC_ESTADO
+                    FROM 
+                        tc_unidad_edo a, tc_estado b
+                    WHERE 
+                        a.ID_EDO = b.ID_EDO AND 
+                        a.ID_UNIDAD = ?
+                </prop>
+                <prop key="tcUnidadEjec">
+                    SELECT   id_unidad,
+                             id_unidad || ' - ' || id_unidad_ejec || ' - ' || desc_unidad_ejec
+                        FROM tc_unidad_ejecutora
+                    ORDER BY uni_ejec_ciclo DESC, id_unidad ASC
+                </prop>
+                <prop key="tcPuesto">
+                    select ID_PUESTO, ID_PUESTO ||' - '|| DESC_PUESTO
+                    from tc_puesto ORDER BY ID_PUESTO asc
+                </prop>
+                <prop key="tcTipoPlaza">
+                    select ID_TIPO_PLAZA, ID_TIPO_PLAZA ||' - '|| DESC_TIPO_PLAZA
+                    from tc_tipo_plaza
+                </prop>
+                <prop key="tcTipoServPub">
+                    select ID_SERV_PUB, ID_SERV_PUB ||' - '|| DESC_TIPO_SERV_PUB
+                    from tc_tipo_serv_pub
+                </prop>
+                <prop key="tcZonaEcon">
+                    select ID_ZONA_ECON, ID_ZONA_ECON ||' - '|| DESC_ZONA_ECON
+                    from tc_zona_econ
+                </prop>
+                <prop key="tcZonaDist">
+                    SELECT   id_zona_dist, id_zona_dist || ' - ' || zd_rfc
+                        FROM tc_zona_dist
+                    ORDER BY id_zona_dist ASC
+                </prop>
+                <prop key="tcConceptoPago">
+                    SELECT id_concepto, id_concepto || ' - ' || desc_con_pag
+                      FROM tc_concepto_pago
+                </prop>
+                <prop key="tcConceptoPagoByTipoCpto">
+                    SELECT id_concepto, id_concepto || ' - ' || desc_con_pag
+                      FROM tc_concepto_pago where id_tipo_cpto = ?
+                  ORDER BY id_concepto
+                </prop>
+                <prop key="tcConceptoPagoSeguroSeparacion">
+                    SELECT cp.id_concepto, cp.desc_con_pag
+                     FROM tc_concepto_pago cp
+                    where id_tipo_cpto = 'D'
+                      and id_concepto in ('82','83')
+                </prop>
+                <prop key="tcConceptoPagoPercepcion">
+                    SELECT c.id_tipo_cpto || c.id_concepto AS id_concepto,
+                           c.id_tipo_cpto || c.id_concepto || ' - '
+                           || c.desc_con_pag AS descripcion
+                      FROM tc_concepto_pago c, tc_tipo_concepto t
+                     WHERE t.id_tipo_concepto = c.id_tipo_cpto
+                       AND c.cp_con_pension = 'S'
+                       AND c.id_tipo_cpto = 'P'
+                </prop>
+                <prop key="tcConceptoPagoDeduccion">
+                    SELECT c.id_tipo_cpto || c.id_concepto AS id_concepto,
+                           c.id_tipo_cpto || c.id_concepto || ' - '
+                           || c.desc_con_pag AS descripcion
+                      FROM tc_concepto_pago c, tc_tipo_concepto t
+                     WHERE t.id_tipo_concepto = c.id_tipo_cpto
+                       AND c.cp_con_pension = 'S'
+                       AND c.id_tipo_cpto = 'D'
+                </prop>
+                <prop key="tcGrupoPago">
+                    select 
+                        ID_GRUPO_PAGO, ID_GRUPO_PAGO||' - '|| DESC_GRUPO_PAGO
+                    from 
+                        tc_grupo_pago
+                    order by ID_GRUPO_PAGO
+                </prop>
+                <prop key="tcAtributoPuestoNivel">
+                    select 
+                        TRIM(ID_NIVEL_PTO), TRIM(ID_NIVEL_PTO) AS NIVEL
+                    from 
+                        tc_atributo_puesto
+                    where TO_CHAR(AP_FIN,'DD-MM-YYYY') = '01-01-2099'  
+                    group by ID_NIVEL_PTO
+                    order by ID_NIVEL_PTO
+                </prop>
+                <prop key="tcMovsPersonal">
+                    SELECT   id_movs_personal,
+                             id_movs_personal || ' - ' || desc_movs_personal AS descmovper
+                        FROM tc_movs_personal
+                    ORDER BY desc_movs_personal
+                </prop>
+                <prop key="tcMovsPersonalMp">
+                    SELECT mp.id_movs_personal, mp.id_movs_personal || ' - ' || mp.desc_movs_personal
+                      FROM tc_movs_personal mp
+                </prop>
+                <prop key="tcMovsPersonalTrunca">
+                    select 
+                        ID_MOVS_PERSONAL, ID_MOVS_PERSONAL||' - '|| SUBSTR(DESC_MOVS_PERSONAL,1,56) AS DESCMOVPER
+                    from 
+                        tc_movs_personal
+                    order by ID_MOVS_PERSONAL
+                </prop>        
+                <prop key="tcUnidadTruncaPre">
+                    select 
+                        ID_UNIDAD, UNI_CICLO ||' - '|| ID_UNIDAD ||' - '|| SUBSTR(DESC_UNIDAD,1,56)
+                    from 
+                        tc_unidad 
+                    where
+                        1=1
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    ORDER BY ID_UNIDAD ASC
+                </prop>
+                <prop key="tcUnidadTruncaNom">
+                    select 
+                        ID_UNIDAD, UNI_CICLO ||' - '|| ID_UNIDAD ||' - '|| SUBSTR(DESC_UNIDAD,1,56)
+                    from 
+                        tc_unidad
+                    where
+                        1=1
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    ORDER BY ID_UNIDAD ASC
+                </prop>
+                <prop key="tcPuestoPre">
+                    SELECT 
+                        P.ID_PUESTO, P.ID_PUESTO ||' - '|| SUBSTR(P.DESC_PUESTO, 1, 50) AS DESCRIPCION
+                    FROM 
+                        TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                    WHERE 
+                        P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    ORDER BY ID_PUESTO ASC
+                </prop>
+                <prop key="tcPuestoNom">                 
+                    SELECT 
+                        P.ID_PUESTO, P.ID_PUESTO ||' - '|| SUBSTR(P.DESC_PUESTO, 1, 50) AS DESCRIPCION
+                    FROM 
+                        TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                    WHERE 
+                        P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    ORDER BY ID_PUESTO ASC
+                </prop>
+                <prop key="tcAtributoPuestoNivelPre">
+                    select 
+                        TRIM(ID_NIVEL_PTO), TRIM(ID_NIVEL_PTO) AS NIVEL
+                    from 
+                        tc_atributo_puesto
+                    where TO_CHAR(AP_FIN,'DD-MM-YYYY') = '01-01-2099'  
+                    group by ID_NIVEL_PTO
+                    order by ID_NIVEL_PTO
+                </prop>
+                <prop key="tcAtributoPuestoNivelNom">
+                    select 
+                        TRIM(ID_NIVEL_PTO), TRIM(ID_NIVEL_PTO) AS NIVEL
+                    from 
+                        tc_atributo_puesto
+                    where TO_CHAR(AP_FIN,'DD-MM-YYYY') = '01-01-2099'  
+                    group by ID_NIVEL_PTO
+                    order by ID_NIVEL_PTO
+                </prop>
+                <prop key="tcNombramientoPre">
+                    SELECT TRIM(ID_NOMBRAMIENTO) AS ID_CONCEPTO,  
+                            TRIM(DESC_NOMBRAMIENTO) AS DESCRIPCION
+                    FROM 
+                        TC_NOMBRAMIENTO
+                </prop>
+                <prop key="tcNombramientoNom">
+                    SELECT TRIM(ID_NOMBRAMIENTO) AS ID_CONCEPTO,  
+                            TRIM(DESC_NOMBRAMIENTO) AS DESCRIPCION
+                    FROM 
+                        TC_NOMBRAMIENTO
+                </prop>
+                <prop key="tcMotivoCancela">
+                    SELECT ID_MOTIVO_CANCELA, TO_CHAR(ID_MOTIVO_CANCELA, '000') || ' - ' || DESC_MOTIVO_CANCELA
+                    FROM TC_MOTIVO_CANCELA
+                </prop>
+                <prop key="QRegControl">
+                    select rc_qna_captura as id, rc_qna_captura as descripcion 
+                    from (select distinct rc_qna_captura from tn_reg_control order by rc_qna_captura desc)
+                    where rownum <![CDATA[<]]> 24 order by rc_qna_captura
+                </prop>
+                <prop key="idDistUnidades">
+                    SELECT d.id_dist_unidad as id, d.id_dist_unidad as descripcion
+                      FROM tc_dist_unidad d, td_plaza p
+                     WHERE d.id_unidad = p.id_unidad_nom
+                </prop>
+                <prop key="listaTiposConceptosPagos">
+                    select  tc_concepto_pago.ID_TIPO_CPTO || '-' || tc_concepto_pago.ID_CONCEPTO as id, 
+                           tc_concepto_pago.ID_TIPO_CPTO || ' ' || tc_concepto_pago.ID_CONCEPTO || ' - '||tc_concepto_pago.DESC_CON_PAG as descripcion
+                    from    tc_concepto_pago
+                    --where   tc_concepto_pago.ID_TIPO_CPTO not in ('C','U')
+                    where   tc_concepto_pago.ID_TIPO_CPTO not in ('C')
+                    and     (tc_concepto_pago.ID_TIPO_CPTO, tc_concepto_pago.ID_CONCEPTO) not in (
+                                select tc_concepto_pago_captura.ID_TIPO_CPTO, 
+                                       tc_concepto_pago_captura.ID_CPTO_PAGO
+                                        from tc_concepto_pago_captura)
+                </prop>
+                <prop key="listaTiposConceptosPagosConsulta">
+                    select  tc_concepto_pago_captura.ID_TIPO_CPTO || '-' || tc_concepto_pago_captura.ID_CPTO_PAGO as id,
+                            tc_concepto_pago.DESC_CON_PAG as descripcion
+                    from    tc_concepto_pago_captura,
+                            tc_concepto_pago
+                    where   tc_concepto_pago_captura.ID_TIPO_CPTO = tc_concepto_pago.ID_TIPO_CPTO
+                    and     tc_concepto_pago_captura.ID_CPTO_PAGO = tc_concepto_pago.ID_CONCEPTO
+                    order by id
+                </prop>
+                <prop key="listaNivelesConceptos">
+                    select substr(id_nivel_pto,1,1) as id,
+                           substr(id_nivel_pto,1,1) as descripcion
+                    from   tc_atributo_puesto
+                    where  tc_atributo_puesto.AP_FIN = to_date('01/01/2099')
+                    and    substr(id_nivel_pto,1,1) <![CDATA[<]]>> 'D'
+                    group  by substr(id_nivel_pto,1,1)
+                    order  by id
+                </prop>
+                <prop key="listaTiposNomina">
+                    SELECT   id_tipo_nomina ID, id_tipo_nomina || ' - ' || desc_tipo_nomina descripcion
+                        FROM tc_tipo_nomina
+                    ORDER BY descripcion
+                </prop>
+                <prop key="listaGruposPago">
+                    select ID_GRUPO_PAGO id,
+                           DESC_GRUPO_PAGO descripcion
+                    from tc_grupo_pago
+                    order by descripcion
+                </prop>
+                <prop key="listaEstadosNomina">
+                    select ID_EDO_NOM id,
+                           DESCRIBE_EDO_NOM descripcion
+                      from TC_ESTADO_NOMINA
+                     --where ID_EDO_NOM != 'C'
+                  order by descripcion
+                </prop>
+                <prop key="listaEstadosNominaAg">
+                    select ID_EDO_NOM id,
+                           DESCRIBE_EDO_NOM descripcion
+                      from TC_ESTADO_NOMINA
+                     where ID_EDO_NOM != 'C'
+                  order by descripcion
+                </prop>
+                <prop key="listaQuincenas">
+                    select (case when n<![CDATA[<]]>=9 then anio || '0' || n else anio || n end) id, (case when n<![CDATA[<]]>=9 then anio || '0' || n else anio || n end) quincena
+                    from (select SUBSTR(RC_QNA_CAPTURA,0,4) anio from tn_reg_control where RC_VIGENTE='S'), ( select rownum n from dual connect by level <![CDATA[<]]>= 24 )
+                    where n >= (select SUBSTR(RC_QNA_CAPTURA,5,2) quincena from tn_reg_control where RC_VIGENTE='S')
+                    union all
+                    select (case when n<![CDATA[<]]>=9 then anio+1 || '0' || n else anio+1 || n end) id, (case when n<![CDATA[<]]>=9 then anio+1 || '0' || n else anio+1 || n end) quincena
+                    from (select SUBSTR(RC_QNA_CAPTURA,0,4) anio from tn_reg_control where RC_VIGENTE='S'), ( select rownum n from dual connect by level <![CDATA[<]]>= 24 )
+                    union all
+                    select (case when n<![CDATA[<]]>=9 then anio+2 || '0' || n else anio+2 || n end) id, (case when n<![CDATA[<]]>=9 then anio+2 || '0' || n else anio+2 || n end) quincena
+                    from (select SUBSTR(RC_QNA_CAPTURA,0,4) anio from tn_reg_control where RC_VIGENTE='S'), ( select rownum n from dual connect by level <![CDATA[<]]>= 24 )
+                    union all
+                    select (case when n<![CDATA[<]]>=9 then anio+3 || '0' || n else anio+3 || n end) id, (case when n<![CDATA[<]]>=9 then anio+3 || '0' || n else anio+3 || n end) quincena
+                    from (select SUBSTR(RC_QNA_CAPTURA,0,4) anio from tn_reg_control where RC_VIGENTE='S'), ( select rownum n from dual connect by level <![CDATA[<]]>= 24 )
+                    union all
+                    select (case when n<![CDATA[<]]>=9 then anio+4 || '0' || n else anio+4 || n end) id, (case when n<![CDATA[<]]>=9 then anio+4 || '0' || n else anio+4 || n end) quincena
+                    from (select SUBSTR(RC_QNA_CAPTURA,0,4) anio from tn_reg_control where RC_VIGENTE='S'), ( select rownum n from dual connect by level <![CDATA[<]]>= 24 )
+                    union all
+                    select (case when n<![CDATA[<]]>=9 then anio+5 || '0' || n else anio+5 || n end) id, (case when n<![CDATA[<]]>=9 then anio+5 || '0' || n else anio+5 || n end) quincena
+                    from (select SUBSTR(RC_QNA_CAPTURA,0,4) anio from tn_reg_control where RC_VIGENTE='S'), ( select rownum n from dual connect by level <![CDATA[<]]>= 24 )
+                    union all
+                    select (case when n<![CDATA[<]]>=9 then anio+6 || '0' || n else anio+6 || n end) id, (case when n<![CDATA[<]]>=9 then anio+6 || '0' || n else anio+6 || n end) quincena
+                    from (select SUBSTR(RC_QNA_CAPTURA,0,4) anio from tn_reg_control where RC_VIGENTE='S'), ( select rownum n from dual connect by level <![CDATA[<]]>= 24 )
+                    where n <![CDATA[<]]>= (select SUBSTR(RC_QNA_CAPTURA,5,2) quincena from tn_reg_control where RC_VIGENTE='S')
+                </prop>
+                <prop key="listaQuincenasAnteriores">
+                    SELECT DISTINCT c.rc_qna_captura id, c.rc_qna_captura quincena
+                               FROM tn_reg_control c
+                              WHERE c.rc_qna_captura <![CDATA[<=]]>  (SELECT rc_qna_captura
+                                                           FROM tn_reg_control
+                                                          WHERE rc_vigente = 'S')
+                           ORDER BY 1 DESC
+                </prop>
+                <prop key="listaQuincenasAnterioresFinales">
+                SELECT DISTINCT c.rc_qna_captura ID, c.rc_qna_captura quincena
+           FROM tn_reg_control c
+          WHERE c.rc_qna_captura <![CDATA[<=]]>   (SELECT rc_qna_captura
+                                       FROM tn_reg_control
+                                      WHERE rc_vigente = 'S')
+            AND c.rc_qna_captura <![CDATA[>=]]>  ?
+       ORDER BY 1 DESC
+                </prop>
+                <prop key="listaJerarquias">
+                    select tc_jerarquia.ID_JERARQUIA,
+                           tc_jerarquia.ID_JERARQUIA || ' ' ||tc_jerarquia.DESC_JERARQUIA
+                      from tc_jerarquia
+                     order by 1
+                </prop>
+                <prop key="listaNombramientos">
+                    select tc_nombramiento.ID_NOMBRAMIENTO,
+                           tc_nombramiento.ID_NOMBRAMIENTO || ' ' || tc_nombramiento.DESC_NOMBRAMIENTO
+                    from tc_nombramiento
+                    order by 1
+                </prop>
+                <prop key="listaNiveles">
+                    select distinct tc_atributo_puesto.ID_NIVEL_PTO, '' || tc_atributo_puesto.ID_NIVEL_PTO || ''
+                    from tc_atributo_puesto
+                    order by 1
+                </prop>
+                <prop key="listaPorcentajes">
+                    SELECT VALOR, ID FROM (
+                    SELECT CPC_OPCION1 ID, CPC_VALOR1 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION1 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION2 ID, CPC_VALOR2 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION2 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION3 ID, CPC_VALOR3 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION3 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION4 ID, CPC_VALOR4 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION4 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION5 ID, CPC_VALOR5 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION5 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION6 ID, CPC_VALOR6 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION6 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION7 ID, CPC_VALOR7 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION7 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION8 ID, CPC_VALOR8 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION8 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION9 ID, CPC_VALOR9 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION9 IS NOT NULL UNION ALL
+                    SELECT CPC_OPCION0 ID, CPC_VALOR0 VALOR, ID_TIPO_CPTO, ID_CPTO_PAGO
+                    FROM TC_CONCEPTO_PAGO_CAPTURA
+                    WHERE CPC_OPCION0 IS NOT NULL)
+                    WHERE  ##ID_TIPO_CPTO## and ##ID_CPTO_PAGO##
+                </prop>
+
+                <prop key="tcInmueble">
+                    select id_inmueble,
+                           id_inmueble ||' - '|| inmueble_calle || ' ' || inmueble_num_ext 
+                    from tc_inmueble
+                    order by id_inmueble
+                </prop>
+                <prop key="listaLengua">
+                    SELECT li_codigo, li_codigo||' '||desc_lengua as descripcion
+                      FROM tc_lengua_idioma
+                    ORDER BY li_codigo
+                </prop>
+
+            </props>
+        </property>
+    </bean>
+</beans>

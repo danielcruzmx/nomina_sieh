@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="concentrado" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="7" bottomMargin="7">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/WEB-INF/reports/calculoNomina/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_LEYENDA_TITULO" class="java.lang.String"/>
+	<parameter name="P_QNA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_COMPLE" class="java.lang.String"/>
+	<parameter name="P_TIPO_NOM" class="java.lang.String"/>
+	<parameter name="P_UNIDAD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select trim(t.desc_tipo_nomina)||' complemento  '||trim(p.pe_num_comple)||'  por Estado Físico en la Quincena '||substr(p.pe_qna_pago,5,2)||' de '||substr(p.pe_qna_pago,1,4) titulo,
+       p.id_edo id_unidad_fisica, p.pe_qna_pago pf_qna_pago, p.id_tipo_nomina, p.pe_num_comple pf_num_complem,
+       substr(p.pe_qna_pago,1,4), case when p.id_edo = 33 then 'Total Secretaría' else u.desc_estado end desc_unidad, case when p.id_edo = 33 then 0 else p.id_edo end unidad_titulo,
+
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+from td_perded_edo p, tc_estado u, tc_tipo_nomina t
+where p.pe_qna_pago = $P{P_QNA}
+  and p.id_edo in ($P!{P_UNIDAD})
+  and p.id_tipo_nomina = $P{P_TIPO_NOM}
+  and p.pe_num_comple = $P{P_COMPLE}
+  and p.id_edo = u.id_edo(+)
+  and p.id_tipo_nomina = t.id_tipo_nomina
+group by p.id_edo, p.pe_qna_pago, p.id_tipo_nomina, p.pe_num_comple, u.desc_estado,
+         t.desc_tipo_nomina
+order by p.id_edo]]>
+	</queryString>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="ID_UNIDAD_FISICA" class="java.lang.String"/>
+	<field name="PF_QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="ID_TIPO_NOMINA" class="java.lang.String"/>
+	<field name="PF_NUM_COMPLEM" class="java.lang.String"/>
+	<field name="SUBSTR(P.PE_QNA_PAGO,1,4)" class="java.lang.String"/>
+	<field name="DESC_UNIDAD" class="java.lang.String"/>
+	<field name="UNIDAD_TITULO" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="subtitulo" class="java.lang.String"/>
+	<group name="Unidad" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></groupExpression>
+		<groupHeader>
+			<band height="497">
+				<staticText>
+					<reportElement x="0" y="0" width="28" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Estado :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="57" y="0" width="695" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="31" y="0" width="23" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{UNIDAD_TITULO}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="0" y="10" width="344" height="198"/>
+					<subreportParameter name="P_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="P_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/Percepcionesedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="408" y="10" width="344" height="198"/>
+					<subreportParameter name="D_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="D_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="D_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="D_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="D_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/deduccionesedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="0" y="306" width="344" height="64"/>
+					<subreportParameter name="PS_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PS_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PS_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PS_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PS_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/percepcionessinptaedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="408" y="486" width="344" height="11"/>
+					<subreportParameter name="PTD_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTD_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTD_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTD_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTD_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/Total deduccionesedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="0" y="486" width="344" height="11"/>
+					<subreportParameter name="PPT_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PPT_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PPT_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PPT_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PPT_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/Total Percepcionesedo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="264">
+				<staticText>
+					<reportElement x="0" y="0" width="28" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Estado :]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="57" y="0" width="695" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="31" y="0" width="23" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{UNIDAD_TITULO}]]></textFieldExpression>
+				</textField>
+				<subreport>
+					<reportElement x="0" y="12" width="344" height="17"/>
+					<subreportParameter name="PE_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PE_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PE_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PE_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PE_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/pensionesedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="0" y="41" width="344" height="100"/>
+					<subreportParameter name="PI_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PI_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PI_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PI_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PI_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/sueldos isssteedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="408" y="41" width="344" height="100"/>
+					<subreportParameter name="PG_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PG_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PG_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PG_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PG_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/aportaciones gobiernoedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="408" y="12" width="344" height="17"/>
+					<subreportParameter name="PL_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PL_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PL_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PL_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PL_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/Liquidoedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="408" y="164" width="344" height="74"/>
+					<subreportParameter name="PTL_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTL_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTL_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTL_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PTL_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/Liquido CXLCedo.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport>
+					<reportElement x="0" y="213" width="344" height="41"/>
+					<subreportParameter name="PIM_TIPONOMINA">
+						<subreportParameterExpression><![CDATA[$F{ID_TIPO_NOMINA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PIM_CICLO">
+						<subreportParameterExpression><![CDATA[$F{SUBSTR(P.PE_QNA_PAGO,1,4)}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PIM_NUMCOMPLEMENTO">
+						<subreportParameterExpression><![CDATA[$F{PF_NUM_COMPLEM}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PIM_QNAPAGO">
+						<subreportParameterExpression><![CDATA[$F{PF_QNA_PAGO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="PIM_UNIDAD">
+						<subreportParameterExpression><![CDATA[$F{ID_UNIDAD_FISICA}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/impuesto trabedo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="216" y="20" width="313" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro" size="12" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Concentrado de Percepciones y Deducciones de la]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="561" y="0" width="191" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="561" y="20" width="191" height="30"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="0" width="752" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro Bold" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="1" width="432" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_LEYENDA_TITULO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="5" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="640" y="15" width="70" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="15" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="67" y="2" width="562" height="28" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

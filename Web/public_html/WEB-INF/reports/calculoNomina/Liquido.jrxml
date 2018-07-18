@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Liquido" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="606"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PL_QNAPAGO" class="java.lang.String"/>
+	<parameter name="PL_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="PL_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="PL_CICLO" class="java.lang.String"/>
+	<parameter name="PL_UNIDAD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select p.pf_qna_pago, p.id_unidad_fisica, p.id_tipo_nomina, p.pf_num_complem, 'Liquido de Cheques Emitidos, Trabajadores' LIQUIDODECHEQUESEMITIDOS,
+       sum(CASE WHEN(p.id_tipo_cpto = 'P') THEN (p.pf_monto*1) WHEN (p.id_tipo_cpto = 'D') THEN (p.pf_monto*-1) END) SUMALIQUIDO
+from td_perded_fis p
+where p.pf_qna_pago = $P{PL_QNAPAGO}
+  and p.id_unidad_fisica = $P{PL_UNIDAD}
+  and p.id_tipo_nomina = $P{PL_TIPONOMINA}
+  and p.pf_num_complem = $P{PL_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto||p.id_cpto_pago <> 'P62'
+group by p.pf_qna_pago, p.id_unidad_fisica, p.id_tipo_nomina, p.pf_num_complem]]>
+	</queryString>
+	<field name="PF_QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="ID_UNIDAD_FISICA" class="java.lang.String"/>
+	<field name="ID_TIPO_NOMINA" class="java.lang.String"/>
+	<field name="PF_NUM_COMPLEM" class="java.lang.String"/>
+	<field name="LIQUIDODECHEQUESEMITIDOS" class="java.lang.String"/>
+	<field name="SUMALIQUIDO" class="java.math.BigDecimal"/>
+	<group name="QNA">
+		<groupExpression><![CDATA[$F{PF_QNA_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<textField>
+					<reportElement x="0" y="0" width="270" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIQUIDODECHEQUESEMITIDOS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="270" y="0" width="52" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUMALIQUIDO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="2" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="13" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="322" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="1" width="270" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[D  e  d  u  c  c  i  o  n  e  s]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="10" width="322" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="270" y="1" width="52" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

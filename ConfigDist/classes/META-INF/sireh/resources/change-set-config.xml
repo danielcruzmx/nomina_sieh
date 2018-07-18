@@ -1,0 +1,8 @@
+<change-set xmlns='http://drools.org/drools-5.0/change-set'
+            xmlns:xs='http://www.w3.org/2001/XMLSchema-instance'
+            xs:schemaLocation='http://drools.org/drools-5.0/change-set http://anonsvn.jboss.org/repos/labs/labs/jbossrules/trunk/drools-api/src/main/resources/change-set-1.0.0.xsd' >
+    <add>      
+        <resource name="secureResource" description="some useful description" type="DSL" source="classpath:META-INF/sireh/resources/drools/rules/DSL/calculoNomina.dsl"/>
+        <resource name="secureResource" description="some useful description" type="DSLR" source="classpath:META-INF/sireh/resources/drools/rules/DSLR"/>
+    </add>
+</change-set>

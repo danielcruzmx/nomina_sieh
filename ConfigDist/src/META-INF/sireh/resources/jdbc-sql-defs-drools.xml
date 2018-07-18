@@ -1,0 +1,888 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+    
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                
+                <!-- Nomina By ID -->
+                <prop key="queryNominasQnaPorQna">
+                    SELECT ID_NOMINA idNomina,
+                           TN_NOMINA.ID_TIPO_NOMINA idTipoNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           DESCRIBE_EDO_NOM status,
+                           NOM_INI_PAGO nomIniPago,
+                           NOM_FIN_PAGO nomFinPago,
+                           NOM_FEC_APERTURA nomFecApertura,
+                           NOM_FEC_CIERRE nomFecCierre
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TN_REG_CONTROL, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.NOM_QNA_CAPTURA   = TN_REG_CONTROL.RC_QNA_CAPTURA
+                       AND TN_REG_CONTROL.RC_VIGENTE   = 'S'
+                       AND TN_NOMINA.NOM_CERRADA      != 'S'
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND TN_NOMINA.ID_NOMINA         = ?
+                </prop>
+                
+                <!-- Nominas extraordinarias By ID -->
+                <prop key="queryNominasQnaPorQnaExtraordinaria">
+                    SELECT ID_NOMINA idNomina,
+                           TN_NOMINA.ID_TIPO_NOMINA idTipoNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           DESCRIBE_EDO_NOM status,
+                           NOM_INI_PAGO nomIniPago,
+                           NOM_FIN_PAGO nomFinPago,
+                           NOM_FEC_APERTURA nomFecApertura,
+                           NOM_FEC_CIERRE nomFecCierre
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND TN_NOMINA.ID_NOMINA         = ?
+                </prop>
+                
+                <!-- Nomina By ID - Incentivo -->
+                <prop key="queryNominasQnaPorQnaIncentivo">
+                    SELECT ID_NOMINA idNomina,
+                           TN_NOMINA.ID_TIPO_NOMINA idTipoNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           DESCRIBE_EDO_NOM status,
+                           NOM_INI_PAGO nomIniPago,
+                           NOM_FIN_PAGO nomFinPago,
+                           NOM_FEC_APERTURA nomFecApertura,
+                           NOM_FEC_CIERRE nomFecCierre
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.NOM_CERRADA      != 'S'
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND TN_NOMINA.ID_NOMINA         = ?
+                </prop>
+                
+                <!-- Cálculo de nómina - Nomina por ID -->
+                <prop key="nominaById">
+                    SELECT ID_NOMINA idNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           TN_NOMINA.ID_TIPO_NOMINA idTipoNomina,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           DESCRIBE_EDO_NOM status,
+                           NOM_INI_PAGO nomIniPago,
+                           NOM_FIN_PAGO nomFinPago,
+                           NOM_FEC_APERTURA nomFecApertura,
+                           NOM_FEC_CIERRE nomFecCierre
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND TN_NOMINA.ID_NOMINA         = ?
+                </prop>
+                
+                <!-- Pago By Plaza -->
+                <prop key="pagoByPlaza">
+                    SELECT 
+                        TD_PLAZA.ID_PLAZA,
+                        TD_PLAZA.ID_PUESTO_NOM,
+                        TC_PUESTO.DESC_PUESTO,
+                        TD_PLAZA.ID_UNIDAD_NOM,
+                        TC_UNIDAD.DESC_UNIDAD,
+                        TD_PLAZA.ID_GRUPO_PAGO,
+                        TD_PLAZA.ID_ZONA_DIST_NOM,
+                        TD_PLAZA.PLAZA_IMP_HONO,
+                        TD_PLAZA.PLAZA_QNA_CAPTURA,
+                        TD_PLAZA.PLAZA_ULTIMO_MOVTO,
+                        TD_PLAZA.ID_MOVTO_PERSONA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_INCENTIVO,
+                        TC_GRUPO_PAGO.DESC_GRUPO_PAGO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO,
+                        TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO AS ID_NIVEL_PRE,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_ERARIO_FEDERAL,
+                        TC_NOMBRAMIENTO.DESC_NOMBRAMIENTO,
+                        TC_JERARQUIA.DESC_JERARQUIA,
+                        TC_TABULADOR_NOM.TAB_SUELDO,
+                        TC_TABULADOR_NOM.TAB_COMPENSACION,
+                        TC_TABULADOR_PRE.TAB_SUELDO AS TAB_SUELDO_PRE
+                    FROM
+                        TD_PLAZA,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_NOM,
+                        TC_TABULADOR       TC_TABULADOR_NOM,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_PRE,
+                        TC_TABULADOR       TC_TABULADOR_PRE,
+                        TC_GRUPO_PAGO,
+                        TC_NOMBRAMIENTO,
+                        TC_JERARQUIA,
+                        TC_UNIDAD,
+                        TC_PUESTO
+                    WHERE
+                        TD_PLAZA.ID_PUESTO_NOM                  = TC_ATRIBUTO_PUESTO_NOM.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_NOM.AP_FIN           = TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_NOM.TAB_FIN                = TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO     = TC_TABULADOR_NOM.ID_NIVEL_PTO
+                    AND TD_PLAZA.ID_RANGO_NOM                   = TC_TABULADOR_NOM.ID_RANGO
+                    AND TD_PLAZA.ID_ZONA_ECO_NOM                = TC_TABULADOR_NOM.ID_ZONA_ECON
+                    AND TD_PLAZA.ID_PUESTO_PRE                  = TC_ATRIBUTO_PUESTO_PRE.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_PRE.AP_FIN           = TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_PRE.TAB_FIN                = TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO     = TC_TABULADOR_PRE.ID_NIVEL_PTO
+                    AND TD_PLAZA.ID_RANGO_PRE                   = TC_TABULADOR_PRE.ID_RANGO
+                    AND TD_PLAZA.ID_ZONA_ECO_PRE                = TC_TABULADOR_PRE.ID_ZONA_ECON
+                    AND TD_PLAZA.ID_SIT_PLAZA LIKE 'O%'
+                    AND TD_PLAZA.ID_GRUPO_PAGO                  = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO  = TC_NOMBRAMIENTO.ID_NOMBRAMIENTO
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA     = TC_JERARQUIA.ID_JERARQUIA
+                    AND TD_PLAZA.ID_UNIDAD_NOM                  = TC_UNIDAD.ID_UNIDAD
+                    AND TD_PLAZA.ID_PUESTO_NOM                  = TC_PUESTO.ID_PUESTO
+                    AND TC_UNIDAD.UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4)FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    AND TD_PLAZA.ID_PLAZA = ?
+                </prop>
+                
+                <!-- Pagos By GpoPago para Incentivo -->
+                <prop key="pagoNoOrdinarioByGpoPago">
+                    SELECT min(tn_historico_pago.HP_INI_PAGO) as FEC_INI_PAGO,                            
+                        max(tn_historico_pago.HP_FIN_PAGO) as FEC_FIN_PAGO,                                
+                        TD_EMPLEADO.RFC_UNICO AS RFC_EMPLEADO,
+                        TD_EMPLEADO.CURP_EMPLEADO,
+                        TD_EMPLEADO.IMSS_ISSSTE,  
+                        TD_EMPLEADO.NOMBRE_EMPLEADO,
+                        TD_EMPLEADO.PRIMER_APELLIDO,
+                        TD_EMPLEADO.SEGUNDO_APELLIDO,  
+                        td_empleado.COMPAT_EMPLEO,                                      
+                        tn_historico_pago.ID_PLAZA,    
+                        tn_historico_pago.ID_PUESTO_NOM,                                  
+                        MAX(tn_historico_pago.ID_UNIDAD_NOM)  as ID_UNIDAD_NOM,                                  
+                        tn_historico_pago.ID_GRUPOPAGO_NOM as ID_GRUPO_PAGO,              
+                        MAX(tn_historico_pago.ID_ZONA_DIST_NOM) as ID_ZONA_DIST_NOM,                              
+                        tc_grupo_pago.DESC_GRUPO_PAGO,                                  
+                        tc_atributo_puesto_nom.ID_NIVEL_PTO,                              
+                        tc_atributo_puesto_pre.ID_NIVEL_PTO as ID_NIVEL_PRE,              
+                        tc_atributo_puesto_nom.ID_NOMBRAMIENTO,                          
+                        tc_atributo_puesto_nom.ID_JERARQUIA,                              
+                        tc_atributo_puesto_nom.AP_ERARIO_FEDERAL,                      
+                        tc_atributo_puesto_nom.AP_INCENTIVO,                              
+                        tc_nombramiento.DESC_NOMBRAMIENTO,                              
+                        tc_jerarquia.DESC_JERARQUIA,                                      
+                        tc_tabulador_nom.TAB_SUELDO,                                      
+                        tc_tabulador_nom.TAB_COMPENSACION,                              
+                        tc_tabulador_pre.TAB_SUELDO AS TAB_SUELDO_PRE,                  
+                        tc_tipo_pago.DESC_TIPO_PAGO                                          
+                    FROM tn_historico_pago,                                        
+                         tn_concepto_pagado,                                    
+                         td_empleado,                                               
+                         tc_atributo_puesto tc_atributo_puesto_nom,                  
+                         tc_tabulador       tc_tabulador_nom,                      
+                         tc_atributo_puesto tc_atributo_puesto_pre,                  
+                         tc_tabulador       tc_tabulador_pre,                      
+                         tc_grupo_pago,                                              
+                         tc_nombramiento,                                          
+                         tc_jerarquia,                                               
+                         tc_tipo_pago                                           
+                    WHERE  tn_historico_pago.HP_RFC            =  td_empleado.RFC_EMPLEADO   
+                        and    tn_historico_pago.ID_PUESTO_NOM     =  tc_atributo_puesto_nom.ID_ATRIBUTO_PUESTO   
+                        and    tc_atributo_puesto_nom.AP_FIN       =  to_date('01/01/2099')  
+                        and    tc_tabulador_nom.TAB_FIN            =  to_date('01/01/2099')  
+                        and    tc_atributo_puesto_nom.ID_NIVEL_PTO =  tc_tabulador_nom.ID_NIVEL_PTO   
+                        and    tn_historico_pago.ID_RANGO_NOM      =  tc_tabulador_nom.ID_RANGO  
+                        and    tn_historico_pago.ID_ZONA_ECO_NOM   =  tc_tabulador_nom.ID_ZONA_ECON   
+                        and    tn_historico_pago.ID_PUESTO_PRE     =  tc_atributo_puesto_pre.ID_ATRIBUTO_PUESTO   
+                        and    tc_atributo_puesto_pre.AP_FIN       =  to_date('01/01/2099')  
+                        and    tc_tabulador_pre.TAB_FIN            =  to_date('01/01/2099')  
+                        and    tc_atributo_puesto_pre.ID_NIVEL_PTO =  tc_tabulador_pre.ID_NIVEL_PTO   
+                        and    tn_historico_pago.ID_RANGO_NOM      =  tc_tabulador_pre.ID_RANGO  
+                        and    tn_historico_pago.ID_ZONA_ECO_NOM   =  tc_tabulador_pre.ID_ZONA_ECON   
+                        and    tc_atributo_puesto_nom.ID_JERARQUIA = '7'
+                        and    (tn_historico_pago.HP_FIN_PAGO <![CDATA[>=]]> TO_DATE(:fechaInicial,'dd/mm/yyyy') and tn_historico_pago.HP_FIN_PAGO <![CDATA[<=]]> TO_DATE(:fechaFinal,'dd/mm/yyyy'))  
+                        and    tn_historico_pago.ID_SIT_PAGO <![CDATA[!=]]> 'C'
+                        and    tn_historico_pago.ID_GRUPOPAGO_NOM     = :grupoPago  
+                        and    tn_historico_pago.ID_GRUPOPAGO_NOM     = tc_grupo_pago.ID_GRUPO_PAGO    
+                        and    tc_atributo_puesto_nom.ID_NOMBRAMIENTO = tc_nombramiento.ID_NOMBRAMIENTO    
+                        and    tc_atributo_puesto_nom.ID_JERARQUIA    = tc_jerarquia.ID_JERARQUIA  
+                        and    td_empleado.ID_TIPO_PAGO               = tc_tipo_pago.ID_TIPO_PAGO  
+                        and    tn_historico_pago.HP_FOLIO             = tn_concepto_pagado.CP_FOLIO  
+                        and    tn_historico_pago.HP_DIF_FOLIO         = tn_concepto_pagado.CP_DIF_FOLIO  
+                        and    tn_concepto_pagado.ID_TIPO_CPTO || tn_concepto_pagado.ID_CPTO_PAGO in ('P07','P02')  
+                        AND    HP_RFC NOT IN (SELECT MCP_RFC FROM TN_MOVTO_CONCEPTO_PAGO WHERE ID_TIPO_CPTO = 'U' AND ID_CONCEPTO = 'NP' AND ID_SIT_CAPTURA = 'V')
+                        AND    tn_historico_pago.ID_TIPO_NOMINA NOT IN ('OD','DB')
+                    GROUP BY             
+                        TD_EMPLEADO.RFC_UNICO,
+                        TD_EMPLEADO.CURP_EMPLEADO,
+                        TD_EMPLEADO.IMSS_ISSSTE,  
+                        TD_EMPLEADO.NOMBRE_EMPLEADO,
+                        TD_EMPLEADO.PRIMER_APELLIDO,
+                        TD_EMPLEADO.SEGUNDO_APELLIDO,  
+                        td_empleado.COMPAT_EMPLEO,               
+                        tn_historico_pago.ID_PLAZA,         
+                        tn_historico_pago.ID_PUESTO_NOM,     
+                        tn_historico_pago.ID_GRUPOPAGO_NOM,      
+                        tc_grupo_pago.DESC_GRUPO_PAGO,           
+                        tc_atributo_puesto_nom.ID_NIVEL_PTO,        
+                        tc_atributo_puesto_pre.ID_NIVEL_PTO,        
+                        tc_atributo_puesto_nom.ID_NOMBRAMIENTO,      
+                        tc_atributo_puesto_nom.ID_JERARQUIA,           
+                        tc_atributo_puesto_nom.AP_ERARIO_FEDERAL,    
+                        tc_atributo_puesto_nom.AP_INCENTIVO,        
+                        tc_nombramiento.DESC_NOMBRAMIENTO,       
+                        tc_jerarquia.DESC_JERARQUIA,             
+                        tc_tabulador_nom.TAB_SUELDO,             
+                        tc_tabulador_nom.TAB_COMPENSACION,       
+                        tc_tabulador_pre.TAB_SUELDO,             
+                        tc_tipo_pago.DESC_TIPO_PAGO              
+                        order by 3,1
+                </prop>
+                
+                <!-- Pagos By GpoPago -->
+                <prop key="pagoByGpoPago">
+                    SELECT 
+                        TD_EMPLEADO.RFC_EMPLEADO,
+                        TD_EMPLEADO.CURP_EMPLEADO,
+                        TD_EMPLEADO.IMSS_ISSSTE,
+                        0 AS NUM_PENSION,
+                        TD_EMPLEADO.NOMBRE_EMPLEADO,
+                        TD_EMPLEADO.PRIMER_APELLIDO,
+                        TD_EMPLEADO.SEGUNDO_APELLIDO,
+                        TD_EMPLEADO.COMPAT_EMPLEO,
+                        TD_PLAZA.ID_PLAZA,
+                        TD_PLAZA.ID_PUESTO_NOM,
+                        TC_PUESTO.DESC_PUESTO,
+                        TD_PLAZA.ID_UNIDAD_NOM,
+                        TC_UNIDAD.DESC_UNIDAD,
+                        TD_PLAZA.ID_GRUPO_PAGO,
+                        TD_PLAZA.ID_ZONA_DIST_NOM,
+                        TD_PLAZA.PLAZA_IMP_HONO,
+                        CASE WHEN (
+                                SELECT ID_CONCEPTO 
+                                FROM TN_MOVTO_CONCEPTO_PAGO
+                                WHERE
+                                    ID_TIPO_CPTO = 'U'
+                                AND ID_CONCEPTO  = 'NR'
+                                AND ID_SIT_CAPTURA =  'V'
+                                AND MCP_RFC = TD_PLAZA.PLAZA_RFC
+                                AND MCP_QNA_CAPTURA = TD_PLAZA.PLAZA_QNA_CAPTURA ) IS NOT NULL  
+                            THEN TD_PLAZA.PLAZA_QNA_CAPTURA - 1 
+                            ELSE TD_PLAZA.PLAZA_QNA_CAPTURA 
+                        END AS PLAZA_QNA_CAPTURA,
+                        --TD_PLAZA.PLAZA_QNA_CAPTURA,
+                        TD_PLAZA.PLAZA_ULTIMO_MOVTO,
+                        TD_PLAZA.ID_MOVTO_PERSONA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_INCENTIVO,
+                        TC_GRUPO_PAGO.DESC_GRUPO_PAGO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO,
+                        TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO AS ID_NIVEL_PRE,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_ERARIO_FEDERAL,
+                        TC_NOMBRAMIENTO.DESC_NOMBRAMIENTO,
+                        TC_JERARQUIA.DESC_JERARQUIA,
+                        CASE 
+                            WHEN MOD((SELECT SUBSTR(RC_QNA_CAPTURA,5,2) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S'),2)=0
+                                THEN 
+                                    CASE WHEN MOD(TC_TABULADOR_NOM.TAB_SUELDO*100,2) = 0
+                                        THEN 
+                                            TC_TABULADOR_NOM.TAB_SUELDO
+                                        ELSE 
+                                            TC_TABULADOR_NOM.TAB_SUELDO+0.01
+                                    END         
+                                ELSE 
+                                    CASE WHEN MOD(TC_TABULADOR_NOM.TAB_SUELDO*100,2) <![CDATA[<>]]> 0
+                                        THEN 
+                                            TC_TABULADOR_NOM.TAB_SUELDO-0.01
+                                        ELSE 
+                                            TC_TABULADOR_NOM.TAB_SUELDO
+                                    END    
+                        END AS TAB_SUELDO,
+                        CASE WHEN MOD((SELECT SUBSTR(RC_QNA_CAPTURA,5,2) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S'),2)=0
+                             THEN   
+                                CASE WHEN MOD(TC_TABULADOR_NOM.TAB_COMPENSACION*100,2) = 0
+                                     THEN
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION
+                                     ELSE 
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION+0.01
+                                END         
+                        ELSE 
+                            CASE WHEN MOD(TC_TABULADOR_NOM.TAB_COMPENSACION*100,2) <![CDATA[<>]]> 0
+                                    THEN 
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION-0.01
+                                    ELSE 
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION
+                            END    
+                        END AS TAB_COMPENSACION,
+                        CASE WHEN MOD((SELECT SUBSTR(RC_QNA_CAPTURA,5,2) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S'),2)=0
+                             THEN   
+                                CASE WHEN MOD(TC_TABULADOR_PRE.TAB_SUELDO*100,2) = 0
+                                    THEN 
+                                        TC_TABULADOR_PRE.TAB_SUELDO
+                                    ELSE 
+                                        TC_TABULADOR_PRE.TAB_SUELDO+0.01
+                                    END         
+                             ELSE 
+                                CASE WHEN MOD(TC_TABULADOR_PRE.TAB_SUELDO*100,2) <![CDATA[<>]]> 0
+                                    THEN 
+                                        TC_TABULADOR_PRE.TAB_SUELDO-0.01
+                                    ELSE 
+                                        TC_TABULADOR_PRE.TAB_SUELDO
+                                END    
+                        END AS TAB_SUELDO_PRE,
+                        TC_TIPO_PAGO.DESC_TIPO_PAGO 
+                    FROM
+                        TD_PLAZA,
+                        TD_EMPLEADO,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_NOM,
+                        TC_TABULADOR       TC_TABULADOR_NOM,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_PRE,
+                        TC_TABULADOR       TC_TABULADOR_PRE,
+                        TC_GRUPO_PAGO,
+                        TC_NOMBRAMIENTO,
+                        TC_JERARQUIA,
+                        TC_TIPO_PAGO,
+                        TC_UNIDAD,
+                        TC_PUESTO
+                    WHERE  
+                        TD_PLAZA.PLAZA_RFC                      = TD_EMPLEADO.RFC_EMPLEADO
+                    AND TD_PLAZA.ID_PUESTO_NOM                  = TC_ATRIBUTO_PUESTO_NOM.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_NOM.AP_FIN           = TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_NOM.TAB_FIN                = TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO     = TC_TABULADOR_NOM.ID_NIVEL_PTO
+                    AND TD_PLAZA.ID_RANGO_NOM                   = TC_TABULADOR_NOM.ID_RANGO
+                    AND TD_PLAZA.ID_ZONA_ECO_NOM                = TC_TABULADOR_NOM.ID_ZONA_ECON
+                    AND TD_PLAZA.ID_PUESTO_PRE                  = TC_ATRIBUTO_PUESTO_PRE.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_PRE.AP_FIN           = TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_PRE.TAB_FIN                = TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO     = TC_TABULADOR_PRE.ID_NIVEL_PTO
+                    AND TD_PLAZA.ID_RANGO_PRE                   = TC_TABULADOR_PRE.ID_RANGO
+                    AND TD_PLAZA.ID_ZONA_ECO_PRE                = TC_TABULADOR_PRE.ID_ZONA_ECON
+                    AND TD_PLAZA.ID_SIT_PLAZA LIKE 'O%'
+                    AND TD_PLAZA.ID_GRUPO_PAGO                  = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO  = TC_NOMBRAMIENTO.ID_NOMBRAMIENTO
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA     = TC_JERARQUIA.ID_JERARQUIA
+                    AND TD_EMPLEADO.ID_TIPO_PAGO                = TC_TIPO_PAGO.ID_TIPO_PAGO
+                    AND TD_PLAZA.ID_UNIDAD_NOM                  = TC_UNIDAD.ID_UNIDAD
+                    AND TD_PLAZA.ID_PUESTO_NOM                  = TC_PUESTO.ID_PUESTO
+                    AND TC_UNIDAD.UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4)FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    AND ##TC_UNIDAD.UNI_CICLO#=#OPERATIONAL_YEAR##
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND TC_UNIDAD.UNI_CENTRAL_FORANEA = ?
+                    AND PLAZA_RFC NOT IN (
+                        SELECT MCP_RFC
+                            FROM TN_MOVTO_CONCEPTO_PAGO, TD_PLAZA
+                        WHERE
+                            ID_TIPO_CPTO = 'U'
+                        AND ID_CONCEPTO  = 'NO'
+                        AND ID_SIT_CAPTURA =  'V'
+                        AND MCP_RFC = PLAZA_RFC
+                        AND ID_SIT_PLAZA LIKE 'O%')
+                    AND TD_PLAZA.ID_GRUPO_PAGO = ?
+                </prop>
+                
+                <prop key="quincenaVigente">
+                    SELECT RC_QNA_CAPTURA AS QUINCENA_VIGENTE FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S'
+                </prop>
+                
+                <!-- Historico de Pago By RFC -->
+                <prop key="historicoPagoByRfc">
+                    SELECT
+                        TN_HISTORICO_PAGO.HP_INI_PAGO,
+                        TN_HISTORICO_PAGO.HP_FIN_PAGO,
+                        TD_EMPLEADO.RFC_EMPLEADO,
+                        TD_EMPLEADO.COMPAT_EMPLEO,
+                        TN_HISTORICO_PAGO.ID_PLAZA,
+                        TN_HISTORICO_PAGO.ID_UNIDAD_NOM,
+                        TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM AS ID_GRUPO_PAGO,
+                        TN_HISTORICO_PAGO.ID_ZONA_DIST_NOM,
+                        TN_HISTORICO_PAGO.HP_QNA_PAGO,
+                        TC_GRUPO_PAGO.DESC_GRUPO_PAGO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO,
+                        TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO AS ID_NIVEL_PRE,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_ERARIO_FEDERAL,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_INCENTIVO,
+                        TC_NOMBRAMIENTO.DESC_NOMBRAMIENTO,
+                        TC_JERARQUIA.DESC_JERARQUIA,
+                        TC_TABULADOR_NOM.TAB_SUELDO,
+                        TC_TABULADOR_NOM.TAB_COMPENSACION,
+                        TC_TABULADOR_PRE.TAB_SUELDO AS TAB_SUELDO_PRE,
+                        TC_TIPO_PAGO.DESC_TIPO_PAGO
+                    FROM
+                        TN_HISTORICO_PAGO,
+                        TN_CONCEPTO_PAGADO,
+                        TD_EMPLEADO,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_NOM,
+                        TC_TABULADOR       TC_TABULADOR_NOM,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_PRE,
+                        TC_TABULADOR       TC_TABULADOR_PRE,
+                        TC_GRUPO_PAGO,
+                        TC_NOMBRAMIENTO,
+                        TC_JERARQUIA,
+                        TC_TIPO_PAGO
+                    WHERE  
+                        TN_HISTORICO_PAGO.HP_RFC            =  TD_EMPLEADO.RFC_EMPLEADO
+                    AND TN_HISTORICO_PAGO.ID_PUESTO_NOM     =  TC_ATRIBUTO_PUESTO_NOM.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_NOM.AP_FIN       =  TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_NOM.TAB_FIN            =  TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO =  TC_TABULADOR_NOM.ID_NIVEL_PTO
+                    AND TN_HISTORICO_PAGO.ID_RANGO_NOM      =  TC_TABULADOR_NOM.ID_RANGO
+                    AND TN_HISTORICO_PAGO.ID_ZONA_ECO_NOM   =  TC_TABULADOR_NOM.ID_ZONA_ECON
+                    AND TN_HISTORICO_PAGO.ID_PUESTO_PRE     =  TC_ATRIBUTO_PUESTO_PRE.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_PRE.AP_FIN       =  TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_PRE.TAB_FIN            =  TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO =  TC_TABULADOR_PRE.ID_NIVEL_PTO
+                    AND TN_HISTORICO_PAGO.ID_RANGO_NOM      =  TC_TABULADOR_PRE.ID_RANGO
+                    AND TN_HISTORICO_PAGO.ID_ZONA_ECO_NOM   =  TC_TABULADOR_PRE.ID_ZONA_ECON
+                    AND (TN_HISTORICO_PAGO.HP_INI_PAGO <![CDATA[>=]]> TO_DATE(:fechaMovimiento,'DD/MM/YYYY') OR TN_HISTORICO_PAGO.HP_FIN_PAGO <![CDATA[>=]]> TO_DATE(:fechaMovimiento,'DD/MM/YYYY'))
+                    AND TN_HISTORICO_PAGO.ID_SIT_PAGO <![CDATA[<>]]> 'C'
+                    AND TD_EMPLEADO.RFC_UNICO = :rfc
+                    AND TN_HISTORICO_PAGO.HP_CONSEC_NOMINA not in (:listIdNominas)
+                    AND TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM     = TC_GRUPO_PAGO.ID_GRUPO_PAGO  
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO = TC_NOMBRAMIENTO.ID_NOMBRAMIENTO  
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA    = TC_JERARQUIA.ID_JERARQUIA
+                    AND TD_EMPLEADO.ID_TIPO_PAGO               = TC_TIPO_PAGO.ID_TIPO_PAGO
+                    AND TN_HISTORICO_PAGO.HP_FOLIO             = TN_CONCEPTO_PAGADO.CP_FOLIO
+                    AND TN_HISTORICO_PAGO.HP_DIF_FOLIO         = TN_CONCEPTO_PAGADO.CP_DIF_FOLIO
+                    AND TN_CONCEPTO_PAGADO.ID_TIPO_CPTO || TN_CONCEPTO_PAGADO.ID_CPTO_PAGO IN ('P07','P02','P05','P06','PHO')
+                    GROUP BY
+                        TN_HISTORICO_PAGO.HP_INI_PAGO,
+                        TN_HISTORICO_PAGO.HP_INI_PAGO,
+                        TN_HISTORICO_PAGO.HP_FIN_PAGO,
+                        TD_EMPLEADO.RFC_EMPLEADO,
+                        TD_EMPLEADO.COMPAT_EMPLEO,
+                        TN_HISTORICO_PAGO.ID_PLAZA,
+                        TN_HISTORICO_PAGO.ID_UNIDAD_NOM,
+                        TN_HISTORICO_PAGO.ID_GRUPOPAGO_NOM,
+                        TN_HISTORICO_PAGO.ID_ZONA_DIST_NOM,
+                        TN_HISTORICO_PAGO.HP_QNA_PAGO,
+                        TC_GRUPO_PAGO.DESC_GRUPO_PAGO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO,
+                        TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_ERARIO_FEDERAL,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_INCENTIVO,
+                        TC_NOMBRAMIENTO.DESC_NOMBRAMIENTO,
+                        TC_JERARQUIA.DESC_JERARQUIA,
+                        TC_TABULADOR_NOM.TAB_SUELDO,
+                        TC_TABULADOR_NOM.TAB_COMPENSACION,
+                        TC_TABULADOR_PRE.TAB_SUELDO,
+                        TC_TIPO_PAGO.DESC_TIPO_PAGO
+                    ORDER BY TN_HISTORICO_PAGO.HP_QNA_PAGO
+                </prop>
+                
+                <!-- Pago By RFC -->
+                <prop key="pagoByRfc">
+                    SELECT DISTINCT 
+                        TD_EMPLEADO.RFC_EMPLEADO,
+                        TD_EMPLEADO.CURP_EMPLEADO,
+                        TD_EMPLEADO.IMSS_ISSSTE,
+                        NVL(TO_CHAR(TD_PENSION.NUM_PENSION),'-') NUM_PENSION,
+                        TD_EMPLEADO.NOMBRE_EMPLEADO,
+                        TD_EMPLEADO.PRIMER_APELLIDO,
+                        TD_EMPLEADO.SEGUNDO_APELLIDO,
+                        TD_EMPLEADO.COMPAT_EMPLEO,
+                        TD_PLAZA.ID_PLAZA,
+                        TD_PLAZA.ID_PUESTO_NOM,
+                        TC_PUESTO.DESC_PUESTO,
+                        TD_PLAZA.ID_UNIDAD_NOM,
+                        TC_UNIDAD.DESC_UNIDAD,
+                        TD_PLAZA.ID_GRUPO_PAGO,
+                        TD_PLAZA.ID_ZONA_DIST_NOM,
+                        TD_PLAZA.PLAZA_IMP_HONO,
+                        CASE WHEN (
+                                SELECT ID_CONCEPTO 
+                                FROM TN_MOVTO_CONCEPTO_PAGO
+                                WHERE
+                                    ID_TIPO_CPTO = 'U'
+                                AND ID_CONCEPTO  = 'NR'
+                                AND ID_SIT_CAPTURA =  'V'
+                                AND MCP_RFC = TD_PLAZA.PLAZA_RFC
+                                AND MCP_QNA_CAPTURA = TD_PLAZA.PLAZA_QNA_CAPTURA ) IS NOT NULL  
+                            THEN TD_PLAZA.PLAZA_QNA_CAPTURA - 1 
+                            ELSE TD_PLAZA.PLAZA_QNA_CAPTURA 
+                        END AS PLAZA_QNA_CAPTURA,
+                        --TD_PLAZA.PLAZA_QNA_CAPTURA,
+                        TD_PLAZA.PLAZA_ULTIMO_MOVTO,
+                        TD_PLAZA.ID_MOVTO_PERSONA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_INCENTIVO,
+                        TC_GRUPO_PAGO.DESC_GRUPO_PAGO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO,
+                        TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO AS ID_NIVEL_PRE,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO,
+                        TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA,
+                        TC_ATRIBUTO_PUESTO_NOM.AP_ERARIO_FEDERAL,
+                        TC_NOMBRAMIENTO.DESC_NOMBRAMIENTO,
+                        TC_JERARQUIA.DESC_JERARQUIA,
+                        CASE 
+                            WHEN MOD((SELECT SUBSTR(RC_QNA_CAPTURA,5,2) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S'),2)=0
+                                THEN 
+                                    CASE WHEN MOD(TC_TABULADOR_NOM.TAB_SUELDO*100,2) = 0
+                                        THEN 
+                                            TC_TABULADOR_NOM.TAB_SUELDO
+                                        ELSE 
+                                            TC_TABULADOR_NOM.TAB_SUELDO+0.01
+                                    END         
+                                ELSE 
+                                    CASE WHEN MOD(TC_TABULADOR_NOM.TAB_SUELDO*100,2) <![CDATA[<>]]> 0
+                                        THEN 
+                                            TC_TABULADOR_NOM.TAB_SUELDO-0.01
+                                        ELSE 
+                                            TC_TABULADOR_NOM.TAB_SUELDO
+                                    END    
+                        END AS TAB_SUELDO,
+                        CASE WHEN MOD((SELECT SUBSTR(RC_QNA_CAPTURA,5,2) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S'),2)=0
+                             THEN   
+                                CASE WHEN MOD(TC_TABULADOR_NOM.TAB_COMPENSACION*100,2) = 0
+                                     THEN
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION
+                                     ELSE 
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION+0.01
+                                END         
+                        ELSE 
+                            CASE WHEN MOD(TC_TABULADOR_NOM.TAB_COMPENSACION*100,2) <![CDATA[<>]]> 0
+                                    THEN 
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION-0.01
+                                    ELSE 
+                                        TC_TABULADOR_NOM.TAB_COMPENSACION
+                            END    
+                        END AS TAB_COMPENSACION,
+                        CASE WHEN MOD((SELECT SUBSTR(RC_QNA_CAPTURA,5,2) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S'),2)=0
+                             THEN   
+                                CASE WHEN MOD(TC_TABULADOR_PRE.TAB_SUELDO*100,2) = 0
+                                    THEN 
+                                        TC_TABULADOR_PRE.TAB_SUELDO
+                                    ELSE 
+                                        TC_TABULADOR_PRE.TAB_SUELDO+0.01
+                                    END         
+                             ELSE 
+                                CASE WHEN MOD(TC_TABULADOR_PRE.TAB_SUELDO*100,2) <![CDATA[<>]]> 0
+                                    THEN 
+                                        TC_TABULADOR_PRE.TAB_SUELDO-0.01
+                                    ELSE 
+                                        TC_TABULADOR_PRE.TAB_SUELDO
+                                END    
+                        END AS TAB_SUELDO_PRE,
+                        TC_TIPO_PAGO.DESC_TIPO_PAGO    
+                    FROM
+                        TD_PLAZA,
+                        TD_EMPLEADO,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_NOM,
+                        TC_TABULADOR       TC_TABULADOR_NOM,
+                        TC_ATRIBUTO_PUESTO TC_ATRIBUTO_PUESTO_PRE,
+                        TC_TABULADOR       TC_TABULADOR_PRE,
+                        TC_GRUPO_PAGO,
+                        TC_NOMBRAMIENTO,
+                        TC_JERARQUIA,
+                        TC_TIPO_PAGO,
+                        TD_PENSION,
+                        TC_UNIDAD,
+                        TC_PUESTO
+                    WHERE  
+                        TD_PLAZA.PLAZA_RFC                      = TD_EMPLEADO.RFC_EMPLEADO
+                    AND TD_PLAZA.ID_PUESTO_NOM                  = TC_ATRIBUTO_PUESTO_NOM.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_NOM.AP_FIN           = TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_NOM.TAB_FIN                = TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NIVEL_PTO     = TC_TABULADOR_NOM.ID_NIVEL_PTO
+                    AND TD_PLAZA.ID_RANGO_NOM                   = TC_TABULADOR_NOM.ID_RANGO
+                    AND TD_PLAZA.ID_ZONA_ECO_NOM                = TC_TABULADOR_NOM.ID_ZONA_ECON
+                    AND TD_PLAZA.ID_PUESTO_PRE                  = TC_ATRIBUTO_PUESTO_PRE.ID_ATRIBUTO_PUESTO
+                    AND TC_ATRIBUTO_PUESTO_PRE.AP_FIN           = TO_DATE('01/01/2099')
+                    AND TC_TABULADOR_PRE.TAB_FIN                = TO_DATE('01/01/2099')
+                    AND TC_ATRIBUTO_PUESTO_PRE.ID_NIVEL_PTO     = TC_TABULADOR_PRE.ID_NIVEL_PTO
+                    AND TD_PLAZA.ID_RANGO_PRE                   = TC_TABULADOR_PRE.ID_RANGO
+                    AND TD_PLAZA.ID_ZONA_ECO_PRE                = TC_TABULADOR_PRE.ID_ZONA_ECON
+                    AND TD_PLAZA.ID_SIT_PLAZA LIKE 'O%'
+                    AND TD_PLAZA.ID_GRUPO_PAGO                  = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_NOMBRAMIENTO  = TC_NOMBRAMIENTO.ID_NOMBRAMIENTO
+                    AND TC_ATRIBUTO_PUESTO_NOM.ID_JERARQUIA     = TC_JERARQUIA.ID_JERARQUIA
+                    AND TD_EMPLEADO.ID_TIPO_PAGO                = TC_TIPO_PAGO.ID_TIPO_PAGO
+                    AND TD_PLAZA.PLAZA_RFC                      = TD_PENSION.RFC_PENSION(+)
+                    AND TD_PLAZA.ID_UNIDAD_NOM                  = TC_UNIDAD.ID_UNIDAD
+                    AND TD_PLAZA.ID_PUESTO_NOM                  = TC_PUESTO.ID_PUESTO
+                    AND TC_UNIDAD.UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4)FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    AND TD_PLAZA.PLAZA_RFC = ?
+                    AND ROWNUM <![CDATA[<]]> 2
+                </prop>              
+                <prop key="ConceptosPagoByRfc">
+                   select  tn_movto_concepto_pago.MCP_RFC,
+                           tn_movto_concepto_pago.ID_MOVTO_CONCEPTO_PAGO,
+                           tn_movto_concepto_pago.ID_TIPO_CPTO,
+                           tn_movto_concepto_pago.ID_CONCEPTO,
+                           tn_movto_concepto_pago.MCP_MONTO,
+                           tn_movto_concepto_pago.MCP_PORCENTAJE,
+                           tn_movto_concepto_pago.MCP_FEC_INCIDENCIA,
+                           tn_movto_concepto_pago.MCP_QNA_INI,
+                           tn_movto_concepto_pago.MCP_QNA_FIN,
+                           tn_movto_concepto_pago.MCP_QNA_APLICADAS,
+                           tn_movto_concepto_pago.MCP_QNA_A_DESCONTAR,
+                           tn_movto_concepto_pago.MCP_MONTO_ADEUDO,
+                           tn_movto_concepto_pago.MCP_QNAS_ADEUDO
+                    from   tn_movto_concepto_pago
+                    where  tn_movto_concepto_pago.ID_SIT_CAPTURA = 'V'
+                    and    tn_movto_concepto_pago.MCP_RFC in (
+                                    select  td_plaza.PLAZA_RFC
+                                    from    td_plaza 
+                                    where   td_plaza.ID_SIT_PLAZA like 'O%'
+                                    and td_plaza.PLAZA_RFC = ? )
+
+                </prop>
+                 <prop key="pensionesByRfc">
+                     select    td_pension.RFC_PENSION,
+                               td_pension.NUM_PENSION,
+                               td_pension.BENEFICIARIA_PENSION,
+                               td_pension.MONTO_PENSION,
+                               td_pension.PORCENTAJE_PENSION,
+                               td_pension.MONTO_ADEUDO,
+                               td_pension.QNA_APLICA_ADEUDO,
+                               td_pension.QNA_DESC_ADEUDO, 
+                               td_pension.CPTOS_PORCENTAJE
+                        from   td_pension 
+                        where  td_pension.STATUS_PENSION = 'V'
+                        and    td_pension.RFC_PENSION in (
+                                        select  td_plaza.PLAZA_RFC
+                                        from    td_plaza 
+                                        where   td_plaza.ID_SIT_PLAZA like 'O%'
+                                        and td_plaza.PLAZA_RFC = ?) 
+                </prop>
+                
+                <!--INCENTIVO-->
+                <prop key="conceptosPagoByGpoPagoIncentivo">
+                    select tn_movto_concepto_pago.MCP_RFC,
+                           tn_movto_concepto_pago.ID_MOVTO_CONCEPTO_PAGO,
+                           tn_movto_concepto_pago.ID_TIPO_CPTO,
+                           tn_movto_concepto_pago.ID_CONCEPTO,
+                           tn_movto_concepto_pago.MCP_MONTO,
+                           tn_movto_concepto_pago.MCP_PORCENTAJE,
+                           tn_movto_concepto_pago.MCP_FEC_INCIDENCIA,
+                           tn_movto_concepto_pago.MCP_QNA_INI,
+                           tn_movto_concepto_pago.MCP_QNA_FIN,
+                           tn_movto_concepto_pago.MCP_QNA_APLICADAS,
+                           tn_movto_concepto_pago.MCP_QNA_A_DESCONTAR,
+                           tn_movto_concepto_pago.MCP_MONTO_ADEUDO,
+                           tn_movto_concepto_pago.MCP_QNAS_ADEUDO
+                    from   tn_movto_concepto_pago
+                    where  tn_movto_concepto_pago.ID_SIT_CAPTURA = 'V'
+                </prop>
+                
+                <prop key="conceptosPagoByGpoPago">
+                    select tn_movto_concepto_pago.MCP_RFC,
+                           tn_movto_concepto_pago.ID_MOVTO_CONCEPTO_PAGO,
+                           tn_movto_concepto_pago.ID_TIPO_CPTO,
+                           tn_movto_concepto_pago.ID_CONCEPTO,
+                           tn_movto_concepto_pago.MCP_MONTO,
+                           tn_movto_concepto_pago.MCP_PORCENTAJE,
+                           tn_movto_concepto_pago.MCP_FEC_INCIDENCIA,
+                           tn_movto_concepto_pago.MCP_QNA_INI,
+                           tn_movto_concepto_pago.MCP_QNA_FIN,
+                           tn_movto_concepto_pago.MCP_QNA_APLICADAS,
+                           tn_movto_concepto_pago.MCP_QNA_A_DESCONTAR,
+                           tn_movto_concepto_pago.MCP_MONTO_ADEUDO,
+                           tn_movto_concepto_pago.MCP_QNAS_ADEUDO
+                    from   tn_movto_concepto_pago
+                    where  tn_movto_concepto_pago.ID_SIT_CAPTURA = 'V'
+                    and    tn_movto_concepto_pago.MCP_RFC in (
+                                    select  td_plaza.PLAZA_RFC
+                                    from    td_plaza 
+                                    where   td_plaza.ID_SIT_PLAZA like 'O%'
+                                      and   td_plaza.ID_GRUPO_PAGO = ? )
+                </prop>
+                <prop key="pensionesByGpoPago">
+                    select td_pension.RFC_PENSION,
+                           td_pension.NUM_PENSION,
+                           td_pension.BENEFICIARIA_PENSION,
+                           td_pension.MONTO_PENSION,
+                           td_pension.PORCENTAJE_PENSION,
+                           td_pension.MONTO_ADEUDO,
+                           td_pension.QNA_APLICA_ADEUDO,
+                           td_pension.QNA_DESC_ADEUDO, 
+                           td_pension.CPTOS_PORCENTAJE
+                    from   td_pension 
+                    where  td_pension.STATUS_PENSION = 'V'
+                    and    td_pension.RFC_PENSION in (
+                                    select  td_plaza.PLAZA_RFC
+                                    from    td_plaza 
+                                    where   td_plaza.ID_SIT_PLAZA like 'O%' 
+                                      and   td_plaza.ID_GRUPO_PAGO = ?  )
+                </prop>
+                
+                <!--INCENTIVO-->
+                <prop key="pensionesByGpoPagoIncentivo">
+                    select td_pension.RFC_PENSION,
+                           td_pension.NUM_PENSION,
+                           td_pension.BENEFICIARIA_PENSION,
+                           td_pension.MONTO_PENSION,
+                           td_pension.PORCENTAJE_PENSION,
+                           td_pension.MONTO_ADEUDO,
+                           td_pension.QNA_APLICA_ADEUDO,
+                           td_pension.QNA_DESC_ADEUDO, 
+                           td_pension.CPTOS_PORCENTAJE
+                    from   td_pension 
+                    where  td_pension.STATUS_PENSION = 'V'
+                       AND td_pension.PORCENTAJE_PENSION > 0
+                       AND td_pension.NUM_PENSION > 0
+                       AND td_pension.CPTOS_PORCENTAJE IS NOT NULL AND LENGTH (td_pension.CPTOS_PORCENTAJE) > 0 
+                </prop>
+                
+                <!-- Pagos By RFCs-->
+                <prop key="pagoByRFCs">
+                    select td_empleado.RFC_EMPLEADO,
+                           td_plaza.ID_PLAZA,
+                           td_plaza.ID_UNIDAD_NOM,
+                           td_plaza.ID_GRUPO_PAGO,
+                           tc_grupo_pago.DESC_GRUPO_PAGO,
+                           tc_atributo_puesto.ID_NIVEL_PTO,
+                           tc_atributo_puesto.ID_NOMBRAMIENTO,
+                           tc_nombramiento.DESC_NOMBRAMIENTO,
+                           tc_atributo_puesto.ID_JERARQUIA,
+                           tc_jerarquia.DESC_JERARQUIA,
+                           tc_atributo_puesto.AP_ERARIO_FEDERAL,
+                           tc_tabulador.TAB_SUELDO,
+                           tc_tabulador.TAB_COMPENSACION,
+                           td_plaza.ID_ZONA_ECO_NOM
+                    from   td_plaza, 
+                           td_empleado, 
+                           tc_atributo_puesto, 
+                           tc_tabulador,
+                           tc_grupo_pago,
+                           tc_nombramiento,
+                           tc_jerarquia
+                    where  td_plaza.PLAZA_RFC              = td_empleado.RFC_EMPLEADO
+                    and    td_plaza.ID_PUESTO_NOM          = tc_atributo_puesto.ID_ATRIBUTO_PUESTO
+                    and    tc_atributo_puesto.AP_FIN       = to_date('01/01/2099')
+                    and    tc_tabulador.TAB_FIN            = to_date('01/01/2099')
+                    and    tc_atributo_puesto.ID_NIVEL_PTO = tc_tabulador.ID_NIVEL_PTO
+                    and    td_plaza.ID_RANGO_NOM           = tc_tabulador.ID_RANGO
+                    and    td_plaza.ID_ZONA_ECO_NOM        = tc_tabulador.ID_ZONA_ECON
+                    and    td_plaza.ID_SIT_PLAZA like 'O%'
+                    and    td_plaza.ID_GRUPO_PAGO = tc_grupo_pago.ID_GRUPO_PAGO
+                    and    tc_atributo_puesto.ID_NOMBRAMIENTO = tc_nombramiento.ID_NOMBRAMIENTO
+                    and    tc_atributo_puesto.ID_JERARQUIA = tc_jerarquia.ID_JERARQUIA
+                    and    td_empleado.RFC_EMPLEADO IN (:listaRFCs)
+                </prop>
+                <prop key="conceptosPagoByRFCs">
+                    select tn_movto_concepto_pago.MCP_RFC,
+                           tn_movto_concepto_pago.ID_MOVTO_CONCEPTO_PAGO,
+                           tn_movto_concepto_pago.ID_TIPO_CPTO,
+                           tn_movto_concepto_pago.ID_CONCEPTO,
+                           tn_movto_concepto_pago.MCP_MONTO,
+                           tn_movto_concepto_pago.MCP_PORCENTAJE,
+                           tn_movto_concepto_pago.MCP_FEC_INCIDENCIA,
+                           tn_movto_concepto_pago.MCP_QNA_INI,
+                           tn_movto_concepto_pago.MCP_QNA_FIN,
+                           tn_movto_concepto_pago.MCP_QNA_APLICADAS,
+                           tn_movto_concepto_pago.MCP_QNA_A_DESCONTAR,
+                           tn_movto_concepto_pago.MCP_MONTO_ADEUDO,
+                           tn_movto_concepto_pago.MCP_QNAS_ADEUDO
+                    from   tn_movto_concepto_pago
+                    where  tn_movto_concepto_pago.ID_SIT_CAPTURA = 'V'
+                    and    tn_movto_concepto_pago.MCP_RFC in (
+                                    select  td_plaza.PLAZA_RFC
+                                    from    td_plaza 
+                                    where   td_plaza.ID_SIT_PLAZA like 'O%'
+                                      and   td_plaza.PLAZA_RFC IN (:listaRFCs) )
+                </prop>
+                <prop key="pensionesByRFCs">
+                    select td_pension.RFC_PENSION,
+                           td_pension.NUM_PENSION,
+                           td_pension.BENEFICIARIA_PENSION,
+                           td_pension.MONTO_PENSION,
+                           td_pension.PORCENTAJE_PENSION,
+                           td_pension.MONTO_ADEUDO,
+                           td_pension.QNA_APLICA_ADEUDO,
+                           td_pension.QNA_DESC_ADEUDO, 
+                           td_pension.CPTOS_PORCENTAJE
+                    from   td_pension 
+                    where  td_pension.STATUS_PENSION = 'V'
+                    and    td_pension.RFC_PENSION in (
+                                    select  td_plaza.PLAZA_RFC
+                                    from    td_plaza 
+                                    where   td_plaza.ID_SIT_PLAZA like 'O%' 
+                                      and   td_plaza.PLAZA_RFC IN (:listaRFCs)  )
+                </prop>
+                
+                <!-- calcByGpoPago -->
+                
+                <!-- getPagosByGpoPago -->
+                
+                <!-- getCatalogoByTipo -->
+                <prop key="tcIsptByTipo">
+                    SELECT  
+                        ISPT_INI,
+                        ID_ZONA_GEO,
+                        ISPT_LIM_INF1,
+                        ISPT_LIM_INF2,
+                        ISPT_LIM_SUPERIOR,
+                        ISPT_SUELDO_BRUTO1,
+                        ISPT_SUELDO_BRUTO2, 
+                        ISPT_CUOTA_FIJA,
+                        ISPT_EXCEDENTE,
+                        ISPT_SUBSIDIO,
+                        ISPT_SUELDO_ANUAL,
+                        ISPT_PORCENTAJE,
+                        ISPT_CREDITO_SALARIO,
+                        USUARIO,
+                        FEC_MODIFICO
+                    FROM 
+                        TC_ISPT
+                    WHERE 
+                        TO_CHAR(ISPT_FIN,'DD-MM-YYYY') = '01-01-2099'
+                    AND ID_TIPO_TABLA = ?
+                </prop>
+                
+                <prop key="updateStatusProcesandoNominaQna">
+                    UPDATE TN_NOMINA NOM
+                    SET NOM.ID_EDO_NOM = 'P'
+                    WHERE NOM.ID_NOMINA = ?        
+                </prop>
+                
+                <prop key="updateStatusSinProcesoNominaQna">
+                    UPDATE TN_NOMINA NOM
+                    SET NOM.ID_EDO_NOM = 'N'
+                    WHERE NOM.ID_NOMINA = ?        
+                </prop>
+                <prop key="deleteCalculoNominaQna">
+                    DELETE FROM TN_CALCULO_NOMINA_QNA WHERE ID_NOMINA = ?
+                </prop>
+                
+                <prop key="conceptosNominaExtraSARFOV">
+                    SELECT 
+                        TC_CONCEPTO_PAGO.ID_CONCEPTO, TC_CONCEPTO_PAGO.ID_CONCEPTO || ' - ' || TC_CONCEPTO_PAGO.DESC_CON_PAG AS DESC_CON_PAG 
+                    FROM 
+                        TC_CONCEPTO_PAGO 
+                    WHERE 
+                        ID_TIPO_CPTO in ('C') AND ID_CONCEPTO IN ('ND', 'SB', 'SR', 'SA', 'FV', 'RV', 'AP', 'RC', 'SE', 'RT', 'ST', 'RH', 'SH') 
+                    ORDER BY TC_CONCEPTO_PAGO.DESC_CON_PAG ASC
+                </prop>
+                <prop key="queryBlobsByIdNomina">
+                select TN_NOMINA.ID_EDO_NOM AS estadoNomina,
+                           TN_NOMINA.NOM_ARCH_CREACION AS nomArchCreacion,
+                           TN_NOMINA.NOM_ARCH_ANEXO20 AS nomArchAnexo20,
+                           TN_NOMINA.NOM_ARCH_TIMBRADO AS nomArchTimbrado,
+                           TN_NOMINA.NOM_ARCH_CANC AS nomArchCanc
+                      FROM TN_NOMINA where id_nomina = ?
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

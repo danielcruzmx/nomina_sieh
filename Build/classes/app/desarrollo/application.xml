@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application>
+    <display-name>Sistema de Recursos Humanos</display-name>
+    <!-- El Modulo JCA del fsnJCR debe ir antes que cualquier otra aplicacion web para inicializar correctamente el repositorio -->
+    <!-- SCM:fsnJCR -->
+    <module>
+        <connector>fsn-jcr-JCA.rar</connector>
+    </module>
+    <!-- SCM:fsnJCR -->
+    <!-- El Modulo Web del AdmonCat debe ir antes que cualquier otra aplicacion web de lo contrario se presenta el error de que falta la clase:
+         "org.apache.struts.util.PropertyMessageResourcesFactory" debido a un problema de classloading en la clase "org.apache.struts.util.RequestUtils" de Struts -->    
+    <!-- SCM:admonCat -->
+    <module>
+        <web>
+            <web-uri>sireh-admonCat.war</web-uri>
+            <context-root>sireh/admonCat</context-root>
+        </web>
+    </module>
+    <!-- SCM:admonCat -->
+
+    <!-- Modulos Estandard que pueden ser incluidos en EAR (root) -->
+    <module>
+        <ejb>sireh-service.jar</ejb>
+    </module>  
+    <module>
+        <web>
+            <web-uri>sireh-web.war</web-uri>
+            <context-root>sireh</context-root>
+        </web>
+    </module>
+    <!-- SCM:addWeb -->
+    <!-- SCM:addWeb -->
+    <module>
+        <web>
+            <web-uri>sireh-webStatic.war</web-uri>
+            <context-root>sireh/resources</context-root>
+        </web>
+    </module>
+    
+    <!-- Web Services -->
+    <!--module>
+        <web>
+            <web-uri>sireh-webWS.war</web-uri>
+            <context-root>sireh/sirehWS</context-root>
+        </web>
+    </module-->
+    <!-- Web Services -->
+    
+    <!-- Modulos de componentes o terceros que deben ser incluidos en EAR (root): war y ejb -->
+    <!-- SCM:batchMgr -->
+    <!-- <module>
+       <ejb>admonBatch-service.jar</ejb>
+    </module>
+    <module>
+        <web>
+            <web-uri>sireh-admonBatch.war</web-uri>
+            <context-root>sireh/batchmgr</context-root>
+        </web>
+    </module> -->
+    <!-- SCM:batchMgr -->
+    <!-- SCM:fsnjBPM -->
+    <!-- <module>
+        <ejb>jbpm-enterprise.jar</ejb>
+    </module>
+    <module>
+        <web>
+            <web-uri>sireh-bpm.war</web-uri>
+            <context-root>sireh/fsnjbpm</context-root>
+        </web>
+    </module> -->
+    <!-- SCM:fsnjBPM -->
+    <!-- SCM:fsnJCR -->
+    <!--module>
+        <web>
+            <web-uri>fsnjcr-webapp.war</web-uri>
+            <context-root>sireh/fsnjcr</context-root>
+        </web>
+    </module-->
+    <!-- SCM:fsnJCR -->
+</application>

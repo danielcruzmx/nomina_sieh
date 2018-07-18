@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee">
+    <description>Web Application</description>
+    <session-config>
+        <session-timeout>35</session-timeout>
+    </session-config>
+    
+     <listener>
+        <listener-class>gob.shcp.fsn.control.listener.MultiContextLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>locatorFactorySelector</param-name><!-- specify how (classpath:|classpath*:) and where to find the applicationContext bean -->
+        <param-value>classpath*:META-INF/beanRefContext.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>parentContextKey</param-name>
+        <param-value>applicationContext</param-value><!-- bean id of type ClassPathXmlApplicationContext to instantiate for loading config files as APPROOT-PARENT -->
+    </context-param>
+    <!--<context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>WEB-INF/webContext.xml,WEB-INF/control-config.xml</param-value>
+        <empty value (could be use for listing config files that should be loading when instantiate XmlWebApplicationContext as WEBROOT-PARENT)>
+    context-param-->
+
+    <!-- Bounds request to current Thread -->
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <description>Web Service MyWebService2SoapHttpPort</description>
+        <display-name>Web Service MyWebService2SoapHttpPort</display-name>
+        <servlet-name>MyWebService2SoapHttpPort</servlet-name>
+        <servlet-class>gob.shcp.sireh.ws.TestWS</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <description>Web Service MyWebService1SoapHttpPort</description>
+        <display-name>Web Service MyWebService1SoapHttpPort</display-name>
+        <servlet-name>MyWebService1SoapHttpPort</servlet-name>
+        <servlet-class>gob.shcp.sireh.ws.MyCompanyWS</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>MyWebService2SoapHttpPort</servlet-name>
+        <url-pattern>MyWebService2SoapHttpPort</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MyWebService1SoapHttpPort</servlet-name>
+        <url-pattern>MyWebService1SoapHttpPort</url-pattern>
+    </servlet-mapping>
+    
+    <mime-mapping>
+        <extension>html</extension>
+        <mime-type>text/html</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>txt</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+    
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

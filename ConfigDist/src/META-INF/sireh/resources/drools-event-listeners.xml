@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:drools="http://drools.org/schema/drools-spring"	
+        xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd		
+		http://drools.org/schema/drools-spring classpath:/org/drools/container/spring/drools-spring-1.7.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"> 
+        <drools:eventListeners id="customListeners">
+            <drools:agendaEventListener ref="default-agenda-listener"/>
+            <drools:processEventListener ref="default-process-listener"/>
+            <drools:workingMemoryEventListener ref="default-wm-listener"/>
+        </drools:eventListeners>
+       
+        <bean id="default-agenda-listener" class="gob.shcp.sireh.service.rule.CustomAgendaEventListener"/>
+        <bean id="default-process-listener" class="org.drools.event.process.DefaultProcessEventListener"/>
+        <bean id="default-wm-listener" class="org.drools.event.rule.DefaultWorkingMemoryEventListener"/>
+</beans>

@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Relacion Constancias" columnDirection="RTL" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="110"/>
+	<parameter name="IMAGES_URI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_ID_CURSO" class="java.lang.String"/>
+	<parameter name="P_CVE_CURSO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT TO_CHAR(ROWNUM,'999') AS CONTADOR, C.ID_CURSO, C.CURSO_CLAVE, --- SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+       CP.DESC_CURSO_PRINCIPAL AS CURSO,
+       C.CURSO_DURACION,
+       TO_CHAR(C.CURSO_FEC_INI,'DD/MM/YYYY') DESDE,
+       TO_CHAR(C.CURSO_FEC_FIN,'DD/MM/YYYY') HASTA,
+       A.DESC_AULA, PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ',') AS HORARIO_CURSO,
+       C.CURSO_PARTICIPANTES AS PARTICIPANTES, P.RFC_EMPLEADO,
+       TRIM(PARTICIPANTE_PRIMER_APELLIDO) || ' ' || TRIM(PARTICIPANTE_SEGUNDO_APELLIDO) || ' ' || TRIM(PARTICIPANTE_NOMBRE) NOMBRE,
+       P.ID_NIVEL_PTO, P.ID_UNIDAD, U.DESC_UNIDAD,
+       CASE WHEN P.ID_NIVEL_PTO IN ('1','2','3','4','5','6','7','8','9','10','11') THEN 'OP'
+            WHEN SUBSTR(P.ID_NIVEL_PTO,1,1) = 'P' THEN 'E'
+            ELSE 'MM'
+       END NIVEL,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+  FROM TN_CAP_CURSO C, TC_CAP_SUBPROGRAMA SUB, TC_CAP_CURSO_PRINCP CP, TC_CAP_AULA A, TC_CAP_CONTROL_CURSO CC,
+       TC_CAP_COORDINACION COO, TN_CAP_PARTICIPANTE P, TC_UNIDAD U
+ WHERE (C.ID_CURSO = $P{P_ID_CURSO} OR C.CURSO_CLAVE = $P{P_CVE_CURSO})
+   AND C.ID_COORDINACION = COO.ID_COORDINACION
+   AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+   AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+   AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+   AND C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA
+   AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+   AND C.ID_AULA = A.ID_AULA(+)
+   AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+   AND C.ID_CURSO = P.ID_CURSO AND P.ID_SITUACION_PARTICIPANTE = 2
+   AND P.ID_UNIDAD = U.ID_UNIDAD AND U.UNI_CICLO = SUBSTR(TO_CHAR(SYSDATE,'DD/MM/YYYYY'),7,4)
+   AND (((SELECT COUNT(*) FROM TN_CAP_CAL_CURSO WHERE ID_CURSO = C.ID_CURSO) = 1
+          AND P.PARTICIPANTE_CALIFICACION_FIN = 0) OR
+             (P.PARTICIPANTE_ASISTENCIA >= 80 AND P.PARTICIPANTE_CALIFICACION_FIN >= 70))
+   AND C.ID_CONTROL_CURSO IN ('CER','EVP')]]>
+	</queryString>
+	<field name="CONTADOR" class="java.lang.String"/>
+	<field name="ID_CURSO" class="java.math.BigDecimal"/>
+	<field name="CURSO_CLAVE" class="java.lang.String"/>
+	<field name="CURSO" class="java.lang.String"/>
+	<field name="CURSO_DURACION" class="java.lang.String"/>
+	<field name="DESDE" class="java.lang.String"/>
+	<field name="HASTA" class="java.lang.String"/>
+	<field name="DESC_AULA" class="java.lang.String"/>
+	<field name="HORARIO_CURSO" class="java.lang.String"/>
+	<field name="PARTICIPANTES" class="java.math.BigDecimal"/>
+	<field name="RFC_EMPLEADO" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="ID_NIVEL_PTO" class="java.lang.String"/>
+	<field name="ID_UNIDAD" class="java.lang.String"/>
+	<field name="DESC_UNIDAD" class="java.lang.String"/>
+	<field name="NIVEL" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="REGIS" class="java.lang.Integer" resetType="Group" resetGroup="G_unidad" calculation="DistinctCount">
+		<variableExpression><![CDATA[$F{NOMBRE}]]></variableExpression>
+	</variable>
+	<group name="G_unidad" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{ID_UNIDAD}]]></groupExpression>
+		<groupFooter>
+			<band height="30">
+				<staticText>
+					<reportElement x="0" y="5" width="572" height="20"/>
+					<textElement>
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<text><![CDATA[La presente relación deberá ser enviada en formato original a la Dirección de Capacitación y Certificación de la DGRH; con At´n a la Lic. Patricia Moiret Toledano y Cedillo.]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="81" y="198" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="148" splitType="Stretch">
+			<textField>
+				<reportElement x="362" y="10" width="210" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="165" y="11" width="236" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="11" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[RELACIÓN DE ENTREGA DE CONSTANCIAS]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="50" width="572" height="20" forecolor="#CCCCCC" backcolor="#CCCCCC"/>
+			</rectangle>
+			<textField>
+				<reportElement x="44" y="92" width="75" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURSO_CLAVE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="44" y="77" width="234" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURSO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="77" width="37" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Curso :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="92" width="37" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Clave :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="106" width="47" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Horario :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="53" y="106" width="100" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORARIO_CURSO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="119" width="87" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lugar del Evento :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="97" y="119" width="197" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_AULA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="367" y="77" width="50" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Período :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="367" y="92" width="68" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No. de Horas :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="439" y="77" width="49" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="505" y="77" width="49" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HASTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="422" y="77" width="17" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[DEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="488" y="77" width="17" height="11"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[AL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="437" y="92" width="40" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURSO_DURACION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="133" width="241" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="133" width="113" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad Administrativa :]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="1" width="572" height="20"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="52" y="5" width="252" height="12" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE COMPLETO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="322" y="5" width="50" height="12" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIVEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="376" y="5" width="196" height="12" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ÁREA DE ADSCRIPCIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="5" width="22" height="12" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No.]]></text>
+			</staticText>
+			<line>
+				<reportElement x="39" y="1" width="1" height="20"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="317" y="1" width="1" height="20"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="376" y="1" width="1" height="20"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="0" width="572" height="15"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="42" y="2" width="271" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="39" y="0" width="1" height="15"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="317" y="0" width="1" height="15"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="376" y="0" width="1" height="15"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="379" y="2" width="190" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="327" y="2" width="39" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="2" width="21" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONTADOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<textField pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="477" y="16" width="95" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="300" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="477" y="6" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="537" y="6" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="572" height="1" forecolor="#999999"/>
+			</line>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="7" splitType="Stretch"/>
+	</summary>
+</jasperReport>

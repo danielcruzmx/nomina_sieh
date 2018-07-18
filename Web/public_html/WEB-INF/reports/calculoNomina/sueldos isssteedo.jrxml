@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sueldos issste" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="749"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PI_QNAPAGO" class="java.lang.String"/>
+	<parameter name="PI_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="PI_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="PI_UNIDAD" class="java.lang.String"/>
+	<parameter name="PI_CICLO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select case when n.id_grupo_pago_nom = 'V' and p.id_tipo_nomina <> 'AG' and p.id_tipo_nomina <> 'LA' then '12201' else e.id_partida end id_partida, p.id_cpto_pago, c.desc_con_pag,
+(select pe_casos
+ from td_perded_edo p1
+ where p.pe_qna_pago = p1.pe_qna_pago
+   and p.id_edo = p1.id_edo
+   and p.id_tipo_nomina = p1.id_tipo_nomina
+   and p.pe_num_comple = p1.pe_num_comple
+   and p1.id_tipo_cpto= 'D'
+   and p1.id_cpto_pago = '0D') pf_casos,
+       case when p.id_cpto_pago = 'DS' then p.pe_monto * - 1 else p.pe_monto end pf_monto
+from td_perded_edo p, tn_eco_cpto_pago e, tc_concepto_pago c, tn_nomina n
+where p.pe_qna_pago = $P{PI_QNAPAGO}
+  and p.id_edo = $P{PI_UNIDAD}
+  and p.id_tipo_nomina = $P{PI_TIPONOMINA}
+  and p.pe_num_comple = $P{PI_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto in ('C','P')
+  and p.id_cpto_pago IN ('02','05','07','A1','A2','A3','A4','A5','H4','77','JS','DS')
+  and p.id_tipo_cpto = e.id_tipo_cpto(+)
+  and p.id_cpto_pago = e.id_cpto_pago(+)
+  and e.ecp_ciclo(+) = $P{PI_CICLO}
+  and p.id_tipo_cpto = c.id_tipo_cpto(+)
+  and p.id_cpto_pago = c.id_concepto(+)
+  and p.pe_qna_pago = n.nom_qna_captura
+  and p.id_tipo_nomina = n.id_tipo_nomina
+  and p.pe_num_comple = n.nom_num_complem
+order by e.id_partida, NLSSORT(p.ID_CPTO_PAGO,'NLS_SORT=BINARY_AI')]]>
+	</queryString>
+	<field name="ID_PARTIDA" class="java.lang.String"/>
+	<field name="ID_CPTO_PAGO" class="java.lang.String"/>
+	<field name="DESC_CON_PAG" class="java.lang.String"/>
+	<field name="PF_CASOS" class="java.math.BigDecimal"/>
+	<field name="PF_MONTO" class="java.math.BigDecimal"/>
+	<variable name="suma sdo" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PF_MONTO}]]></variableExpression>
+	</variable>
+	<variable name="casos issste" class="java.math.BigDecimal" calculation="Highest">
+		<variableExpression><![CDATA[$F{PF_CASOS}]]></variableExpression>
+	</variable>
+	<group name="CONCEPTO">
+		<groupExpression><![CDATA[$F{ID_CPTO_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<textField isBlankWhenNull="true">
+					<reportElement x="0" y="1" width="22" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_PARTIDA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="22" y="1" width="205" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_CON_PAG}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="255" y="1" width="74" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="327" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Partidas Presupuestales para Integrar el Sueldo Base del ISSSTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="35" splitType="Stretch">
+			<textField pattern="#,##0.00">
+				<reportElement x="267" y="6" width="62" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{suma sdo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="76" y="6" width="191" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sueldos Base para el ISSSTE]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="267" y="19" width="62" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{casos issste}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="76" y="19" width="191" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Trabajadores que Cotizan al ISSSTE]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

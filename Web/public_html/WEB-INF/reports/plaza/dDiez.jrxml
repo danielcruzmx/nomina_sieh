@@ -1,0 +1,646 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="01-D10(Detalle)" pageWidth="936" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="896" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select qna_pago,  tipo_nomina, clasifica_uni, tipo_grupo, case when tipo_grupo is null and tipo_plaza is null then 'Total' else tipo_plaza end tipo_plaza,
+sum(casos), sum(sueldo), sum(compensacion), sum(prestaciones),
+PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+from (
+select qna_pago, tipo_nomina, clasifica_uni, tipo_grupo,
+case
+     when tipo_plaza is null then ' '||tipo_grupo else tipo_plaza end tipo_plaza,
+case when tipo_plaza is not null then sum(casos) else null end casos,
+case when tipo_plaza is not null then sum(sueldo) else null end sueldo ,
+case when tipo_plaza is not null then sum(compensacion) else null end compensacion,
+case when tipo_plaza is not null then sum(prestaciones) else null end prestaciones from
+(
+select (SELECT to_number($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09')))
+    FROM TC_MES_QNA
+    WHERE ID_MES=$P{PAR_MES}) qna_pago,
+ c.clasifica clasifica_uni, c.nomina tipo_nomina, c.grupo tipo_grupo, c.grado tipo_plaza,
+c.casos, p.sueldo , p.compensacion, p.prestaciones
+From (
+select 'ORDINARIA' as nomina,
+    cla.desc_clasifica clasifica,
+    case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+    when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO end as grupo,
+    case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+    when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+    when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+    when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+    when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+    when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+    when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+    when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+    when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL' end as grado,
+    count(unique hp.ID_PLAZA) as casos
+From SIREH.TN_HISTORICO_PAGO hp, SIREH.TN_CONCEPTO_PAGADO cp, SIREH.TC_CLASIFICA cla, SIREH.TC_UNIDAD_CLASIFICA ucla,
+     SIREH.TC_ATRIBUTO_PUESTO ap, SIREH.TN_CXLC_FISICA cf, SIREH.TC_GRUPO_PAGO gp
+Where
+    hp.HP_QNA_PAGO in (SELECT to_number($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09')))
+                            FROM TC_MES_QNA
+                            WHERE ID_MES=$P{PAR_MES})
+    and hp.HP_NUM_PENSION = 0
+    and TO_NUMBER(hp.HP_NUM_COMPLEM) < 90
+    and hp.id_unidad_nom <> 'G00'
+    and hp.ID_PUESTO_NOM = ap.ID_ATRIBUTO_PUESTO
+    and ap.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and hp.HP_FOLIO = cp.CP_FOLIO
+    and hp.HP_DIF_FOLIO = cp.CP_DIF_FOLIO
+    and cp.ID_TIPO_CPTO = 'P'
+    and cp.ID_CPTO_PAGO in ('02','05','07','16')
+    and hp.ID_GRUPOPAGO_NOM = cf.ID_GRUPOPAGO
+  and cf.CF_CICLO = $P{PAR_CICLO}
+    and hp.ID_EDO_NOM =cf.ID_EDO
+    and hp.ID_UNIDAD_NOM = cf.ID_UNIDAD
+    and cp.ID_TIPO_CPTO = cf.ID_TIPO_CPTO
+    and cp.ID_CPTO_PAGO = cf.ID_CPTO_PAGO
+    and cf.CF_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.ID_PARTIDA <> '0000'
+    and cf.CF_GUIA_CONT_EJER < 3000
+    and cf.CF_GUIA_CONT_EJER not in(2227,2427,2297,2488,2298,2489)
+    and hp.ID_GRUPOPAGO_NOM = gp.ID_GRUPO_PAGO
+    and cf.ID_UNIDAD not in ('AYI','G00')
+    and (hp.ID_UNIDAD_PRE <> 'AYI' or hp.ID_UNIDAD_NOM <> 'AYI')
+    and (ucla.UNI_CICLO = $P{PAR_CICLO}
+    and hp.id_unidad_nom = ucla.ID_UNIDAD
+    and ucla.ID_CLASIFICA = cla.ID_CLASIFICA)
+group by 'ORDINARIA', cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+    when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO end,
+case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+    when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+    when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+    when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+    when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+    when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+    when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+    when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+    when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL' end
+order by 'ORDINARIA' desc , cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+    when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO end
+,
+case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+    when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+    when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+    when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+    when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+    when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+    when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+    when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+    when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL' end
+) c,
+(
+select 'ORDINARIA' as nomina,
+    cla.desc_clasifica clasifica,
+    case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end as grupo,
+    case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+        when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+        when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+        when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+        when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+        when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+        when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+        when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+        when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL'
+    end as grado,
+    sum(case when cf.ID_PARTIDA in ('11301', '12201', '12101') then  CP.CP_monto end) as sueldo,
+    sum(case when cf.ID_PARTIDA in ('15402') then CP.CP_monto end) as compensacion,
+    sum(case when cf.ID_PARTIDA not in ('11301', '12201', '12101', '15402') then  CP.CP_monto end) as prestaciones
+From SIREH.TN_HISTORICO_PAGO hp, SIREH.TC_CLASIFICA cla, SIREH.TC_UNIDAD_CLASIFICA ucla,
+     SIREH.TN_CONCEPTO_PAGADO cp, SIREH.TC_ATRIBUTO_PUESTO ap, SIREH.TN_CXLC_FISICA cf, SIREH.TC_GRUPO_PAGO gp
+Where
+    hp.HP_QNA_PAGO in (SELECT to_number($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09')))
+                            FROM TC_MES_QNA
+                            WHERE ID_MES=$P{PAR_MES})
+    and hp.HP_NUM_PENSION = 0
+    and TO_NUMBER(hp.HP_NUM_COMPLEM) < 90
+    and hp.id_unidad_nom <> 'G00'
+    and hp.ID_PUESTO_NOM = ap.ID_ATRIBUTO_PUESTO
+    and ap.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and hp.HP_FOLIO = cp.CP_FOLIO
+    and hp.HP_DIF_FOLIO = cp.CP_DIF_FOLIO
+    and cp.ID_TIPO_CPTO = 'P'
+    and hp.ID_GRUPOPAGO_NOM = cf.ID_GRUPOPAGO
+  and cf.CF_CICLO = $P{PAR_CICLO}
+    and hp.ID_EDO_NOM =cf.ID_EDO
+    and hp.ID_UNIDAD_NOM = cf.ID_UNIDAD
+    and cp.ID_TIPO_CPTO = cf.ID_TIPO_CPTO
+    and cp.ID_CPTO_PAGO = cf.ID_CPTO_PAGO
+    and cf.CF_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.ID_PARTIDA <> '0000'
+    and cf.CF_GUIA_CONT_EJER < 3000
+    and cf.CF_GUIA_CONT_EJER not in(2227,2427,2297,2488,2298,2489)
+    and hp.ID_GRUPOPAGO_NOM = gp.ID_GRUPO_PAGO
+    and cf.ID_UNIDAD not in ('AYI','G00')
+    and (hp.ID_UNIDAD_PRE <> 'AYI' or hp.ID_UNIDAD_NOM <> 'AYI' or  hp.ID_UNIDAD_NOM <> 'G00')
+    and (ucla.UNI_CICLO = $P{PAR_CICLO}
+    and hp.id_unidad_nom = ucla.ID_UNIDAD
+    and ucla.ID_CLASIFICA = cla.ID_CLASIFICA)
+    group by 'ORDINARIA', cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end,
+  case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+        when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+        when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+        when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+        when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+        when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+        when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+        when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+        when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL'
+    end
+order by 'ORDINARIA' desc, cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end,
+  case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+        when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+        when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+        when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+        when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+        when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+        when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+        when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+        when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL'
+    end
+) p
+Where c.nomina = p.nomina
+    and c.clasifica = p.clasifica
+    and c.grupo = p.grupo
+    and c.grado = p.grado
+)
+group by qna_pago,  tipo_nomina, rollup ( clasifica_uni, tipo_grupo,  tipo_plaza )
+union all
+select qna_pago,  tipo_nomina, clasifica_uni, tipo_grupo,
+case
+     when tipo_plaza is null then ' '||tipo_grupo else tipo_plaza end tipo_plaza,
+case when tipo_plaza is not null then sum(casos) else null end casos,
+case when tipo_plaza is not null then sum(sueldo) else null end sueldo ,
+case when tipo_plaza is not null then sum(compensacion) else null end compensacion,
+case when tipo_plaza is not null then sum(prestaciones) else null end prestaciones from
+(
+select (SELECT to_number($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09')))
+    FROM TC_MES_QNA
+    WHERE ID_MES=$P{PAR_MES}) qna_pago,
+    c.clasifica clasifica_uni, c.nomina tipo_nomina, c.grupo tipo_grupo, c.grado tipo_plaza,
+    c.casos, p.sueldo , p.compensacion, p.prestaciones
+From (
+select 'ORDINARIA' as nomina,
+    cla.desc_clasifica clasifica,
+    case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+    when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO end as grupo,
+    case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+    when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+    when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+    when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+    when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+    when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+    when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+    when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+    when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL' end as grado,
+    count(unique hp.ID_PLAZA) as casos
+From SIREH.TN_HISTORICO_PAGO hp, SIREH.TN_CONCEPTO_PAGADO cp, SIREH.TC_CLASIFICA cla, SIREH.TC_UNIDAD_CLASIFICA ucla,
+     SIREH.TC_ATRIBUTO_PUESTO ap, SIREH.TN_CXLC_FISICA cf, SIREH.TC_GRUPO_PAGO gp
+Where
+    hp.HP_QNA_PAGO in (SELECT to_number($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09')))
+                            FROM TC_MES_QNA
+                            WHERE ID_MES=$P{PAR_MES})
+    and hp.HP_NUM_PENSION = 0
+    and TO_NUMBER(hp.HP_NUM_COMPLEM) < 90
+    and hp.id_unidad_nom <> 'G00'
+    and hp.ID_PUESTO_NOM = ap.ID_ATRIBUTO_PUESTO
+    and ap.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and hp.HP_FOLIO = cp.CP_FOLIO
+    and hp.HP_DIF_FOLIO = cp.CP_DIF_FOLIO
+    and cp.ID_TIPO_CPTO = 'P'
+    and cp.ID_CPTO_PAGO in ('02','05','07','16')
+    and hp.ID_GRUPOPAGO_NOM = cf.ID_GRUPOPAGO
+  and cf.CF_CICLO = $P{PAR_CICLO}
+    and hp.ID_EDO_NOM =cf.ID_EDO
+    and hp.ID_UNIDAD_NOM = cf.ID_UNIDAD
+    and cp.ID_TIPO_CPTO = cf.ID_TIPO_CPTO
+    and cp.ID_CPTO_PAGO = cf.ID_CPTO_PAGO
+    and cf.CF_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.ID_PARTIDA <> '0000'
+    and cf.CF_GUIA_CONT_EJER < 3000
+    and cf.CF_GUIA_CONT_EJER not in(2227,2427,2297,2488,2298,2489)
+    and hp.ID_GRUPOPAGO_NOM = gp.ID_GRUPO_PAGO
+    and cf.ID_UNIDAD not in ('AYI', 'G00')
+    and (hp.ID_UNIDAD_PRE <> 'AYI' or hp.ID_UNIDAD_NOM <> 'AYI' or hp.id_unidad_nom <> 'G00')
+    and (ucla.UNI_CICLO = $P{PAR_CICLO}
+    and hp.id_unidad_nom = ucla.ID_UNIDAD
+    and ucla.ID_CLASIFICA = cla.ID_CLASIFICA)
+group by 'ORDINARIA', cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+    when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO end,
+case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+    when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+    when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+    when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+    when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+    when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+    when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+    when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+    when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL' end
+order by 'ORDINARIA' desc , cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+    when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO end
+,
+case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+    when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+    when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+    when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+    when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+    when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+    when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+    when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+    when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+    when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+    when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+    when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL' end
+) c,
+(
+select 'ORDINARIA' as nomina,
+    cla.desc_clasifica clasifica,
+    case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end as grupo,
+    case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+        when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+        when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+        when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+        when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+        when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+        when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+        when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+        when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL'
+    end as grado,
+    sum(case when cf.ID_PARTIDA in ('11301', '12201', '12101') then  CP.CP_monto end) as sueldo,
+    sum(case when cf.ID_PARTIDA in ('15402') then CP.CP_monto end) as compensacion,
+    sum(case when cf.ID_PARTIDA not in ('11301', '12201', '12101', '15402') then  CP.CP_monto end) as prestaciones
+From SIREH.TN_HISTORICO_PAGO hp, SIREH.TC_CLASIFICA cla, SIREH.TC_UNIDAD_CLASIFICA ucla,
+    SIREH.TN_CONCEPTO_PAGADO cp, SIREH.TC_ATRIBUTO_PUESTO ap, SIREH.TN_CXLC_FISICA cf, SIREH.TC_GRUPO_PAGO gp
+Where
+    hp.HP_QNA_PAGO in (SELECT to_number($P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09')))
+                            FROM TC_MES_QNA
+                            WHERE ID_MES=$P{PAR_MES})
+    and hp.HP_NUM_PENSION = 0
+    and TO_NUMBER(hp.HP_NUM_COMPLEM) < 90
+    and hp.ID_PUESTO_NOM = ap.ID_ATRIBUTO_PUESTO
+    and ap.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and hp.HP_FOLIO = cp.CP_FOLIO
+    and hp.HP_DIF_FOLIO = cp.CP_DIF_FOLIO
+    and cp.ID_TIPO_CPTO = 'P'
+    and hp.ID_GRUPOPAGO_NOM = cf.ID_GRUPOPAGO
+  and cf.CF_CICLO = $P{PAR_CICLO}
+    and hp.ID_EDO_NOM =cf.ID_EDO
+    and hp.ID_UNIDAD_NOM = cf.ID_UNIDAD
+    and cp.ID_TIPO_CPTO = cf.ID_TIPO_CPTO
+    and cp.ID_CPTO_PAGO = cf.ID_CPTO_PAGO
+    and cf.CF_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+    and cf.ID_PARTIDA <> '0000'
+    and cf.CF_GUIA_CONT_EJER < 3000
+    and cf.CF_GUIA_CONT_EJER not in(2227,2427,2297,2488,2298,2489)
+    and hp.ID_GRUPOPAGO_NOM = gp.ID_GRUPO_PAGO
+    and cf.ID_UNIDAD not in ('AYI', 'G00')
+    and (hp.ID_UNIDAD_PRE <> 'AYI' or hp.ID_UNIDAD_NOM <> 'AYI' or hp.id_unidad_nom <> 'G00')
+    and (ucla.UNI_CICLO = $P{PAR_CICLO}
+    and hp.id_unidad_nom = ucla.ID_UNIDAD
+    and ucla.ID_CLASIFICA = cla.ID_CLASIFICA)
+group by 'ORDINARIA', cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end,
+  case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+        when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+        when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+        when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+        when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+        when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+        when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+        when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+        when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL'
+    end
+order by 'ORDINARIA' desc , cla.desc_clasifica,
+case when gp.DESC_GRUPO_PAGO = 'Consejerias' or gp.DESC_GRUPO_PAGO = 'Personal en el Extranjero' then 'Personal Estructura'
+        when gp.DESC_GRUPO_PAGO <> 'Consejerias' then gp.DESC_GRUPO_PAGO
+    end,
+  case when ap.ID_NIVEL_PTO like 'G%' then 'A SECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Estructura' then 'B SUBSECRETARIO DE ESTADO'
+        when ap.ID_NIVEL_PTO like 'H%' and gp.DESC_GRUPO_PAGO='Personal Honorarios' then 'Personal Honorarios'
+        when ap.ID_NIVEL_PTO like 'I%' then 'C OFICIAL MAYOR'
+        when ap.ID_NIVEL_PTO like 'J%' then 'D JEFE DE UNIDAD'
+        when ap.ID_NIVEL_PTO like 'K%' then 'E DIRECTOR GENERAL'
+        when ap.ID_NIVEL_PTO like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+        when ap.ID_NIVEL_PTO like 'M%' then 'G DIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'N%' then 'H SUBDIRECTOR DE AREA'
+        when ap.ID_NIVEL_PTO like 'O%' then 'I JEFE DE DEPARTAMENTO'
+        when ap.ID_NIVEL_PTO in ('P11', 'P12','P13')  then 'J ENLACE'
+        when ap.ID_NIVEL_PTO like 'P%' and ap.ID_NIVEL_PTO not in ('P11', 'P12','P13') then 'J ENLACE ALTA RESP'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'B' then 'K OPERATIVO DE BASE'
+        when ap.ID_JERARQUIA = '7' and ap.ID_NOMBRAMIENTO = 'C' then 'L OPERATIVO DE CONFIANZA'
+        when ap.ID_JERARQUIA = 'S' then 'S SERVICIO SOCIAL'
+    end
+) p
+Where c.nomina = p.nomina
+    and c.clasifica = p.clasifica
+    and c.grupo = p.grupo
+    and c.grado = p.grado
+)
+group by qna_pago,  tipo_nomina, rollup ( clasifica_uni, tipo_grupo,  tipo_plaza )
+order by qna_pago, clasifica_uni, tipo_grupo, tipo_plaza
+) where tipo_grupo is not null and tipo_plaza is not null
+group by qna_pago,  tipo_nomina, rollup ( clasifica_uni, tipo_grupo,  tipo_plaza )
+order by qna_pago, clasifica_uni, tipo_grupo, tipo_plaza]]>
+	</queryString>
+	<field name="QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="TIPO_NOMINA" class="java.lang.String"/>
+	<field name="CLASIFICA_UNI" class="java.lang.String"/>
+	<field name="TIPO_GRUPO" class="java.lang.String"/>
+	<field name="TIPO_PLAZA" class="java.lang.String"/>
+	<field name="SUM(CASOS)" class="java.math.BigDecimal"/>
+	<field name="SUM(SUELDO)" class="java.math.BigDecimal"/>
+	<field name="SUM(COMPENSACION)" class="java.math.BigDecimal"/>
+	<field name="SUM(PRESTACIONES)" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<group name="MEP_RFC">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<group name="Tipo_grupo">
+		<groupExpression><![CDATA[$F{TIPO_GRUPO}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<rectangle>
+					<reportElement x="0" y="0" width="896" height="25" forecolor="#FFFFFF" backcolor="#F1F1F1"/>
+				</rectangle>
+				<staticText>
+					<reportElement x="349" y="12" width="32" height="13"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qna]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="425" y="12" width="53" height="13"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Casos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="506" y="12" width="92" height="13"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sueldo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="631" y="12" width="96" height="13"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Compensación]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="745" y="12" width="102" height="13"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Prestaciones]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="305" y="0" width="418" height="13"/>
+					<textElement textAlignment="Center">
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nómina Ordinaria y Complementos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="148" y="12" width="108" height="13"/>
+					<textElement>
+						<font isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tipo plaza]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="20"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="251" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="686" y="9" width="210" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="656" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="263" y="6" width="504" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="10" isBold="true" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Personal ocupado y pago de sueldos y salarios]]></text>
+			</staticText>
+			<image isLazy="true">
+				<reportElement x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="263" y="26" width="504" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[en la Administración Pública Federal]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="1" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="14" width="893" height="1" forecolor="#F1F1F1"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="425" y="0" width="53" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{SUM(CASOS)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="506" y="0" width="92" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{SUM(SUELDO)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="631" y="0" width="96" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{SUM(COMPENSACION)}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="746" y="0" width="101" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{SUM(PRESTACIONES)}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="147" y="0" width="159" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{TIPO_PLAZA}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="337" y="0" width="55" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{QNA_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement isPrintRepeatedValues="false" x="19" y="0" width="106" height="13"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{CLASIFICA_UNI}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="789" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="854" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEE dd/MMM/yyyy HH:mm">
+				<reportElement x="793" y="15" width="89" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="893" height="1" forecolor="#999999"/>
+			</line>
+			<textField isBlankWhenNull="true">
+				<reportElement x="162" y="5" width="600" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

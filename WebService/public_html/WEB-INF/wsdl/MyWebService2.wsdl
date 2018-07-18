@@ -1,0 +1,92 @@
+<definitions
+     name="MyWebService2"
+     targetNamespace="http://gob.shcp.sireh.ws/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://gob.shcp.sireh.ws/"
+     xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:tns0="http://gob.shcp.sireh.ws/types/"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+     xmlns:tns1="http://www.oracle.com/webservices/internal/literal"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://gob.shcp.sireh.ws/types/"
+             elementFormDefault="qualified" xmlns:tns="http://gob.shcp.sireh.ws/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:ns1="http://www.oracle.com/webservices/internal/literal">
+            <import namespace="http://www.oracle.com/webservices/internal/literal"/>
+            <element name="getDeptInfoElement" type="int"/>
+            <element name="getDeptInfoResponseElement" type="tns:Dept" nillable="true"/>
+            <complexType name="Dept">
+                <sequence>
+                    <element name="employees" type="ns1:collection" nillable="true"/>
+                    <element name="location" type="string" nillable="true"/>
+                    <element name="name" type="string" nillable="true"/>
+                    <element name="id" type="int"/>
+                </sequence>
+            </complexType>
+            <element name="getDeptInfoStringElement" type="int"/>
+            <element name="getDeptInfoStringResponseElement" type="string" nillable="true"/>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.oracle.com/webservices/internal/literal"
+             elementFormDefault="qualified" xmlns:tns="http://www.oracle.com/webservices/internal/literal"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/">
+            <import namespace="http://gob.shcp.sireh.ws/types/"/>
+            <complexType name="collection">
+                <sequence>
+                    <element name="item" type="anyType" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+        </schema>
+    </types>
+    <message name="MyWebService2_getDeptInfo">
+        <part name="parameters" element="tns0:getDeptInfoElement"/>
+    </message>
+    <message name="MyWebService2_getDeptInfoResponse">
+        <part name="return" element="tns0:getDeptInfoResponseElement"/>
+    </message>
+    <message name="MyWebService2_getDeptInfoString">
+        <part name="parameters" element="tns0:getDeptInfoStringElement"/>
+    </message>
+    <message name="MyWebService2_getDeptInfoStringResponse">
+        <part name="return" element="tns0:getDeptInfoStringResponseElement"/>
+    </message>
+    <portType name="MyWebService2">
+        <operation name="getDeptInfo">
+            <input message="tns:MyWebService2_getDeptInfo"/>
+            <output message="tns:MyWebService2_getDeptInfoResponse"/>
+        </operation>
+        <operation name="getDeptInfoString">
+            <input message="tns:MyWebService2_getDeptInfoString"/>
+            <output message="tns:MyWebService2_getDeptInfoStringResponse"/>
+        </operation>
+    </portType>
+    <binding name="MyWebService2SoapHttp" type="tns:MyWebService2">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="getDeptInfo">
+            <soap:operation soapAction="http://gob.shcp.sireh.ws//getDeptInfo"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal" parts="return"/>
+            </output>
+        </operation>
+        <operation name="getDeptInfoString">
+            <soap:operation soapAction="http://gob.shcp.sireh.ws//getDeptInfoString"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal" parts="return"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="MyWebService2">
+        <port name="MyWebService2SoapHttpPort" binding="tns:MyWebService2SoapHttp">
+            <soap:address location="http://172.18.153.53:8888/sirehWS/MyWebService2SoapHttpPort"/>
+        </port>
+    </service>
+</definitions>

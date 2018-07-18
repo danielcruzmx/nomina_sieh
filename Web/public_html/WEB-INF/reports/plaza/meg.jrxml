@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="19-Rep MEG" pageWidth="3312" pageHeight="576" columnWidth="3256" leftMargin="36" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select h.hp_qna_pago QNA_PAGO, h.hp_num_complem COMPLEMENTO, g.desc_grupo_pago GRUPO,
+            h.id_unidad_nom UNIDAD, u.DESC_UNIDAD DESCRIPCION,
+            a.id_nivel_pto NIVEL, h.id_puesto_nom PUESTO, p.desc_puesto DESC_PUESTO, p.desc_puestoho DESC_HOMBRE, p.desc_puestomu DESC_MUJER,
+            h.hp_rfc RFC, e.curp_empleado CURP, e.primer_apellido PATERNO, e.segundo_apellido MATERNO, e.nombre_empleado NOMBRE,
+            h.id_plaza PLAZA,
+to_char(e.ingreso_dependencia,'dd/mm/yyyy') FEC_INGRESO,
+            nvl(t.tab_sueldo,0) SLDO_MENSUAL, nvl(t.tab_compensacion,0) COMPENSA_MENSUAL,
+            case when (h.id_tipo_nomina = 'OR' and h.hp_num_complem in ('2')) then nvl(pl.PLAZA_IMP_HONO,0)
+            else 0 end IMPTE_HONO_MENSUAL
+from tn_historico_pago h,  tc_atributo_puesto a, td_empleado e, tc_tabulador t, tc_unidad u, tc_puesto p, tc_grupo_pago g,
+         td_plaza pl
+where
+/* La extracción de información se hace en base a las nominas ordinarias de las quincenas requeridas, el usuario final debería de poder elegir las
+nominas */
+( (
+--h.hp_qna_pago = 201316
+h.hp_qna_pago=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES = $P{PAR_MES})
+ and h.id_tipo_nomina = 'OR' and h.hp_num_complem in ('0','2','10') )
+                or (
+--h.hp_qna_pago = 201315
+h.hp_qna_pago=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES = $P{PAR_MES})
+and h.id_tipo_nomina = 'CJ' and h.hp_num_complem in ('0','1'))  )
+and h.hp_num_pension = '0'
+and h.id_puesto_nom = a.id_atributo_puesto
+and a.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and h.hp_rfc = e.rfc_empleado(+) -- Este outer no debe ir se esta poniendo porque la tabla de empleado no esta al 100
+and a.id_nivel_pto = t.id_nivel_pto
+and h.id_zona_eco_nom = t.id_zona_econ
+and t.tab_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and h.id_rango_nom = t.id_rango
+and h.id_puesto_nom = p.id_puesto
+and h.id_unidad_nom = u.id_unidad
+and u.uni_ciclo = $P{PAR_CICLO}
+and h.id_grupopago_nom = g.id_grupo_pago
+and h.id_plaza = pl.id_plaza(+)
+order by h.hp_qna_pago,h.hp_num_complem,g.desc_grupo_pago,h.id_unidad_nom,u.DESC_UNIDAD,p.desc_puestoho]]>
+	</queryString>
+	<field name="QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="COMPLEMENTO" class="java.lang.String"/>
+	<field name="GRUPO" class="java.lang.String"/>
+	<field name="UNIDAD" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="NIVEL" class="java.lang.String"/>
+	<field name="PUESTO" class="java.lang.String"/>
+	<field name="DESC_PUESTO" class="java.lang.String"/>
+	<field name="DESC_HOMBRE" class="java.lang.String"/>
+	<field name="DESC_MUJER" class="java.lang.String"/>
+	<field name="RFC" class="java.lang.String"/>
+	<field name="CURP" class="java.lang.String"/>
+	<field name="PATERNO" class="java.lang.String"/>
+	<field name="MATERNO" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="PLAZA" class="java.math.BigDecimal"/>
+	<field name="FEC_INGRESO" class="java.lang.String"/>
+	<field name="SLDO_MENSUAL" class="java.math.BigDecimal"/>
+	<field name="COMPENSA_MENSUAL" class="java.math.BigDecimal"/>
+	<field name="IMPTE_HONO_MENSUAL" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="13" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="56" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Qna]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="56" y="0" width="53" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Complemento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="109" y="0" width="155" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Grupo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="264" y="0" width="53" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="317" y="0" width="480" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1757" y="0" width="53" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Nivel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1810" y="0" width="61" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="797" y="0" width="480" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Descripción hombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1277" y="0" width="480" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Descripción mujer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1871" y="0" width="275" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Descripción puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2146" y="0" width="100" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2246" y="0" width="105" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CURP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2351" y="0" width="139" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Paterno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2490" y="0" width="158" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Materno]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2648" y="0" width="166" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2814" y="0" width="61" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2875" y="0" width="82" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fecha ingreso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2957" y="0" width="70" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Sueldo mensual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3027" y="0" width="100" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Compensa mensual]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3127" y="0" width="100" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Honorario mensual]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="56" y="0" width="53" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{COMPLEMENTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="109" y="0" width="155" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{GRUPO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="264" y="0" width="53" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="317" y="0" width="480" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1757" y="0" width="53" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1810" y="0" width="61" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1871" y="0" width="275" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESC_PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2146" y="0" width="100" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{RFC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2246" y="0" width="105" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CURP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2351" y="0" width="139" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PATERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2490" y="0" width="158" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{MATERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2648" y="0" width="166" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2814" y="0" width="61" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="2875" y="0" width="82" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FEC_INGRESO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="2957" y="0" width="70" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{SLDO_MENSUAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="56" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{QNA_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="3027" y="0" width="100" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{COMPENSA_MENSUAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="3127" y="0" width="100" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{IMPTE_HONO_MENSUAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="797" y="0" width="480" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESC_HOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1277" y="0" width="480" height="13"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESC_MUJER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

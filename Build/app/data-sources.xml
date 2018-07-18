@@ -1,0 +1,7 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+<data-sources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://xmlns.oracle.com/oracleas/schema/data-sources-10_1.xsd">
+    <connection-pool name="connection-pool-sireh" validate-connection="false">
+        <connection-factory factory-class="oracle.jdbc.pool.OracleDataSource" user="FACTOR_HUMANO" password="shcp2013" url="jdbc:oracle:thin:@172.22.45.14:1522:EOM2"/>
+    </connection-pool>
+    <managed-data-source name="data-source-sireh" jndi-name="jdbc/SIREHDS" connection-pool-name="connection-pool-sireh"/>
+</data-sources>

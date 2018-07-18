@@ -1,0 +1,1292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                <!--Expedinte personal - Comprobantes de pago-->
+                <prop key="comprobanteExp">                    
+                    SELECT  P.PAQ_FOLIO,
+                    -----------
+                    HP.HP_FOLIO,
+                    HP.HP_DIF_FOLIO,
+                    TN.DESC_TIPO_NOMINA,
+                    HP.HP_CICLO_UNIDAD,
+                    HP.HP_EJER_FISCAL,
+                    HP.ID_PLAZA,
+                    HP.ID_UNIDAD_NOM,
+                    HP.ID_PUESTO_NOM,
+                    GP.DESC_GRUPO_PAGO,
+                    TO_CHAR(NVL(HP.HP_NETO_PAGO,0),'$999,999.99') AS NETO,
+                    --------------------
+                    C.COMP_FOLIO_RECIBO,
+                    HP.HP_INI_PAGO,
+                    C.COMP_FOLIO_FISCAL,
+                    C.COMP_FECHA_EMISION,
+                    E.NOMBRE_EMPLEADO, 
+                    E.PRIMER_APELLIDO, 
+                    E.SEGUNDO_APELLIDO,
+                    E.RFC_EMPLEADO AS COMP_RFC,
+                    C.ID_COMPROBANTE,
+                    P.ID_PAQUETE,
+                    EC.DESC_EDO_COMP, 
+                    C.ID_EDO_COMPROBANTE
+            FROM    TN_COMPROBANTE C, TN_PAQUETE P, TD_EMPLEADO E, TC_ESTADO_COMPROBANTE EC, TN_HISTORICO_PAGO HP, TC_TIPO_NOMINA TN, TC_GRUPO_PAGO GP
+            WHERE   C.COMP_RFC = ?
+                    AND C.ID_PAQUETE = P.ID_PAQUETE 
+                    AND C.COMP_RFC = E.RFC_EMPLEADO 
+                    AND C.ID_EDO_COMPROBANTE = EC.ID_EDO_COMPROBANTE 
+                    AND C.COMP_FOLIO_RECIBO = HP.HP_FOLIO(+)
+                    AND C.COMP_RFC = HP.HP_RFC(+)
+                    --------------------------------------------
+                    AND HP.ID_TIPO_NOMINA =  TN.ID_TIPO_NOMINA(+)
+                    And HP.ID_GRUPOPAGO_NOM = GP.ID_GRUPO_PAGO(+)
+                    ------------------------------
+                    ORDER BY HP.HP_INI_PAGO DESC
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta de registro federal de contribuyentes-->
+                <prop key="sequence-altaRfc">
+                    SELECT SD_RFC_SECUENCIA.NEXTVAL AS RFC_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaRfc">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_RFC ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaRfc">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_RFC ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaRfc">
+                   UPDATE TD_EXP_RFC SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Cambio de estatus - Registro federal de contribuyentes-->
+                <prop key="totalHistoricoRfc-expModEstatus">
+                    SELECT * FROM TD_EXP_RFC ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'HIS' ORDER BY ER.FEC_MODIFICO DESC
+                </prop>
+                <prop key="totalRegistroRfc-expModEstatus">
+                    SELECT * FROM TD_EXP_RFC ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG' ORDER BY ER.FEC_MODIFICO DESC
+                </prop>
+                <prop key="totalRegistradosRfc-expModEstatus">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_RFC ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG' AND ER.RFC_SECUENCIA != :idDocto
+                </prop>
+                <prop key="totalRechazadosRfc-expModEstatus">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_RFC ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC' AND ER.RFC_SECUENCIA != :idDocto
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Designacion - Búsqueda de familiares, dependientes o beneficiarios-->
+                <prop key="sequence-altaDepBenef">
+                    SELECT SD_BEN_SECUENCIA.NEXTVAL AS BEN_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaDepBenef">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_BENEFICIARIOS EB WHERE EB.RFC_EMPLEADO = :rfcEmpleado AND EB.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaDepBenef">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_BENEFICIARIOS EB WHERE EB.RFC_EMPLEADO = :rfcEmpleado AND EB.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaDepBenef">
+                   UPDATE TD_EXP_BENEFICIARIOS SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta y/o modificación de familiares, dependientes o beneficiarios-->
+                <prop key="sequence-altaDependientes">
+                    SELECT SD_FDB_SECUENCIA.NEXTVAL AS FDB_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaDependientes">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_FAMILIAR_DEPS_BENEF EF WHERE EF.RFC_EMPLEADO = :rfcEmpleado AND EF.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaDependientes">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_FAMILIAR_DEPS_BENEF EF WHERE EF.RFC_EMPLEADO = :rfcEmpleado AND EF.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaDependientes">
+                   UPDATE TD_EXP_FAMILIAR_DEPS_BENEF SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                <prop key="verificaParentesco-altaDependientes">
+                    SELECT COUNT(*) AS TOTAL_PARENTESCO FROM TD_EXP_FAMILIAR_DEPS_BENEF BEN 
+                    WHERE 
+                        BEN.RFC_EMPLEADO = :rfcEmpleado
+                    AND BEN.ID_PARENTESCO = :idParenesco
+                    AND BEN.ID_STATUS IN ('REG') 
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta de clave única de registro de población-->
+                <prop key="sequence-altaCurp">
+                    SELECT SD_CURP_SECUENCIA.NEXTVAL AS CURP_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaCurp">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_CURP ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaCurp">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_CURP ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaCurp">
+                   UPDATE TD_EXP_CURP SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta de Cuentas Bancarias-->
+                <prop key="sequence-altaCuentasBancarias">
+                    SELECT SD_CTA_SECUENCIA.NEXTVAL AS CTA_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaCuentasBancarias">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_CUENTAS_BANCARIAS ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaCuentasBancarias">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_CUENTAS_BANCARIAS ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaCuentasBancarias">
+                   UPDATE TD_EXP_CUENTAS_BANCARIAS SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Aviso en caso de accidente-->
+                <prop key="aviso-Accidente">
+                    SELECT  EA.RFC_EMPLEADO rfcEmpleado, 
+                        EA.ACC_NOMBRE_EMPLEADO accNombreEmpleado, 
+                        EA.ACC_PRIMER_APELLIDO accPrimerApellido, 
+                        EA.ACC_SEGUNDO_APELLIDO accSegundoApellido,
+                        EA.ACC_TELEFONO1 accTelefono1,
+                        EA.ACC_TELEFONO2 accTelefono2,
+                        EA.ID_PARENTESCO idParentesco,
+                        PA.DESC_PARENTESCO usuario
+                    FROM    TD_EXP_AVISO_ACCIDENTE EA, TC_PARENTESCO PA
+                    WHERE   EA.RFC_EMPLEADO = ?
+                            AND EA.ID_PARENTESCO = PA.ID_PARENTESCO
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Aviso en caso de accidente-->
+                <prop key="sequence-altaAvisoAccidente">
+                    SELECT SD_ACC_SECUENCIA.NEXTVAL AS ACC_SECUENCIA FROM DUAL
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta experiencia laboral-->
+                <prop key="sequence-experienciaLaboral">
+                    SELECT SD_EXP_SECUENCIA.NEXTVAL AS expSecuencia FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-experienciaLaboral">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_EXPERIENCIA_LABORAL EL WHERE EL.RFC_EMPLEADO = :rfcEmpleado AND EL.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-experienciaLaboral">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_EXPERIENCIA_LABORAL EL WHERE EL.RFC_EMPLEADO = :rfcEmpleado AND EL.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-experienciaLaboral">
+                   UPDATE TD_EXP_EXPERIENCIA_LABORAL SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta de domicilio particular-->
+                <prop key="sequence-altaDomicilio">
+                    SELECT SD_DOM_SECUENCIA.NEXTVAL AS DOM_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaDomicilio">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_DOMICILIO_PARTICULAR ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaDomicilio">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_DOMICILIO_PARTICULAR ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaDomicilio">
+                   UPDATE TD_EXP_DOMICILIO_PARTICULAR SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                <prop key="getMuicipiosByEstado-altaDomicilio">
+                    SELECT  M.ID_EDO, M.ID_MUNICIPIO, M.ID_ZONA_ECON, M.ID_ZONA_SAL_MIN, M.DESC_MUNICIPIO, M.USUARIO, M.FEC_MODIFICO
+                    FROM    TC_MUNICIPIO M, TC_ESTADO E
+                    WHERE   M.ID_EDO = E.ID_EDO
+                            AND E.ID_EDO = ?
+                            ORDER BY M.ID_MUNICIPIO ASC
+                </prop>
+                <prop key="getCpsByEstadoAndMunicipio-altaDomicilio">
+                    SELECT  distinct ID_COD_POST 
+                    FROM    TC_CODIGO_POSTAL
+                    WHERE   ID_EDO = ?
+                            AND ID_MUN = ?
+                            ORDER BY ID_COD_POST ASC
+                </prop>
+                <prop key="getColoniasByCodigoPostal-altaDomicilio">
+                    SELECT  C.ID_COD_POST, C.COLONIA, C.ID_EDO, C.ID_MUN, C.ID_STATUS, C.USUARIO, C.FEC_MODIFICO
+                    FROM    TC_CODIGO_POSTAL C
+                    WHERE   C.ID_COD_POST = ?
+                            ORDER BY C.ID_COD_POST ASC
+                </prop>
+                                
+                <!--Oficina Virtual - Gestion de Documentos - Alta de Datos de Naciemiento-->
+                <prop key="sequence-altaDatosNacimiento">
+                    SELECT SD_DNA_SECUENCIA.NEXTVAL AS DNA_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaDatosNacimiento">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_DATOS_NACIMIENTO ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaDatosNacimiento">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_DATOS_NACIMIENTO ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaDatosNacimiento">
+                   UPDATE TD_EXP_DATOS_NACIMIENTO SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+		
+                <!--Oficina Virtual - Gestion de Documentos - Fechas Laborales-->
+                <prop key="sequence-altaFechasLaborales">
+                    SELECT SD_RFC_SECUENCIA.NEXTVAL AS FEL_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="updateActivosToHistorico-altaFechasLaborales">
+                   UPDATE TD_EXP_FECHAS_LABORALES SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>    
+                 <prop key="totalRegistrados-altaFechasLaborales">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_FECHAS_LABORALES ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaFechasLaborales">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_FECHAS_LABORALES ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC'
+                </prop>
+				
+		<!--Oficina Virtual - Gestion de Documentos - Alta de Cursos y capacitaciones-->
+                <prop key="sequence-altaCapacitacionCursos">
+                    SELECT SD_CAP_SECUENCIA.NEXTVAL AS CAP_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaCapacitacionCursos">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_CAPACITACION ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaCapacitacionCursos">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_CAPACITACION ER WHERE ER.RFC_EMPLEADO = :rfcEmpleado AND ER.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaCapacitacionCursos">
+                   UPDATE TD_EXP_CAPACITACION SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta de antecedentes academicos -->
+                <prop key="sequence-altaAntecedentesAcademicos">
+                    SELECT SD_ACC_SECUENCIA.NEXTVAL AS AAC_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaAntecedentesAcademicos">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_ANTECEDENTES_ACADEMICOS AA WHERE AA.RFC_EMPLEADO = :rfcEmpleado AND AA.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaAntecedentesAcademicos">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_ANTECEDENTES_ACADEMICOS AA WHERE AA.RFC_EMPLEADO = :rfcEmpleado AND AA.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaAntecedentesAcademicos">
+                   UPDATE TD_EXP_ANTECEDENTES_ACADEMICOS SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta documentos sin captura -->
+                <prop key="sequence-altaDocumentosSinCaptura">
+                    SELECT SD_DSD_SECUENCIA.NEXTVAL AS DSD_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaDocumentosSinCaptura">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_DOCTOS_SIN_DATOS AA WHERE AA.RFC_EMPLEADO = :rfcEmpleado AND AA.ID_DOCTO = :idDocto AND AA.ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaDocumentosSinCaptura">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_DOCTOS_SIN_DATOS AA WHERE AA.RFC_EMPLEADO = :rfcEmpleado AND AA.ID_DOCTO = :idDocto AND AA.ID_STATUS = 'REC'
+                </prop>
+                <prop key="updateActivosToHistorico-altaDocumentosSinCaptura">
+                   UPDATE TD_EXP_DOCTOS_SIN_DATOS SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_DOCTO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                <prop key="getTcDescripcionAux-documentosSinDatos">
+                    SELECT trim(DESC_DOCTO) AS DESC_DOCTO
+                    FROM TC_TIPO_DOC_EXP_AUX
+                    WHERE ID_DOCTO = ?
+                    ORDER BY DESC_DOCTO ASC
+                </prop>
+                
+                <!--Oficina Virtual - Gestion de Documentos - Alta de cartilla militar-->
+                <prop key="sequence-altaCartillaMilitar">
+                    SELECT SD_CMI_SECUENCIA.NEXTVAL AS CMI_SECUENCIA FROM DUAL
+                </prop>
+                <prop key="totalRegistrados-altaCartillaMilitar">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_CARTILLA_MILITAR WHERE RFC_EMPLEADO = :rfcEmpleado AND ID_STATUS = 'REG'
+                </prop>
+                <prop key="totalRechazados-altaCartillaMilitar">
+                    SELECT COUNT(*) AS TOTAL_RECHAZADOS FROM TD_EXP_CARTILLA_MILITAR WHERE RFC_EMPLEADO = :rfcEmpleado AND ID_STATUS = 'REC'
+                </prop>
+                <prop key="totalRegistrados-datosComplementarios">
+                    SELECT COUNT(*) AS TOTAL_REGISTRADOS FROM TD_EXP_AVISO_ACCIDENTE WHERE RFC_EMPLEADO = :rfcEmpleado
+                </prop>
+                <prop key="updateActivosToHistorico-altaCartillaMilitar">
+                   UPDATE TD_EXP_CARTILLA_MILITAR SET ID_STATUS = 'HIS' WHERE RFC_EMPLEADO = ? AND ID_STATUS = 'ACT'
+                </prop>
+                
+                <!--**************** DOCUMENTOS OPCIONALES *******************-->
+                <prop key="getExpDoctoFaltantesLaborales">
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO IN ('DCLFD', 'SOCEM', 'CIFON', 'AHOSO', 'CSGMM', 'INSAR', 'SEGUR', 'OFIDO', 'ACSPF', 'PSPAS', 'DOSPF', 'COSER', 'HUSER', 'CONES', 'ACTAD', 'RNOIC', 'AEOIC', 'ACTAT', 'MEDDI', 'CONHE', 'CAISS', 'DEMAN', 'LAUEJ', 'BECAS', 'ACDEF', 'OFIRE', 'OFISU', 'ACUBA', 'DMINC')
+                          AND DSD.ID_DOCTO = DSDCD.ID_DOCTO 
+                          AND DSD.RFC_EMPLEADO = ? 
+                 GROUP BY DSDCD.ORDEN_DOCTO,
+                          DSDCD.DESC_DOCTO_CORTA, 
+                          DSD.ID_DOCTO,
+                          DSDCD.REQUERIDO,
+                          DSDCD.ID_DOCTO
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(CAPCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CAPCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CAP.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          CAPCD.REQUERIDO REQUERIDO,
+                          CAPCD.ID_DOCTO
+                     FROM TD_EXP_CAPACITACION CAP, TC_TIPO_DOCTOS_EXPEDIENTE CAPCD
+                    WHERE CAPCD.ID_DOCTO = 'CCTDE'
+                          AND CAP.ID_DOCTO = CAPCD.ID_DOCTO 
+                          AND CAP.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(BENCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          BENCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN BEN.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          BENCD.REQUERIDO REQUERIDO,
+                          BENCD.ID_DOCTO
+                     FROM TD_EXP_BENEFICIARIOS BEN, TC_TIPO_DOCTOS_EXPEDIENTE BENCD
+                    WHERE BENCD.ID_DOCTO = 'DESBE'
+                          AND BEN.ID_DOCTO = BENCD.ID_DOCTO
+                          AND BEN.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL 
+                    
+                    SELECT TO_CHAR(FDBCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          FDBCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN FDB.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,     
+                          FDBCD.REQUERIDO REQUERIDO,
+                          FDBCD.ID_DOCTO
+                     FROM TD_EXP_FAMILIAR_DEPS_BENEF FDB, TC_TIPO_DOCTOS_EXPEDIENTE FDBCD
+                    WHERE FDBCD.ID_DOCTO = 'DFDBE'
+                          AND FDB.ID_DOCTO = FDBCD.ID_DOCTO
+                          AND FDB.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(FELCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          FELCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN FEL.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          FELCD.REQUERIDO REQUERIDO,
+                          FELCD.ID_DOCTO 
+                     FROM TD_EXP_FECHAS_LABORALES FEL, TC_TIPO_DOCTOS_EXPEDIENTE FELCD
+                    WHERE FELCD.ID_DOCTO = 'FECLA'
+                          AND FEL.ID_DOCTO = FELCD.ID_DOCTO
+                          AND FEL.RFC_EMPLEADO = ? 
+                          AND ROWNUM = 1
+                    
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(EXPLCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          EXPLCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN EXPL.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,        
+                          EXPLCD.REQUERIDO REQUERIDO,
+                          EXPLCD.ID_DOCTO 
+                     FROM TD_EXP_EXPERIENCIA_LABORAL EXPL, TC_TIPO_DOCTOS_EXPEDIENTE EXPLCD
+                    WHERE EXPLCD.ID_DOCTO = 'EXPLA'
+                          AND EXPL.ID_DOCTO = EXPLCD.ID_DOCTO 
+                          AND EXPL.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    ORDER BY 1 ASC
+
+                </prop>
+                
+                <!--**************** DOCUMENTOS OBLIGATORIOS *************************-->
+                <prop key="getExpDoctoFaltantesObligatorios">
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO,                     
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,     
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'SOEMP'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO 
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,       
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CURRV'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO 
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CERME'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO 
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'IDOFI'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO  IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'MBPDV'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO 
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CNISF'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CILAB'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'ABMIS'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CONNO'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DNACD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                           DNACD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                           CASE 
+                            WHEN DNA.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,  
+                           DNACD.REQUERIDO REQUERIDO, 
+                           DNACD.ID_DOCTO
+                      FROM TD_EXP_DATOS_NACIMIENTO DNA, TC_TIPO_DOCTOS_EXPEDIENTE DNACD
+                     WHERE DNACD.ID_DOCTO = 'ACNAC'
+                           AND DNA.ID_DOCTO(+) = DNACD.ID_DOCTO
+                           AND DNA.RFC_EMPLEADO(+) = ?
+                           AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(RFCCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          RFCCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN RFC.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          RFCCD.REQUERIDO REQUERIDO,
+                          RFCCD.ID_DOCTO
+                     FROM TD_EXP_RFC RFC, TC_TIPO_DOCTOS_EXPEDIENTE RFCCD
+                    WHERE RFCCD.ID_DOCTO = 'CRRFC'
+                          AND RFC.ID_DOCTO(+) = RFCCD.ID_DOCTO
+                          AND RFC.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(AACCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          AACCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN AAC.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          AACCD.REQUERIDO REQUERIDO,
+                          AACCD.ID_DOCTO
+                     FROM TD_EXP_ANTECEDENTES_ACADEMICOS AAC, TC_TIPO_DOCTOS_EXPEDIENTE AACCD
+                    WHERE AACCD.ID_DOCTO = 'COEST'
+                          AND AAC.ID_DOCTO(+) = AACCD.ID_DOCTO
+                          AND AAC.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(CURPCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CURPCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CURP.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS, 
+                          CURPCD.REQUERIDO REQUERIDO,
+                          CURPCD.ID_DOCTO
+                     FROM TD_EXP_CURP CURP, TC_TIPO_DOCTOS_EXPEDIENTE CURPCD
+                    WHERE CURPCD.ID_DOCTO = 'CCURP'
+                          AND CURP.ID_DOCTO(+) = CURPCD.ID_DOCTO
+                          AND CURP.RFC_EMPLEADO(+) = ? 
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DOMCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DOMCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DOM.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DOMCD.REQUERIDO REQUERIDO, 
+                          DOMCD.ID_DOCTO
+                     FROM TD_EXP_DOMICILIO_PARTICULAR DOM, TC_TIPO_DOCTOS_EXPEDIENTE DOMCD
+                    WHERE DOMCD.ID_DOCTO = 'CODOM'
+                          AND DOM.ID_DOCTO(+) = DOMCD.ID_DOCTO
+                          AND DOM.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(CTACD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CTACD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CTA.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,       
+                          CTACD.REQUERIDO REQUERIDO,
+                          CTACD.ID_DOCTO
+                     FROM TD_EXP_CUENTAS_BANCARIAS CTA, TC_TIPO_DOCTOS_EXPEDIENTE CTACD
+                    WHERE CTACD.ID_DOCTO = 'CTABA'
+                          AND CTA.ID_DOCTO(+) = CTACD.ID_DOCTO
+                          AND CTA.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                          
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(SEGCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                              SEGCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                              CASE 
+                                    WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                                    ELSE 'CON DOCUMENTOS'
+                              END AS DESC_STATUS,       
+                              SEGCD.REQUERIDO REQUERIDO,
+                              SEGCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE SEGCD
+                    WHERE SEGCD.ID_DOCTO = 'SEGUR'
+                              AND DSD.ID_DOCTO(+) = SEGCD.ID_DOCTO
+                              AND DSD.RFC_EMPLEADO(+) = ?
+                              AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DBENCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                              DBENCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                              CASE 
+                                    WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                                    ELSE 'CON DOCUMENTOS'
+                              END AS DESC_STATUS,       
+                              DBENCD.REQUERIDO REQUERIDO,
+                              DBENCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DBENCD
+                    WHERE DBENCD.ID_DOCTO = 'DESBE'
+                              AND DSD.ID_DOCTO(+) = DBENCD.ID_DOCTO
+                              AND DSD.RFC_EMPLEADO(+) = ?
+                              AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(CMICD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CMICD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CMI.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,        
+                          CMICD.REQUERIDO REQUERIDO, 
+                          CMICD.ID_DOCTO
+                      FROM TD_EXP_CARTILLA_MILITAR CMI, TC_TIPO_DOCTOS_EXPEDIENTE CMICD
+                     WHERE CMICD.ID_DOCTO = 'CARMI' 
+                           AND CMI.ID_DOCTO(+) = CMICD.ID_DOCTO
+                           AND CMI.RFC_EMPLEADO(+) = ?
+                           AND ROWNUM = 1
+                    ORDER BY  1 ASC
+                </prop>
+      
+                <prop key="getExpDoctoActivos">   
+                    --DOCUMENTOS OBLIGATORIOS
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO,                     
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,     
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'SOEMP'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,       
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO 
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CURRV'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CERME'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'IDOFI'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'MBPDV'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CNISF'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CILAB'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'ABMIS'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+        
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO, 
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO = 'CONNO'
+                          AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DNACD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                           DNACD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                           CASE 
+                            WHEN DNA.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,  
+                           DNACD.REQUERIDO REQUERIDO, 
+                           DNACD.ID_DOCTO
+                      FROM TD_EXP_DATOS_NACIMIENTO DNA, TC_TIPO_DOCTOS_EXPEDIENTE DNACD
+                     WHERE DNACD.ID_DOCTO = 'ACNAC'
+                           AND DNA.ID_DOCTO(+) = DNACD.ID_DOCTO
+                           AND DNA.RFC_EMPLEADO(+) = ?
+                           AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(RFCCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          RFCCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN RFC.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          RFCCD.REQUERIDO REQUERIDO,
+                          RFCCD.ID_DOCTO
+                     FROM TD_EXP_RFC RFC, TC_TIPO_DOCTOS_EXPEDIENTE RFCCD
+                    WHERE RFCCD.ID_DOCTO = 'CRRFC'
+                          AND RFC.ID_DOCTO(+) = RFCCD.ID_DOCTO
+                          AND RFC.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(AACCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          AACCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN AAC.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          AACCD.REQUERIDO REQUERIDO,
+                          AACCD.ID_DOCTO
+                     FROM TD_EXP_ANTECEDENTES_ACADEMICOS AAC, TC_TIPO_DOCTOS_EXPEDIENTE AACCD
+                    WHERE AACCD.ID_DOCTO = 'COEST'
+                          AND AAC.ID_DOCTO(+) = AACCD.ID_DOCTO
+                          AND AAC.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(CURPCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CURPCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CURP.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS, 
+                          CURPCD.REQUERIDO REQUERIDO,
+                          CURPCD.ID_DOCTO
+                     FROM TD_EXP_CURP CURP, TC_TIPO_DOCTOS_EXPEDIENTE CURPCD
+                    WHERE CURPCD.ID_DOCTO = 'CCURP'
+                          AND CURP.ID_DOCTO(+) = CURPCD.ID_DOCTO
+                          AND CURP.RFC_EMPLEADO(+) = ? 
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(DOMCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DOMCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DOM.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DOMCD.REQUERIDO REQUERIDO, 
+                          DOMCD.ID_DOCTO
+                     FROM TD_EXP_DOMICILIO_PARTICULAR DOM, TC_TIPO_DOCTOS_EXPEDIENTE DOMCD
+                    WHERE DOMCD.ID_DOCTO = 'CODOM'
+                          AND DOM.ID_DOCTO(+) = DOMCD.ID_DOCTO
+                          AND DOM.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(CTACD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CTACD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CTA.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,       
+                          CTACD.REQUERIDO REQUERIDO,
+                          CTACD.ID_DOCTO
+                     FROM TD_EXP_CUENTAS_BANCARIAS CTA, TC_TIPO_DOCTOS_EXPEDIENTE CTACD
+                    WHERE CTACD.ID_DOCTO = 'CTABA'
+                          AND CTA.ID_DOCTO(+) = CTACD.ID_DOCTO
+                          AND CTA.RFC_EMPLEADO(+) = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    -----------DOCUMENTOS OPCIONALES
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN DSD.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          DSDCD.REQUERIDO REQUERIDO,
+                          DSDCD.ID_DOCTO
+                     FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD
+                    WHERE DSDCD.ID_DOCTO IN ('DCLFD', 'SOCEM', 'CIFON', 'INSAR', 'AHOSO', 'CSGMM', 'SEGUR', 'OFIDO', 'ACSPF', 'PSPAS', 'DOSPF', 'COSER', 'HUSER', 'CONES', 'ACTAD', 'RNOIC', 'AEOIC', 'ACTAT', 'MEDDI', 'CONHE', 'CAISS', 'DEMAN', 'LAUEJ', 'BECAS', 'ACDEF', 'OFIRE', 'OFISU', 'ACUBA', 'DMINC')
+                          AND DSD.ID_DOCTO = DSDCD.ID_DOCTO
+                          AND DSD.RFC_EMPLEADO = ? 
+                 GROUP BY DSDCD.ORDEN_DOCTO,
+                          DSDCD.DESC_DOCTO_CORTA, 
+                          DSD.ID_DOCTO,
+                          DSDCD.REQUERIDO,
+                          DSDCD.ID_DOCTO
+
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(CAPCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CAPCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CAP.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          CAPCD.REQUERIDO REQUERIDO,
+                          CAPCD.ID_DOCTO
+                     FROM TD_EXP_CAPACITACION CAP, TC_TIPO_DOCTOS_EXPEDIENTE CAPCD
+                    WHERE CAPCD.ID_DOCTO = 'CCTDE'
+                          AND CAP.ID_DOCTO = CAPCD.ID_DOCTO
+                          AND CAP.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(BENCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          BENCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN BEN.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          BENCD.REQUERIDO REQUERIDO,
+                          BENCD.ID_DOCTO
+                     FROM TD_EXP_BENEFICIARIOS BEN, TC_TIPO_DOCTOS_EXPEDIENTE BENCD
+                    WHERE BENCD.ID_DOCTO = 'DESBE'
+                          AND BEN.ID_DOCTO = BENCD.ID_DOCTO
+                          AND BEN.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL 
+                    
+                    SELECT TO_CHAR(FDBCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          FDBCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN FDB.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,     
+                          FDBCD.REQUERIDO REQUERIDO,
+                          FDBCD.ID_DOCTO
+                     FROM TD_EXP_FAMILIAR_DEPS_BENEF FDB, TC_TIPO_DOCTOS_EXPEDIENTE FDBCD
+                    WHERE FDBCD.ID_DOCTO = 'DFDBE'
+                          AND FDB.ID_DOCTO = FDBCD.ID_DOCTO
+                          AND FDB.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(FELCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          FELCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN FEL.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,      
+                          FELCD.REQUERIDO REQUERIDO,
+                          FELCD.ID_DOCTO
+                     FROM TD_EXP_FECHAS_LABORALES FEL, TC_TIPO_DOCTOS_EXPEDIENTE FELCD
+                    WHERE FELCD.ID_DOCTO = 'FECLA'
+                          AND FEL.ID_DOCTO = FELCD.ID_DOCTO
+                          AND FEL.RFC_EMPLEADO = ? 
+                          AND ROWNUM = 1
+                    
+                    UNION ALL                          
+                    
+                    SELECT TO_CHAR(EXPLCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          EXPLCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN EXPL.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,        
+                          EXPLCD.REQUERIDO REQUERIDO,
+                          EXPLCD.ID_DOCTO
+                     FROM TD_EXP_EXPERIENCIA_LABORAL EXPL, TC_TIPO_DOCTOS_EXPEDIENTE EXPLCD
+                    WHERE EXPLCD.ID_DOCTO = 'EXPLA'
+                          AND EXPL.ID_DOCTO = EXPLCD.ID_DOCTO
+                          AND EXPL.RFC_EMPLEADO = ?
+                          AND ROWNUM = 1
+                    
+                    UNION ALL
+                    
+                    SELECT TO_CHAR(CMICD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CMICD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          CASE 
+                            WHEN CMI.ID_DOCTO IS NULL THEN 'SIN DOCUMENTOS'
+                            ELSE 'CON DOCUMENTOS'
+                          END AS DESC_STATUS,        
+                          CMICD.REQUERIDO REQUERIDO, 
+                          CMICD.ID_DOCTO
+                      FROM TD_EXP_CARTILLA_MILITAR CMI, TC_TIPO_DOCTOS_EXPEDIENTE CMICD
+                     WHERE CMICD.ID_DOCTO = 'CARMI' 
+                           AND CMI.ID_DOCTO(+) = CMICD.ID_DOCTO
+                           AND CMI.RFC_EMPLEADO(+) = ?
+                           AND ROWNUM = 1
+                    ORDER BY  4 DESC, 1 ASC
+                </prop>
+                
+                <!--Oficina Virtual - Documentos expediente personal -  Historico-->
+                <prop key="getExpDoctoHistoricoObligatoriosPorTipo">
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                           DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                           NVL(DSD.DSD_SECUENCIA, '0') SECUENCIA, NVL(DSD.DSD_DOCTO_REF, 'SIN') DOCTO_REF, 
+                           NVL(DSDCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                           DSDCR.DESC_RECHAZO DESC_RECHAZO, DSDCD.REQUERIDO REQUERIDO, NVL(DSD.ID_STATUS, 'SIN') ID_STATUS, DSD.ID_DOCTO 
+                      FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD, TC_ESTADO_REGISTRO DSDCE, TC_EXP_RECHAZO DSDCR
+                     WHERE DSDCD.ID_DOCTO = ? AND DSD.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                           AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO AND DSD.ID_STATUS = DSDCE.ID_STATUS(+) AND DSD.ID_EXP_RECHAZO = DSDCR.ID_EXP_RECHAZO(+)
+                           AND DSD.RFC_EMPLEADO(+) = ? 
+                ORDER BY  DSDCD.ORDEN_DOCTO, DSD.DSD_SECUENCIA DESC                           
+                </prop>
+                <prop key="getExpDoctoHistoricoObligatorios">
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                           DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                           NVL(DSD.DSD_SECUENCIA, '0') SECUENCIA, NVL(DSD.DSD_DOCTO_REF, 'SIN') DOCTO_REF, 
+                           NVL(DSDCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                           DSDCR.DESC_RECHAZO DESC_RECHAZO, DSDCD.REQUERIDO REQUERIDO, NVL(DSD.ID_STATUS, 'SIN') ID_STATUS, DSD.ID_DOCTO 
+                      FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD, TC_ESTADO_REGISTRO DSDCE, TC_EXP_RECHAZO DSDCR
+                     WHERE DSDCD.ID_DOCTO IN ('SOEMP', 'CURRV', 'CERME', 'IDOFI', 'MBPDV', 'CNISF', 'CILAB', 'ABMIS', 'CONNO') AND DSD.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                           AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO AND DSD.ID_STATUS = DSDCE.ID_STATUS(+) AND DSD.ID_EXP_RECHAZO = DSDCR.ID_EXP_RECHAZO(+)
+                           AND DSD.RFC_EMPLEADO(+) = ? 
+                ORDER BY  DSDCD.ORDEN_DOCTO, DSD.DSD_SECUENCIA DESC                           
+                </prop>
+                <prop key="getExpDoctoHistoricoActaNacimiento">
+                    SELECT TO_CHAR(DNACD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                           DNACD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                           NVL(DNA.DNA_SECUENCIA, '0') SECUENCIA, NVL(DNA.DNA_DOCTO_REF, 'SIN') DOCTO_REF, 
+                           NVL(DNACE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                           DNACR.DESC_RECHAZO DESC_RECHAZO, DNACD.REQUERIDO REQUERIDO, NVL(DNA.ID_STATUS, 'SIN') ID_STATUS, DNA.ID_DOCTO
+                      FROM TD_EXP_DATOS_NACIMIENTO DNA, TC_TIPO_DOCTOS_EXPEDIENTE DNACD, TC_ESTADO_REGISTRO DNACE, TC_EXP_RECHAZO DNACR
+                     WHERE DNACD.ID_DOCTO = 'ACNAC' AND DNA.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                           AND DNA.ID_DOCTO(+) = DNACD.ID_DOCTO AND DNA.ID_STATUS = DNACE.ID_STATUS(+) AND DNA.ID_EXP_RECHAZO = DNACR.ID_EXP_RECHAZO(+)
+                           AND DNA.RFC_EMPLEADO(+) = ? 
+                ORDER BY  DNACD.ORDEN_DOCTO, DNA.DNA_SECUENCIA DESC                                                                                                                                                              
+                </prop>
+                <prop key="getExpDoctoHistoricoComprobanteEstudios">
+                    SELECT TO_CHAR(AACCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          AACCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          NVL(AAC.AAC_SECUENCIA, '0') SECUENCIA, NVL(AAC.AAC_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(AACCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          AACCR.DESC_RECHAZO DESC_RECHAZO, AACCD.REQUERIDO REQUERIDO, NVL(AAC.ID_STATUS, 'SIN') ID_STATUS, AAC.ID_DOCTO
+                     FROM TD_EXP_ANTECEDENTES_ACADEMICOS AAC, TC_TIPO_DOCTOS_EXPEDIENTE AACCD, TC_ESTADO_REGISTRO AACCE, TC_EXP_RECHAZO AACCR
+                    WHERE AACCD.ID_DOCTO = 'COEST' AND AAC.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                          AND AAC.ID_DOCTO(+) = AACCD.ID_DOCTO AND AAC.ID_STATUS = AACCE.ID_STATUS(+) AND AAC.ID_EXP_RECHAZO = AACCR.ID_EXP_RECHAZO(+)
+                          AND AAC.RFC_EMPLEADO(+) = ? 
+                ORDER BY  AACCD.ORDEN_DOCTO, AAC.AAC_SECUENCIA DESC                                                                                                                                   
+                </prop>
+                <prop key="getExpDoctoHistoricoCompDomicilio">
+                    SELECT TO_CHAR(DOMCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          DOMCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          NVL(DOM.DOM_SECUENCIA, '0') SECUENCIA, NVL(DOM.DOM_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(DOMCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          DOMCR.DESC_RECHAZO DESC_RECHAZO, DOMCD.REQUERIDO REQUERIDO, NVL(DOM.ID_STATUS, 'SIN') ID_STATUS, DOM.ID_DOCTO 
+                     FROM TD_EXP_DOMICILIO_PARTICULAR DOM, TC_TIPO_DOCTOS_EXPEDIENTE DOMCD, TC_ESTADO_REGISTRO DOMCE, TC_EXP_RECHAZO DOMCR
+                    WHERE DOMCD.ID_DOCTO = 'CODOM' AND DOM.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                          AND DOM.ID_DOCTO(+) = DOMCD.ID_DOCTO AND DOM.ID_STATUS = DOMCE.ID_STATUS(+) AND DOM.ID_EXP_RECHAZO = DOMCR.ID_EXP_RECHAZO(+)
+                          AND DOM.RFC_EMPLEADO(+) = ? 
+                ORDER BY  DOMCD.ORDEN_DOCTO, DOM.DOM_SECUENCIA DESC                                                                                                         
+                </prop>
+                <prop key="getExpDoctoHistoricoBancario">
+                    SELECT TO_CHAR(CTACD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CTACD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          NVL(CTA.CTA_SECUENCIA, '0') SECUENCIA, NVL(CTA.CTA_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(CTACE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          CTACR.DESC_RECHAZO DESC_RECHAZO, CTACD.REQUERIDO REQUERIDO, NVL(CTA.ID_STATUS, 'SIN') ID_STATUS, CTA.ID_DOCTO
+                     FROM TD_EXP_CUENTAS_BANCARIAS CTA, TC_TIPO_DOCTOS_EXPEDIENTE CTACD, TC_ESTADO_REGISTRO CTACE, TC_EXP_RECHAZO CTACR
+                    WHERE CTACD.ID_DOCTO = 'CTABA' AND CTA.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                          AND CTA.ID_DOCTO(+) = CTACD.ID_DOCTO AND CTA.ID_STATUS = CTACE.ID_STATUS(+) AND CTA.ID_EXP_RECHAZO = CTACR.ID_EXP_RECHAZO(+)
+                          AND CTA.RFC_EMPLEADO(+) = ? 
+                ORDER BY  CTACD.ORDEN_DOCTO, CTA.CTA_SECUENCIA DESC                                                                               
+                </prop>
+                <prop key="getExpDoctoHistoricoCartilla">
+                    SELECT TO_CHAR(CMICD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                           CMICD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                           NVL(CMI.CMI_SECUENCIA, '0') SECUENCIA, NVL(CMI.CMI_DOCTO_REF, 'SIN') DOCTO_REF, 
+                           NVL(CMICE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                           CMICR.DESC_RECHAZO DESC_RECHAZO, CMICD.REQUERIDO REQUERIDO, NVL(CMI.ID_STATUS, 'SIN') ID_STATUS, CMI.ID_DOCTO
+                      FROM TD_EXP_CARTILLA_MILITAR CMI, TC_TIPO_DOCTOS_EXPEDIENTE CMICD, TC_ESTADO_REGISTRO CMICE, TC_EXP_RECHAZO CMICR
+                     WHERE CMICD.ID_DOCTO = 'CARMI' AND CMI.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                           AND CMI.ID_DOCTO(+) = CMICD.ID_DOCTO AND CMI.ID_STATUS = CMICE.ID_STATUS(+) AND CMI.ID_EXP_RECHAZO = CMICR.ID_EXP_RECHAZO(+)
+                           AND CMI.RFC_EMPLEADO(+) = ? 
+                ORDER BY  CMICD.ORDEN_DOCTO, CMI.CMI_SECUENCIA DESC                                                     
+                </prop>
+                <prop key="getExpDoctoHistoricoFechasLaborales">
+                    SELECT TO_CHAR(FELCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          FELCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          NVL(FEL.FEL_SECUENCIA, '0') SECUENCIA, NVL(FEL.FEL_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(FELCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          FELCR.DESC_RECHAZO DESC_RECHAZO, FELCD.REQUERIDO REQUERIDO, FEL.ID_STATUS ID_STATUS, FEL.ID_DOCTO 
+                     FROM TD_EXP_FECHAS_LABORALES FEL, TC_TIPO_DOCTOS_EXPEDIENTE FELCD, TC_ESTADO_REGISTRO FELCE, TC_EXP_RECHAZO FELCR
+                    WHERE FELCD.ID_DOCTO = 'FECLA' AND FEL.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                          AND FEL.ID_DOCTO = FELCD.ID_DOCTO AND FEL.ID_STATUS = FELCE.ID_STATUS AND FEL.ID_EXP_RECHAZO = FELCR.ID_EXP_RECHAZO
+                          AND FEL.RFC_EMPLEADO = ?
+                ORDER BY  FELCD.ORDEN_DOCTO, FEL.FEL_SECUENCIA DESC                          
+                </prop>
+                <prop key="getExpDoctoHistoricoCurp">
+                    SELECT TO_CHAR(CURPCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CURPCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          NVL(CURP.CURP_SECUENCIA, '0') SECUENCIA, NVL(CURP.CURP_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(CURPCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          CURPCR.DESC_RECHAZO DESC_RECHAZO, CURPCD.REQUERIDO REQUERIDO, NVL(CURP.ID_STATUS, 'SIN') ID_STATUS, CURP.ID_DOCTO
+                     FROM TD_EXP_CURP CURP, TC_TIPO_DOCTOS_EXPEDIENTE CURPCD, TC_ESTADO_REGISTRO CURPCE, TC_EXP_RECHAZO CURPCR
+                    WHERE CURPCD.ID_DOCTO = 'CCURP' AND CURP.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                          AND CURP.ID_DOCTO(+) = CURPCD.ID_DOCTO AND CURP.ID_STATUS = CURPCE.ID_STATUS(+) AND CURP.ID_EXP_RECHAZO = CURPCR.ID_EXP_RECHAZO(+)
+                          AND CURP.RFC_EMPLEADO(+) = ? 
+                ORDER BY  CURPCD.ORDEN_DOCTO, CURP.CURP_SECUENCIA DESC
+                </prop>
+                <prop key="getExpDoctoHistoricoRfc">
+                    SELECT TO_CHAR(RFCCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          RFCCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          NVL(RFC.RFC_SECUENCIA, '0') SECUENCIA, NVL(RFC.RFC_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(RFCCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          RFCCR.DESC_RECHAZO DESC_RECHAZO, RFCCD.REQUERIDO REQUERIDO, NVL(RFC.ID_STATUS, 'SIN') ID_STATUS, RFC.ID_DOCTO
+                     FROM TD_EXP_RFC RFC, TC_TIPO_DOCTOS_EXPEDIENTE RFCCD, TC_ESTADO_REGISTRO RFCCE, TC_EXP_RECHAZO RFCCR
+                    WHERE RFCCD.ID_DOCTO = 'CRRFC' AND RFC.ID_STATUS IN ('HIS','REG','REC', 'ACT')
+                          AND RFC.ID_DOCTO(+) = RFCCD.ID_DOCTO AND RFC.ID_STATUS = RFCCE.ID_STATUS(+) AND RFC.ID_EXP_RECHAZO = RFCCR.ID_EXP_RECHAZO(+)
+                          AND RFC.RFC_EMPLEADO(+) = ? 
+                 ORDER BY RFCCD.ORDEN_DOCTO, RFC.RFC_SECUENCIA DESC
+                </prop>
+                <prop key="getExpDoctoHistoricoExperienciaLaboral">
+                    SELECT TO_CHAR(EXPLCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          EXPLCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          NVL(EXPL.EXP_SECUENCIA, '0') SECUENCIA, NVL(EXPL.EXP_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(EXPLCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          EXPLCR.DESC_RECHAZO DESC_RECHAZO, EXPLCD.REQUERIDO REQUERIDO, EXPL.ID_STATUS ID_STATUS, EXPL.ID_DOCTO 
+                     FROM TD_EXP_EXPERIENCIA_LABORAL EXPL, TC_TIPO_DOCTOS_EXPEDIENTE EXPLCD, TC_ESTADO_REGISTRO EXPLCE, TC_EXP_RECHAZO EXPLCR
+                    WHERE EXPLCD.ID_DOCTO = 'EXPLA' AND EXPL.ID_STATUS IN ('HIS','REG', 'REC','ACT')
+                          AND EXPL.ID_DOCTO = EXPLCD.ID_DOCTO AND EXPL.ID_STATUS = EXPLCE.ID_STATUS AND EXPL.ID_EXP_RECHAZO = EXPLCR.ID_EXP_RECHAZO
+                          AND EXPL.RFC_EMPLEADO = ? 
+                   ORDER BY EXPLCD.ORDEN_DOCTO, EXPL.EXP_SECUENCIA DESC
+                </prop>
+                
+                <!-- Documentos ActivosHistoricos -->
+                <prop key="getExpDoctoSubgridActivosRegistradosObligatoriosPorTipo">
+                    SELECT TO_CHAR(DSDCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                           --DSDCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          DSDCD.DESC_DOCTO_CORTA || '.-' || NVL(DSD.DSD_DESCRIP_DOCTO, null) || ' ' || NVL(DSD.DSD_AXO_DOCTO, null) DESC_DOCTO,                                                       
+                           NVL(DSD.DSD_SECUENCIA, '0') SECUENCIA, NVL(DSD.DSD_DOCTO_REF, 'SIN') DOCTO_REF, 
+                           NVL(DSDCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                           DSDCR.DESC_RECHAZO DESC_RECHAZO, DSDCD.REQUERIDO REQUERIDO, NVL(DSD.ID_STATUS, 'SIN') ID_STATUS, DSD.ID_DOCTO 
+                      FROM TD_EXP_DOCTOS_SIN_DATOS DSD, TC_TIPO_DOCTOS_EXPEDIENTE DSDCD, TC_ESTADO_REGISTRO DSDCE, TC_EXP_RECHAZO DSDCR
+                     WHERE DSDCD.ID_DOCTO = ? AND DSD.ID_STATUS IN ('HIS','REG', 'REC','ACT')
+                           AND DSD.ID_DOCTO(+) = DSDCD.ID_DOCTO AND DSD.ID_STATUS = DSDCE.ID_STATUS(+) AND DSD.ID_EXP_RECHAZO = DSDCR.ID_EXP_RECHAZO(+)
+                           AND DSD.RFC_EMPLEADO(+) = ? 
+                  ORDER BY DSDCD.ORDEN_DOCTO, DSD.DSD_SECUENCIA DESC, DESC_DOCTO
+                </prop>
+                <prop key="getExpDoctoSubgridActivosRegistradosCapacitacion">
+                    SELECT TO_CHAR(CAPCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          CAPCC.DESC_CAPACITACION || '.-' || CAP.CAP_DESC_CAPACITACION DESC_DOCTO, 
+                          NVL(CAP.CAP_SECUENCIA, '0') SECUENCIA, NVL(CAP.CAP_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(CAPCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          CAPCR.DESC_RECHAZO DESC_RECHAZO, CAPCD.REQUERIDO REQUERIDO, CAP.ID_STATUS ID_STATUS, CAP.ID_DOCTO, CAP.ID_CAPACITACION
+                     FROM TD_EXP_CAPACITACION CAP, TC_TIPO_DOCTOS_EXPEDIENTE CAPCD, TC_ESTADO_REGISTRO CAPCE, TC_EXP_RECHAZO CAPCR, TC_CAPACITACION CAPCC
+                    WHERE CAPCD.ID_DOCTO = 'CCTDE' AND CAP.ID_STATUS IN ('HIS','REG', 'REC','ACT')
+                          AND CAP.ID_DOCTO = CAPCD.ID_DOCTO AND CAP.ID_STATUS = CAPCE.ID_STATUS AND CAP.ID_EXP_RECHAZO = CAPCR.ID_EXP_RECHAZO
+                          AND CAP.ID_CAPACITACION = CAPCC.ID_CAPACITACION
+                          AND CAP.RFC_EMPLEADO(+) = ? 
+                 ORDER BY CAPCD.ORDEN_DOCTO, CAP.ID_CAPACITACION, CAP.CAP_SECUENCIA DESC
+                </prop>
+                <prop key="getExpDoctoSubgridActivosRegistradosFamiliares">
+                    SELECT TO_CHAR(FDBCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          --FDBCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          UPPER(FDBCP.DESC_PARENTESCO)|| '.-' ||  FDB.FDB_NOMBRE_EMPLEADO || ' ' || FDB.FDB_PRIMER_APELLIDO || ' ' || FDB.FDB_SEGUNDO_APELLIDO DESC_DOCTO, 
+                          NVL(FDB.FDB_SECUENCIA, '0') SECUENCIA, NVL(FDB.FDB_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(FDBCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          FDBCR.DESC_RECHAZO DESC_RECHAZO, FDBCD.REQUERIDO REQUERIDO, FDB.ID_STATUS ID_STATUS, FDB.ID_DOCTO
+                     FROM TD_EXP_FAMILIAR_DEPS_BENEF FDB, TC_TIPO_DOCTOS_EXPEDIENTE FDBCD, TC_ESTADO_REGISTRO FDBCE, TC_EXP_RECHAZO FDBCR, TC_PARENTESCO FDBCP
+                    WHERE FDBCD.ID_DOCTO = 'DFDBE' AND FDBCD.ID_STATUS IN ('HIS','REG', 'REC','ACT')
+                          AND FDB.ID_DOCTO = FDBCD.ID_DOCTO AND FDB.ID_STATUS = FDBCE.ID_STATUS AND FDB.ID_EXP_RECHAZO = FDBCR.ID_EXP_RECHAZO
+                          AND FDB.ID_PARENTESCO = FDBCP.ID_PARENTESCO
+                          AND FDB.RFC_EMPLEADO(+) = ?
+                   ORDER BY FDBCD.ORDEN_DOCTO, FDB.ID_PARENTESCO, FDB.FDB_SECUENCIA DESC                          
+                </prop>
+                <prop key="getExpDoctoSubgridActivosRegistradosDependientes">
+                    SELECT TO_CHAR(BENCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          --BENCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          UPPER(BENCB.DESC_BENEFICIO) || '.-' || BEN.BEN_NOMBRE_EMPLEADO || ' ' || BEN.BEN_PRIMER_APELLIDO || ' ' || BEN.BEN_SEGUNDO_APELLIDO DESC_DOCTO,                           
+                          NVL(BEN.BEN_SECUENCIA, '0') SECUENCIA, NVL(BEN.BEN_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(BENCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          BENCR.DESC_RECHAZO DESC_RECHAZO, BENCD.REQUERIDO REQUERIDO, BEN.ID_STATUS ID_STATUS, BEN.ID_DOCTO
+                     FROM TD_EXP_BENEFICIARIOS BEN, TC_TIPO_DOCTOS_EXPEDIENTE BENCD, TC_ESTADO_REGISTRO BENCE, TC_EXP_RECHAZO BENCR, TC_TIPO_BENEFICIO BENCB
+                    WHERE BENCD.ID_DOCTO = 'DESBE' AND BENCD.ID_STATUS IN ('HIS','REG', 'REC','ACT')
+                          AND BEN.ID_DOCTO = BENCD.ID_DOCTO AND BEN.ID_STATUS = BENCE.ID_STATUS AND BEN.ID_EXP_RECHAZO = BENCR.ID_EXP_RECHAZO
+                          AND BEN.ID_TIPO_BENEFICIO = BENCB.ID_TIPO_BENEFICIO
+                          AND BEN.RFC_EMPLEADO(+) = ?
+                   ORDER BY BENCD.ORDEN_DOCTO, BEN.ID_TIPO_BENEFICIO, BEN.BEN_SECUENCIA DESC                          
+                </prop>
+                <prop key="getExpDoctoSubgridActivosRegistradosComprobanteEstudios">
+                    SELECT TO_CHAR(AACCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          --AACCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          UPPER(AACCN.DESC_NIVEL_ESCOLAR) || '.-' || UPPER(AACCC.DESC_PROFN_CARRERA)  DESC_DOCTO, 
+                          NVL(AAC.AAC_SECUENCIA, '0') SECUENCIA, NVL(AAC.AAC_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(AACCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          AACCR.DESC_RECHAZO DESC_RECHAZO, AACCD.REQUERIDO REQUERIDO, NVL(AAC.ID_STATUS, 'SIN') ID_STATUS, AAC.ID_DOCTO
+                     FROM TD_EXP_ANTECEDENTES_ACADEMICOS AAC, TC_TIPO_DOCTOS_EXPEDIENTE AACCD, TC_ESTADO_REGISTRO AACCE, TC_EXP_RECHAZO AACCR, TC_NIVEL_ESCOLAR AACCN, TC_PROFN_CARRERA AACCC
+                    WHERE AACCD.ID_DOCTO = 'COEST' AND AAC.ID_STATUS IN ('HIS','REG', 'REC','ACT')
+                          AND AAC.ID_DOCTO(+) = AACCD.ID_DOCTO AND AAC.ID_STATUS = AACCE.ID_STATUS(+) AND AAC.ID_EXP_RECHAZO = AACCR.ID_EXP_RECHAZO(+)
+                          AND AAC.ID_NIVEL_ESCOLAR = AACCN.ID_NIVEL_ESCOLAR
+                          AND AAC.ID_PROF_CARRERA  = AACCC.ID_PROFN_CARRERA
+                          AND AAC.RFC_EMPLEADO(+) = ? 
+                   ORDER BY AACCD.ORDEN_DOCTO, AAC.ID_NIVEL_ESCOLAR DESC, AAC.AAC_SECUENCIA DESC                          
+                </prop>
+                <prop key="getExpDoctoSubgridActivosRegistradosExperienciaLaboral">
+                    SELECT TO_CHAR(EXPLCD.ORDEN_DOCTO, '999') ORDEN_DOCTO, 
+                          --EXPLCD.DESC_DOCTO_CORTA DESC_DOCTO, 
+                          UPPER(EXPLCC.DESC_NIVEL_CARGO) || '.-' || EXPL.EXP_ORGANIZACION DESC_DOCTO,                           
+                          NVL(EXPL.EXP_SECUENCIA, '0') SECUENCIA, NVL(EXPL.EXP_DOCTO_REF, 'SIN') DOCTO_REF, 
+                          NVL(EXPLCE.DES_STATUS,'SIN DOCUMENTOS')  DESC_STATUS,     
+                          EXPLCR.DESC_RECHAZO DESC_RECHAZO, EXPLCD.REQUERIDO REQUERIDO, EXPL.ID_STATUS ID_STATUS, EXPL.ID_DOCTO 
+                     FROM TD_EXP_EXPERIENCIA_LABORAL EXPL, TC_TIPO_DOCTOS_EXPEDIENTE EXPLCD, TC_ESTADO_REGISTRO EXPLCE, TC_EXP_RECHAZO EXPLCR, TC_NIVEL_CARGO EXPLCC
+                    WHERE EXPLCD.ID_DOCTO = 'EXPLA' AND EXPL.ID_STATUS IN ('HIS','REG', 'REC','ACT')
+                          AND EXPL.ID_DOCTO = EXPLCD.ID_DOCTO AND EXPL.ID_STATUS = EXPLCE.ID_STATUS AND EXPL.ID_EXP_RECHAZO = EXPLCR.ID_EXP_RECHAZO
+                          AND EXPL.ID_NIVEL_CARGO = EXPLCC.ID_NIVEL_CARGO
+                          AND EXPL.RFC_EMPLEADO(+) = ? 
+                   ORDER BY EXPLCD.ORDEN_DOCTO, EXPL.ID_NIVEL_CARGO, EXPL.EXP_SECUENCIA DESC                          
+                </prop>
+                <prop key="updateTdExpDoctosSinDatos-modDescripMasiva">
+                    UPDATE TD_EXP_DOCTOS_SIN_DATOS
+                        SET DSD_DESCRIP_DOCTO = ?
+                    WHERE DSD_DESCRIP_DOCTO = ?       
+                </prop>
+                <prop key="getExpedienteTablasDatos">
+                    select table_name nombreTabla
+                    from all_tab_columns
+                    where column_name like upper('ID_EXP_RECHAZO')
+                            and table_name like 'TD_EXP_%'
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

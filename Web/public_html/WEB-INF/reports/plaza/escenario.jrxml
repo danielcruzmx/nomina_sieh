@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="División escenario" printOrder="Horizontal" columnDirection="RTL" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="880" leftMargin="36" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="517"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select * from (
+SELECT
+ID_UNIDAD_PRE UR, DESC_UNIDAD DESCRIPCION,  DESC_UNIDAD_4,
+PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+(
+select 'AC02' GRUPO, upper(g.desc_grupo_pago) desc_grupo_pago,
+           p.id_unidad_pre, upper(uu.DESC_UNIDAD) DESC_UNIDAD, upper(uu.DESC_UNIDAD_ABREV) DESC_UNIDAD_ABREV,
+           p.id_puesto_pre,
+           upper(pp.desc_puesto) desc_puesto, aa.id_nivel_pto,
+           aa.id_nombramiento, upper(nn.desc_nombramiento) desc_nombramiento, aa.id_jerarquia,
+          case when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(jj.desc_jerarquia) end JERARQUIA,
+          case when aa.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when aa.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when aa.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when aa.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when aa.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when aa.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when aa.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when aa.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when aa.id_jerarquia = '7' and aa.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza,
+           case when p.id_unidad_nom like 'X%' then p.id_unidad_pre
+           else p.id_unidad_nom end ur_fisica_a,
+           case when p.id_unidad_nom like 'X%' then upper(uu.DESC_UNIDAD)
+           else upper(u.DESC_UNIDAD) end describe_ur_fisica_a,
+           p.id_unidad_nom, upper(u.DESC_UNIDAD) DESC_UNIDAD_2, upper(u.DESC_UNIDAD_ABREV) DESC_UNIDAD_ABREV_1,
+           p.id_puesto_nom, upper(ppp.desc_puesto) desc_puesto_1, a.id_nivel_pto id_nivel_pto_1,
+           a.id_nombramiento id_nombramiento_1, upper(n.desc_nombramiento) desc_nombramiento_1, a.id_jerarquia id_jerarquia_1,
+          case when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(j.desc_jerarquia) end DESC_UNIDAD_3,
+          case when a.id_nivel_pto like 'G%' then 'A SECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'H%' then 'B SUBSECRETARIO DE ESTADO'
+                    when a.id_nivel_pto like 'I%' then 'C OFICIAL MAYOR'
+                    when a.id_nivel_pto like 'J%' then 'D JEFE DE UNIDAD'
+                    when a.id_nivel_pto like 'K%' then 'E DIRECTOR GENERAL'
+                    when a.id_nivel_pto like 'L%' then 'F DIRECTOR GENERAL ADJUNTO'
+                    when a.id_nivel_pto like 'M%' then 'G DIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'N%' then 'H SUBDIRECTOR DE AREA'
+                    when a.id_nivel_pto like 'O%' then 'I JEFE DE DEPARTAMENTO'
+                    when a.id_nivel_pto like 'P%' then 'J ENLACE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'B' then 'K OPERATIVO DE BASE'
+                    when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'L OPERATIVO DE CONFIANZA'
+           end tipo_plaza_1,
+          p.id_sit_plaza, upper(s.desc_sit_plaza) desc_sit_plaza,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+          else 'VACANTE' end situacion_plaza_reporte,
+          case when p.id_sit_plaza like 'O%' then 'OCUPADA'
+                  when p.id_unidad_nom like 'X%' then 'RESERVA'
+          else 'VACANTE' end situacion_plaza_reporte_a,
+          p.id_plaza, p.plaza_rfc, e.nombre_empleado, e.primer_apellido, e.segundo_apellido,
+          f.CODIGO_PUESTO, f.NOMBRE_PUESTO,
+          case when a.id_jerarquia in('7','4') and a.id_nombramiento = 'B' then 'OPERATIVO DE BASE'
+                  when a.id_jerarquia = '7' and a.id_nombramiento = 'C' then 'OPERATIVO DE CONFIANZA'
+                  when f.observaciones = 'PUESTOS NO SUJETOS AL SPC POR OTRA LEY' then 'PUESTOS NO SUJETOS AL SPC'
+          else upper(f.OBSERVACIONES) end DESC_UNIDAD_4
+from TD_PLAZA p, TC_UNIDAD u, TC_ATRIBUTO_PUESTO a, TC_JERARQUIA j, TC_NOMBRAMIENTO n, TC_PUESTO pp,
+         TC_SIT_PLAZA s, TC_GRUPO_PAGO g,
+         TC_UNIDAD uu, TC_ATRIBUTO_PUESTO aa, TC_JERARQUIA jj, TC_NOMBRAMIENTO nn, TC_PUESTO ppp,
+         TD_ESCENARIO f, TD_EMPLEADO e
+where p.id_grupo_pago in ('E', 'J')
+and p.id_grupo_pago = g.id_grupo_pago
+and p.id_unidad_nom = u.id_unidad
+and u.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_nom = a.id_atributo_puesto
+and p.id_puesto_nom = ppp.id_puesto
+and a.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and a.id_jerarquia = j.id_jerarquia
+and a.id_nombramiento = n.id_nombramiento
+and p.id_sit_plaza = s.id_sit_plaza
+and p.id_unidad_pre = uu.id_unidad
+and uu.uni_ciclo = $P{PAR_CICLO}
+and p.id_puesto_pre = pp.id_puesto
+and p.id_puesto_pre = aa.id_atributo_puesto
+and aa.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+and aa.id_jerarquia = jj.id_jerarquia
+and aa.id_nombramiento = nn.id_nombramiento
+and p.id_plaza = f.PLAZA_ESCENARIO (+)
+and f.fin_escenario(+) = TO_DATE('31/12/2099','DD/MM/YYYY')
+and p.plaza_rfc = e.rfc_empleado (+)
+)
+)
+PIVOT (COUNT(*) FOR DESC_UNIDAD_4 IN('PUESTOS NO SUJETOS AL SPC' as PTOSNO_SUJETOSALSPC,
+'PUESTOS DEL SPC' AS PTOSDEL_SPC,
+'PUESTOS DE SEGURIDAD NACIONAL' AS PTOSDE_SEGURIDADNACIONAL,
+'PUESTOS AUTORIZADOS COMO DE LIBRE DESIGNACIÓN' AS PTOSAUTORIZADOS_LIBREDESIGNA ,
+'PUESTOS DE LIBRE DESIGNACIÓN POR OTRA LEY' AS PTOSLIBREDESIGNA_POROTRALEY,
+'PUESTOS ASIMILADOS SERVICIO EXTERIOR' AS PTOASIMILADOS_SERVICIOEXT,
+'GABINETE DE APOYO' AS GABINETE_APOYO,
+'OPERATIVO DE CONFIANZA' AS OPERATIVO_CONFIANZA,
+'OPERATIVO DE BASE' AS OPERATIVO_BASE))
+order by UR]]>
+	</queryString>
+	<field name="UR" class="java.lang.String"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="PTOSNO_SUJETOSALSPC" class="java.lang.Double"/>
+	<field name="PTOSDEL_SPC" class="java.lang.Double"/>
+	<field name="PTOSDE_SEGURIDADNACIONAL" class="java.lang.Double"/>
+	<field name="PTOSAUTORIZADOS_LIBREDESIGNA" class="java.lang.Double"/>
+	<field name="PTOSLIBREDESIGNA_POROTRALEY" class="java.lang.Double"/>
+	<field name="PTOASIMILADOS_SERVICIOEXT" class="java.lang.Double"/>
+	<field name="GABINETE_APOYO" class="java.lang.Double"/>
+	<field name="OPERATIVO_CONFIANZA" class="java.lang.Double"/>
+	<field name="OPERATIVO_BASE" class="java.lang.Double"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="TOTNOSPC" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PTOSNO_SUJETOSALSPC}]]></variableExpression>
+	</variable>
+	<variable name="TOTSISPC" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PTOSDEL_SPC}]]></variableExpression>
+	</variable>
+	<variable name="TOTSEGNAL" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PTOSDE_SEGURIDADNACIONAL}]]></variableExpression>
+	</variable>
+	<variable name="TOTLIBRED" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PTOSAUTORIZADOS_LIBREDESIGNA}]]></variableExpression>
+	</variable>
+	<variable name="TOTLDOTRA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PTOSLIBREDESIGNA_POROTRALEY}]]></variableExpression>
+	</variable>
+	<variable name="TOTASEXTE" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{PTOASIMILADOS_SERVICIOEXT}]]></variableExpression>
+	</variable>
+	<variable name="TOTGABAPOYO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{GABINETE_APOYO}]]></variableExpression>
+	</variable>
+	<variable name="TOTOPECONF" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OPERATIVO_CONFIANZA}]]></variableExpression>
+	</variable>
+	<variable name="TOTOPEBASE" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{OPERATIVO_BASE}]]></variableExpression>
+	</variable>
+	<variable name="TOTALPLAZAS" class="java.lang.Double" resetType="Group" resetGroup="ur" incrementType="Group" incrementGroup="ur">
+		<variableExpression><![CDATA[$F{PTOSNO_SUJETOSALSPC}.doubleValue()+$F{PTOSDEL_SPC}.doubleValue()+$F{PTOSDE_SEGURIDADNACIONAL}.doubleValue()+
+$F{PTOSAUTORIZADOS_LIBREDESIGNA}.doubleValue()+$F{PTOSLIBREDESIGNA_POROTRALEY}.doubleValue()+$F{PTOASIMILADOS_SERVICIOEXT}.doubleValue()+
+$F{GABINETE_APOYO}.doubleValue()+$F{OPERATIVO_CONFIANZA}.doubleValue()+$F{OPERATIVO_BASE}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="TOTALPLAZASSUM" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOTALPLAZAS}]]></variableExpression>
+	</variable>
+	<group name="ur">
+		<groupExpression><![CDATA[$F{UR}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="261" y="118" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="630" y="10" width="239" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="630" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="295" y="18" width="291" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[División escenario ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="34" splitType="Stretch">
+			<elementGroup>
+				<rectangle>
+					<reportElement x="0" y="0" width="878" height="33" backcolor="#F0EFEF"/>
+					<graphicElement>
+						<pen lineColor="#999999"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="565" y="0" width="52" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Libre designación otra Ley]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="512" y="0" width="52" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Autorizados libre designación]]></text>
+				</staticText>
+				<line>
+					<reportElement x="33" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<staticText>
+					<reportElement x="827" y="0" width="51" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total de plazas]]></text>
+				</staticText>
+				<line>
+					<reportElement x="617" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="460" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="358" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="773" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<staticText>
+					<reportElement x="617" y="0" width="52" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Asimilados servicio exterior]]></text>
+				</staticText>
+				<line>
+					<reportElement x="721" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="564" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="669" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<staticText>
+					<reportElement x="669" y="0" width="52" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Gabinete de apoyo]]></text>
+				</staticText>
+				<line>
+					<reportElement x="410" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="827" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<staticText>
+					<reportElement x="721" y="0" width="52" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Operativo confianza]]></text>
+				</staticText>
+				<line>
+					<reportElement x="512" y="0" width="1" height="33" forecolor="#CCCCCC"/>
+				</line>
+				<staticText>
+					<reportElement x="410" y="0" width="50" height="33" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sujetos al SPC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="34" y="0" width="324" height="33"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[     Descripción]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="0" width="34" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[UR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="359" y="0" width="52" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[No sujetos    al SPC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="774" y="0" width="53" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Operativo base]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="460" y="0" width="52" height="33"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Seguridad nacional]]></text>
+				</staticText>
+			</elementGroup>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="878" height="14" backcolor="#FFFFFF"/>
+				<graphicElement>
+					<pen lineColor="#999999"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="34" y="0" width="325" height="14"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="360" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{PTOSNO_SUJETOSALSPC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="410" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{PTOSDEL_SPC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="461" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{PTOSDE_SEGURIDADNACIONAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="513" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{PTOSAUTORIZADOS_LIBREDESIGNA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="568" y="0" width="48" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{PTOSLIBREDESIGNA_POROTRALEY}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="618" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{PTOASIMILADOS_SERVICIOEXT}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="670" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{GABINETE_APOYO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="724" y="0" width="47" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{OPERATIVO_CONFIANZA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="771" y="0" width="50" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{OPERATIVO_BASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="824" y="0" width="49" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTALPLAZAS}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="0" width="30" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="827" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="721" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="617" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="512" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="773" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="669" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="564" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="460" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="410" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="358" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="33" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="880" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="773" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="600" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="783" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="843" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="23" splitType="Stretch">
+			<rectangle>
+				<reportElement x="258" y="6" width="620" height="14" backcolor="#F0EFEF"/>
+				<graphicElement>
+					<pen lineColor="#999999"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="#,##0">
+				<reportElement x="413" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTSISPC}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="464" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTSEGNAL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="517" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTLIBRED}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="571" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTLDOTRA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="621" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTASEXTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="673" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTGABAPOYO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="727" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTOPECONF}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="775" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTOPEBASE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="258" y="6" width="95" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<textField evaluationTime="Group" evaluationGroup="ur" pattern="#,##0" isBlankWhenNull="false">
+				<reportElement x="827" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTALPLAZASSUM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="364" y="6" width="45" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{TOTNOSPC}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="358" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="411" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="460" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="511" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="564" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="618" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="668" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="722" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="773" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="826" y="6" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

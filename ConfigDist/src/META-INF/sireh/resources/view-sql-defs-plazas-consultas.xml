@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+<!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+                <!--Consulta General de Plazas - Búsqueda de plazas con filtros    RM-->
+                <prop key="consultaGeneral">
+                    SELECT
+                        P.ID_PLAZA, 
+                        P.PLAZA_RFC,
+                        NVL(P.PLAZA_RESPALDO, 0) RESPALDO,
+                        E.NOMBRE_EMPLEADO||' '||E.PRIMER_APELLIDO||' '||E.SEGUNDO_APELLIDO AS NOMBRE_EMP, 
+                        P.ID_SIT_PLAZA, 
+                        SP.DESC_SIT_PLAZA, 
+                        P.ID_GRUPO_PAGO, 
+                        GP.DESC_GRUPO_PAGO,
+                        P.ID_UNIDAD_PRE, 
+                        P.ID_PUESTO_PRE, 
+                        AP.ID_NIVEL_PTO AS ID_NIVEL_PTO_PRE,  
+                        AP.ID_NOMBRAMIENTO AS ID_NOMB_PRE, 
+                        P.ID_UNIDAD_NOM, 
+                        P.ID_PUESTO_NOM, 
+                        APN.ID_NIVEL_PTO AS ID_NIVEL_PTO_NOM, 
+                        APN.ID_NOMBRAMIENTO AS ID_NOMB_NOM, 
+                        P.ID_MOVTO_PERSONA, 
+                        P.ID_TIPO_PLAZA, 
+                        TPL.DESC_TIPO_PLAZA, 
+                        P.ID_SERV_PUB, 
+                        ES.CODIGO_PUESTO,
+                        P.USUARIO, 
+                        TO_CHAR(P.FEC_MODIFICO,'DD/MM/YYYY HH24:MI:SS') AS FEC_MODIFICO
+                    FROM 
+                        TD_PLAZA P, 
+                        TC_UNIDAD UP, 
+                        TC_PUESTO PP, 
+                        TC_ATRIBUTO_PUESTO AP, 
+                        TC_NOMBRAMIENTO NP, 
+                        TC_UNIDAD UN, 
+                        TC_PUESTO PN, 
+                        TC_ATRIBUTO_PUESTO APN, 
+                        TC_NOMBRAMIENTO NN, 
+                        TC_SIT_PLAZA SP, 
+                        TC_GRUPO_PAGO GP, 
+                        TD_EMPLEADO E, 
+                        TC_MOVS_PERSONAL MP, 
+                        TC_TIPO_PLAZA TPL, 
+                        TC_TIPO_SERV_PUB TSP, 
+                        TD_ESCENARIO ES
+                    WHERE
+                            ##P.ID_PLAZA##
+                        AND ##P.PLAZA_RFC## 
+                        AND ##E.NOMBRE_EMPLEADO##
+                        AND ##E.PRIMER_APELLIDO##
+                        AND ##E.SEGUNDO_APELLIDO##
+                        AND ##TRIM(P.ID_SIT_PLAZA)##
+                        AND ##P.ID_GRUPO_PAGO##
+                        AND ##P.ID_UNIDAD_PRE##
+                        
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)                     
+                        
+                        AND ##AP.ID_NIVEL_PTO##
+                        AND ##AP.ID_NOMBRAMIENTO##                        
+                        AND ##P.ID_UNIDAD_NOM##
+                        
+                        AND P.ID_PUESTO_NOM IN (SELECT APNOM.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO APNOM WHERE TO_CHAR(APNOM.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(APNOM.ID_ATRIBUTO_PUESTO)##) 
+                            
+                        AND ##APN.ID_NIVEL_PTO##
+                        AND ##APN.ID_NOMBRAMIENTO##
+                        AND ##P.ID_MOVTO_PERSONA##
+                        AND ##P.ID_SERV_PUB##
+                        AND ##P.ID_TIPO_PLAZA##
+                        AND ##P.ID_VACANCIA##
+                        AND ##ES.CODIGO_PUESTO##
+                        
+                        AND P.PLAZA_RFC = E.RFC_EMPLEADO(+)                        
+                        AND TRIM(P.ID_SIT_PLAZA) = TRIM(SP.ID_SIT_PLAZA)                                          
+                        AND P.ID_GRUPO_PAGO = GP.ID_GRUPO_PAGO
+                        AND UP.UNI_CICLO = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        AND P.ID_UNIDAD_PRE =  UP.ID_UNIDAD
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        
+                        AND P.ID_PUESTO_PRE = PP.ID_PUESTO
+                        AND TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099'  
+                        AND P.ID_PUESTO_PRE = AP.ID_ATRIBUTO_PUESTO
+                        AND AP.ID_NOMBRAMIENTO = NP.ID_NOMBRAMIENTO
+                        AND P.ID_UNIDAD_NOM = UN.ID_UNIDAD
+                        AND ##P.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                        
+                        AND UN.UNI_CICLO = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        AND P.ID_PUESTO_NOM = PN.ID_PUESTO
+                        AND TO_CHAR(APN.AP_FIN,'DD-MM-YYYY') = '01-01-2099'  
+                        AND P.ID_PUESTO_NOM = APN.ID_ATRIBUTO_PUESTO
+                        AND APN.ID_NOMBRAMIENTO = NN.ID_NOMBRAMIENTO
+                        AND P.ID_MOVTO_PERSONA = MP.ID_MOVS_PERSONAL
+                        AND P.ID_TIPO_PLAZA = TPL.ID_TIPO_PLAZA
+                        AND P.ID_SERV_PUB = TSP.ID_SERV_PUB
+                        AND ES.FIN_ESCENARIO(+) = '01/01/2099' 
+                        AND P.ID_PLAZA = ES.PLAZA_ESCENARIO(+)
+                        AND ROWNUM <![CDATA[<]]> 500
+                        ORDER BY P.ID_PLAZA ASC
+                </prop>
+    
+                <!--Consulta General de Plazas para adecuacion   RM-->
+                <prop key="consultaPlazaAdecuacion">
+                    SELECT  p.plaf_ciclo, p.id_oficio_afecta, p.id_plaza, 
+                            p.id_operacion ||'-'|| r.desc_operacion operacion, 
+                            p.id_unidad, p.id_puesto, a.id_nivel_pto, p.id_edo,  
+                            p.id_grupo_pago ||'-'|| cg.desc_grupo_pago as id_grupo_pago,  
+                            p.plaf_proy_amplia ||'-'|| pr1.desc_proy_regul proy_amplia,
+                            p.plaf_proy_reduce ||'-'|| pr2.desc_proy_regul proy_reduce,
+                            p.plaf_inicio, p.plaf_final,  
+                            o.id_sit_afectaci ||'-'|| desc_sit_afectaci as id_sit_afectaci,  
+                            trim(o.ofac_leyenda_justif) leyenda_justificac,
+                            p.USUARIO, 
+                            p.FEC_MODIFICO
+                    FROM    td_plaza_afectacion p, td_oficio_afectacion o, tc_atributo_puesto a, tc_proy_regulariza pr1, 
+                            tc_proy_regulariza pr2, tc_operacion r, TC_GRUPO_PAGO cg, TC_SITUACION_AFECTACION csa 
+                    WHERE   
+                                ##p.id_oficio_afecta##
+                            and ##p.id_plaza##
+                            and p.id_plaza <![CDATA[>]]>  0
+                            and p.plaf_ciclo = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                            and p.id_oficio_afecta = o.id_oficio_afecta 
+                            and p.plaf_ciclo = o.ofac_ciclo 
+                            and p.id_puesto = a.id_atributo_puesto 
+                            and a.ap_fin = '01/01/2099' 
+                            and p.plaf_proy_amplia = pr1.id_proy_regul
+                            and p.plaf_ciclo = pr1.pr_ciclo 
+                            and p.plaf_proy_reduce = pr2.id_proy_regul 
+                            and p.plaf_ciclo = pr2.pr_ciclo 
+                            and p.id_operacion = r.id_operacion 
+                            and p.id_grupo_pago = cg.id_grupo_pago
+                            and o.id_sit_afectaci = csa.id_sit_afectaci
+                            AND ##p.id_unidad#SIREHUNIDAD#PRIMARY##
+                            and ROWNUM <![CDATA[<]]> 200
+                            order by 4 desc, 2,3
+                </prop>
+    
+                <!--Consulta Movimientos de Personal RM-->
+                <prop key="consultaMovtosPersonal">
+                    SELECT  C.ID_MOVTO_PERSONA ||' '|| M.DESC_MOVS_PERSONAL MOV_PERSONAL,  C.ID_PLAZA, C.ID_PUESTO_NOM, 
+                            C.ID_RANGO_NOM, C.ID_NOMBRAMIENTO_NOM ||' '|| N.DESC_NOMBRAMIENTO NOMBRAMIENTO, C.MEP_RFC,  C.MEP_CURP,
+                            C.MEP_NOMBRE||' '|| C.MEP_PRIMER_APELLIDO ||' '|| C.MEP_SEGUNDO_APELLIDO NOMBRE_EMP, 
+                            C.MEP_QNA_CAPTURA, C.MEP_INI_CONT, C.MEP_FIN_CONT, C.MEP_IMPORTE_HONORARIO, C.USUARIO, C.FEC_MODIFICO, 
+                            C.ID_UNIDAD_NOM, C.ID_ZONA_ECO_NOM, C.ID_GRUPO_PAGO ||' '|| G.DESC_GRUPO_PAGO GRUPO_PAGO,
+                            C.ID_SERV_PUB ||' '|| T.DESC_TIPO_SERV_PUB SERV_PUB, C.ID_MOVTOS_EMP_PLA, C.MEP_OBSERVA, C.MEP_OBSERVA_INTERNAS,
+                            C.MEP_QNA_CANCELA, C.MEP_USR_CANCELA, C.MEP_FECHA_CANCELA
+                     FROM   TN_MOVTOS_EMP_PLA C, TC_MOVS_PERSONAL M, TC_NOMBRAMIENTO N, TC_GRUPO_PAGO G, TC_TIPO_SERV_PUB T 
+                    WHERE   C.ID_MOVTO_PERSONA = M.ID_MOVS_PERSONAL(+) 
+                            AND C.ID_NOMBRAMIENTO_NOM = N.ID_NOMBRAMIENTO(+) 
+                            AND C.ID_GRUPO_PAGO = G.ID_GRUPO_PAGO (+)
+                            AND C.ID_SERV_PUB = T.ID_SERV_PUB (+)
+                            AND C.ID_PLAZA <![CDATA[>]]>  0
+                            AND ##C.MEP_RFC##
+                            AND ##C.ID_PLAZA##
+                            AND ##C.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                 ORDER BY   C.MEP_QNA_CAPTURA DESC, C.FEC_MODIFICO DESC, C.ID_MOVTOS_EMP_PLA DESC
+                </prop>
+    
+                <!--Consulta Plaza Soporte - Búsqueda de plazas Eventuales c soporte    RM-->
+                <prop key="consultaECS">                
+                    SELECT 'EVE C/S' AS TIPO,
+                        pe.ID_GRUPO_PAGO||'-'||cgpe.DESC_GRUPO_PAGO AS GRUPO_PAGO_EVE,
+                        pe.ID_UNIDAD_NOM AS UNI_DESC_EVE, 
+                        pe.ID_PLAZA AS ID_PLAZA_EVE, 
+                        pe.PLAZA_RESPALDO AS PLAZA_RESPALDO_EVE, 
+                        pe.PLAZA_RFC AS PLAZA_RFC_EVE, 
+                        ee.NOMBRE_EMPLEADO||' '||ee.PRIMER_APELLIDO||' '||ee.SEGUNDO_APELLIDO AS NOMBRE_EMP_EVE, 
+                        pe.ID_SIT_PLAZA||'-'||cspe.DESC_SIT_PLAZA AS DESC_SIT_PLAZA_EVE,
+                        pe.ID_PUESTO_NOM AS DESC_PUESTO_EVE, 
+                        cape.ID_NIVEL_PTO AS ID_NIVEL_PTO_EVE,
+                        pe.ID_RANGO_NOM AS ID_RANGO_EVE, 
+                        cape.ID_JERARQUIA||'-'||cje.DESC_JERARQUIA AS DESC_JERARQUIA_EVE, 
+                        TRIM(cape.ID_NOMBRAMIENTO)||'-'||cne.DESC_NOMBRAMIENTO AS DESC_NOMBRAMIENTO_EVE, 
+                        pe.ID_ZONA_ECO_NOM AS ID_ZONA_ECO_EVE, 
+                        pe.ID_MOVTO_PERSONA||'-'||cmpe.DESC_MOVS_PERSONAL AS DESC_MOVS_PERSONAL_EVE,
+                        pe.PLAZA_QNA_CAPTURA AS PLAZA_QNA_CAPTURA_EVE,
+                        pe.PLAZA_ULTIMO_MOVTO AS PLAZA_ULTIMO_MOVTO_EVE,
+                        pe.PLAZA_INI_CONT AS PLAZA_INI_CONT_EVE,   
+                        pe.PLAZA_FIN_CONT AS PLAZA_FIN_CONT_EVE,
+                        cte.TAB_SUELDO AS TAB_SUELDO_EVE, 
+                        cte.TAB_COMPENSACION AS TAB_COMPENSACION_EVE,
+                        ps.ID_GRUPO_PAGO||'-'||cgps.DESC_GRUPO_PAGO AS GRUPO_PAGO_EST,
+                        ps.ID_UNIDAD_NOM AS UNI_DESC_EST, 
+                        ps.ID_PLAZA AS ID_PLAZA_EST, 
+                        ps.PLAZA_RESPALDO AS PLAZA_RESPALDO_EST, 
+                        ps.PLAZA_RFC AS PLAZA_RFC_EST, 
+                        es.NOMBRE_EMPLEADO||' '||es.PRIMER_APELLIDO||' '||es.SEGUNDO_APELLIDO AS NOMBRE_EMP_EST, 
+                        ps.ID_SIT_PLAZA||'-'||csps.DESC_SIT_PLAZA AS DESC_SIT_PLAZA_EST,
+                        ps.ID_PUESTO_NOM AS DESC_PUESTO_EST, 
+                        caps.ID_NIVEL_PTO AS ID_NIVEL_PTO_EST,
+                        ps.ID_RANGO_NOM AS ID_RANGO_EST, 
+                        caps.ID_JERARQUIA||'-'||cjs.DESC_JERARQUIA AS DESC_JERARQUIA_EST, 
+                        TRIM(caps.ID_NOMBRAMIENTO)||'-'||cns.DESC_NOMBRAMIENTO AS DESC_NOMBRAMIENTO_EST, 
+                        ps.ID_ZONA_ECO_NOM AS ID_ZONA_ECO_EST, 
+                        ps.ID_MOVTO_PERSONA||'-'||cmps.DESC_MOVS_PERSONAL AS DESC_MOVS_PERSONAL_EST,
+                        ps.PLAZA_QNA_CAPTURA AS PLAZA_QNA_CAPTURA_EST,
+                        ps.PLAZA_ULTIMO_MOVTO AS PLAZA_ULTIMO_MOVTO_EST,
+                        ps.PLAZA_INI_CONT AS PLAZA_INI_CONT_EST,   
+                        ps.PLAZA_FIN_CONT AS PLAZA_FIN_CONT_EST,
+                        cts.TAB_SUELDO AS TAB_SUELDO_EST, 
+                        cts.TAB_COMPENSACION AS TAB_COMPENSACION_EST,
+                        pe.USUARIO, 
+                        pe.FEC_MODIFICO
+                    FROM
+                        TD_PLAZA pe,  TC_UNIDAD cue, TC_PUESTO cpe,  TC_ATRIBUTO_PUESTO cape, TC_NOMBRAMIENTO cne, TC_JERARQUIA cje, 
+                        TC_TABULADOR cte, TC_SIT_PLAZA cspe, TD_EMPLEADO ee, TC_MOVS_PERSONAL cmpe, TC_GRUPO_PAGO cgpe,
+                        
+                        TD_PLAZA ps,  TC_UNIDAD cus, TC_PUESTO cps,  TC_ATRIBUTO_PUESTO caps, TC_NOMBRAMIENTO cns, TC_JERARQUIA cjs, 
+                        TC_TABULADOR cts, TC_SIT_PLAZA csps, TD_EMPLEADO es, TC_MOVS_PERSONAL cmps, TC_GRUPO_PAGO cgps
+                    WHERE
+                            ##pe.ID_PLAZA##
+                        and ##pe.ID_UNIDAD_NOM##                        
+    
+                        and pe.ID_GRUPO_PAGO = 'V'
+                        and pe. ID_PLAZA = ps.PLAZA_RESPALDO(+)
+                        and pe.ID_GRUPO_PAGO = cgpe.ID_GRUPO_PAGO
+                        and trim(pe.ID_SIT_PLAZA) = trim(cspe.ID_SIT_PLAZA) 
+                        and pe.PLAZA_RFC = ee.RFC_EMPLEADO(+) 
+                        and pe.ID_UNIDAD_NOM = cue.ID_UNIDAD 
+                        AND ##pe.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                        
+                        and cue.uni_ciclo = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        
+                        and pe.ID_PUESTO_NOM = cpe.ID_PUESTO 
+                        and TO_CHAR(cape.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and pe.ID_PUESTO_NOM = cape.ID_ATRIBUTO_PUESTO  
+                        and TRIM(cape.ID_NOMBRAMIENTO) = TRIM(cne.ID_NOMBRAMIENTO)
+                        and cape.ID_JERARQUIA = cje.ID_JERARQUIA
+                        and TO_CHAR(cte.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and cape.ID_NIVEL_PTO = cte.ID_NIVEL_PTO 
+                        and pe.ID_ZONA_ECO_NOM = cte.ID_ZONA_ECON
+                        and pe.ID_RANGO_NOM  = cte.ID_RANGO 
+                        and pe.ID_MOVTO_PERSONA = cmpe.ID_MOVS_PERSONAL
+                        and ps.ID_GRUPO_PAGO = cgps.ID_GRUPO_PAGO
+                        and trim(ps.ID_SIT_PLAZA) = trim(csps.ID_SIT_PLAZA) 
+                        and ps.PLAZA_RFC = es.RFC_EMPLEADO(+) 
+                        and ps.ID_UNIDAD_NOM = cus.ID_UNIDAD 
+                        AND ##ps.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                        
+                        and cus.uni_ciclo = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        
+                        and ps.ID_PUESTO_NOM = cps.ID_PUESTO 
+                        and TO_CHAR(caps.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and ps.ID_PUESTO_NOM = caps.ID_ATRIBUTO_PUESTO  
+                        and TRIM(caps.ID_NOMBRAMIENTO) = TRIM(cns.ID_NOMBRAMIENTO)
+                        and caps.ID_JERARQUIA = cjs.ID_JERARQUIA
+                        and TO_CHAR(cts.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and caps.ID_NIVEL_PTO = cts.ID_NIVEL_PTO 
+                        and ps.ID_ZONA_ECO_NOM = cts.ID_ZONA_ECON
+                        and ps.ID_RANGO_NOM  = cts.ID_RANGO 
+                        and ps.ID_MOVTO_PERSONA = cmps.ID_MOVS_PERSONAL
+                </prop>                
+    
+                <!--Consulta Plaza Soporte - Búsqueda de plazas Eventuales con o sin soporte    RM-->
+                <prop key="consultaESS">                
+                    SELECT 'EVE S/S' AS TIPO,
+                        pe.ID_GRUPO_PAGO||'-'||cgpe.DESC_GRUPO_PAGO AS GRUPO_PAGO_EVE,
+                        pe.ID_UNIDAD_NOM AS UNI_DESC_EVE, 
+                        pe.ID_PLAZA AS ID_PLAZA_EVE, 
+                        pe.PLAZA_RESPALDO AS PLAZA_RESPALDO_EVE, 
+                        pe.PLAZA_RFC AS PLAZA_RFC_EVE, 
+                        ee.NOMBRE_EMPLEADO||' '||ee.PRIMER_APELLIDO||' '||ee.SEGUNDO_APELLIDO AS NOMBRE_EMP_EVE, 
+                        pe.ID_SIT_PLAZA||'-'||cspe.DESC_SIT_PLAZA AS DESC_SIT_PLAZA_EVE,
+                        pe.ID_PUESTO_NOM AS DESC_PUESTO_EVE, 
+                        cape.ID_NIVEL_PTO AS ID_NIVEL_PTO_EVE,
+                        pe.ID_RANGO_NOM AS ID_RANGO_EVE, 
+                        cape.ID_JERARQUIA||'-'||cje.DESC_JERARQUIA AS DESC_JERARQUIA_EVE, 
+                        TRIM(cape.ID_NOMBRAMIENTO)||'-'||cne.DESC_NOMBRAMIENTO AS DESC_NOMBRAMIENTO_EVE, 
+                        pe.ID_ZONA_ECO_NOM AS ID_ZONA_ECO_EVE, 
+                        pe.ID_MOVTO_PERSONA||'-'||cmpe.DESC_MOVS_PERSONAL AS DESC_MOVS_PERSONAL_EVE,
+                        pe.PLAZA_QNA_CAPTURA AS PLAZA_QNA_CAPTURA_EVE,
+                        pe.PLAZA_ULTIMO_MOVTO AS PLAZA_ULTIMO_MOVTO_EVE,
+                        pe.PLAZA_INI_CONT AS PLAZA_INI_CONT_EVE,   
+                        pe.PLAZA_FIN_CONT AS PLAZA_FIN_CONT_EVE,
+                        cte.TAB_SUELDO AS TAB_SUELDO_EVE, 
+                        cte.TAB_COMPENSACION AS TAB_COMPENSACION_EVE,
+                        pe.USUARIO, 
+                        pe.FEC_MODIFICO,
+                        
+                        NULL AS GRUPO_PAGO_EST,
+                        NULL AS UNI_DESC_EST, 
+                        NULL AS ID_PLAZA_EST, 
+                        NULL AS PLAZA_RESPALDO_EST, 
+                        NULL AS PLAZA_RFC_EST, 
+                        NULL AS NOMBRE_EMP_EST, 
+                        NULL AS DESC_SIT_PLAZA_EST,
+                        NULL AS DESC_PUESTO_EST, 
+                        NULL AS ID_NIVEL_PTO_EST,
+                        NULL AS ID_RANGO_EST, 
+                        NULL AS DESC_JERARQUIA_EST, 
+                        NULL AS DESC_NOMBRAMIENTO_EST, 
+                        NULL AS ID_ZONA_ECO_EST, 
+                        NULL AS DESC_MOVS_PERSONAL_EST,
+                        NULL AS PLAZA_QNA_CAPTURA_EST,
+                        NULL AS PLAZA_ULTIMO_MOVTO_EST,
+                        NULL AS PLAZA_INI_CONT_EST,   
+                        NULL AS PLAZA_FIN_CONT_EST,
+                        NULL AS TAB_SUELDO_EST, 
+                        NULL AS TAB_COMPENSACION_EST
+                    FROM
+                        TD_PLAZA pe,  TC_UNIDAD cue, TC_PUESTO cpe,  TC_ATRIBUTO_PUESTO cape, TC_NOMBRAMIENTO cne, TC_JERARQUIA cje, 
+                        TC_TABULADOR cte, TC_SIT_PLAZA cspe, TD_EMPLEADO ee, TC_MOVS_PERSONAL cmpe, TC_GRUPO_PAGO cgpe
+                    WHERE
+                            ##pe.ID_PLAZA##
+                        and ##pe.ID_UNIDAD_NOM##                        
+                        
+                        and pe.ID_GRUPO_PAGO = 'V'
+                        and (pe.PLAZA_RESPALDO = 0 or pe.PLAZA_RESPALDO is null)    
+                        and pe.ID_GRUPO_PAGO = cgpe.ID_GRUPO_PAGO
+                        and trim(pe.ID_SIT_PLAZA) = trim(cspe.ID_SIT_PLAZA) 
+                        and pe.PLAZA_RFC = ee.RFC_EMPLEADO(+) 
+                        and pe.ID_UNIDAD_NOM = cue.ID_UNIDAD 
+                        AND ##pe.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                        
+                        and cue.uni_ciclo = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        
+                        and pe.ID_PUESTO_NOM = cpe.ID_PUESTO 
+                        and TO_CHAR(cape.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and pe.ID_PUESTO_NOM = cape.ID_ATRIBUTO_PUESTO  
+                        and TRIM(cape.ID_NOMBRAMIENTO) = TRIM(cne.ID_NOMBRAMIENTO)
+                        and cape.ID_JERARQUIA = cje.ID_JERARQUIA
+                        and TO_CHAR(cte.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and cape.ID_NIVEL_PTO = cte.ID_NIVEL_PTO 
+                        and pe.ID_ZONA_ECO_NOM = cte.ID_ZONA_ECON
+                        and pe.ID_RANGO_NOM  = cte.ID_RANGO 
+                        and pe.ID_MOVTO_PERSONA = cmpe.ID_MOVS_PERSONAL
+                </prop>                
+                    
+                <!--Consulta Plaza Soporte - Búsqueda de plazas de Estructura con soporte    RM-->
+                <prop key="consultaEST">
+                    SELECT 'EST C/S' AS TIPO,
+                        pe.ID_GRUPO_PAGO||'-'||cgpe.DESC_GRUPO_PAGO AS GRUPO_PAGO_EVE,
+                        pe.ID_UNIDAD_NOM AS UNI_DESC_EVE, 
+                        pe.ID_PLAZA AS ID_PLAZA_EVE, 
+                        pe.PLAZA_RESPALDO AS PLAZA_RESPALDO_EVE, 
+                        pe.PLAZA_RFC AS PLAZA_RFC_EVE, 
+                        ee.NOMBRE_EMPLEADO||' '||ee.PRIMER_APELLIDO||' '||ee.SEGUNDO_APELLIDO AS NOMBRE_EMP_EVE, 
+                        pe.ID_SIT_PLAZA||'-'||cspe.DESC_SIT_PLAZA AS DESC_SIT_PLAZA_EVE,
+                        pe.ID_PUESTO_NOM AS DESC_PUESTO_EVE, 
+                        cape.ID_NIVEL_PTO AS ID_NIVEL_PTO_EVE,
+                        pe.ID_RANGO_NOM AS ID_RANGO_EVE, 
+                        cape.ID_JERARQUIA||'-'||cje.DESC_JERARQUIA AS DESC_JERARQUIA_EVE, 
+                        TRIM(cape.ID_NOMBRAMIENTO)||'-'||cne.DESC_NOMBRAMIENTO AS DESC_NOMBRAMIENTO_EVE, 
+                        pe.ID_ZONA_ECO_NOM AS ID_ZONA_ECO_EVE, 
+                        pe.ID_MOVTO_PERSONA||'-'||cmpe.DESC_MOVS_PERSONAL AS DESC_MOVS_PERSONAL_EVE,
+                        pe.PLAZA_QNA_CAPTURA AS PLAZA_QNA_CAPTURA_EVE,
+                        pe.PLAZA_ULTIMO_MOVTO AS PLAZA_ULTIMO_MOVTO_EVE,
+                        pe.PLAZA_INI_CONT AS PLAZA_INI_CONT_EVE,   
+                        pe.PLAZA_FIN_CONT AS PLAZA_FIN_CONT_EVE,
+                        cte.TAB_SUELDO AS TAB_SUELDO_EVE, 
+                        cte.TAB_COMPENSACION AS TAB_COMPENSACION_EVE,
+                        ps.ID_GRUPO_PAGO||'-'||cgps.DESC_GRUPO_PAGO AS GRUPO_PAGO_EST,
+                        ps.ID_UNIDAD_NOM AS UNI_DESC_EST, 
+                        ps.ID_PLAZA AS ID_PLAZA_EST, 
+                        ps.PLAZA_RESPALDO AS PLAZA_RESPALDO_EST, 
+                        ps.PLAZA_RFC AS PLAZA_RFC_EST, 
+                        es.NOMBRE_EMPLEADO||' '||es.PRIMER_APELLIDO||' '||es.SEGUNDO_APELLIDO AS NOMBRE_EMP_EST, 
+                        ps.ID_SIT_PLAZA||'-'||csps.DESC_SIT_PLAZA AS DESC_SIT_PLAZA_EST,
+                        ps.ID_PUESTO_NOM AS DESC_PUESTO_EST, 
+                        caps.ID_NIVEL_PTO AS ID_NIVEL_PTO_EST,
+                        ps.ID_RANGO_NOM AS ID_RANGO_EST, 
+                        caps.ID_JERARQUIA||'-'||cjs.DESC_JERARQUIA AS DESC_JERARQUIA_EST, 
+                        TRIM(caps.ID_NOMBRAMIENTO)||'-'||cns.DESC_NOMBRAMIENTO AS DESC_NOMBRAMIENTO_EST, 
+                        ps.ID_ZONA_ECO_NOM AS ID_ZONA_ECO_EST, 
+                        ps.ID_MOVTO_PERSONA||'-'||cmps.DESC_MOVS_PERSONAL AS DESC_MOVS_PERSONAL_EST,
+                        ps.PLAZA_QNA_CAPTURA AS PLAZA_QNA_CAPTURA_EST,
+                        ps.PLAZA_ULTIMO_MOVTO AS PLAZA_ULTIMO_MOVTO_EST,
+                        ps.PLAZA_INI_CONT AS PLAZA_INI_CONT_EST,   
+                        ps.PLAZA_FIN_CONT AS PLAZA_FIN_CONT_EST,
+                        cts.TAB_SUELDO AS TAB_SUELDO_EST, 
+                        cts.TAB_COMPENSACION AS TAB_COMPENSACION_EST,
+                        pe.USUARIO, 
+                        pe.FEC_MODIFICO
+                    FROM
+                        TD_PLAZA pe,  TC_UNIDAD cue, TC_PUESTO cpe,  TC_ATRIBUTO_PUESTO cape, TC_NOMBRAMIENTO cne, TC_JERARQUIA cje, 
+                        TC_TABULADOR cte, TC_SIT_PLAZA cspe, TD_EMPLEADO ee, TC_MOVS_PERSONAL cmpe, TC_GRUPO_PAGO cgpe,
+                        
+                        TD_PLAZA ps,  TC_UNIDAD cus, TC_PUESTO cps,  TC_ATRIBUTO_PUESTO caps, TC_NOMBRAMIENTO cns, TC_JERARQUIA cjs, 
+                        TC_TABULADOR cts, TC_SIT_PLAZA csps, TD_EMPLEADO es, TC_MOVS_PERSONAL cmps, TC_GRUPO_PAGO cgps
+                    WHERE
+                            ##pe.ID_PLAZA##
+                        and ##pe.ID_UNIDAD_NOM##                        
+                        
+                        and ps.ID_GRUPO_PAGO = 'E'
+                        and ps.PLAZA_RESPALDO <![CDATA[>]]>  0
+                        and pe.ID_PLAZA = ps.PLAZA_RESPALDO(+)
+                        and pe.ID_GRUPO_PAGO = cgpe.ID_GRUPO_PAGO
+                        and trim(pe.ID_SIT_PLAZA) = trim(cspe.ID_SIT_PLAZA) 
+                        and pe.PLAZA_RFC = ee.RFC_EMPLEADO(+) 
+                        and pe.ID_UNIDAD_NOM = cue.ID_UNIDAD 
+                        AND ##pe.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                        
+                        and cue.uni_ciclo = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        
+                        and pe.ID_PUESTO_NOM = cpe.ID_PUESTO 
+                        and TO_CHAR(cape.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and pe.ID_PUESTO_NOM = cape.ID_ATRIBUTO_PUESTO  
+                        and TRIM(cape.ID_NOMBRAMIENTO) = TRIM(cne.ID_NOMBRAMIENTO)
+                        and cape.ID_JERARQUIA = cje.ID_JERARQUIA
+                        and TO_CHAR(cte.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and cape.ID_NIVEL_PTO = cte.ID_NIVEL_PTO 
+                        and pe.ID_ZONA_ECO_NOM = cte.ID_ZONA_ECON
+                        and pe.ID_RANGO_NOM  = cte.ID_RANGO 
+                        and pe.ID_MOVTO_PERSONA = cmpe.ID_MOVS_PERSONAL
+                        and ps.ID_GRUPO_PAGO = cgps.ID_GRUPO_PAGO
+                        and trim(ps.ID_SIT_PLAZA) = trim(csps.ID_SIT_PLAZA) 
+                        and ps.PLAZA_RFC = es.RFC_EMPLEADO(+) 
+                        and ps.ID_UNIDAD_NOM = cus.ID_UNIDAD 
+                        AND ##ps.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                        
+                        and cus.uni_ciclo = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        
+                        and ps.ID_PUESTO_NOM = cps.ID_PUESTO 
+                        and TO_CHAR(caps.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and ps.ID_PUESTO_NOM = caps.ID_ATRIBUTO_PUESTO  
+                        and TRIM(caps.ID_NOMBRAMIENTO) = TRIM(cns.ID_NOMBRAMIENTO)
+                        and caps.ID_JERARQUIA = cjs.ID_JERARQUIA
+                        and TO_CHAR(cts.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        and caps.ID_NIVEL_PTO = cts.ID_NIVEL_PTO 
+                        and ps.ID_ZONA_ECO_NOM = cts.ID_ZONA_ECON
+                        and ps.ID_RANGO_NOM  = cts.ID_RANGO 
+                        and ps.ID_MOVTO_PERSONA = cmps.ID_MOVS_PERSONAL
+                </prop>
+                <prop key="consultaPlazaSpc">
+                    select p.plaza_rfc, e.nombre_empleado, e.primer_apellido, e.segundo_apellido, e.curp_empleado,
+                           p.id_plaza, es.codigo_puesto, es.nombre_puesto
+                    from td_plaza p, td_empleado e, td_escenario es      
+                    where p.plaza_rfc = e.rfc_empleado(+)
+                      and p.id_unidad_nom <![CDATA[<>]]> 'G00'
+                      and p.id_unidad_nom not like 'X%'
+                      and p.id_plaza = es.plaza_escenario(+)
+                      and es.fin_escenario(+) = '31/12/2099'  
+            </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

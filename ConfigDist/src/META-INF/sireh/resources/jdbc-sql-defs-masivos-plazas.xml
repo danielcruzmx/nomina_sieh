@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                <prop key="selectTnPlantillaPlazaReduceVsUnidad">
+                    SELECT pa.id_unidad
+                        FROM tn_plantilla_plaza_estructura pa INNER JOIN tc_unidad u
+                        ON pa.id_unidad = u.id_unidad AND pa.usuario = ?
+                </prop>
+                <prop key="maximaPlazaEventualByCiclo">
+                    SELECT 
+                        MAX(ID_PLAZA) AS ID_PLAZA
+                    FROM 
+                        TD_PLAZA 
+                    WHERE 
+                        ID_PLAZA <![CDATA[>=]]> 70000 AND ID_PLAZA <![CDATA[<]]> 80000
+                    AND PLAZA_CICLO = ?
+                </prop>
+                <prop key="updateTdPlazaMasivaBajaHonorarios">
+                    UPDATE td_plaza
+                       SET id_sit_plaza = ?,
+                           plaza_rfc = ?,
+                           id_movto_persona = ?,
+                           plaza_Ultimo_Movto = ?,
+                           plaza_Ini_Cont = ?,
+                           plaza_Qna_Captura = ?,
+                           usuario = ?,
+                           fec_modifico = ?
+                     WHERE id_plaza = ?
+                </prop>
+                <prop key="selectTnPlantillaPlazaVsInmueble">
+                SELECT PA.PPE_INMUEBLE
+                    FROM TN_PLANTILLA_PLAZA_ESTRUCTURA PA INNER JOIN TC_INMUEBLE M
+                        ON PA.PPE_INMUEBLE = M.ID_INMUEBLE AND PA.USUARIO = ?
+                </prop>
+                <prop key="updateTdPlazaMasiva">
+                    UPDATE td_plaza
+                       SET id_unidad_pre = ?,
+                           id_puesto_pre = ?,
+                           id_edo_pre = ?,
+                           id_zona_eco_pre = ?
+                     WHERE id_plaza = ?
+                </prop>
+                <prop key="updateTdPlazaMasivaReubicacion">
+                    UPDATE td_plaza
+                       SET id_unidad_pre = ?,
+                           id_edo_pre = ?,
+                           id_zona_eco_pre = ?
+                     WHERE id_plaza = ?
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

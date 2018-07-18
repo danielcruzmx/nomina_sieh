@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="MovtosPersonalExt" pageWidth="2877" pageHeight="612" orientation="Landscape" columnWidth="2877" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" isIgnorePagination="true">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="4733"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_UNIDAD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_QNA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+                TN_MOVTOS_EMP_PLA.ID_MOVTO_PERSONA,
+                TC_MOVS_PERSONAL.DESC_MOVS_PERSONAL,
+                TN_MOVTOS_EMP_PLA.MEP_RFC,
+                trim(trim(TD_EMPLEADO.PRIMER_APELLIDO)||' '||trim(TD_EMPLEADO.SEGUNDO_APELLIDO)||' '||trim(TD_EMPLEADO.NOMBRE_EMPLEADO)) empleado,
+                TN_MOVTOS_EMP_PLA.ID_PLAZA,
+                TN_MOVTOS_EMP_PLA.ID_PUESTO_PRE,
+                TN_MOVTOS_EMP_PLA.ID_PUESTO_NOM,
+                TC_RANGO_TABUL.DESC_RANGO_TABUL,
+                TC_TIPO_PAGO.DESC_TIPO_PAGO,
+                TN_MOVTOS_EMP_PLA.ID_ZONA_DIST_NOM,
+                TC_NOMBRAMIENTO.DESC_NOMBRAMIENTO,
+                TD_EMPLEADO.IMSS_ISSSTE MEP_IMSS_ISSSTE,
+                TD_EMPLEADO.CURP_EMPLEADO MEP_CURP,
+                to_char(TN_MOVTOS_EMP_PLA.MEP_INGRESO_DEPENDENCIA, 'dd/mm/yyyy') MEP_INGRESO_DEPENDENCIA,
+                to_char(TN_MOVTOS_EMP_PLA.MEP_INGRESO_GOB_FED, 'dd/mm/yyyy') MEP_INGRESO_GOB_FED,
+                banco_sar.DESC_BANCOS,
+                TN_MOVTOS_EMP_PLA.MEP_CLABE,
+                TN_MOVTOS_EMP_PLA.MEP_QNA_CAPTURA,
+                to_char(TN_MOVTOS_EMP_PLA.MEP_INI_CONT, 'dd/mm/yyyy') MEP_INI_CONT,
+                to_char(TN_MOVTOS_EMP_PLA.MEP_FIN_CONT, 'dd/mm/yyyy') MEP_FIN_CONT,
+                TN_MOVTOS_EMP_PLA.MEP_IMPORTE_HONORARIO,
+                TN_MOVTOS_EMP_PLA.ID_UNIDAD_PRE,
+                TN_MOVTOS_EMP_PLA.ID_UNIDAD_NOM,
+                TN_MOVTOS_EMP_PLA.MEP_PLAZA_ANT,
+                TN_MOVTOS_EMP_PLA.ID_PUESTO_NOM_ANT,
+                nombant.DESC_NOMBRAMIENTO,
+                TN_MOVTOS_EMP_PLA.USUARIO,
+                to_char(TN_MOVTOS_EMP_PLA.FEC_MODIFICO, 'dd/mm/yyyy hh24:mi:ss') FEC_MODIFICO
+From
+                TN_MOVTOS_EMP_PLA
+        left outer join TC_RANGO_TABUL on TN_MOVTOS_EMP_PLA.ID_RANGO_NOM = TC_RANGO_TABUL.ID_RANGO_TABUL
+        left outer join TC_TIPO_PAGO on TN_MOVTOS_EMP_PLA.ID_TIPO_PAGO = TC_TIPO_PAGO.ID_TIPO_PAGO
+                left outer join TC_NOMBRAMIENTO on TN_MOVTOS_EMP_PLA.ID_NOMBRAMIENTO_NOM = TC_NOMBRAMIENTO.ID_NOMBRAMIENTO
+                left outer join TC_NOMBRAMIENTO nombant on TN_MOVTOS_EMP_PLA.ID_NOMBRAMIENTO_ANT = nombant.ID_NOMBRAMIENTO
+                left outer join TC_ESTADO on TN_MOVTOS_EMP_PLA.ID_EDO_PARTICULAR = TC_ESTADO.ID_EDO
+        left outer join TC_MUNICIPIO on TN_MOVTOS_EMP_PLA.ID_EDO_PARTICULAR = TC_MUNICIPIO.ID_EDO and TN_MOVTOS_EMP_PLA.ID_MUNI_PARTICULAR = TC_MUNICIPIO.ID_MUNICIPIO
+        left outer join TC_ESTADO_CIVIL on TN_MOVTOS_EMP_PLA.ID_EDO_CIVIL = TC_ESTADO_CIVIL.ID_EDO_CIVIL
+        left outer join TC_NACIONALIDAD on TN_MOVTOS_EMP_PLA.ID_NACIONALIDAD = TC_NACIONALIDAD.ID_NACIONALIDAD
+        left outer join TC_GENERO on TN_MOVTOS_EMP_PLA.ID_GENERO = TC_GENERO.ID_GENERO
+        left outer join TC_BANCO banco_sar on TN_MOVTOS_EMP_PLA.ID_BANCO_SAR = banco_sar.ID_BANCO
+        left outer join TD_PLAZA on TN_MOVTOS_EMP_PLA.ID_PLAZA = TD_PLAZA.ID_PLAZA
+        left outer join TD_EMPLEADO on TN_MOVTOS_EMP_PLA.MEP_RFC = TD_EMPLEADO.RFC_EMPLEADO,
+                TC_MOVS_PERSONAL
+WHERE
+        TN_MOVTOS_EMP_PLA.ID_MOVTO_PERSONA = TC_MOVS_PERSONAL.ID_MOVS_PERSONAL AND
+        TN_MOVTOS_EMP_PLA.MEP_QNA_CAPTURA = $P{PAR_QNA}  AND
+        TN_MOVTOS_EMP_PLA.ID_UNIDAD_NOM IN ($P!{PAR_UNIDAD}) and
+        tn_movtos_emp_pla.mep_qna_cancela is null
+ORDER BY
+                TN_MOVTOS_EMP_PLA.ID_MOVTO_PERSONA ASC,
+                TN_MOVTOS_EMP_PLA.ID_UNIDAD_NOM ASC,
+                TN_MOVTOS_EMP_PLA.ID_ZONA_DIST_NOM ASC,
+                TN_MOVTOS_EMP_PLA.MEP_RFC ASC]]>
+	</queryString>
+	<field name="ID_MOVTO_PERSONA" class="java.math.BigDecimal"/>
+	<field name="DESC_MOVS_PERSONAL" class="java.lang.String"/>
+	<field name="MEP_RFC" class="java.lang.String"/>
+	<field name="EMPLEADO" class="java.lang.String"/>
+	<field name="ID_PLAZA" class="java.math.BigDecimal"/>
+	<field name="ID_PUESTO_PRE" class="java.lang.String"/>
+	<field name="ID_PUESTO_NOM" class="java.lang.String"/>
+	<field name="DESC_RANGO_TABUL" class="java.lang.String"/>
+	<field name="DESC_TIPO_PAGO" class="java.lang.String"/>
+	<field name="ID_ZONA_DIST_NOM" class="java.math.BigDecimal"/>
+	<field name="DESC_NOMBRAMIENTO" class="java.lang.String"/>
+	<field name="MEP_IMSS_ISSSTE" class="java.lang.String"/>
+	<field name="MEP_CURP" class="java.lang.String"/>
+	<field name="MEP_INGRESO_DEPENDENCIA" class="java.lang.String"/>
+	<field name="MEP_INGRESO_GOB_FED" class="java.lang.String"/>
+	<field name="DESC_BANCOS" class="java.lang.String"/>
+	<field name="MEP_CLABE" class="java.lang.String"/>
+	<field name="MEP_QNA_CAPTURA" class="java.math.BigDecimal"/>
+	<field name="MEP_INI_CONT" class="java.lang.String"/>
+	<field name="MEP_FIN_CONT" class="java.lang.String"/>
+	<field name="MEP_IMPORTE_HONORARIO" class="java.math.BigDecimal"/>
+	<field name="ID_UNIDAD_PRE" class="java.lang.String"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="MEP_PLAZA_ANT" class="java.math.BigDecimal"/>
+	<field name="ID_PUESTO_NOM_ANT" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="FEC_MODIFICO" class="java.lang.String"/>
+	<variable name="Casos" class="java.lang.Number" resetType="Group" resetGroup="Gpo_movto" calculation="Count">
+		<variableExpression><![CDATA[$F{ID_MOVTO_PERSONA}]]></variableExpression>
+	</variable>
+	<group name="Gpo_movto">
+		<groupExpression><![CDATA[$F{ID_MOVTO_PERSONA}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="12" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="2877" height="12" forecolor="#FFFFFF" backcolor="#F1F1F1"/>
+			</rectangle>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="737" y="0" width="63" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="800" y="0" width="56" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="856" y="0" width="111" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Puesto Funcional]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="967" y="0" width="72" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Herramienta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1039" y="0" width="111" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Tipo Pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1150" y="0" width="67" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Zona Pago]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1413" y="0" width="123" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CURP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2015" y="0" width="95" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Inicio Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2110" y="0" width="88" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fin Contrato]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1536" y="0" width="78" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Ingreso Dependencia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1614" y="0" width="96" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Ing. Gob. Fed.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1710" y="0" width="100" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Bancos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1810" y="0" width="123" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[CLABE Bancaria]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1933" y="0" width="82" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Qna. Captura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2373" y="0" width="68" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[UR Física]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2441" y="0" width="91" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Plaza anterior]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2532" y="0" width="99" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Puesto anterior]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2631" y="0" width="123" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Usuario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2754" y="0" width="123" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Fecha Captura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1217" y="0" width="86" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Nombramiento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="1303" y="0" width="110" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[No. Seg. Social]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2310" y="0" width="63" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="460" y="0" width="277" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Nombre del servidor público]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="2198" y="0" width="112" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Importe Honorario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" x="371" y="0" width="89" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="371" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Movimiento]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="371" y="0" width="89" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_RFC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="737" y="0" width="63" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="800" y="0" width="56" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_PUESTO_PRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="856" y="0" width="111" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_PUESTO_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="967" y="0" width="72" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_RANGO_TABUL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1039" y="0" width="111" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_TIPO_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1150" y="0" width="67" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_ZONA_DIST_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1413" y="0" width="123" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_CURP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1710" y="0" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_BANCOS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1810" y="0" width="123" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_CLABE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1933" y="0" width="82" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_QNA_CAPTURA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="2198" y="0" width="112" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_IMPORTE_HONORARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2310" y="0" width="63" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_UNIDAD_PRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2373" y="0" width="68" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2441" y="0" width="91" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_PLAZA_ANT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2532" y="0" width="99" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_PUESTO_NOM_ANT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2631" y="0" width="123" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="460" y="0" width="277" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1217" y="0" width="86" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_NOMBRAMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1303" y="0" width="110" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_IMSS_ISSSTE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1536" y="0" width="78" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_INGRESO_DEPENDENCIA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1614" y="0" width="96" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_INGRESO_GOB_FED}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2015" y="0" width="95" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_INI_CONT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2110" y="0" width="88" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_FIN_CONT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="2754" y="0" width="123" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FEC_MODIFICO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="31" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_MOVTO_PERSONA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="0" width="340" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_MOVS_PERSONAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

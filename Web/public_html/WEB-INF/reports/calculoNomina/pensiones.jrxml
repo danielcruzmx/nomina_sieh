@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pensiones" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="655"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PE_QNAPAGO" class="java.lang.String"/>
+	<parameter name="PE_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="PE_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="PE_CICLO" class="java.lang.String"/>
+	<parameter name="PE_UNIDAD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select e.id_partida, p.id_cpto_pago, c.desc_con_pag, p.pf_casos, p.pf_monto
+from td_perded_fis p, tn_eco_cpto_pago e, tc_concepto_pago c
+where p.pf_qna_pago = $P{PE_QNAPAGO}
+  and p.id_unidad_fisica = $P{PE_UNIDAD}
+  and p.id_tipo_nomina = $P{PE_TIPONOMINA}
+  and p.pf_num_complem = $P{PE_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto = 'P'
+  and p.id_cpto_pago = '62'
+  and p.id_tipo_cpto = e.id_tipo_cpto(+)
+  and p.id_cpto_pago = e.id_cpto_pago(+)
+  and e.ecp_ciclo(+) = $P{PE_CICLO}
+  and p.id_tipo_cpto = c.id_tipo_cpto(+)
+  and p.id_cpto_pago = c.id_concepto(+)
+order by NLSSORT(p.ID_CPTO_PAGO,'NLS_SORT=BINARY_AI')]]>
+	</queryString>
+	<field name="ID_PARTIDA" class="java.lang.String"/>
+	<field name="ID_CPTO_PAGO" class="java.lang.String"/>
+	<field name="DESC_CON_PAG" class="java.lang.String"/>
+	<field name="PF_CASOS" class="java.math.BigDecimal"/>
+	<field name="PF_MONTO" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="3" width="27" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Partida]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="12" width="333" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="1" width="333" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="227" y="3" width="43" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="27" y="3" width="200" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[P  e  r  c  e  p  c  i  o  n  e  s]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="270" y="3" width="63" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="12" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="227" y="1" width="43" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PF_CASOS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="270" y="1" width="59" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PF_MONTO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="1" width="227" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Pago de Pensión Alimenticia]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

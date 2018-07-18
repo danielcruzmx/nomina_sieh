@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Comparativo de Casos Concepto de Pago" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_UNIDAD" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_QNA_INI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_QNA_FIN" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_TIPO_NOMINA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_TIPO_CPTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CPTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+concepto_pago.DESC_CON_PAG || ' (' || cp.id_tipo_cpto || '-' || cp.id_cpto_pago || ') en la Quincena '||
+substr(h.hp_qna_pago,5,2)||' del '||substr(h.hp_qna_pago,0,4)||' Complemento(s) 0 - ' || ( SELECT
+        concepto_pago.DESC_CON_PAG || ' (' || c2.id_tipo_cpto || '-' || c2.id_cpto_pago || ') en la Quincena '||
+        substr(h2.hp_qna_pago,5,2)||' del '||substr(h2.hp_qna_pago,0,4)||' Complemento(s) 0 ' titulo2
+
+                           FROM
+                                tn_historico_pago h2,
+                                tn_concepto_pagado c2,
+                                tc_concepto_pago concepto_pago
+                           WHERE
+                                h2.hp_qna_pago = $P{PAR_QNA_FIN} and
+                                h2.id_tipo_nomina = $P{PAR_TIPO_NOMINA} and
+                                h2.id_unidad_nom in ($P!{PAR_UNIDAD}) and
+                                h2.hp_num_pension = 0 and
+                                h2.hp_folio = c2.cp_folio and
+                                h2.hp_dif_folio = c2.cp_dif_folio and
+                                c2.id_tipo_cpto = $P{PAR_TIPO_CPTO} and
+                                c2.id_cpto_pago = $P{PAR_CPTO} and
+                                c2.id_tipo_cpto = concepto_pago.id_tipo_cpto and
+                                c2.id_cpto_pago = concepto_pago.id_concepto and rownum = 1 ) as titulo,
+    n.desc_nombramiento,
+    'Unidad física : '||h.id_unidad_nom||' '||u.DESC_UNIDAD unidad_fisica,
+    substr(lpad(H.ID_ZONA_DIST_NOM,5,'0'),0,2) ||'-'||substr(lpad(H.ID_ZONA_DIST_NOM,5,'0'),3,3) zona_pago,
+    substr(h.hp_rfc,0,4)||'-'||substr(h.hp_rfc,5,6)||'-'||substr(h.hp_rfc,11,3)||' '||trim(trim(e.primer_apellido)||' '||trim(e.segundo_apellido))||' '||trim(e.nombre_empleado) empleado,
+    lpad(h.id_plaza,6,'0') plaza,
+    h.id_puesto_nom,
+    ap.id_nivel_pto,
+    P.DESC_SIT_PAGO,
+
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+
+From
+    tn_historico_pago h,
+    tn_concepto_pagado cp,
+    tc_concepto_pago concepto_pago,
+    td_empleado e,
+    tc_atributo_puesto ap,
+    tc_unidad u,
+    tc_nombramiento n,
+    tc_sit_pago p
+Where
+--    h.hp_qna_pago = 201314 and
+    h.hp_qna_pago = $P{PAR_QNA_INI} and
+--    h.hp_num_complem = 0 and
+--    h.id_tipo_nomina = 'OR' and
+    h.id_tipo_nomina = $P{PAR_TIPO_NOMINA} and
+--    h.id_unidad_nom = '711'  and
+    h.id_unidad_nom in ($P!{PAR_UNIDAD}) and
+    h.hp_num_pension = 0 and
+--    cp.id_tipo_cpto = 'D' and
+    cp.id_tipo_cpto = $P{PAR_TIPO_CPTO} and
+--    cp.id_cpto_pago = '82' and
+    cp.id_cpto_pago = $P{PAR_CPTO} and
+    h.hp_fin_pago between ap.ap_ini and ap.ap_fin and
+    cp.id_tipo_cpto = concepto_pago.id_tipo_cpto and
+    cp.id_cpto_pago = concepto_pago.id_concepto and
+    h.hp_folio = cp.cp_folio and
+    h.hp_dif_folio = cp.cp_dif_folio and
+    h.hp_rfc = e.rfc_empleado and
+    trim(h.id_puesto_nom) = trim(ap.id_atributo_puesto) and
+    h.id_unidad_nom = u.id_unidad and
+--    u.uni_ciclo = 2013 and
+    u.uni_ciclo in (select SUBSTR(RC_QNA_CAPTURA,0,4)
+                            from TN_REG_CONTROL
+                            where TN_REG_CONTROL.RC_VIGENTE   = 'S') and
+    ap.id_nombramiento = n.id_nombramiento and
+    h.id_sit_pago = P.ID_SIT_PAGO and
+    h.hp_rfc not in (SELECT
+                                h2.hp_rfc
+                           FROM
+                                tn_historico_pago h2,
+                                tn_concepto_pagado c2
+                           WHERE
+                                h2.hp_qna_pago = $P{PAR_QNA_FIN} and
+--                                h2.hp_num_complem = 0 and
+--                                h2.id_tipo_nomina = 'OR' and
+                                h2.id_tipo_nomina = $P{PAR_TIPO_NOMINA} and
+--                                h2.id_unidad_nom = '711'  and
+                                h2.id_unidad_nom in ($P!{PAR_UNIDAD}) and
+                                h2.hp_num_pension = 0 and
+                                h2.hp_folio = c2.cp_folio and
+                                h2.hp_dif_folio = c2.cp_dif_folio and
+--                                c2.id_tipo_cpto = 'D' and
+                                c2.id_tipo_cpto = $P{PAR_TIPO_CPTO} and
+--                                c2.id_cpto_pago = '82'
+                                c2.id_cpto_pago = $P{PAR_CPTO} )
+ORDER BY
+    ap.id_nombramiento ASC,
+    h.id_unidad_nom ASC,
+    h.id_zona_dist_nom ASC,
+    h.hp_rfc ASC,
+    h.id_plaza ASC,
+    h.id_puesto_nom ASC,
+    ap.id_nivel_pto Asc]]>
+	</queryString>
+	<field name="DESC_NOMBRAMIENTO" class="java.lang.String"/>
+	<field name="UNIDAD_FISICA" class="java.lang.String"/>
+	<field name="ZONA_PAGO" class="java.lang.String"/>
+	<field name="EMPLEADO" class="java.lang.String"/>
+	<field name="PLAZA" class="java.lang.String"/>
+	<field name="ID_PUESTO_NOM" class="java.lang.String"/>
+	<field name="ID_NIVEL_PTO" class="java.lang.String"/>
+	<field name="DESC_SIT_PAGO" class="java.lang.String"/>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="Total_gral" class="java.lang.Number" incrementType="Report" calculation="Count">
+		<variableExpression><![CDATA[$F{EMPLEADO}]]></variableExpression>
+	</variable>
+	<group name="Gpo_tipo">
+		<groupExpression><![CDATA[$F{DESC_NOMBRAMIENTO}]]></groupExpression>
+		<groupHeader>
+			<band height="19">
+				<textField>
+					<reportElement x="24" y="4" width="100" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Courier New" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_NOMBRAMIENTO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="34">
+				<textField>
+					<reportElement x="24" y="4" width="66" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Courier New" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_NOMBRAMIENTO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="117" y="4" width="57" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Gpo_tipo_COUNT}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="116" y="18" width="57" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_gral}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="24" y="18" width="87" height="12"/>
+					<textElement>
+						<font fontName="Courier New" size="8"/>
+					</textElement>
+					<text><![CDATA[Total de Registros]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="175" y="2" width="375" height="48"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="DejaVu Sans" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="575" y="0" width="177" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="575" y="20" width="177" height="30"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="7" y="5" width="75" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Zona Pagadora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="88" y="5" width="297" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="404" y="5" width="66" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="476" y="5" width="66" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="558" y="5" width="66" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="644" y="5" width="103" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situación del Cheque]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="31" width="752" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField>
+				<reportElement x="24" y="3" width="336" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNIDAD_FISICA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="111" y="17" width="304" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="32" y="17" width="55" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ZONA_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="431" y="17" width="46" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="507" y="17" width="43" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_PUESTO_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="574" y="17" width="38" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_NIVEL_PTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="684" y="17" width="61" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_SIT_PAGO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="5" width="549" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch"/>
+	</summary>
+</jasperReport>

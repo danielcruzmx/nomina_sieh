@@ -1,0 +1,124 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+
+<project name="sireh" basedir=".">
+    <!-- Archivos de propiedades -->
+    <property file="build.properties"/>
+    <property file="${scm.build.dir}/scm-build.properties"/>
+    
+    <!-- Importa macros y targets de soporte -->
+    <import file="${scm.build.dir}/scm-macros-build.xml"/>
+
+   <!-- Crea el EAR de la aplicacion. -->
+   <target name="sireh_ear" description="Genera el ear de la aplicacion ${app.name.title}." depends="manifest">
+      <scm-ear excludes="">
+         <modules>
+            <!-- Modulos adicionales que pueden ser incluidos en EAR (root) -->
+
+            <!-- Modulos Estandard que pueden ser incluidos en EAR (root) -->
+            <scm-jar-config/>
+            <scm-jar-config-dist/>
+            <scm-jar-data/>
+            <scm-jar-model/>
+            <scm-jar-service/>
+            <scm-jar-web/>
+            <scm-war-web-static/>
+            <scm-war-web>
+                <!-- Librerias de componentes o terceros que deben ser incluidas en WEB-INF/lib -->
+                <!-- SCM:fsnjBPM -->
+                <!-- <fileset dir="${jbpm.dir}" includes="fsnjBPM-web.jar"/> -->
+                <!-- SCM:fsnjBPM -->
+                <fileset dir="${home.dir}/Web/lib" includes="*.jar" excludes="xmlparserv2.jar,jackson-annotations-2.0.1.jar,jackson-core-2.0.1.jar,jackson-databind-2.0.1.jar,jasperFontsExt.jar,zxing-core-1.7.jar,zxing-javase-1.7.jar"/>
+            </scm-war-web>
+            <!-- SCM:addWeb -->
+            <!-- SCM:addWeb -->
+            
+            <!-- Web Services -->
+            <!--scm-jar-webWS/>
+            <scm-war-webWS>
+                <fileset dir="${home.dir}/Web/lib" includes="*.jar" excludes="xmlparserv2.jar,jackson-annotations-2.0.1.jar,jackson-core-2.0.1.jar,jackson-databind-2.0.1.jar,jasperFontsExt.jar,zxing-core-1.7.jar,zxing-javase-1.7.jar"/>
+            </scm-war-webWS-->
+            <!-- Web Services -->
+
+            <!-- Modulos de componentes o terceros que deben ser incluidos en EAR (root): war y ejb -->
+            <!-- SCM:admonCat -->
+            <scm-admonCat-war />
+            <scm-admonCat-svc /> 
+            <!-- SCM:admonCat -->
+            <!-- SCM:batchMgr -->
+            <!-- <scm-admonBatch-war />
+            <scm-admonBatch-svc /> -->
+            <!-- SCM:batchMgr -->
+            <!-- SCM:fsnjBPM -->
+            <!-- <scm-bpm-war />
+            <scm-bpm-svc /> -->
+            <!-- SCM:fsnjBPM -->
+            <!-- SCM:fsnJCR-->
+            <scm-fsnjcr-dependencies/>
+            <!-- SCM:fsnJCR-->
+         </modules>
+         
+         <app-libs>
+            <!-- Librerias de componentes o terceros que deben ser incluidas en APP-INF/lib -->
+            <!-- SCM:admonCat -->
+                <fileset dir="${home.dir}/Web/lib" includes="*.jar" excludes="xmlparserv2.jar"/>
+                <!--fileset dir="${home.dir}/Web/lib" includes="*.jar"-->
+                
+                <fileset dir="${admonCat.dir}"     includes="*.jar" excludes="*web.jar, *src.jar"/>
+                <!-- librerias de poi para el parseo de archivos-->
+                <fileset dir="${jakarta.dir}"      includes="poi-ooxml.jar,poi-ooxml-schemas.jar,commons-jexl.jar,xmlbeans.jar,geronimo-stax-api.jar"/>
+                <fileset dir="${jxls.dir}"         includes="*.jar" excludes="*src.jar"/>
+            <!-- SCM:admonCat -->
+            
+            <!-- SCM:batchMgr -->
+                <!-- <fileset dir="${batchManager.dir}" includes="*.jar" excludes="*service.jar, *web.jar, *src.jar"/> -->
+                <!-- <fileset dir="${jakarta.dir}"      includes="activemq.jar, xbean-spring.jar"/> -->
+                <!-- <fileset dir="${quartz.dir}"       includes="*.jar" excludes="*src.jar"/> -->
+            <!-- SCM:batchMgr -->
+            
+            <!-- SCM:fsnjBPM -->
+            <fileset dir="${jbpm.dir}"         includes="*.jar" excludes="*enterprise.jar, *web.jar, *src.jar"/>
+            <fileset dir="${bsh.dir}"          includes="*.jar" excludes="*src.jar"/>
+            <fileset dir="${jaf.dir}"          includes="*.jar" excludes="*src.jar"/>
+            <fileset dir="${jackrabbit.dir}"   includes="jcr.jar,jackrabbit-core.jar,jackrabbit-api.jar,jackrabbit-jcr-commons.jar"/>
+            <fileset dir="${jboss.dir}"        includes="*.jar" excludes="*src.jar"/>
+            <fileset dir="${jsf.dir}"          includes="*.jar" excludes="jsf-impl.jar, *src.jar"/>
+            <fileset dir="${vaadin.dir}"       includes="*.jar" excludes="*src.jar"/>
+            <fileset dir="${spring.dir}"       includes="spring-modules-jbpm31.jar"/>
+            <!-- SCM:fsnjBPM -->
+            
+            <!-- SCM:ccpki -->
+            <fileset dir="${pki.dir}"          includes="*.jar" excludes="*src.jar"/>
+            <fileset dir="${bouncycastle.dir}" includes="*.jar" excludes="*src.jar"/>
+            <!-- SCM:ccpki -->
+            
+            <!-- SCM:intWeb -->
+                <!-- <fileset dir="${tidy.dir}"         includes="*.jar" excludes="*src.jar"/> -->
+                <!-- <fileset dir="${intWeb.dir}"       includes="*.jar" excludes="*src.jar"/> -->
+            <!-- SCM:intWeb -->
+            
+            <!-- SCM:fsnJCR -->
+                <fileset dir="${build.fsnjcr.dependencies}" includes="*.jar"/>
+            <!-- SCM:fsnJCR -->
+            
+            <!-- SCM:fsnRules -->
+                <fileset dir="${drools.dir}"        includes="*.jar" excludes="*web.jar, *src.jar"/>
+                <fileset dir="${quartz.dir}"        includes="quartz.jar" excludes="*src.jar"/>
+                <fileset dir="${mvel.dir}"          includes="*.jar" excludes="*web.jar, *src.jar"/>
+                <fileset dir="${eclipseCore.dir}"   includes="*.jar" excludes="*web.jar, *src.jar"/>
+                <fileset dir="${antlr.dir}"         includes="antlr-runtime.jar" excludes="*web.jar, *src.jar"/>
+            <!-- SCM:fsnRules -->
+         </app-libs>
+         
+         <!-- SCM:fsnJCR -->
+         <meta-inf>
+            <metainf dir="${build.fsnjcr.dependencies}" includes="*.xml"/>
+         </meta-inf>
+         <!-- SCM:fsnJCR -->
+      </scm-ear>
+   </target>
+
+   <!-- Tareas de deployment del ear de la aplicacion -->
+   <target name="deploy_ear" description="Realiza redeploy del ear de la aplicacion ${app.name.title}." depends="sireh_ear">
+     <antcall target="deploy"/>
+   </target>
+</project>

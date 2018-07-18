@@ -1,0 +1,49 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<file-format>
+    <converter name="char" class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" return-type="java.lang.String"/>
+    <converter name="decimal" class="com.blackbear.flatworm.converters.CoreConverters" method="convertDecimal" return-type="java.lang.Double"/>
+    <converter name="rfc" class="gob.shcp.sireh.service.parser.ConvertType" method="convertRFC" return-type="java.lang.String"/>
+    <converter name="tipoMov" class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMov" return-type="java.lang.String"/>
+    <record name="IXE">
+        <record-definition>
+            <bean name="datosDTO" class="gob.shcp.sireh.model.nomina.terceros.DatosArchivoDTO"/>
+            <line>
+            	
+				
+            	
+            	
+            	         	
+            
+            
+            
+            
+            
+         
+            
+            
+            
+            
+         
+            
+            
+            
+            
+         
+            
+            
+            
+            
+         
+            
+            
+            
+            
+         <record-element beanref="datosDTO.rfc" end="32" start="19" type="rfc"/>
+            <record-element beanref="datosDTO.curp" end="18" start="0" type="char"/>
+            <record-element beanref="datosDTO.importe" end="93" start="87" type="decimal"/>
+            <record-element beanref="datosDTO.tipoMovimiento" end="62" start="61" type="tipoMov"/>
+            <record-element beanref="datosDTO.concepto" end="87" start="85" type="char"/>
+         </line>
+        </record-definition>
+    </record>
+</file-format>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="impuesto trab" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="581"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PIM_QNAPAGO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PIM_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="PIM_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="PIM_CICLO" class="java.lang.String"/>
+	<parameter name="PIM_UNIDAD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 'Impuesto' leyenda1,
+       ((nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PD1' or p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' then p.pe_monto*-1 end),0) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'D01' or p.id_tipo_cpto||p.id_cpto_pago = 'DIC' or p.id_tipo_cpto||p.id_cpto_pago = 'DIL' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIV' or p.id_tipo_cpto||p.id_cpto_pago = 'D0I' or p.id_tipo_cpto||p.id_cpto_pago = 'DIJ' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIE' or p.id_tipo_cpto||p.id_cpto_pago = 'DIP' or p.id_tipo_cpto||p.id_cpto_pago = 'DIS' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIR' or p.id_tipo_cpto||p.id_cpto_pago = 'DIT' or p.id_tipo_cpto||p.id_cpto_pago = 'DID' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIA' or p.id_tipo_cpto||p.id_cpto_pago = 'DIB' or p.id_tipo_cpto||p.id_cpto_pago = 'DIM' then p.pe_monto *  -1 end),0))*1) pf_monto,
+       'Subsidio para el empleo' leyend2,
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'D35' then p.pe_monto * - 1
+                    when p.id_tipo_cpto||p.id_cpto_pago = 'P35' or p.id_tipo_cpto||p.id_cpto_pago = 'PJ3' then p.pe_monto *  - 1 end),0) pf_monto1,
+       (nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PD1' or p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' or p.id_tipo_cpto||p.id_cpto_pago = 'P35' or p.id_tipo_cpto||p.id_cpto_pago = 'PJ3' then p.pe_monto * -1 end),0) -
+nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'P35' or p.id_tipo_cpto||p.id_cpto_pago = 'PJ3' then p.pe_monto * 1 end),0) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'D01' or p.id_tipo_cpto||p.id_cpto_pago = 'DIC' or p.id_tipo_cpto||p.id_cpto_pago = 'DIL' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIV' or p.id_tipo_cpto||p.id_cpto_pago = 'D0I' or p.id_tipo_cpto||p.id_cpto_pago = 'DIJ' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIE' or p.id_tipo_cpto||p.id_cpto_pago = 'DIP' or p.id_tipo_cpto||p.id_cpto_pago = 'DIS' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIR' or p.id_tipo_cpto||p.id_cpto_pago = 'DIT' or p.id_tipo_cpto||p.id_cpto_pago = 'DID' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIA' or p.id_tipo_cpto||p.id_cpto_pago = 'DIB' or p.id_tipo_cpto||p.id_cpto_pago = 'DIM' then p.pe_monto * -1 end),0)) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'D35' then p.pe_monto *  -1
+                    when p.id_tipo_cpto||p.id_cpto_pago = 'P35' or p.id_tipo_cpto||p.id_cpto_pago = 'PJ3' then p.pe_monto * -1 end),0) pf_monto2,
+       'Acreditamiento Salarial' ACREDITAMIENTOSALARIAL,
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CE0' then p.pe_monto * - 1 end),0) pf_monto3,
+       'ISPT Retenido' ISPTRETENIDO,
+       ((
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CJ1' or p.id_tipo_cpto||p.id_cpto_pago = 'CSS' or p.id_tipo_cpto||p.id_cpto_pago = 'CIE' or p.id_tipo_cpto||p.id_cpto_pago = 'CIP' or p.id_tipo_cpto||p.id_cpto_pago = 'CIB' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'CIA' or p.id_tipo_cpto||p.id_cpto_pago = 'C01' or p.id_tipo_cpto||p.id_cpto_pago = 'CIM' then p.pe_monto * 1 end),0))*1) pf_monto4
+from td_perded_edo p, tn_eco_cpto_pago e, tc_concepto_pago c
+where p.pe_qna_pago =  $P{PIM_QNAPAGO}
+  and p.id_edo =  $P{PIM_UNIDAD}
+  and p.id_tipo_nomina =  $P{PIM_TIPONOMINA}
+  and p.pe_num_comple =  $P{PIM_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto||p.id_cpto_pago IN ('PD1','PDI','PIS','P35','PJ3','D35','D01','DIC','DIL','DIV','D0I','DIJ','DIE','DIP','DIS','DIR','DIT','DID','DIA','DIB','DIM','CJ1', 'CSS', 'CIE', 'CIA', 'CIB', 'C01',  'CIM', 'CE0')
+  and p.id_tipo_cpto = e.id_tipo_cpto(+)
+  and p.id_cpto_pago = e.id_cpto_pago(+)
+  and e.ecp_ciclo(+) =  $P{PIM_CICLO}
+  and p.id_tipo_cpto = c.id_tipo_cpto(+)
+  and p.id_cpto_pago = c.id_concepto(+)
+order by pe_monto desc,NLSSORT(p.ID_CPTO_PAGO,'NLS_SORT=BINARY_AI')]]>
+	</queryString>
+	<field name="LEYENDA1" class="java.lang.String"/>
+	<field name="PF_MONTO" class="java.math.BigDecimal"/>
+	<field name="LEYEND2" class="java.lang.String"/>
+	<field name="PF_MONTO1" class="java.math.BigDecimal"/>
+	<field name="PF_MONTO2" class="java.math.BigDecimal"/>
+	<field name="ACREDITAMIENTOSALARIAL" class="java.lang.String"/>
+	<field name="PF_MONTO3" class="java.math.BigDecimal"/>
+	<field name="ISPTRETENIDO" class="java.lang.String"/>
+	<field name="PF_MONTO4" class="java.math.BigDecimal"/>
+	<group name="CONCEPTO">
+		<groupExpression><![CDATA[$F{LEYENDA1}]]></groupExpression>
+		<groupHeader>
+			<band height="89">
+				<textField>
+					<reportElement x="21" y="5" width="207" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LEYENDA1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="228" y="5" width="100" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="21" y="19" width="207" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LEYEND2}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="228" y="19" width="100" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="228" y="34" width="100" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO2}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="21" y="34" width="207" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Impuesto Neto]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="21" y="63" width="207" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ACREDITAMIENTOSALARIAL}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="21" y="75" width="207" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ISPTRETENIDO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="228" y="63" width="100" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO3}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="228" y="75" width="100" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO4}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

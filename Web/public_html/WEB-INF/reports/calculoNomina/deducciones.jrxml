@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="deducciones" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="D_QNAPAGO" class="java.lang.String"/>
+	<parameter name="D_CICLO" class="java.lang.String"/>
+	<parameter name="D_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="D_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="D_UNIDAD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select e.id_partida, p.id_cpto_pago, c.desc_con_pag, p.pf_casos, p.pf_monto
+from td_perded_fis p, tn_eco_cpto_pago e, tc_concepto_pago c
+where p.pf_qna_pago = $P{D_QNAPAGO}
+  and p.id_unidad_fisica = $P{D_UNIDAD}
+  and p.id_tipo_nomina = $P{D_TIPONOMINA}
+  and p.pf_num_complem = $P{D_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto = 'D'
+  and p.id_tipo_cpto = e.id_tipo_cpto(+)
+  and p.id_cpto_pago = e.id_cpto_pago(+)
+  and e.ecp_ciclo(+) = $P{D_CICLO}
+  and p.id_tipo_cpto = c.id_tipo_cpto(+)
+  and p.id_cpto_pago = c.id_concepto(+)
+order by NLSSORT(p.ID_CPTO_PAGO,'NLS_SORT=BINARY_AI')]]>
+	</queryString>
+	<field name="ID_PARTIDA" class="java.lang.String"/>
+	<field name="ID_CPTO_PAGO" class="java.lang.String"/>
+	<field name="DESC_CON_PAG" class="java.lang.String"/>
+	<field name="PF_CASOS" class="java.math.BigDecimal"/>
+	<field name="PF_MONTO" class="java.math.BigDecimal"/>
+	<variable name="Suma Deduccion" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PF_MONTO}]]></variableExpression>
+	</variable>
+	<group name="DEDUCCIONES">
+		<groupExpression><![CDATA[$F{ID_CPTO_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="9">
+				<textField>
+					<reportElement x="2" y="0" width="20" height="9"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_CPTO_PAGO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="22" y="0" width="194" height="9"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_CON_PAG}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="216" y="0" width="49" height="9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_CASOS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="265" y="0" width="59" height="9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="15" splitType="Stretch">
+			<staticText>
+				<reportElement x="265" y="4" width="59" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="216" y="4" width="49" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="4" width="214" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[D  e  d  u  c  c  i  o  n  e  s]]></text>
+			</staticText>
+			<line>
+				<reportElement x="2" y="13" width="322" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="2" y="3" width="322" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

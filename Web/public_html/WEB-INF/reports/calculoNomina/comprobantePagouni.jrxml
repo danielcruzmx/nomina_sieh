@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprobantePago" pageWidth="612" pageHeight="792" columnWidth="571" leftMargin="24" rightMargin="17" topMargin="11" bottomMargin="0">
+	<property name="ireport.zoom" value="2.0490403660952126"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="40"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/WEB-INF/reports/calculoNomina/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_UNIDAD" class="java.lang.String"/>
+	<parameter name="PAR_COMPLEMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_TIPO_NOMINA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_PENSION" class="java.lang.String"/>
+	<parameter name="PAR_TIPO_PENSION" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    'del período de pago ' ||
+    to_char(tn_historico_pago.hp_ini_pago, 'dd') || ' ' ||
+    trim(to_char(tn_historico_pago.hp_ini_pago, 'Month')) || ' ' ||
+    to_char(tn_historico_pago.hp_ini_pago, 'yyyy') ||
+    ' al ' ||
+    to_char(tn_historico_pago.hp_fin_pago, 'dd') || ' ' ||
+    trim(to_char(tn_historico_pago.hp_fin_pago, 'Month')) || ' ' ||
+    to_char(tn_historico_pago.hp_fin_pago, 'yyyy') titulo,
+     lpad(tn_historico_pago.hp_folio,10,'0')comprobante,
+     case when tn_historico_pago.hp_num_pension <>0then substr(tn_historico_pago.hp_rfc,0,4)||'-'||substr(tn_historico_pago.hp_rfc,5,6)||'-'||substr(tn_historico_pago.hp_rfc,11,3)||'  '||    (select TD_PENSION.BENEFICIARIA_PENSION from td_pension
+     where tn_historico_pago.hp_rfc = td_pension.rfc_pension
+       and tn_historico_pago.hp_num_pension = td_pension.num_pension
+       and td_pension.id_pension in (select max(td_pension.id_pension)
+                                     from td_pension
+                                     where tn_historico_pago.hp_rfc = td_pension.rfc_pension
+                                       and tn_historico_pago.hp_num_pension = td_pension.num_pension)
+     group by td_pension.beneficiaria_pension) else substr(tn_historico_pago.hp_rfc,0,4)||'-'||substr(tn_historico_pago.hp_rfc,5,6)||'-'||substr(tn_historico_pago.hp_rfc,11,3)||'  '||trim(trim(td_empleado.primer_apellido)||' '||trim(td_empleado.segundo_apellido))||' '||trim(td_empleado.nombre_empleado)end empleado,
+     case when tn_historico_pago.hp_qna_pago >= 201616 AND TN_HISTORICO_PAGO.ID_UNIDAD_NOM <> 'G00' then
+             case when TC_ATRIBUTO_PUESTO.id_jerarquia <= '5' and tn_historico_pago.id_unidad_nom <> 'G00' and tn_historico_pago.id_puesto_nom not in (' P05377',' P05395',' P05380') --diferente de G00 y Laudos
+                         then substr(tn_historico_pago.id_puesto_nom,1,4)||substr(tn_historico_pago.id_puesto_nom,7,1) ||'00'||substr(tn_historico_pago.id_puesto_nom,5,3)
+                    when TC_ATRIBUTO_PUESTO.id_jerarquia <= '5' and tn_historico_pago.id_unidad_nom <> 'G00' and tn_historico_pago.id_puesto_nom in (' P05377',' P05395',' P05380') --Laudos
+                         then substr(tn_historico_pago.id_puesto_nom,2,1)||'L'||TC_ATRIBUTO_PUESTO.id_nivel_pto||substr(tn_historico_pago.id_puesto_nom,3,5)
+                    when tn_historico_pago.id_unidad_nom = 'G00' then substr(tn_historico_pago.id_puesto_nom,1,2)||TC_ATRIBUTO_PUESTO.id_nivel_pto||substr(tn_historico_pago.id_puesto_nom,3,5)        --G00
+                    else tn_historico_pago.id_puesto_nom
+             end||' '||case when substr(td_empleado.curp_empleado,11,1) = 'H' then tc_puesto.desc_puestoho when substr(td_empleado.curp_empleado,11,1) = 'M' then tc_puesto.desc_puestomu else tc_puesto.desc_puesto end
+         WHEN TN_HISTORICO_PAGO.HP_QNA_PAGO < 201618 and TN_HISTORICO_PAGO.id_unidad_nom = 'G00' THEN
+              substr(TN_HISTORICO_PAGO.id_puesto_nom,1,4)||substr(TN_HISTORICO_PAGO.id_puesto_nom,7,1) ||'00'||substr(TN_HISTORICO_PAGO.id_puesto_nom,5,3)||' '||case when substr(td_empleado.curp_empleado,11,1) = 'H' then tc_puesto.desc_puestoho when substr(td_empleado.curp_empleado,11,1) = 'M' then tc_puesto.desc_puestomu else tc_puesto.desc_puesto end
+         WHEN TN_HISTORICO_PAGO.HP_QNA_PAGO >= 201618 and tn_HISTORICO_PAGO.id_unidad_nom = 'G00' THEN
+              substr(TN_HISTORICO_PAGO.id_puesto_nom,1,2)||TC_ATRIBUTO_PUESTO.id_nivel_pto||substr(TN_HISTORICO_PAGO.id_puesto_nom,3,5)||' '||case when substr(td_empleado.curp_empleado,11,1) = 'H' then tc_puesto.desc_puestoho when substr(td_empleado.curp_empleado,11,1) = 'M' then tc_puesto.desc_puestomu else tc_puesto.desc_puesto end        --G00
+          else
+             tn_historico_pago.id_puesto_nom||' '||case when substr(td_empleado.curp_empleado,11,1) = 'H' then tc_puesto.desc_puestoho when substr(td_empleado.curp_empleado,11,1) = 'M' then tc_puesto.desc_puestomu else tc_puesto.desc_puesto end
+          end puesto_funcional,     substr(td_empleado.curp_empleado,0,4)||'-'||substr(td_empleado.curp_empleado,5,6)||'-'||substr(td_empleado.curp_empleado,11,8)curp,
+     case when substr(tn_historico_pago.hp_clabe,1,3)>'990'or substr(tn_historico_pago.hp_clabe,1,3)='000'then tc_banco.desc_bancos else 'Cta. '||tc_banco.desc_bancos end cve_banco,
+     lpad(tn_historico_pago.id_plaza,6,'0')plaza,
+     tc_atributo_puesto.id_nivel_pto||'-'||tn_historico_pago.id_rango_nom nivel_herramienta,
+     tn_historico_pago.id_unidad_nom||' '||tc_unidad.desc_unidad unidad_fisica,
+     case when tn_historico_pago.hp_num_pension = 0 then lpad(tn_historico_pago.hp_pcp_pagados,3,'0') ||' de '|| lpad(tn_historico_pago.hp_pcp_por_pagar,3,'0') else ' ' end pcp, tn_historico_pago.id_unidad_nom||'-'||substr(lpad(tn_historico_pago.id_zona_dist_nom,5,'0'),0,2)||'-'||substr(lpad(tn_historico_pago.id_zona_dist_nom,5,'0'),3,3)zona_pagadora,
+     lpad(tn_historico_pago.hp_num_pension,2,'0')num_pension,
+    to_char(tn_nomina.nom_fec_pago, 'dd') || ' ' ||
+    trim(to_char(tn_nomina.nom_fec_pago, 'month')) || ' ' ||
+    to_char(tn_nomina.nom_fec_pago, 'yyyy') REGCONT_FEC_PAGO,
+     tn_historico_pago.id_tipo_nomina||'-'||substr(tn_historico_pago.hp_qna_pago,0,4)||'-'||substr(tn_historico_pago.hp_qna_pago,5,2)||'-'||tn_historico_pago.hp_num_complem nomina,
+     (select sum(c.cp_monto)
+      from tn_concepto_pagado c
+      where c.id_tipo_cpto = 'P'
+        and c.id_cpto_pago <> 'D1'
+        and tn_historico_pago.hp_folio = c.cp_folio
+        and tn_historico_pago.hp_dif_folio = c.cp_dif_folio) percepciones,
+      (select  sum(CASE WHEN(c1.id_tipo_cpto = 'D') THEN (c1.cp_monto*1.) WHEN (c1.id_tipo_cpto||c1.id_cpto_pago = 'PD1') THEN (c1.cp_monto*-1.) END)
+       from tn_concepto_pagado c1
+       where c1.id_tipo_cpto in('P','D')
+         and tn_historico_pago.hp_folio = c1.cp_folio
+         and tn_historico_pago.hp_dif_folio = c1.cp_dif_folio) deducciones,
+     (select sum(CASE WHEN(c2.id_tipo_cpto = 'P') THEN (c2.cp_monto*1.) WHEN (c2.id_tipo_cpto = 'D') THEN (c2.cp_monto*-1.) END)
+      from tn_concepto_pagado c2
+      where c2.id_tipo_cpto in ('P','D')
+        and tn_historico_pago.hp_folio = c2.cp_folio
+        and tn_historico_pago.hp_dif_folio = c2.cp_dif_folio) liquido,
+     --leyenda
+     case when tn_historico_pago.id_sit_pago='C'then 'C A N C E L A D O'end leyenda_cancelado,
+     tn_nomina.nom_leyenda,
+     td_empleado.imss_issste,
+     tn_historico_pago.hp_dif_folio
+FROM
+     TN_HISTORICO_PAGO,
+     TD_EMPLEADO,
+     TC_TIPO_NOMINA,
+     TC_UNIDAD,
+     TC_PUESTO,
+     TC_SIT_PAGO,
+     TC_ATRIBUTO_PUESTO,
+     TD_PLAZA,
+     TC_BANCO,
+     TN_NOMINA
+WHERE
+     tn_historico_pago.hp_qna_pago = $P{PAR_MES}
+     and tn_historico_pago.id_tipo_nomina = $P{PAR_TIPO_NOMINA}
+     and tn_historico_pago.hp_num_complem = $P{PAR_COMPLEMENTO}
+     and tn_historico_pago.id_zona_dist_nom = 9200
+     AND tn_historico_pago.hp_num_pension = 0
+     and tn_historico_pago.hp_rfc = td_empleado.rfc_empleado(+)
+     and tn_historico_pago.id_tipo_nomina = tc_tipo_nomina.id_tipo_nomina(+)
+     and tn_historico_pago.id_unidad_nom = tc_unidad.id_unidad(+)
+     and tc_unidad.uni_ciclo = substr(tn_historico_pago.hp_qna_pago,1,4)
+     and tn_historico_pago.id_puesto_nom = tc_puesto.id_puesto(+)
+     and tn_historico_pago.id_sit_pago = tc_sit_pago.id_sit_pago(+)
+     and tn_historico_pago.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto(+)
+     and to_char(tc_atributo_puesto.ap_fin,'dd/mm/yyyy') = '01/01/2099'
+     and tn_historico_pago.id_plaza = td_plaza.id_plaza(+)
+     and substr(tn_historico_pago.hp_clabe,0,3) = tc_banco.id_banco(+)
+     and tn_historico_pago.hp_qna_pago = tn_nomina.nom_qna_captura
+     and tn_historico_pago.hp_num_complem = tn_nomina.nom_num_complem
+     and tn_historico_pago.id_tipo_nomina = tn_nomina.id_tipo_nomina
+order by tn_historico_pago.hp_folio ASC]]>
+	</queryString>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="COMPROBANTE" class="java.lang.String"/>
+	<field name="EMPLEADO" class="java.lang.String"/>
+	<field name="PUESTO_FUNCIONAL" class="java.lang.String"/>
+	<field name="CURP" class="java.lang.String"/>
+	<field name="CVE_BANCO" class="java.lang.String"/>
+	<field name="PLAZA" class="java.lang.String"/>
+	<field name="NIVEL_HERRAMIENTA" class="java.lang.String"/>
+	<field name="UNIDAD_FISICA" class="java.lang.String"/>
+	<field name="PCP" class="java.lang.String"/>
+	<field name="ZONA_PAGADORA" class="java.lang.String"/>
+	<field name="NUM_PENSION" class="java.lang.String"/>
+	<field name="REGCONT_FEC_PAGO" class="java.lang.String"/>
+	<field name="NOMINA" class="java.lang.String"/>
+	<field name="PERCEPCIONES" class="java.math.BigDecimal"/>
+	<field name="DEDUCCIONES" class="java.math.BigDecimal"/>
+	<field name="LIQUIDO" class="java.math.BigDecimal"/>
+	<field name="LEYENDA_CANCELADO" class="java.lang.String"/>
+	<field name="NOM_LEYENDA" class="java.lang.String"/>
+	<field name="IMSS_ISSSTE" class="java.lang.String"/>
+	<field name="HP_DIF_FOLIO" class="java.math.BigDecimal"/>
+	<group name="grupo_empleado" minHeightToStartNewPage="10">
+		<groupExpression><![CDATA[$F{EMPLEADO}]]></groupExpression>
+		<groupHeader>
+			<band height="74">
+				<rectangle radius="10">
+					<reportElement x="0" y="63" width="571" height="11"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="293" y="63" width="219" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Concepto]]></text>
+				</staticText>
+				<line direction="BottomUp">
+					<reportElement x="228" y="63" width="1" height="11"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="513" y="63" width="58" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Importe]]></text>
+				</staticText>
+				<line direction="BottomUp">
+					<reportElement x="288" y="63" width="1" height="11"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line direction="BottomUp">
+					<reportElement x="512" y="63" width="1" height="11"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<rectangle radius="10">
+					<reportElement x="0" y="2" width="571" height="61"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="0" y="63" width="228" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Concepto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="57" y="0" width="434" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Comprobante de Percepciones y Deducciones]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="57" y="10" width="434" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TITULO}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="55" y="20" width="516" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="492" y="0" width="77" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Folio]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="492" y="10" width="79" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{COMPROBANTE}]]></textFieldExpression>
+				</textField>
+				<line direction="BottomUp">
+					<reportElement x="491" y="2" width="1" height="18"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="451" y="32" width="58" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[No. Seg. Social]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="205" y="33" width="29" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Banco]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="389" y="32" width="29" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nivel]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="418" y="32" width="32" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NIVEL_HERRAMIENTA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="350" y="43" width="39" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PCP}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="492" y="42" width="47" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[No. Pensión]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="322" y="21" width="29" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Puesto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="57" y="22" width="47" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Empleado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="57" y="32" width="47" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[CURP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="57" y="42" width="47" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Unidad]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="57" y="54" width="47" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Fecha Pago]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="104" y="24" width="218" height="7"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="6"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{EMPLEADO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="104" y="33" width="98" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CURP}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="104" y="54" width="76" height="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{REGCONT_FEC_PAGO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="183" y="53" width="46" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Qna. Pago]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="228" y="53" width="53" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMINA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="389" y="43" width="51" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Distribución]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="438" y="43" width="39" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ZONA_PAGADORA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="104" y="43" width="218" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{UNIDAD_FISICA}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="322" y="43" width="29" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[P.C.P.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="322" y="33" width="30" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Plaza]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="229" y="33" width="93" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CVE_BANCO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="351" y="33" width="46" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PLAZA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="351" y="21" width="220" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PUESTO_FUNCIONAL}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="509" y="32" width="61" height="10"/>
+					<textElement>
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMSS_ISSSTE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="539" y="43" width="31" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NUM_PENSION}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="229" y="63" width="59" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Importe]]></text>
+				</staticText>
+				<line direction="BottomUp">
+					<reportElement x="54" y="2" width="1" height="61"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<textField pattern="#,##0.00">
+					<reportElement x="334" y="54" width="43" height="9"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PERCEPCIONES}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="438" y="53" width="39" height="11"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DEDUCCIONES}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="283" y="53" width="49" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Percepciones]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="389" y="54" width="49" height="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Deducciones]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="492" y="53" width="36" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Liquido]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="57" y="10" width="47" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="6" isBold="false" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[Ramo 06]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="525" y="54" width="46" height="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIQUIDO}]]></textFieldExpression>
+				</textField>
+				<image scaleImage="FillFrame" isLazy="true">
+					<reportElement positionType="FixRelativeToBottom" x="6" y="4" width="44" height="58"/>
+					<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_V.jpg"]]></imageExpression>
+				</image>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="185" splitType="Stretch">
+			<elementGroup/>
+			<subreport>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="569" height="179"/>
+				<subreportParameter name="HP_FOLIO">
+					<subreportParameterExpression><![CDATA[$F{COMPROBANTE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="HP_DIF_FOLIO">
+					<subreportParameterExpression><![CDATA[$F{HP_DIF_FOLIO}.toString()]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["/WEB-INF/reports/calculoNomina/comprobantePago_detalle.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="59" width="571" height="41"/>
+				<textElement textAlignment="Center">
+					<font size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{LEYENDA_CANCELADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="-1" y="158" width="571" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOM_LEYENDA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

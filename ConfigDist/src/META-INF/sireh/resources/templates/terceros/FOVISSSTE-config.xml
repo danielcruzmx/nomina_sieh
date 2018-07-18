@@ -1,0 +1,93 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<file-format>
+    <converter class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" name="char" return-type="java.lang.String"/>
+	<converter class="com.blackbear.flatworm.converters.CoreConverters" method="convertDecimal" name="decimal" return-type="java.lang.Double"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertDecimalIssste" name="monto" return-type="java.lang.Double"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertRFC" name="rfc" return-type="java.lang.String"/>
+    <converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMovIssste" name="tipoMov" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertQnaInicio" name="qnaIni" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertQnaFin" name="qnaFin" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertCharCptoFovi" name="charCptoFovi" return-type="java.lang.String"/>
+	<converter class="gob.shcp.sireh.service.parser.ConvertType" method="convertTipoMovIssste" name="tipoMovIssste" return-type="java.lang.String"/>
+    <record name="FOVISSSTE">
+        <record-definition>
+            <bean class="gob.shcp.sireh.model.nomina.terceros.DatosArchivoDTO" name="datosDTO"/>
+            <line>
+            	
+            
+            
+            
+            
+            
+            
+         
+            
+            
+            
+            
+            
+         
+            
+            
+            
+            
+            
+         
+            
+            
+            
+            
+            
+         
+            
+            
+            
+            
+            
+         
+            
+            
+            
+            
+            
+         
+         
+            
+         
+            
+         
+            
+         
+            
+            
+            
+            
+            
+         
+            
+            
+            
+         
+            
+         
+            
+            
+         
+            
+            
+            
+         
+            
+            
+            
+            
+         <record-element beanref="datosDTO.rfc" end="13" start="0" type="rfc"/>
+            <record-element beanref="datosDTO.importe" end="89" start="81" type="monto"/>
+            <record-element beanref="datosDTO.tipoMovimiento" end="81" start="80" type="char"/>
+            <record-element beanref="datosDTO.concepto" end="91" start="89" type="char"/>
+            <record-element beanref="datosDTO.qnaIni" end="98" start="92" type="qnaIni"/>
+            <record-element beanref="datosDTO.porcentaje" end="100" start="98" type="monto"/>
+         </line>
+        </record-definition>
+    </record>
+</file-format>

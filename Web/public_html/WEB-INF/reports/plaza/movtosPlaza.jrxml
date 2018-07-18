@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Movtos Plaza" pageWidth="582" pageHeight="792" columnWidth="572" leftMargin="5" rightMargin="5" topMargin="5" bottomMargin="5">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_PLAZA_M" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_RFC_M" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT M.ID_MOVTO_PERSONA||' '||MP.DESC_MOVS_PERSONAL TIPO_MOVTO, M.ID_PLAZA PLAZA, M.ID_UNIDAD_NOM UR,
+       TO_CHAR(M.MEP_INI_CONT,'DD/MM/YYYY') INICIAL, NVL(TO_CHAR(M.MEP_FIN_CONT,'DD/MM/YYYY'),' ') FINAL, TRIM(E.NOMBRE_EMPLEADO)||' '||TRIM(E.PRIMER_APELLIDO)||' '||
+       TRIM(E.SEGUNDO_APELLIDO) NOMBRE,
+       NVL(M.MEP_OBSERVA,' ') OBSERVACIONES
+  FROM TN_MOVTOS_EMP_PLA M, TC_MOVS_PERSONAL MP, TC_NOMBRAMIENTO N, TD_EMPLEADO E
+ WHERE (M.ID_PLAZA = $P{P_PLAZA_M} OR M.MEP_RFC = $P{P_RFC_M}) AND
+       (M.ID_MOVTO_PERSONA BETWEEN 100 AND 199 OR
+        M.ID_MOVTO_PERSONA BETWEEN 221 AND 229 OR
+        M.ID_MOVTO_PERSONA BETWEEN 300 AND 399 OR
+        M.ID_MOVTO_PERSONA BETWEEN 411 AND 422 OR
+        M.ID_MOVTO_PERSONA IN ('520','527','538','539'))
+        AND M.ID_MOVTO_PERSONA = MP.ID_MOVS_PERSONAL
+        AND M.MEP_QNA_CANCELA IS NULL
+        AND M.ID_NOMBRAMIENTO_NOM = N.ID_NOMBRAMIENTO(+)
+        AND M.MEP_RFC = E.RFC_EMPLEADO(+)
+ORDER BY M.MEP_INI_CONT]]>
+	</queryString>
+	<field name="TIPO_MOVTO" class="java.lang.String"/>
+	<field name="PLAZA" class="java.math.BigDecimal"/>
+	<field name="UR" class="java.lang.String"/>
+	<field name="INICIAL" class="java.lang.String"/>
+	<field name="FINAL" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="OBSERVACIONES" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<staticText>
+				<reportElement x="1" y="1" width="188" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO DE MOVIMIENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="192" y="1" width="27" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="224" y="1" width="65" height="23"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VIGENCIA INICIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="297" y="1" width="54" height="23"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VIGENCIA FINAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="352" y="1" width="219" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="197" y="23" width="374" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACIONES]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="34" splitType="Stretch">
+			<textField>
+				<reportElement x="1" y="3" width="188" height="28"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_MOVTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="192" y="4" width="27" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="223" y="3" width="66" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INICIAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="293" y="3" width="65" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FINAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="197" y="18" width="314" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OBSERVACIONES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="358" y="3" width="213" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="0" width="570" height="1" forecolor="#999999"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>

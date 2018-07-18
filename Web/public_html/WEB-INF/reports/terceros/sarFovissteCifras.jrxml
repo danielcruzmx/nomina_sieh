@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="SARFOVISSSTECIFRAS" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="7" bottomMargin="7">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\sql sireh\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NOMINAS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+     case when substr(h.hp_qna_pago, 5,2) = '01' then 'Totales de Nómina de SAR-FOVISSSTE Sesto Bimestre de '||substr(h.hp_qna_pago,1,4)
+when substr(h.hp_qna_pago, 5,2) = '05' then 'Totales de Nómina de SAR-FOVISSSTE Primer Bimestre de '||substr(h.hp_qna_pago,1,4)
+when substr(h.hp_qna_pago, 5,2) = '09' then 'Totales de Nómina de SAR-FOVISSSTE Segundo Bimestre de '||substr(h.hp_qna_pago,1,4)
+when substr(h.hp_qna_pago, 5,2) = '13' then 'Totales de Nómina de SAR-FOVISSSTE Tercer Bimestre de '||substr(h.hp_qna_pago,1,4)
+when substr(h.hp_qna_pago, 5,2) = '17' then 'Totales de Nómina de SAR-FOVISSSTE Cuarto Bimestre de  '||substr(h.hp_qna_pago,1,4)
+when substr(h.hp_qna_pago, 5,2) = '21' then 'Totales de Nómina de SAR-FOVISSSTE Quinto Bimestre de '||substr(h.hp_qna_pago,1,4) END TITULO,
+      '012' BANCO,
+      h.HP_NUM_COMPLEM,
+      count(distinct h.hp_rfc) casos,
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CSA',c.cp_monto,0))  as SAR,
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CFV',c.cp_monto,0))  as FOVISSSTE,
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CRV',c.cp_monto,0))  as CESANTIA_PATRON,
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CRC',c.cp_monto,0))  +
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CRT',c.cp_monto,0))  +
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CRH',c.cp_monto,0))  as cesantia,
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CSE',c.cp_monto,0))  +
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CST',c.cp_monto,0))  +
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CSH',c.cp_monto,0))  as ahorro,
+      sum(decode(c.id_tipo_cpto||c.id_cpto_pago,'CAP',c.cp_monto,0))  as AS_PATRON,
+      H.HP_QNA_PAGO,
+
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+
+from  tn_historico_pago h, tn_concepto_pagado c
+where h.hp_folio = c.cp_folio
+  and h.hp_dif_folio = c.cp_dif_folio
+  and h.hp_consec_nomina in ($P!{P_NOMINAS})
+group by h.HP_QNA_PAGO, h.HP_NUM_COMPLEM]]>
+	</queryString>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="BANCO" class="java.lang.String"/>
+	<field name="HP_NUM_COMPLEM" class="java.lang.String"/>
+	<field name="CASOS" class="java.math.BigDecimal"/>
+	<field name="SAR" class="java.math.BigDecimal"/>
+	<field name="FOVISSSTE" class="java.math.BigDecimal"/>
+	<field name="CESANTIA_PATRON" class="java.math.BigDecimal"/>
+	<field name="CESANTIA" class="java.math.BigDecimal"/>
+	<field name="AHORRO" class="java.math.BigDecimal"/>
+	<field name="AS_PATRON" class="java.math.BigDecimal"/>
+	<field name="HP_QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="subtitulo" class="java.lang.String"/>
+	<variable name="Total_Casos" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS}]]></variableExpression>
+	</variable>
+	<variable name="Total_SAR" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{SAR}]]></variableExpression>
+	</variable>
+	<variable name="Total_FOVISSSTE" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{FOVISSSTE}]]></variableExpression>
+	</variable>
+	<variable name="Total_Ce_tra" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CESANTIA}]]></variableExpression>
+	</variable>
+	<variable name="Total_Ce_dep" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{CESANTIA_PATRON}]]></variableExpression>
+	</variable>
+	<variable name="Total_Ahorro" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{AHORRO}]]></variableExpression>
+	</variable>
+	<variable name="Total_Ahorro_Dep" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{AS_PATRON}]]></variableExpression>
+	</variable>
+	<group name="QNAPAGO">
+		<groupExpression><![CDATA[$F{HP_QNA_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="101">
+				<rectangle>
+					<reportElement x="31" y="51" width="682" height="45" backcolor="#CCCCCC"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="33" y="51" width="71" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Banco]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="51" width="76" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Complemento]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="201" y="51" width="43" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Casos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="258" y="51" width="70" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SAR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="336" y="51" width="70" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[FOVISSSTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="51" width="70" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cesantía Trabajador]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="488" y="51" width="70" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cesantía Dependencia]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="566" y="51" width="70" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ahorro Solidario Trabajador]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="641" y="51" width="70" height="43"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Ahorro Solidario Dependencia]]></text>
+				</staticText>
+				<line>
+					<reportElement x="108" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="195" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="252" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="332" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="410" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="483" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="562" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="640" y="51" width="1" height="45"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="49">
+				<rectangle>
+					<reportElement x="31" y="12" width="682" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</rectangle>
+				<textField pattern="#,##0">
+					<reportElement x="201" y="18" width="43" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_Casos}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="259" y="18" width="69" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_SAR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="333" y="18" width="71" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_FOVISSSTE}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="409" y="18" width="70" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_Ce_tra}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="485" y="18" width="70" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_Ce_dep}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="561" y="18" width="70" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_Ahorro}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="641" y="18" width="68" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="9" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{Total_Ahorro_Dep}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="561" y="12" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="640" y="12" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="483" y="12" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="409" y="12" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="332" y="12" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="251" y="12" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="196" y="12" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement x="31" y="18" width="157" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total solicitar a bancos:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="175" y="13" width="337" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro Bold" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="597" y="0" width="155" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="566" y="20" width="186" height="30"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="31" splitType="Stretch">
+			<rectangle>
+				<reportElement x="31" y="5" width="682" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="31" y="7" width="71" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BANCO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="7" width="76" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HP_NUM_COMPLEM}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="259" y="7" width="70" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SAR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="334" y="7" width="70" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FOVISSSTE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="409" y="7" width="70" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CESANTIA_PATRON}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="485" y="7" width="70" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CESANTIA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="561" y="7" width="70" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AHORRO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="639" y="7" width="70" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AS_PATRON}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="201" y="7" width="43" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASOS}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="107" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="196" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="251" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="332" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="409" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="483" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="561" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="639" y="5" width="1" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="5" width="581" height="25" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

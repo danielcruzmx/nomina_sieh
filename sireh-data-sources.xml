@@ -1,0 +1,54 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+<data-sources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			  xsi:noNamespaceSchemaLocation="http://xmlns.oracle.com/oracleas/schema/data-sources-10_1.xsd"
+			  xmlns="http://xmlns.oracle.com/oracleas/schema">
+
+	<connection-pool name="jdev-connection-pool-sireh"
+					 validate-connection="false"
+					 disable-server-connection-pooling="false">
+		<connection-factory factory-class="oracle.jdbc.pool.OracleDataSource"
+							user="SYSTEM"
+							password="danielcruzmx1"
+							url="jdbc:oracle:thin:@oracledb:1521:xe"/>
+	</connection-pool>
+	<connection-pool name="jdev-connection-pool-sireh-reportes"
+					 validate-connection="false"
+					 disable-server-connection-pooling="false">
+		<connection-factory factory-class="oracle.jdbc.pool.OracleDataSource"
+							user="SYSTEM"
+							password="danielcruzmx1"
+							url="jdbc:oracle:thin:@oracledb:1521:xe"/>
+	</connection-pool>
+	<!--<connection-pool name="jdev-connection-pool-sireh-expediente"
+					 validate-connection="false"
+					 disable-server-connection-pooling="false">
+		<connection-factory factory-class="oracle.jdbc.pool.OracleDataSource"
+							user="PRUEBA_FH"
+							password="cambios2013"
+							url="jdbc:oracle:thin:@172.18.3.76:1522:EOM2"/>
+	</connection-pool>-->
+	<connection-pool name="jdev-connection-pool-Jcr"
+					 validate-connection="false"
+					 disable-server-connection-pooling="false">
+		<connection-factory factory-class="oracle.jdbc.pool.OracleDataSource"
+							user="SYSTEM"
+							password="danielcruzmx1"
+							url="jdbc:oracle:thin:@oracledb:1521:xe"/>
+	</connection-pool>
+
+	<managed-data-source name="jdev-connection-managed-sireh"
+						 jndi-name="jdbc/SIREHDS"
+						 connection-pool-name="jdev-connection-pool-sireh"/>
+	<managed-data-source name="jdev-connection-managed-sireh-reportes"
+						 jndi-name="jdbc/SIREHREPDS"
+						 connection-pool-name="jdev-connection-pool-sireh-reportes"/>
+	<!--<managed-data-source name="jdev-connection-managed-sireh-expediente"
+						 jndi-name="jdbc/SIREHEXPDS"
+						 connection-pool-name="jdev-connection-pool-sireh-expediente"
+						 tx-level="local"/>-->
+	<managed-data-source name="jdev-connection-managed-Jcr"
+						 jndi-name="jdbc/SIREHEXPDS"
+						 connection-pool-name="jdev-connection-pool-Jcr"
+						 tx-level="local"/>
+
+</data-sources>

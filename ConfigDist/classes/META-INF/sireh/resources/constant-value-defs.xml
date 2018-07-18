@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+    <!-- CONSTANT VALUE DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder">
+        <property name="map">
+            <util:map>
+                <entry key="CUENTA_DGRH" value="021180040355767847"/>
+                <entry key="CUENTA_CHEQUE" value="000000000000000000"/>
+                <entry key="AP_FIN" value="2099-01-01"/>
+                <entry key="HERRAMIENTA_AUXILIAR" value="0"/>
+                <entry key="local.temp.dir" value="${local.temp.dir}"/>
+                <entry key="notasmerito.templates.dir" value="${notasmerito.templates.dir}"/>
+                <entry key="plazaMasiva.templates.dir" value="${plazas.template.dir}"/>
+                <entry key="terceros.templates.dir" value="${terceros.templates.dir}"/>
+                <entry key="clc.templates.dir" value="${clc.template.dir}"/>
+                <entry key="correo.template.dir" value="${correo.template.dir}"/>
+                <entry key="cliente.template.dir" value="${cliente.template.dir}"/>
+                <entry key="app.drools.changeset" value="${app.drools.change_set}"/>
+                <entry key="timbrado.dir" value="${timbrado.dir}"/>
+                <entry key="PKI_WEB_RESOURCES_URL" value="${pki.web.url}"/>
+                <entry key="PKI_SERVICE_URL" value="${pki.service.url}"/>
+                <entry key="PKI_VALID_RFC" value="${pki.valid.rfc}"/>
+                
+                <!--entry key="FONAC_QUINCENA_ORDINARIA" value="${fonac.quincena.ordinaria}"/-->
+                <!--entry key="FONAC_QUINCENA_EXTRAORDINARIA" value="${fonac.quincena.extraordinaria}"/-->
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="movCapCode">
+        <property name="map">
+            <util:map>
+                <entry key="REGISTRAR_CURSO" value="100"/>
+                <entry key="ACTUALIZACION_REGISTRO" value="101"/>
+                <entry key="ELIMINACION_DE_CURSO" value="102"/>
+                <entry key="CANCELACION_DE_CURSO" value="103"/>
+                <entry key="CONFIRMAR_CURSO" value="104"/>
+                
+                <entry key="ASIGNAR_CALENDARIO" value="200"/>
+                <entry key="ACTUALIZACION_CALENDARIO" value="201"/>
+                
+                <entry key="ASIGNAR_PARTICIPANTE_MANUAL" value="300"/>
+                <entry key="DESASIGNAR_PARTICIPANTE_MANUAL" value="301"/>
+                <entry key="ASIGNAR_PARTICIPANTE_EXPEDIENTE" value="302"/>
+                <entry key="DESASIGNAR_PARTICIPANTE_EXPEDIENTE" value="303"/>
+                <entry key="ACTUALIZACION_PARTICIPANTE" value="304"/>
+                <entry key="CARGA_DE_NOTIFICACION_MANUAL" value="305"/>
+                <entry key="CARGA_DE_CERTIFICADO_MANUAL" value="306"/>
+                <entry key="CARGA_DE_NOTIFICACION_EXPEDIENTE" value="307"/>
+                <entry key="CARGA_DE_CERTIFICADO_EXPEDIENTE" value="308"/>
+                
+                <entry key="ASIGNAR_INSTRUCTOR" value="400"/>
+                <entry key="ACTUALIZACION_INSTRUCTOR" value="401"/>
+                
+                <entry key="ASIGNAR_CONTRATO" value="500"/>
+                <entry key="ACT_ASIGNAR_CONTRATO" value="501"/>
+                <entry key="ASIGNAR_CURSO_CONTRATO" value="502"/>
+                <entry key="ELIMINAR_CURSO_CONTRATO" value="503"/>
+                <entry key="ASIGNAR_FACTURA_CONTRATO" value="504"/>
+                <entry key="ELIMINAR_FACTURA_CONTRATO" value="505"/>
+                <entry key="ELIMINACION_DE_CONTRATO" value="506"/>
+                <entry key="CANCELACION_DE_CONTRATO" value="507"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="movCode">
+        <property name="map">
+            <util:map>
+                <entry key="ALTA_POR_NUEVO_INGRESO" value="111"/>
+                <entry key="ALTA_POR_REINGRESO" value="112"/>
+                <entry key="ALTA_POR_REANUDACION_DE_LABORES" value="113"/>
+                <entry key="ALTA_POR_BAJA_DE_PREVENTIVA_DE_PAGO" value="114"/>
+                <entry key="ALTA_PROVISIONAL" value="115"/>
+                <entry key="PRORROGA_DEL_CONTRATO_INTERINO" value="116"/>
+                <entry key="PRORROGA_DEL_CONTRATO_PROVISIONAL" value="117"/>
+                <entry key="CARGA_INICIAL_DEL_SISTEMA" value="118"/>
+                <entry key="ALTA_POR_BAJA_DE_SUSP_SANCION_ADMIN" value="119"/>
+                <entry key="ALTA_POR_REINSTALACION_DE_LAUDO" value="120"/>
+                <entry key="REINCORPORACION_A_PLAZA_DE_BASE" value="121"/>
+                <entry key="CONTINUIDAD_DE_ARTICULO_34" value="122"/>
+                <entry key="PROMOCION" value="221"/>
+                <entry key="PROMOCION_PLAZA_INTERINA" value="222"/>
+                <entry key="PROMOCION_PLAZA_PROVISIONAL" value="223"/>
+                <entry key="PROMOCION_PERMUTA" value="224"/>
+                <entry key="CAMBIO_DE_TIPO_DE_CONTRATACION" value="225"/>
+                <entry key="ELIMINACION_DE_HERRAMIENTA_AUXILIAR_DE_PAGO" value="226"/>
+                <entry key="RENIVELACION_POR_CONVENIO_SINDICAL" value="227"/>
+                <entry key="BASIFICACION_POR_LAUDO" value="228"/>
+                <entry key="REINGRESO_A_PLAZA_DE_BASE" value="229"/>
+                <entry key="BAJA_POR_RENUNCIA" value="331"/>
+                <entry key="BAJA_POR_DEFUNCION" value="332"/>
+                <entry key="BAJA_POR_PENSION" value="333"/>
+                <entry key="BAJA_POR_JUBILACION" value="334"/>
+                <entry key="BAJA_POR_ABANDONO_DE_EMPLEO" value="335"/>
+                <entry key="BAJA_POR_TERMINO_DE_CONTRATO" value="336"/>
+                <entry key="BAJA_POR_PRISION_PREVENTIVA" value="337"/>
+                <entry key="BAJA_POR_INCAP_INVALIDEZ_TOT_PERM" value="338"/>
+                <entry key="BAJA_POR_RESOL_DE_TRIBUNAL_LABORAL" value="339"/>
+                <entry key="BAJA_POR_ACUERDO_SUPERIOR" value="340"/>
+                <entry key="BAJA_POR_RESPONSABILIDAD" value="341"/>
+                <entry key="BAJA_POR_SANCION_ADMINISTRATIVA" value="342"/>
+                <entry key="BAJA_POR_INSUBSISTENCIA_DE_NOMBRAMIENTO" value="343"/>
+                <entry key="BAJA_POR_ENTREGA_DE_ENCARGO" value="344"/>
+                <entry key="BAJA_POR_RETIRO_VOLUNTARIO" value="345"/>
+                <entry key="BAJA_POR_TRANSFERENCIA" value="346"/>
+                <entry key="BAJA_POR_TERMINO_DE_DESIGNACION_(LSPC)" value="347"/>
+                <entry key="BAJA_POR_TERMINO_DE_SERVICIO_SOCIAL" value="348"/>
+                <entry key="BAJA_POR_PERDIDA_DE_LA_CONFIANZA" value="349"/>
+                <entry key="BAJA_POR_TERMINO_ANTICIPADO_DE_SERVICIO_SOCIAL" value="350"/>
+                <entry key="BAJA_POR_PROMOCION" value="351"/>
+                <entry key="BAJA_POR_RENUNCIAR_A_SU_PUESTO_DE_BASE_SIN_ESTAR_ACTIVO" value="352"/>
+                <entry key="BAJA_POR_SENTENCIA_JUDICIAL" value="353"/>
+                <entry key="BAJA_POR_REVOCACION_DE_CONCURSO" value="354"/>
+                <entry key="LICENCIA_SIN_SUELDO_POR_ASUNTOS_PARTICULARES" value="411"/>
+                <entry key="LICENCIA_SIN_SUELDO_POR_OCUPAR_PUESTO_DE_CONFIANZA" value="412"/>
+                <entry key="LICENCIA_MEDICA_SIN_SUELDO" value="413"/>
+                <entry key="LICENCIA_POR_BECA_EN_EL_EXTRANJERO_SIN_SUELDO" value="414"/>
+                <entry key="PREVENTIVA_DE_PAGO" value="415"/>
+                <entry key="PRORROGA_DE_LICENCIA_SIN_SUELDO_POR_ASUNTOS_PARTICULARES" value="416"/>
+                <entry key="PRORROGA_DE_LICENCIA_INDEFINIDA_SIN_SUELDO_POR_OCUPAR_PUESTO_DE_CONFIANZA" value="417"/>
+                <entry key="PRORROGA_DE_LICENCIA_SIN_SUELDO_POR_OCUPAR_PUESTO_DE_ELECCION_POPULAR" value="418"/>
+                <entry key="PRORROGA_DE_LICENCIA_CON_SUELDO_POR_BECA_EN_EL_EXTRANJERO" value="419"/>
+                <entry key="LICENCIA_SIN_SUELDO_(OTROS)" value="420"/>
+                <entry key="SUSPENSION_POR_SANCION_ADMINISTRATIVA" value="421"/>
+                <entry key="SUSPENSION_EN_SUELDOS_Y_FUNCIONES" value="422"/>
+                <entry key="MODIFICACION_DE_NOMBRE_DE_PILA" value="479"/>
+                <entry key="MODIFICACION_DE_LA_CURP" value="480"/>
+                <entry key="CAMBIO_DE_APELLIDO_PATERNO" value="481"/>
+                <entry key="CAMBIO_DE_APELLIDO_MATERNO" value="482"/>
+                <entry key="CAMBIO_DE_DATOS_CEDULA" value="483"/>
+                <entry key="CAMBIO_DE_RFC" value="484"/>
+                <entry key="UNIFICACION_DE_RFC" value="485"/>
+                <entry key="ASIGNACION_DE_APODERADO" value="486"/>
+                <entry key="CAMBIO_DE_CLABE_BANCARIA" value="487"/>
+                <entry key="CAMBIO_DE_ESTADO_DE_NACIMIENTO" value="488"/>
+                <entry key="PLAZAS_LIBERACION_DE_PLAZAS_=_V" value="501"/>
+                <entry key="CAMBIO_DE_ADSCRIPCION" value="502"/>
+                <entry key="PROMOCION_CAMBIO_DE_PUESTO_FISICO" value="503"/>
+                <entry key="PLAZAS_CAMBIA_SITUACION_C_O_V_=_C" value="504"/>
+                <entry key="PLAZAS_PLAZA_BLOQUEADA_C_O_V_=_R" value="505"/>
+                <entry key="ACTUALIZACION_DEL_SEXO" value="489"/>
+                <entry key="CAMBIO_DE_FECHA_DE_NACIMIENTO" value="490"/>
+                <entry key="CAMBIO_DE_DOMICILIO" value="491"/>
+                <entry key="CAMBIO_DE_ZONA_DE_DISTRIBUCION" value="492"/>
+                <entry key="PLAZAS_PLAZA_DESBLOQUEADA_R_=_C" value="506"/>
+                <entry key="PLAZAS_CAMBIO_ADSCRIPCION_PRESUPUESTAL" value="507"/>
+                <entry key="CAMBIO_DE_DATOS_PRESUPUESTALES" value="514"/>
+                <entry key="PLAZAS_CAMBIO_DE_PUESTO_PRESUPUESTAL" value="509"/>
+                <entry key="PLAZAS_CAMBIO_DE_SUELDO_DE_HONORARIOS" value="510"/>
+                <entry key="LIBERACION_DE_PLAZA_SOBREVALUADA" value="511"/>
+                <entry key="CAMBIO_RADICACION_SOBREVALUADA" value="512"/>
+                <entry key="CAMBIO_PUESTO_FISICO_SOBREVALUADA" value="513"/>
+                <entry key="REMUNERACION_DE_PLAZAS" value="516"/>
+                <entry key="CREACION_DE_PLAZA_EVENTUAL" value="518"/>
+                <entry key="PUESTO_OCUPADO_POR_CONCURSO" value="520"/>
+                <entry key="PUESTO_OCUPADO_POR_CONSURSO_MODIFICA_PUESTO" value="529"/>
+                <entry key="PRORROGA_DE_CONTRATO_EVENTUAL" value="522"/>
+                <entry key="MOVIMIENTO_EVENTUAL" value="538"/>
+                <entry key="ENROQUE_DE_DATOS_DEL_EMPLEADO" value="517"/>
+                <entry key="DESIG_ART_34_LEY_SPC_PARA_APF" value="519"/>
+                <entry key="CREACION_DE_PLAZA_DE_HONORARIO" value="521"/>
+                <entry key="CAMBIO_DE_TIPO_DE_SERVIDOR_PUBLICO" value="527"/>
+                <entry key="CAMBIO_DE_PUESTO_PRESUP_PERSONAL_EV" value="523"/>
+                <entry key="VACANTE_EN_PROCESO_DE_RENIVELACION" value="524"/>
+                <entry key="MODIFICACION_DE_DATOS" value="531"/>
+                <entry key="VACANTE_EN_PROCESO_DE_REUBICACION" value="525"/>
+                <entry key="VACANTE_EN_PROCESO_DE_RETIRO_VOLUNTARIO" value="526"/>
+                <entry key="ELIMINAR_PLAZA_EV_HON_SERVICIO_SOCIAL" value="528"/>
+                <entry key="CAMBIO_EN_LA_FECHA_DE_TERMINO_DE_CONTRATO" value="530"/>
+                <entry key="ELIMINAR_SOPORTE_EVENTUALES" value="532"/>
+                <entry key="ASIGNAR_SOPORTE_EVENTUALES" value="533"/>
+                <entry key="MODIFICA_PROGRAMA_EVENTUAL" value="534"/>
+                <entry key="CONTRATO_EVENTUAL_MODIFICA_FECHA_DE_TERMINO" value="537"/>
+                <entry key="PERMUTA" value="601"/>
+                <entry key="ACREDITACION_JURIDICA" value="602"/>
+                <entry key="ALTA_AL_PROGRAMA_CPSFD" value="610"/>
+                <entry key="MOVIMIENTO_LATERAL" value="123"/>
+                <entry key="BAJA_POR_INHABILITACION" value="355"/>
+                <entry key="PRORROGA_DE_CONTRATO_HONORARIO" value="613"/>
+                <entry key="BAJA_AL_PROGRAMA_CPSFD" value="611"/>
+                <entry key="ACTUALIZACION_DE_DATOS_DEL_PROGRAMA_CPSFD" value="612"/>
+                
+                <entry key="PLAZAS_MODIFICA_PADRON_OBLIGADOS" value="539"/>
+                <entry key="PLAZAS_MODIFICA_PADRON_TIPO_DISCAPACIDAD" value="540"/>
+                <entry key="PLAZAS_MODIFICA_PADRON_NIVELES_RESPONSABILIDAD" value="541"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="pensiones">
+        <property name="map">
+            <util:map>
+                <entry key="ID_TIPO_CONCEPTO_PERCEPCION" value="P"/>
+                <entry key="ID_TIPO_CONCEPTO_DEDUCCION" value="D"/>
+                <entry key="STATUS_PENSION_CAMBIO" value="C"/>
+                <entry key="STATUS_PENSION_VIGENTE" value="V"/>
+                <entry key="STATUS_PENSION_BAJA" value="B"/>
+                <entry key="RADIO_BUTTON_VALUE_PORCENTAJE" value="porcentaje"/>
+                <entry key="RADIO_BUTTON_VALUE_CUOTA_FIJA" value="cuotaFija"/>
+                <entry key="SEPARADOR_PIPE" value="|"/>
+                <entry key="RC_VIGENTE_S" value="S"/>
+                <entry key="VALORES_INICIALES_CPTOS_PORCENTAJE" value="P02|P05|P06|P07|D01|D0A|D0B|D0C|D0D|D0E|"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="jbpmContext">
+        <property name="map">
+            <util:map></util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="nm">
+        <property name="map">
+            <util:map>
+                <entry key="jxls.templates.puntualidad" value="puntualidad.xml"/>
+                <entry key="jxls.templates.capacitacion" value="capacitacion.xml"/>
+                <entry key="jxls.templates.evaluacion" value="evaluacion.xml"/>
+                <entry key="jxls.templates.xls.errores.puntualidad" value="puntualidadPlantillaError.xlsx"/>
+                <entry key="jxls.templates.xls.concentrado.puntualidad" value="puntualidadPlantillaConcentrado.xlsx"/>
+                <entry key="jxls.templates.xls.errores.capacticacion" value="capacitacionPlantillaError.xlsx"/>
+                <entry key="jxls.templates.xls.concentrado.capacticacion" value="capacitacionPlantillaConcentrado.xlsx"/>
+                <entry key="jxls.templates.xls.errores.evaluacion" value="evaluacionPlantillaError.xlsx"/>
+                <entry key="jxls.templates.xls.resultado.generacion.pago.puntualidad" value="pagoPuntualidad.xlsx"/>
+                <entry key="jxls.templates.xls.resultado.generacion.pago.puntualidad.rechazos" value="pagoPuntualidadRechazos.xlsx"/>
+                <entry key="jxls.templates.xls.resultado.generacion.pago.capacitacion" value="pagoCapacitacion.xlsx"/>
+                <entry key="jxls.templates.xls.resultado.generacion.pago.capacitacion.rechazos" value="pagoCapacitacionRechazos.xlsx"/>
+                <entry key="jxls.templates.xls.resultado.generacion.pago.evaluacion" value="pagoEvaluacion.xlsx"/>
+                <entry key="jxls.templates.xls.errores.parseo" value="No se pudo parsear el archivo origen, favor de revisar el layout."/>
+                <entry key="jxls.method.model" value="getListModel"/>
+                <entry key="sufix.remesa" value="REM "/>
+                <entry key="atributo.puesto.fecha" value="01/01/2099 "/>
+                <entry key="atributo.jerarquia.operativo" value="OP"/>
+                <entry key="merito.consecutividad.anio.limite.inferior" value="1990"/>
+                <entry key="merito.consecutividad.new.anio.limite.inferior" value="2015"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="mensajesErrorPuntualidad">
+        <property name="map">
+            <util:map>
+                <entry key="jxls.templates.puntualidad.error.noExisteUsuario" value="El RFC del empleado no se encontró en la nomina de la quincena de validacion"/>
+                <entry key="jxls.templates.puntualidad.error.merito.existe.mismo.anio" value="El empleado ya cuenta con una nota de mérito el mismo año"/>
+                <entry key="jxls.templates.puntualidad.error.merito.error.integridad" value="Error de integridad de datos"/>
+                <entry key="jxls.templates.puntualidad.error.merito.error.validacion" value="Error de validación de datos, el archivo no cumple con el layout de la plantilla"/>
+                <entry key="jxls.templates.puntualidad.error.merito.error.no.operativo" value="El empleado no tiene una jerarquía como operativo"/>
+                <entry key="jxls.templates.puntualidad.error.merito.error.plantilla.incorrecta" value="El archivo no cumple con el layout especificado"/>
+                <entry key="jxls.templates.puntualidad.error.merito.error.rfc.no.valido" value="El RFC no es válido, no tiene el formato correcto"/>
+                <entry key="jxls.templates.puntualidad.error.merito.error.rfc.repetido" value="El RFC está duplicado"/>
+                <entry key="jxls.templates.puntualidad.encabezado.numero" value="N° "/>
+                <entry key="jxls.templates.puntualidad.encabezado.rfc" value="R.F.C."/>
+                <entry key="jxls.templates.puntualidad.encabezado.nombre" value="NOMBRE"/>
+                <entry key="jxls.templates.puntualidad.encabezado.uni" value="UNI"/>
+                <entry key="jxls.templates.puntualidad.encabezado.puesto" value="PUESTO"/>
+                <entry key="jxls.templates.puntualidad.encabezado.plaza" value="PLAZA"/>
+                <entry key="jxls.templates.puntualidad.encabezado.nivel" value="NIVEL"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="mensajesErrorCapacitacion">
+        <property name="map">
+            <util:map>
+                <entry key="jxls.templates.capacitacion.error.rechazado" value="No procede"/>
+                <entry key="jxls.templates.capacitacion.error.noExisteUsuario" value="El RFC del empleado no existe en la BD"/>
+                <entry key="jxls.templates.capacitacion.error.merito.existe.mismo.anio" value="El empleado ya cuenta con una nota de mérito el mismo año"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.integridad" value="Error de integridad de datos"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.validacion" value="Error de validación de datos"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.no.operativo" value="El empleado no tiene una jerarquía como operativo"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.no.tiene.veinte.horas" value="La duración del curso no es de 20 horas"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.no.aprobado" value="El curso no fue aprobado"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.plantilla.incorrecta" value="El archivo no cumple con el layout especificado"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.rfc.no.valido" value="El RFC no es válido"/>
+                <entry key="jxls.templates.capacitacion.error.merito.error.rfc.repetido" value="El RFC está duplicado"/>
+                <entry key="jxls.templates.capacitacion.encabezado.curso" value="CURSO"/>
+                <entry key="jxls.templates.capacitacion.encabezado.denominacion" value="DENOMINACIÓN"/>
+                <entry key="jxls.templates.capacitacion.encabezado.inicio" value="INICIO"/>
+                <entry key="jxls.templates.capacitacion.encabezado.termino" value="TÉRMINO"/>
+                <entry key="jxls.templates.capacitacion.encabezado.duracion" value="DURACIÓN"/>
+                <entry key="jxls.templates.capacitacion.encabezado.rfc" value="RFC"/>
+                <entry key="jxls.templates.capacitacion.encabezado.nombre" value="NOMBRE"/>
+                <entry key="jxls.templates.capacitacion.encabezado.puesto" value="PUESTO"/>
+                <entry key="jxls.templates.capacitacion.encabezado.unidad" value="UNIDAD"/>
+                <entry key="jxls.templates.capacitacion.encabezado.genero" value="GÉNERO"/>
+                <entry key="jxls.templates.capacitacion.encabezado.estatus" value="ESTATUS"/>
+                <entry key="jxls.templates.capacitacion.encabezado.mes" value="MES"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="mensajesErrorEvaluacion">
+        <property name="map">
+            <util:map>
+                <entry key="jxls.templates.evaluacion.error.noExisteUsuario" value="El RFC del empleado no es el vigente"/>
+                <entry key="jxls.templates.evaluacion.error.merito.existe.mismo.anio" value="El empleado ya cuenta con una nota de mérito el mismo año"/>
+                <entry key="jxls.templates.evaluacion.error.merito.existe.mismo.anio.anterior" value="El empleado ya cuenta con una nota de mérito el año anterior"/>
+                <entry key="jxls.templates.evaluacion.error.merito.error.integridad" value="Error de integridad de datos"/>
+                <entry key="jxls.templates.evaluacion.error.merito.error.validacion" value="Error de validación de datos"/>
+                <entry key="jxls.templates.evaluacion.error.merito.error.no.operativo" value="El empleado no tiene una jerarquía como operativo"/>
+                <entry key="jxls.templates.evaluacion.error.merito.error.plantilla.incorrecta" value="El archivo no cumple con el layout especificado"/>
+                <entry key="jxls.templates.evaluacion.error.merito.error.rfc.no.valido" value="El RFC no es válido"/>
+                <entry key="jxls.templates.evaluacion.error.merito.error.rfc.repetido" value="El RFC está duplicado"/>
+                <entry key="jxls.templates.evaluacion.encabezado.numero" value="NUM"/>
+                <entry key="jxls.templates.evaluacion.encabezado.rfc" value="RFC"/>
+                <entry key="jxls.templates.evaluacion.encabezado.nombre" value="NOMBRE Y APELLIDOS"/>
+                <entry key="jxls.templates.evaluacion.encabezado.unidad" value="U. ADMVA"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="terceros">
+        <property name="map">
+            <util:map>
+                <entry key="ID_ISSSTE" value="I"/>
+                <entry key="ASEG_DIVERSAS" value="O"/>
+                <entry key="METLIFE" value="M"/>
+                <entry key="FONACOT" value="FONACOT"/>
+                <entry key="CVE_FONACOT" value="FO"/>
+                <entry key="EXTENSION_XML" value="-config.xml"/>
+                <entry key="FOVISSSTE" value="FOVISSSTE"/>
+                <entry key="METLIFE_ML" value="METLIFE-ML"/>
+                <entry key="VIGENTE" value="O"/>
+                <entry key="LICENCIA" value="L"/>
+                <entry key="PREVENTIVA" value="P"/>
+                <entry key="TIPO_CONCEPTO_PERCEPCION" value="P"/>
+                <entry key="ID_TIPO_CONCEPTO_DEDUCCION" value="D"/>
+                <entry key="ID_TIPO_CONCEPTO_CONTROL" value="C"/>
+                <entry key="ID_TIPO_CONCEPTO_REFERENCIA_CALCULO" value="U"/>
+                <entry key="ALTA" value="V"/>
+                <entry key="CAMBIO" value="C"/>
+                <entry key="BAJA" value="B"/>
+                <entry key="CPTO_FONACOT" value="94"/>
+                <entry key="TIPO_MOVTO_FONACOT" value="A"/>
+                <entry key="ALTA_TIPO_MOVTO" value="A"/>
+                <entry key="CAMBIO_TIPO_MOVTO" value="B"/>
+                <entry key="MOD_TIPO_MOVTO" value="M"/>
+                <entry key="ALTA_ISSSTE" value="1"/>
+                <entry key="CAMBIO_ISSSTE" value="3"/>
+                <entry key="MOD_ISSSTE" value="2"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="mensajesMeritoManual">
+        <property name="map">
+            <util:map>
+                <entry key="jxls.templates.manual.error.noExisteUsuario" value="El RFC del empleado no es el vigente"/>
+                <entry key="jxls.templates.manual.error.merito.existe.mismo.anio" value="El empleado ya cuenta con una nota de mérito el mismo año"/>
+                <entry key="jxls.templates.manual.exito" value="La nota de mérito fue ingresada correctamente."/>
+                <entry key="jxls.templates.manual.error.merito.existe.mismo.anio.anterior" value="El empleado ya cuenta con una nota de mérito el año anterior"/>
+                <entry key="jxls.templates.manual.error.merito.no.es.operativo" value="El empleado no tiene una nivel como Operativo"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="mensajesHolidaysMexico">
+        <property name="map">
+            <util:map>
+                <entry key="date.holiday.anioNuevo" value="${date.holiday.anioNuevo}"/>
+                <entry key="date.holiday.constitucion" value="${date.holiday.constitucion}"/>
+                <entry key="date.holiday.benitoJuarez" value="${date.holiday.benitoJuarez}"/>
+                <entry key="date.holiday.juevesSanto" value="${date.holiday.juevesSanto}"/>
+                <entry key="date.holiday.viernesSanto" value="${date.holiday.viernesSanto}"/>
+                <entry key="date.holiday.diaTrabajo" value="${date.holiday.diaTrabajo}"/>
+                <entry key="date.holiday.diaIndependencia" value="${date.holiday.diaIndependencia}"/>
+                <entry key="date.holiday.diaMuertos" value="${date.holiday.diaMuertos}"/>
+                <entry key="date.holiday.diaRevolucion" value="${date.holiday.diaRevolucion}"/>
+                <entry key="date.holiday.diaEmpleadoBancario" value="${date.holiday.diaEmpleadoBancario}"/>
+                <entry key="date.holiday.navidad" value="${date.holiday.navidad}"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="droolsConfig">
+        <property name="map">
+            <util:map>
+                <entry key="app.drools.change_set" value="${app.drools.change_set}"/>
+                <entry key="app.drools.rules.dir" value="${app.drools.rules.dir}"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="clcManualArchivo">
+        <property name="map">
+            <util:map>
+                <entry key="jxls.service.manualArchivo" value="El proceso de carga de cxlc manual ha presentado un problema técnico. Consultar a su Administrador."/>
+                <entry key="jxls.templates.manualArchivo" value="manualArchivo.xml"/>
+                <entry key="jxls.templates.xls.manualArchivo" value="manualArchivo.xlsx"/>
+                
+                <entry key="carga.manualArchivo.mensaje.plantilla.erronea" value="El archivo no cumple con el layout especificado."/>
+                <entry key="carga.manualArchivo.mensaje.archivo.valido" value="El archivo es válido, ¿Desea procesarlo? "/>
+                <entry key="carga.manualArchivo.mensaje.archivo.invalido" value="El archivo no es válido, Descargue y verifique sus errores."/>
+                
+                <entry key="jxls.templates.evaluacion.encabezado.manualArchivo.unidad" value="UNIDAD"/>
+                <entry key="jxls.templates.evaluacion.encabezado.manualArchivo.estado" value="ESTADO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.manualArchivo.monto" value="MONTO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.manualArchivo.partida" value="PARTIDA"/>
+                <entry key="jxls.templates.evaluacion.encabezado.manualArchivo.tipoCpto" value="TIPO_CPTO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.manualArchivo.tipoMovto" value="TIPO_MOVTO"/>
+                
+                <entry key="validacion.datos.validacion.datos" value="Validación del Layout, verifique los siguientes campos: "/>
+                <entry key="validacion.datos.unidad" value=" unidad no es válido (Verifique el formato) - "/>
+                <entry key="validacion.datos.estado" value=" estado no es válido (Verifique el formato) - "/>
+                <entry key="validacion.datos.monto" value=" monto no es válido (Verifique el formato) - "/>
+                <entry key="validacion.datos.partida" value=" partida no es válido (Verifique el formato) - "/>
+                <entry key="validacion.datos.tipoCpto" value=" tipo concepto no es válido (Verifique el formato)- "/>
+                <entry key="validacion.datos.tipoMovto" value=" tipo movimiento no es válido (Verifique el formato)- "/>
+                
+                <entry key="validacion.datos.unidad.catalogo" value=" unidad no es válido - "/>
+                <entry key="validacion.datos.estado.catalogo" value=" estado no es válido - "/>
+                <entry key="validacion.datos.monto.catalogo" value=" monto no es válido - "/>
+                <entry key="validacion.datos.partida.catalogo" value=" partida no es válido - "/>
+                <entry key="validacion.datos.tipoCpto.catalogo" value=" tipo concepto no es válido - "/>
+                <entry key="validacion.datos.tipoMovto.catalogo" value=" tipo movimiento no es válido - "/>
+                <entry key="validacion.datos.cvePresupuestal.catalogo" value=" clave presupuestal no es válida - "/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="plazaMasivaEstructura">
+        <property name="map">
+            <util:map>
+                <entry key="jxls.service.cargaPlazaMasivaEstructura" value="El proceso de carga de plazas masiva ha presentado un problema técnico. Consultar a su Administrador."/>
+                <entry key="jxls.templates.plazaMasiva" value="creacionPlazaEstructuraMasiva.xml"/>
+                <entry key="jxls.templates.xls.plazaMasiva" value="creacionPlazaEstructuraMasiva.xlsx"/>
+                <entry key="jxls.templates.xml.plazaEventualMasiva" value="creacionPlazaEventualMasiva.xml"/>
+                <entry key="jxls.templates.xls.plazaEventualMasiva" value="creacionPlazaEventualMasiva.xlsx"/>
+                <entry key="jxls.templates.xml.plazaHonorariosMasiva" value="creacionPlazaHonorariosMasiva.xml"/>
+                <entry key="jxls.templates.xls.plazaHonorariosMasiva" value="creacionPlazaHonorariosMasiva.xlsx"/>
+                <entry key="jxls.templates.xls.promocionPlazaEventualMasiva" value="promocionPlazaEventualMasiva.xlsx"/>
+                <entry key="jxls.templates.xml.promocionPlazaEventualMasiva" value="promocionPlazaEventualMasiva.xml"/>
+                <entry key="jxls.templates.xls.exportXlsMasivos" value="exportXlsMasivos.xlsx"/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.plaza.no.existente" value="La plaza no existe - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.plaza.no.valida" value="La plaza ya existe - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.plaza.fuera.rango" value="La plaza está fuera de rango - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.plaza.ocupada" value="La plaza está ocupada - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.grupoPago.no.valida" value="El grupo de pago no es válido - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.unidad.no.valida" value="La unidad no es válida - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.puesto.no.valida" value="El puesto no es válido - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.puesto.no.corresponde.plaza" value="El puesto no corresponde a la plaza indicada - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.estado.no.valida" value="El estado no es válido - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.zonaEconomica.no.valida" value="La zona económica no es válida - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.fechaInicioVigencia.no.valida" value="La fecha inicio de vigencia no es válida - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.fechaFinVigencia.no.valida" value="La fecha fin de vigencia no es válida - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.tipoMovimiento.no.valida" value="El tipo de movimiento no es válido - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.tipo.servidor.publico.no.valida" value="El Tipo de Servidor Publico no es el correcto."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.inmueble.no.valida" value="El Inmueble no es válido."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.tipo.plaza.no.valida" value="El Tipo de Plaza no es el correcto."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.oficioafectacion.no.valida" value="El movimiento existe en Oficio Afefctación - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.proyregulariza.no.valida" value="El movimiento existe en Proyecto Regularización - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.plazaafectacion.no.valida" value="El movimiento existe en Plaza afectación - "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.archivo.valido" value="El archivo es válido, ¿Desea procesarlo? "/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.archivo.invalido" value="El archivo no es válido, Descargue y verifique sus errores."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.proceso.terminado" value="El proceso de carga se ha realizado con éxito."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.plantilla.erronea" value="El archivo no cumple con el layout especificado."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.update.exito" value="El proceso de carga de plazas másivo ha terminado con éxito."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.update.error" value="El proceso de carga de plazas másivo ha presentado problemas, consulte al Administrador."/>
+                <entry key="carga.plaza.masiva.estructura.cancelacion.mensaje.update.exito" value="El proceso de cancelación de plazas ha terminado con éxito."/>
+                <entry key="carga.plaza.masiva.estructura.cancelacion.mensaje.update.error" value="El proceso de carga de plazas másivo ha presentado problemas, consulte al Administrador."/>
+                <entry key="carga.plaza.masiva.estructura.transferencia.mensaje.update.exito" value="El proceso de carga de plazas másivo ha terminado con éxito."/>
+                <entry key="carga.plaza.masiva.estructura.transferencia.mensaje.update.error" value="El proceso de carga de plazas másivo ha presentado problemas, consulte al Administrador."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.zona.economica.erronea" value="La zona económica no es la correcta."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.grupo.pago.erronea" value="El grupo de pago no es el correcto."/>
+                <entry key="carga.plaza.masiva.estructura.creacion.mensaje.plaza.cancelada" value="La plaza ya esta cancelada."/>
+                <entry key="jxls.templates.evaluacion.encabezado.adecuacion.anterior" value="ADECUACIÓN ANTERIOR"/>
+                <entry key="jxls.templates.evaluacion.encabezado.adecuacion.actual" value="ADECUACIÓN ACTUAL"/>
+                <entry key="jxls.templates.evaluacion.encabezado.consecutivo" value="CONSECUTIVO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.unidad" value="UNIDAD"/>
+                <entry key="jxls.templates.evaluacion.encabezado.nivel" value="NIVEL"/>
+                <entry key="jxls.templates.evaluacion.encabezado.zona" value="ZONA"/>
+                <entry key="jxls.templates.evaluacion.encabezado.codigo" value="CODIGO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.puesto.homologado" value="PUESTO HOMOLOGADO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.importe" value="IMPORTE"/>
+                <entry key="jxls.templates.evaluacion.encabezado.plaza" value="No DE PLAZA"/>
+                <entry key="jxls.templates.evaluacion.encabezado.casos" value="CASOS"/>
+                <entry key="jxls.templates.evaluacion.encabezado.tipo" value="TIPO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.estatus" value="Estatus"/>
+                <entry key="jxls.templates.evaluacion.encabezado.cancelada" value="Cancelada"/>
+                <entry key="jxls.templates.evaluacion.encabezado.tipo.movimiento" value="Tipo de Movimiento"/>
+                <entry key="jxls.templates.evaluacion.encabezado.regularizable" value="REGULARIZABLE"/>
+                <entry key="jxls.templates.evaluacion.encabezado.tipo.personal" value="Tipo de Personal"/>
+                <entry key="jxls.templates.evaluacion.encabezado.entidad" value="ENTIDAD FEDERATIVA"/>
+                <entry key="jxls.templates.evaluacion.encabezado.inicio.vigencia" value="INICIO DE VIGENCIA"/>
+                <entry key="jxls.templates.evaluacion.encabezado.fin.vigencia" value="FIN DE VIGENCIA"/>
+                <entry key="jxls.templates.evaluacion.encabezado.tipo.servidor" value="TIPO SERVIDOR PUBLICO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.tipo.plaza" value="TIPO DE PLAZA"/>
+                <entry key="jxls.templates.evaluacion.encabezado.tipo.pto.estrategico" value="PUESTO ESTRATEGICO"/>
+                <entry key="jxls.templates.evaluacion.encabezado.inmueble" value="INMUEBLE"/>
+                <entry key="validacion.datos.validacion.datos" value="Validación del Layout, verifique los siguientes campos: "/>
+                <entry key="validacion.datos.validacion.encabezados" value="VALIDACIÓN DE ENCABEZADOS, verifique los siguientes campos: "/>
+                <entry key="validacion.datos.adecuacion.anterior" value=" adecuación anterior no es válido - "/>
+                <entry key="validacion.datos.adecuacion.actual" value=" adecuación actual no es válido - "/>
+                <entry key="validacion.datos.unidad" value=" unidad no es válido - "/>
+                <entry key="validacion.datos.nivel" value=" nivel no es válido - "/>
+                <entry key="validacion.datos.tipo.serv.pub" value=" tipo de servidor no es válido - "/>
+                <entry key="validacion.datos.zona" value=" zona no es válido - "/>
+                <entry key="validacion.datos.codigo" value=" codigo no es válido - "/>
+                <entry key="validacion.datos.plazas" value=" plazas no es válido - "/>
+                <entry key="validacion.datos.casos" value=" casos no es válido - "/>
+                <entry key="validacion.datos.tipo" value=" tipo no es válido - "/>
+                <entry key="validacion.datos.estatus" value=" estatus no es válido - "/>
+                <entry key="validacion.datos.cancelada" value=" cancelada no es válido - "/>
+                <entry key="validacion.datos.tipo.movimiento" value=" tipo movimiento no es válido - "/>
+                <entry key="validacion.datos.regularizable" value=" regularizable no es válido - "/>
+                <entry key="validacion.datos.tipo.personal" value=" tipo personal no es válido -  "/>
+                <entry key="validacion.datos.tipo.plaza" value=" tipo de Plaza no es válido - "/>
+                <entry key="validacion.datos.pto.estrategico" value=" puesto estratégico no es válido."/>
+                <entry key="validacion.datos.pto.homolgado" value=" puesto homologado no es válido."/>
+                <entry key="validacion.datos.entidad" value=" entidad no es válido - "/>
+                <entry key="validacion.datos.importe" value=" importe no es válido - "/>
+                <entry key="validacion.datos.vigencia" value=" vigencia no es válido - "/>
+                <entry key="validacion.datos.fin.vigencia" value=" fin de vigencia no es válido - "/>
+                <entry key="validacion.datos.inmueble" value=" inmueble no es válido - "/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="plantillas">
+        <property name="map">
+            <util:map>
+                <entry key="EXTENSION_XML" value="-config.xml"/>
+                <entry key="CONVERTER" value="converter"/>
+                <entry key="RECORD" value="record"/>
+                <entry key="NAME" value="name"/>
+                <entry key="RECORD_ELEMENT" value="record-element"/>
+                <entry key="GUION" value="-"/>
+                <entry key="CLAS" value="class"/>
+                <entry key="BEANREF" value="beanref"/>
+                <entry key="RFC" value="rfc"/>
+                <entry key="CURP" value="curp"/>
+                <entry key="IMPORTE" value="importe"/>
+                <entry key="TIPO_MOVTO" value="tipoMovimiento"/>
+                <entry key="REFERENCIA" value="referencia"/>
+                <entry key="CONCEPTO" value="concepto"/>
+                <entry key="QNA" value="qna"/>
+                <entry key="QNA_FIN" value="qnaFin"/>
+                <entry key="NUM_QUINCENAS" value="numQuincenas"/>
+                <entry key="PORCENTAJE" value="porcentaje"/>
+                <entry key="FECHA_INCIDENCIA" value="fechaIncidencia"/>
+                <entry key="START" value="start"/>
+                <entry key="END" value="end"/>
+                <entry key="TYPE" value="type"/>
+                <entry key="PUNTO" value="."/>
+                <entry key="TIPO" value="tipo"/>
+                <entry key="DESC" value="desc"/>
+                <entry key="LINE" value="line"/>
+                <entry key="DATOS_DTO" value="datosDTO."/>
+                <entry key="PLANTILLA" value="plantilla.xml"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="enteros">
+        <property name="map">
+            <util:map>
+                <entry key="ORDINARIO" value="OR"/>
+                <entry key="EXTRAORDINARIA" value="EX"/>
+                <entry key="D_MET_LIFE" value="DML"/>
+                <entry key="P_MET_LIFE" value=""/>
+                <entry key="LAYOUT_METLIFE" value="METLIFE_ENTEROS.xml"/>
+                <entry key="ENTEROS_METLIFE_FILE" value="enterosMetlife.txt"/>
+                <entry key="ENCABEZADO" value="encabezado"/>
+                <entry key="RECORD" value="record"/>
+                <entry key="CONTROL" value="control"/>
+                <entry key="CAMPO" value="campo"/>
+                <entry key="DESCRIPCION" value="desc"/>
+                <entry key="TIPO" value="type"/>
+                <entry key="INICIO" value="ini"/>
+                <entry key="FIN" value="fin"/>
+                <entry key="TAMANIO" value="size"/>
+                <entry key="VALOR" value="value"/>
+                <entry key="COMPLEMENTO" value="complemento"/>
+                <entry key="ALINEACION" value="align"/>
+                <entry key="CASOS" value="casos"/>
+                <entry key="IMPORTE" value="importe"/>
+                <entry key="METLIFE_ML" value="DML"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="mantenimientoPlantillas">
+        <property name="map">
+            <util:map>
+                <entry key="archivo.no.valido" value="Archivo no válido"/>
+                <entry key="archivo.cargado.exitosamente" value="Archivo cargado exitosamente"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="movimientosMasivos">
+        <property name="map">
+            <util:map>
+                <entry key="DIAS_RETROACTIVIDAD" value="90"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="capcer">
+        <property name="map">
+            <util:map>
+                <entry key="correo.template.dir" value="${correo.template.dir}"/>
+                <entry key="mail.template.capcer.notificacion.html" value="mailTemplateNotificacionCapacitacion.html"/>
+				<entry key="mail.template.cfdi.notificacion.html" value="mailTemplateNotificacionCFDI.html"/>
+                <entry key="mail.fromAddress" value="${mail.fromAddress}"/>
+                <entry key="mail.bccAddress" value="${mail.bccAddress}"/>
+                <entry key="mail.fakeEmailAddress" value="${mail.fakeEmailAddress}"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="utils">
+        <property name="map">
+            <util:map>
+                <entry key="FORMATO_FECHA" value="dd/MM/yyyy"/>
+                <entry key="FORMATO_FECHA_LARGA" value="yyyy-MM-dd'T'HH:mm:ss.SSSSS"/>
+            </util:map>
+        </property>
+    </bean>
+    <bean class="gob.shcp.fsn.service.factory.holder.ConfigurationContextsHolder" p:name="timbrado">
+        <property name="map">
+            <util:map>
+                <entry key="JKS_KEYSTORE_TYPE" value="JKS"/>
+                <entry key="JKS_CSD_FILE" value="CSD_SSHC850101U37.jks"/>
+                <entry key="JKS_CSD_KEYSTORE_PASSWORD" value="pruebas"/>
+                <entry key="JKS_CSD_PRIVATE_KEY_PASSWORD" value="pruebas"/>
+                <entry key="SERVICIO_RECEPCION" value="RECEPCION"/>
+                <entry key="SERVICIO_CONSULTA" value="CONSULTA"/>
+                <entry key="SERVICIO_CANCELACION" value="CANCELACION"/>
+                <entry key="SERVICIO_DOWNLOAD" value="DOWNLOAD"/>
+                <entry key="PREFIX_ANEXO20" value="anexo20"/>
+                <entry key="PREFIX_CANCELACION" value="cancelacion"/>
+                <entry key="VIRTUAL_BASKET_TIMBRADO_URL" value="${virtualhost.timbrado.url}"/>
+                <entry key="SIREH_TIMBRADO_CSD_FILENAME_P12" value="${sireh.timbrado.csd.filename.p12}"/>
+                <entry key="SIREH_TIMBRADO_RFC_SHCP" value="${sireh.timbrado.rfc.shcp}"/>
+                <entry key="SIREH_TIMBRADO_CSD_PASS" value="${sireh.timbrado.csd.p12.pass}"/>
+                <entry key="SIREH_TIMBRADO_NUM_CERTIFICADO" value="${sireh.timbrado.num.certificado}"/>
+                <entry key="SIREH_TIMBRADO_CSD_FILENAME_CER" value="${sireh.timbrado.csd.filename.cer}"/>
+                <entry key="SIREH_TIMBRADO_CSD_FILENAME_KEY" value="${sireh.timbrado.csd.filename.key}"/>
+                <entry key="SIREH_TIMBRADO_CSD_CER_PASS" value="${sireh.timbrado.csd.cer.pass}"/>
+            </util:map>
+        </property>
+    </bean>
+</beans>

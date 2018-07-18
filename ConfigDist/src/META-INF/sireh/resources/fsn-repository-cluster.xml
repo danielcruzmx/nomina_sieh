@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!DOCTYPE Repository PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN" "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
+<Repository>
+    <!-- Para que el repositorio se configure adecuadamente se necesita definir las siguientes variables como propiedades de la JVM (-Daaa=yyy):
+         jcr.homeDir         - (rep.home) directorio de trabajo del jackrabbit diferente por cada nodo de cluster (p ej: /app/oracle/OAS1013/basket/MSSN01/jcr)
+         jcr.configFile      - ruta y nombre de localizacion de este archivo (p ej: classpath:/META-INF/fsnTest/resources/jcr-service-config.xml)
+         app.instance.name   - nombre de la instancia del jcr solamente se necesita si esta configurado el elemento <Cluster/>
+         jndi.jcr.datasource - nombre JNDI del DataSource cuando el repositorio esta configurado por base de datos
+         jcr.workspaceName   - nombre del Workspace que utiliza el repositorio
+    -->
+    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+        <param name="path" value="${rep.home}/../CLUSTER/repository"/>
+    </FileSystem>
+    
+    <DataStore class="org.apache.jackrabbit.core.data.FileDataStore">
+        <param name="path" value="${rep.home}/../CLUSTER/datastore"/>
+        <param name="minRecordLength" value="1024"/>
+    </DataStore>
+    
+    <Security appName="Jackrabbit">
+        <!-- Security manager (FQN of class implementing the JackrabbitSecurityManager interface) -->
+        <SecurityManager class="org.apache.jackrabbit.core.security.simple.SimpleSecurityManager" workspaceName="security">
+            <!-- Workspace access (FQN of class implementing the WorkspaceAccessManager interface) -->
+            <!-- <WorkspaceAccessManager class="..."/> -->
+            <!-- <param name="config" value="${rep.home}/security.xml"/> -->
+        </SecurityManager>
+        
+        <!-- Access manager (FQN of class implementing the AccessManager interface) -->
+        <AccessManager class="org.apache.jackrabbit.core.security.simple.SimpleAccessManager">
+            <!-- <param name="config" value="${rep.home}/access.xml"/> -->
+        </AccessManager>
+        
+        <LoginModule class="org.apache.jackrabbit.core.security.simple.SimpleLoginModule">
+            <!-- Anonymous user name ('anonymous' is the default value) -->
+            <param name="anonymousId" value="anonymous"/>
+            <!-- Administrator user name (default value if param is missing is 'admin') -->
+            <param name="adminId" value="admin"/>
+        </LoginModule>
+    </Security>
+    
+    <!-- Location of workspaces root directory and name of default workspace -->
+    <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="${jcr.workspaceName}"/>
+    
+    <!-- Workspace configuration TEMPLATE used to create the initial workspace (defaultWorkspace) if there's no workspace yet -->
+    <Workspace name="${wsp.name}">
+        <!--
+            Virtual file system of the workspace (FQN of class implementing the FileSystem interface)
+            If repository is configured in cluster we need one file system for each cluster node.
+            Each cluster node needs its own (private) workspace level and version FileSystem
+            (only those within the workspace and versioning configuration; the ones in the repository.xml and workspace.xml file).
+        -->
+        <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+            <param name="path" value="${wsp.home}"/>
+        </FileSystem>
+        <!--
+            Persistence manager of the workspace (FQN of class implementing the PersistenceManager interface)
+            If repository is configured in cluster the persistence managers must store their data in the same, globally accessible location (path, table, etc.)
+        -->
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.OraclePersistenceManager">
+            <param name="driver" value="javax.naming.InitialContext"/>
+            <param name="url" value="${jndi.jcr.datasource}"/>
+            <param name="schema" value="oracle"/>
+            <param name="schemaObjectPrefix" value="PM_WS_${wsp.name}_"/>
+            <param name="schemaCheckEnabled" value="false"/>
+        </PersistenceManager>
+        <!-- Search index and the file system it uses (FQN of class implementing the QueryHandler interface), Each cluster node needs its own (private) Search indexes. -->
+        <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+            <param name="path" value="${wsp.home}/index"/>
+            <param name="initializeHierarchyCache" value="false"/>
+        </SearchIndex>
+    </Workspace>
+    
+    <!-- Configures the versioning -->
+    <Versioning rootPath="${rep.home}/version">
+        <!--
+            Configures the filesystem to use for versioning for each persistence manager
+            If repository is configured in cluster the file system must be unique for each cluster node.
+            Each cluster node needs its own (private) workspace level and version FileSystem
+            (only those within the workspace and versioning configuration; the ones in the repository.xml and workspace.xml file).
+        -->
+        <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+            <param name="path" value="${rep.home}/version"/>
+        </FileSystem>
+        <!--
+            Configures the persistence manager to be used for persisting version state.
+            If repository is configured in cluster the persistence managers must store their data in the same, globally accessible location (path, table, etc.)
+        -->
+        <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.OraclePersistenceManager">
+            <param name="driver" value="javax.naming.InitialContext"/>
+            <param name="url" value="${jndi.jcr.datasource}"/>
+            <param name="schema" value="oracle"/>
+            <param name="schemaObjectPrefix" value="Versioning_PM_"/>
+            <param name="schemaCheckEnabled" value="false"/>
+        </PersistenceManager>
+    </Versioning>
+    
+    <!-- Search index for content that is shared repository wide (including /jcr:system tree that contains versioning) -->
+    <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+        <param name="path" value="${rep.home}/repository/index"/>
+        <param name="initializeHierarchyCache" value="false"/>
+    </SearchIndex>
+    
+    <!-- Cluster configuration -->
+    <!--Debe estar en bd-->
+    <!--<Cluster id="${app.instance.name}">
+        <Journal class="org.apache.jackrabbit.core.journal.FileJournal">
+            <param name="revision" value="${rep.home}/../CLUSTER/journal/revision.log"/>
+            <param name="directory" value="${rep.home}/../CLUSTER/journal"/>
+        </Journal>
+    </Cluster>-->
+    <Cluster id="${app.instance.name}" syncDelay="5000">
+        <Journal class="org.apache.jackrabbit.core.journal.OracleDatabaseJournal">
+            <param name="janitorEnabled" value="true"/>
+            <param name="driver" value="javax.naming.InitialContext"/>
+            <param name="url" value="${jndi.jcr.datasource}"/>
+        </Journal>
+    </Cluster>
+</Repository>

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listaAsistencia1" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="238"/>
+	<property name="ireport.y" value="65"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="RFC" class="java.lang.String"/>
+	<parameter name="UNI" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT PZA.ID_UNIDAD_NOM UNIDAD, DC.RFC_EMPLEADO, NVL(EMP.PRIMER_APELLIDO,' ')||' ' ||NVL(EMP.SEGUNDO_APELLIDO,' ')||' '  ||EMP.NOMBRE_EMPLEADO NOMBRE_EMPLEADO, DC.COM_TEL_PART TELEFONO, DC.COM_CEL_PART CELULAR, DC.COM_EMAIL_PART EMAIL, DC.ID_TIPO_SANGRE TIPO_SANGRE, G.DESC_GENERO GENERO, DC.COM_ES_PADRE_MADRE PADRE_MADRE, EC.DESC_EDO_CIVIL ESTADO_CIVIL, DIS.DESC_DISCAPACIDAD DISCAPACIDAD, DC.COM_NUM_RUSP RUSP, DC.COM_NUM_SEG_SOC NSS, IDI.DESC_IDIOMA IDIOMA, DOM.DESC_DOMINIO_IDIOMA DOMINIO_IDIOMA, IPC.DESC_INST_PROT_CIV INSTITUCION_PROT_CIVIL, EPC.DESC_ESP_PROT_CIVIL AS ESPECIALIDAD_PROT_CIVIL,
+PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM TD_EXP_DATOS_COMPLEMENTARIOS DC, TC_GENERO G, TC_ESTADO_CIVIL EC, TC_TIPO_DISCAPACIDAD DIS, TC_IDIOMA IDI, TC_DOMINIO_IDIOMA DOM, TC_INST_PROT_CIV IPC, TC_ESP_PROT_CIVIL EPC, TD_EMPLEADO EMP, TD_PLAZA PZA
+WHERE DC.ID_EDO_CIVIL = EC.ID_EDO_CIVIL(+)
+  AND DC.ID_GENERO = G.ID_GENERO(+)
+  AND DC.ID_DISCAPACIDAD = DIS.ID_DISCAPACIDAD(+)
+  AND DC.ID_IDIOMA = IDI.ID_IDIOMA(+)
+  AND DC.ID_DOMINIO_IDIOMA = DOM.ID_DOMINIO_IDIOMA(+)
+  AND DC.ID_INST_PROT_CIV = IPC.ID_INST_PROT_CIV(+)
+  AND DC.ID_ESP_PROT_CIVIL = EPC.ID_ESP_PROT_CIVIL(+)
+  AND ((DC.RFC_EMPLEADO = $P{RFC} AND $P{UNI} IS NULL) OR
+       ($P{RFC} IS NULL AND PZA.ID_UNIDAD_NOM = $P{UNI}) OR
+	   (DC.RFC_EMPLEADO = $P{RFC} AND PZA.ID_UNIDAD_NOM = $P{UNI}))
+  AND DC.RFC_EMPLEADO     = EMP.RFC_EMPLEADO
+  AND DC.RFC_EMPLEADO     = PZA.PLAZA_RFC
+ORDER BY DC.RFC_EMPLEADO]]>
+	</queryString>
+	<field name="UNIDAD" class="java.lang.String"/>
+	<field name="RFC_EMPLEADO" class="java.lang.String"/>
+	<field name="NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<field name="TELEFONO" class="java.lang.String"/>
+	<field name="CELULAR" class="java.lang.String"/>
+	<field name="EMAIL" class="java.lang.String"/>
+	<field name="TIPO_SANGRE" class="java.lang.String"/>
+	<field name="GENERO" class="java.lang.String"/>
+	<field name="PADRE_MADRE" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="DISCAPACIDAD" class="java.lang.String"/>
+	<field name="RUSP" class="java.math.BigDecimal"/>
+	<field name="NSS" class="java.lang.String"/>
+	<field name="IDIOMA" class="java.lang.String"/>
+	<field name="DOMINIO_IDIOMA" class="java.lang.String"/>
+	<field name="INSTITUCION_PROT_CIVIL" class="java.lang.String"/>
+	<field name="ESPECIALIDAD_PROT_CIVIL" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="500" y="10" width="239" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="500" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="173" y="9" width="317" height="31"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS COMPLEMENTARIOS]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="36" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="143" y="3" width="38" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="56" y="3" width="69" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RFC empleado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="3" width="32" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="335" y="3" width="58" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Teléfono]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="474" y="3" width="51" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[E mail]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="643" y="3" width="56" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo sangre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="35" y="14" width="32" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Género]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="14" width="63" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Padre/Madre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="166" y="14" width="63" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Estado civil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="247" y="14" width="63" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Discapacidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="340" y="14" width="63" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RUSP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="427" y="14" width="73" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Número Seg Soc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="516" y="14" width="73" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Idioma]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="610" y="14" width="73" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Idioma Dominio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="34" y="25" width="184" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Institución Proteccción Civil]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="276" y="25" width="184" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Especialidad Proteccción Civil]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="37" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="36" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField>
+				<reportElement x="52" y="1" width="73" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RFC_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="137" y="1" width="190" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="18" y="1" width="26" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="333" y="1" width="55" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TELEFONO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="401" y="1" width="65" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CELULAR}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="474" y="1" width="150" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{EMAIL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="664" y="1" width="31" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO_SANGRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="27" y="12" width="57" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{GENERO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="108" y="12" width="43" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PADRE_MADRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="170" y="12" width="48" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTADO_CIVIL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="244" y="12" width="83" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DISCAPACIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="336" y="12" width="83" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{RUSP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="426" y="12" width="83" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NSS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="515" y="12" width="83" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IDIOMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="610" y="12" width="83" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMINIO_IDIOMA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="27" y="24" width="233" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INSTITUCION_PROT_CIVIL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="273" y="24" width="236" height="11"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESPECIALIDAD_PROT_CIVIL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="28" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="600" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

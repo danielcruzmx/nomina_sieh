@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                <!-- Proceso - Ordinaria/Terceros - Existe error -->
+                <prop key="marcaRevisadoExisteError">
+                    UPDATE 
+                        TD_CXLC_ERROR 
+                    SET 
+                        CE_REVISADO = 1
+                    WHERE 
+                        CE_CICLO = ?
+                    AND CE_QNA_PAGO = ?
+                    AND ID_TIPO_NOMINA = ?
+                    AND CE_COMPLEMENTO = ?
+                    AND CE_REVISADO = 0
+                </prop>
+                
+                <!-- Proceso - Terceros - Guias contables -->
+                <prop key="guiaContableByTipoNominaTerceros">
+                    SELECT 
+                        TN.GUIA_CONTABLE_CLC 
+                    FROM 
+                        TC_TIPO_NOMINA TN 
+                    WHERE 
+                        TN.TIPO_CLC = 'TERCEROS' 
+                    AND TN.ID_TIPO_NOMINA = :idTipoNomina
+                </prop>
+                
+                <!-- Proceso - Terceros - Existe CLC -->
+                <prop key="existeCLCProcesadaTerceros">
+                    SELECT * 
+                    FROM 
+                        TD_CXLC C 
+                    WHERE
+                        C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA = :idTipoNomina
+                    AND C.CXLC_COMPLEMENTO = :cxlcComplemento
+                </prop>
+                
+                <!-- Proceso - Patronales - Guias contables -->
+                <prop key="guiaContableByTipoNominaTerceros">
+                    SELECT 
+                        TN.GUIA_CONTABLE_CLC 
+                    FROM 
+                        TC_TIPO_NOMINA TN 
+                    WHERE 
+                        TN.TIPO_CLC = 'TERCEROS' 
+                    AND TN.ID_TIPO_NOMINA = :idTipoNomina
+                </prop>
+                
+                <!-- Proceso - Terceros - Obtiene numero clc terceros -->
+                <prop key="numeroClcTerceros_FONAC">
+                    SELECT 
+                        S.SEC_CXLC_TERCEROS
+                    FROM 
+                        TD_CXLC C, TD_SEC_CXLC S 
+                    WHERE 
+                        S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                    AND C.CXLC_SITUACION = 'D' 
+                    AND C.CXLC <![CDATA[<]]> 20000 
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                    AND S.SEC_GUIA_CONTABLE_EJER IN (2278,2218) 
+                    AND S.ID_SINDICATO IN (0,1) 
+                    AND C.CXLC = S.CXLC 
+                    AND C.CXLC IN (:cxlcTerceros)
+                    GROUP BY S.SEC_CXLC_TERCEROS
+                </prop>
+                <prop key="numeroClcTerceros_SINDICATO">
+                    SELECT 
+                        S.SEC_CXLC_TERCEROS
+                    FROM 
+                        TD_CXLC C, TD_SEC_CXLC S 
+                    WHERE 
+                        S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB')
+                    AND C.CXLC_SITUACION = 'D' 
+                    AND C.CXLC <![CDATA[<]]> 20000 
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                    AND S.SEC_GUIA_CONTABLE_EJER IN (2218) 
+                    AND S.ID_SINDICATO IN (3) 
+                    AND C.CXLC = S.CXLC 
+                    AND C.CXLC IN (:cxlcTerceros)
+                    GROUP BY S.SEC_CXLC_TERCEROS
+                </prop>
+                <prop key="numeroClcTerceros_CAJA_DE_AHORRO_SINDICAL">
+                    SELECT 
+                        S.SEC_CXLC_TERCEROS
+                    FROM 
+                        TD_CXLC C, TD_SEC_CXLC S 
+                    WHERE 
+                        S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                    AND C.CXLC_SITUACION = 'D' 
+                    AND C.CXLC <![CDATA[<]]> 20000 
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                    AND S.SEC_GUIA_CONTABLE_EJER IN (2297)
+                    AND C.CXLC = S.CXLC 
+                    AND C.CXLC IN (:cxlcTerceros)
+                    GROUP BY S.SEC_CXLC_TERCEROS
+                </prop>
+                <prop key="numeroClcTerceros_FSTSE">
+                    SELECT 
+                        S.SEC_CXLC_TERCEROS
+                    FROM 
+                        TD_CXLC C, TD_SEC_CXLC S 
+                    WHERE 
+                        S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                    AND C.CXLC_SITUACION = 'D' 
+                    AND C.CXLC <![CDATA[<]]> 20000 
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                    AND S.SEC_GUIA_CONTABLE_EJER IN (2218) 
+                    AND S.ID_SINDICATO IN (0,2) 
+                    AND C.CXLC = S.CXLC 
+                    AND C.CXLC IN (:cxlcTerceros)
+                    GROUP BY S.SEC_CXLC_TERCEROS
+                </prop>
+                <prop key="numeroClcTerceros_PENSION_ALIMENTICIA">
+                    SELECT 
+                        S.SEC_CXLC_TERCEROS
+                    FROM 
+                        TD_CXLC C, TD_SEC_CXLC S 
+                    WHERE 
+                        S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA IN ('GG')
+                    AND C.CXLC_SITUACION = 'D' 
+                    AND C.CXLC <![CDATA[<]]> 20000 
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                    AND S.SEC_GUIA_CONTABLE_EJER IN (2219) 
+                    AND C.CXLC = S.CXLC 
+                    AND C.CXLC IN (:cxlcTerceros)
+                    GROUP BY S.SEC_CXLC_TERCEROS
+                </prop>
+                <prop key="numeroClcTerceros_IMPUESTOS">
+                    SELECT 
+                        S.SEC_CXLC_TERCEROS
+                    FROM 
+                        TD_CXLC C, TD_SEC_CXLC S 
+                    WHERE 
+                        S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA IN ('GG')
+                    AND C.CXLC_SITUACION = 'D' 
+                    AND C.CXLC <![CDATA[<]]> 20000 
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                    AND S.SEC_GUIA_CONTABLE_EJER IN (2202, 2226) 
+                    AND C.CXLC = S.CXLC 
+                    AND C.CXLC IN (:cxlcTerceros)
+                    GROUP BY S.SEC_CXLC_TERCEROS
+                </prop>
+                <prop key="numeroClcTerceros_OTROS">                    
+                    SELECT 
+                        S.SEC_CXLC_TERCEROS
+                    FROM 
+                        TD_CXLC C, TD_SEC_CXLC S 
+                    WHERE 
+                        S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    --AND C.CXLC_QNA_PAGO = :cxlcQnaPago
+                    AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                    AND C.CXLC_SITUACION = 'D' 
+                    AND C.CXLC <![CDATA[<]]> 20000 
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                    AND S.SEC_GUIA_CONTABLE_EJER IN (2297)
+                    AND C.CXLC = S.CXLC 
+                    AND C.CXLC IN (:cxlcTerceros)
+                    GROUP BY S.SEC_CXLC_TERCEROS
+                </prop>
+                
+                
+                <!-- Herramientas - Registra compromiso - CLC Comprometidas -->
+                <prop key="cxlcComprometidas">
+                    SELECT *
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_COMPROMISO IN (:cxlcCompromiso)
+                    ORDER BY C.CXLC ASC
+                </prop>
+                
+                <!-- Herramientas - Registra compromiso - Existe compromiso -->
+                <prop key="existeCompromiso">
+                    SELECT *
+                    FROM 
+                        TD_SEC_CXLC S
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :secCxlcCiclo
+                    AND S.SEC_COMPROMISO = :secCompromiso
+                </prop>
+                
+                <!-- Herramientas - Registra compromiso - Existe devengado -->
+                <prop key="existeDevengado">
+                    SELECT *
+                    FROM 
+                        TD_SEC_CXLC S
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :secCxlcCiclo
+                    AND S.SEC_DEVENGADO = :secDevengado
+                </prop>
+                
+                <!-- Herramientas - Registra compromiso - CLC Involucradas -->
+                <prop key="updateCxlcInvolucradas">
+                    UPDATE 
+                        TD_SEC_CXLC S
+                    SET
+                        S.SEC_COMPROMISO = :cxlcCompromiso,
+                        S.USUARIO = :usuario,
+                        S.FEC_MODIFICO = SYSDATE,
+                        S.SEC_QNA_APLI = :secQnaApli
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :cxlcCiclo
+                    AND S.CXLC IN (:cxlcInvolucradas)
+                </prop>
+                
+                <!-- Herramientas - Registra solicitud pago - CLC Comprometidas -->
+                <prop key="cxlcComprometidasSolPago">
+                    SELECT *
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC_COMPROMISO IN (:cxlcCompromiso)
+                    ORDER BY C.CXLC ASC
+                </prop>
+                
+                <!-- Herramientas - Registra solicitud pago - CLC Involucradas -->
+                <prop key="updateCxlcInvolucradasSolPago">
+                    UPDATE 
+                        TD_SEC_CXLC S
+                    SET
+                        S.SEC_DEVENGADO = :cxlcDevengado,
+                        S.USUARIO = :usuario,
+                        S.FEC_MODIFICO = SYSDATE
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :cxlcCiclo
+                    AND S.CXLC IN (:cxlcInvolucradas)
+                </prop>
+                
+                <!-- Herramientas - Registra clc -->
+                <prop key="updateRegistraCLC">
+                    UPDATE 
+                        TD_SEC_CXLC S
+                    SET
+                        S.SEC_CXLC_SIAFF = :cxlcSIAFF,
+                        S.USUARIO = :usuario,
+                        S.FEC_MODIFICO = SYSDATE
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :cxlcCiclo
+                    AND S.CXLC = :cxlc
+                </prop>
+                
+                <!-- Herramientas - Concilia clc -->
+                <prop key="updateCxlcConciliar">
+                    UPDATE 
+                        TD_CXLC C
+                    SET
+                        C.CXLC_CONCILIA_SICOP = :cxlcConciliacionSicop,
+                        C.USUARIO = :usuario,
+                        C.FEC_MODIFICO = SYSDATE
+                    WHERE 
+                        C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC IN (:cxlcConciliar)
+                </prop>
+                
+                
+                <prop key="nominasValidasBenefComodin">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE
+                        TN.TIPO_NOM_CXLC IS NOT NULL
+                    AND LENGTH(TN.TIPO_NOM_CXLC) <![CDATA[>]]> 1
+                    GROUP BY TN.ID_TIPO_NOMINA
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                
+                <!-- Interfaz - Solicitud de compromiso -->
+                <prop key="cxlcCompromisoActual">
+                    SELECT 
+                        C.CXLC_COMPROMISO,
+                        C.CXLC_COMPLEMENTO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                         C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC IN (:cxlc)
+                    GROUP BY C.CXLC_COMPROMISO, C.CXLC_COMPLEMENTO
+                </prop>
+                <prop key="maxCxlcCompromiso">
+                    SELECT 
+                        NVL(MAX(CXLC_COMPROMISO), 0) + 1 AS CXLC_COMPROMISO
+                    FROM 
+                        TD_CXLC
+                    WHERE 
+                        CXLC_CICLO = :cxlcCiclo
+                </prop>
+                <prop key="maxCxlcDevengado">
+                    SELECT 
+                        NVL(MAX(CXLC_DEVENGADO), 0) + 1 AS CXLC_DEVENGADO
+                    FROM 
+                        TD_CXLC
+                    WHERE 
+                        CXLC_CICLO = :cxlcCiclo
+                </prop>
+                <prop key="detalleSolicitudCompromiso">
+                    SELECT
+                        S.SEC_CXLC_CICLO,
+                        S.ID_UNIDAD,
+                        S.ID_FUNCION,
+                        S.ID_UNIDAD_EJECUTO,
+                        S.ID_PROGRAMA,
+                        S.ID_ACT_INSTI,
+                        S.ID_ACT_PRIORITA,
+                        S.ID_PARTIDA,
+                        S.ID_TIPO_GASTO,
+                        S.ID_FUENTE_FINAN,
+                        '1' AS LINEA_GLO,
+                        '10' AS SUB_LINA_GLO,
+                        S.ID_UNIDAD AS UR,
+                        S.ID_EDO,
+                        S.ID_ACT_INSTI_ESP,
+                        '00000000000' AS PROGRAMA,
+                        SUM(S.SEC_MONTO) AS MONTO    
+                    FROM 
+                        TD_SEC_CXLC S
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :secCxlcCiclo
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> '2489'
+                    AND S.ID_PARTIDA <![CDATA[<>]]> '0000'
+                    AND S.CXLC IN (:secCxlc)
+                    GROUP BY 
+                        S.SEC_CXLC_CICLO, 
+                        S.ID_UNIDAD, 
+                        S.ID_FUNCION, 
+                        S.ID_UNIDAD_EJECUTO, 
+                        S.ID_PROGRAMA, 
+                        S.ID_ACT_INSTI,
+                        S.ID_ACT_PRIORITA,
+                        S.ID_PARTIDA,
+                        S.ID_TIPO_GASTO,
+                        S.ID_FUENTE_FINAN,
+                        S.ID_EDO,
+                        S.ID_ACT_INSTI_ESP
+                    ORDER BY S.ID_UNIDAD, S.ID_EDO, S.ID_PARTIDA
+                </prop>
+                <prop key="updateCxlcComprometer">
+                    UPDATE 
+                        TD_CXLC C
+                    SET
+                        C.CXLC_COMPROMISO = :cxlcCompromiso,
+                        C.USUARIO = :usuario,
+                        C.FEC_MODIFICO = SYSDATE
+                    WHERE 
+                        C.CXLC_CICLO = :cxlcCiclo
+                    AND C.CXLC IN (:cxlcComprometer)
+                </prop>
+                
+                <!-- Interfaz - Solicitud de pago -->
+                <prop key="detalleSolicitudPago">
+                    SELECT
+                        S.SEC_CXLC_CICLO,
+                        S.ID_UNIDAD,
+                        S.ID_FUNCION,
+                        S.ID_UNIDAD_EJECUTO,
+                        S.ID_PROGRAMA,
+                        S.ID_ACT_INSTI,
+                        S.ID_ACT_PRIORITA,
+                        S.ID_PARTIDA,
+                        S.ID_TIPO_GASTO,
+                        S.ID_FUENTE_FINAN,
+                        S.ID_UNIDAD AS UR,
+                        S.ID_EDO,
+                        S.ID_ACT_INSTI_ESP,
+                        SUM(S.SEC_MONTO) AS MONTO,
+                        S.SEC_COMPROMISO,
+                        S.SEC_TIPO_CPTO,
+                        S.SEC_CPTO_MOVTO
+                    FROM 
+                        TD_SEC_CXLC S
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :secCxlcCiclo
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> '2489'
+                    AND S.ID_PARTIDA <![CDATA[<>]]> '0000'
+                    AND S.CXLC IN (:secCxlc)
+                    GROUP BY 
+                        S.SEC_CXLC_CICLO, 
+                        S.ID_UNIDAD, 
+                        S.ID_FUNCION, 
+                        S.ID_UNIDAD_EJECUTO, 
+                        S.ID_PROGRAMA, 
+                        S.ID_ACT_INSTI,
+                        S.ID_ACT_PRIORITA,
+                        S.ID_PARTIDA,
+                        S.ID_TIPO_GASTO,
+                        S.ID_FUENTE_FINAN,
+                        S.ID_EDO,
+                        S.ID_ACT_INSTI_ESP,
+                        S.SEC_COMPROMISO,
+                        S.SEC_TIPO_CPTO,
+                        S.SEC_CPTO_MOVTO
+                    ORDER BY S.ID_UNIDAD, S.ID_EDO, S.ID_PARTIDA
+                </prop>
+                
+                <!-- Interfaz - Solicitud de pago - CLC Involucradas -->
+                <prop key="cxlcInvolucradasSolicitudPagoList">                    
+                    SELECT 
+                        C.CXLC_CICLO,
+                        C.CXLC,
+                        C.CXLC_QNA_PAGO,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        C.CXLC_DEVENGADO
+                    FROM 
+                        TD_CXLC C, TC_TIPO_NOMINA TN, TD_SEC_CXLC S
+                    WHERE
+                        C.CXLC = S.CXLC
+                    AND S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                    AND C.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND C.CXLC_COMPROMISO <![CDATA[>]]> 0
+                    AND (C.CXLC_DEVENGADO IS NULL OR C.CXLC_DEVENGADO = '')               
+                    AND (S.SEC_COMPROMISO IS NOT NULL OR S.SEC_COMPROMISO != '')
+                    AND (S.SEC_DEVENGADO IS NULL OR S.SEC_DEVENGADO = '')
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND S.SEC_COMPROMISO IN(:secCompromiso)
+                    GROUP BY 
+                        C.CXLC_CICLO,
+                        C.CXLC,
+                        C.CXLC_QNA_PAGO,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        C.CXLC_DEVENGADO
+                </prop>
+                
+                <!-- Interfaz - Solicitud de clc -->
+                <prop key="detalleSolicitudCLC">
+                    SELECT
+                        S.CXLC,
+                        S.SEC_CXLC_CICLO,
+                        S.ID_UNIDAD,
+                        S.ID_FUNCION,
+                        S.ID_UNIDAD_EJECUTO,
+                        S.ID_PROGRAMA,
+                        S.ID_ACT_INSTI,
+                        S.ID_ACT_PRIORITA,
+                        S.ID_PARTIDA,
+                        S.ID_TIPO_GASTO,
+                        S.ID_FUENTE_FINAN,
+                        S.ID_UNIDAD AS UR,
+                        S.ID_EDO,
+                        S.ID_ACT_INSTI_ESP,
+                        SUM(S.SEC_MONTO) AS MONTO,
+                        S.SEC_COMPROMISO,
+                        S.SEC_TIPO_CPTO,
+                        S.SEC_CPTO_MOVTO,
+                        S.SEC_DEVENGADO,
+                        C.CXLC_DEVENGADO
+                    FROM 
+                        TD_SEC_CXLC S, TD_CXLC C
+                    WHERE 
+                        S.SEC_CXLC_CICLO = :secCxlcCiclo
+                    AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> '2489'
+                    AND S.ID_PARTIDA <![CDATA[<>]]> '0000'
+                    AND S.CXLC IN (:secCxlc)
+                    AND C.CXLC_CICLO = :cxlcCiclo
+                    AND S.CXLC = C.CXLC
+                    GROUP BY 
+                        S.CXLC,
+                        S.SEC_CXLC_CICLO, 
+                        S.ID_UNIDAD, 
+                        S.ID_FUNCION, 
+                        S.ID_UNIDAD_EJECUTO, 
+                        S.ID_PROGRAMA, 
+                        S.ID_ACT_INSTI,
+                        S.ID_ACT_PRIORITA,
+                        S.ID_PARTIDA,
+                        S.ID_TIPO_GASTO,
+                        S.ID_FUENTE_FINAN,
+                        S.ID_EDO,
+                        S.ID_ACT_INSTI_ESP,
+                        S.SEC_COMPROMISO,
+                        S.SEC_TIPO_CPTO,
+                        S.SEC_CPTO_MOVTO,
+                        S.SEC_DEVENGADO,
+                        C.CXLC_DEVENGADO
+                    ORDER BY S.ID_UNIDAD, S.ID_EDO, S.ID_PARTIDA
+                </prop>
+                
+                
+                <!-- Consultas - Registro CLC -->
+                <prop key="consultasRegistraTdCxlc">
+                    SELECT
+                        C.CXLC_CICLO, 
+                        C.CXLC, 
+                        C.ID_TIPO_NOMINA, 
+                        C.CXLC_QNA_PAGO, 
+                        C.CXLC_COMPLEMENTO, 
+                        C.CXLC_MONTO, 
+                        C.CXLC_SITUACION,
+                        C.CXLC_RECTIFICA, 
+                        C.CXLC_TIPO_PROCESO, 
+                        C.CXLC_MAESTRO_PTO, 
+                        C.CXLC_CONCILIA_SICOP, 
+                        C.CXLC_NOTA, 
+                        C.CXLC_COMPROMISO,
+                        C.CXLC_DEVENGADO, 
+                        C.CXLC_SIAFF, 
+                        C.CXLC_IVA, 
+                        C.CXLC_PARAMETROS, 
+                        C.CXLC_ORIGEN, 
+                        C.NOMINA_ORIGEN, 
+                        C.USUARIO, 
+                        C.FEC_MODIFICO
+                    FROM 
+                        TD_CXLC C 
+                    WHERE
+                        C.CXLC_CICLO =  NVL(:cxlcCiclo, C.CXLC_CICLO)
+                    AND C.CXLC_QNA_PAGO = NVL(:cxlcQnaPago, C.CXLC_QNA_PAGO)
+                    AND C.ID_TIPO_NOMINA = NVL(:idTipoNomina, C.ID_TIPO_NOMINA)
+                    AND C.CXLC_COMPLEMENTO = NVL(:cxlcComplemento, C.CXLC_COMPLEMENTO)
+                    AND C.CXLC = NVL(:cxlc, C.CXLC)
+                    ORDER BY 1,2,4,3
+                </prop>
+                <prop key="consultasRegistraTdSecCxlc">
+                    SELECT
+                        S.SEC_CXLC_CICLO, 
+                        S.CXLC, 
+                        S.SEC_CXLC, 
+                        S.ID_UNIDAD, 
+                        S.ID_UNIDAD_EJECUTO, 
+                        S.ID_EDO, 
+                        S.ID_FUNCION,
+                        S.ID_PROGRAMA, 
+                        S.ID_ACT_INSTI, 
+                        S.ID_ACT_PRIORITA, 
+                        S.ID_ACT_INSTI_ESP, 
+                        S.ID_PARTIDA, 
+                        S.ID_TIPO_GASTO,
+                        S.ID_FUENTE_FINAN, 
+                        S.SEC_GUIA_CONTABLE_EJER, 
+                        S.SEC_MONTO, 
+                        S.SEC_CLAVE_MOV, 
+                        S.ID_SINDICATO,
+                        S.SEC_FEC_EXTRA_SICOP, 
+                        S.SEC_CXLC_TERCEROS, 
+                        S.SEC_TERCEROS, 
+                        S.ID_GRUPOPAGO, 
+                        S.SEC_CTA_CLABE,
+                        S.SEC_COMPROMISO, 
+                        S.SEC_DEVENGADO, 
+                        S.SEC_CXLC_SIAFF, 
+                        S.SEC_SIAFF, 
+                        S.SEC_QNA_APLI, 
+                        S.SEC_TIPO_CPTO,
+                        S.SEC_CPTO_MOVTO, 
+                        S.USUARIO, 
+                        S.FEC_MODIFICO
+                    FROM 
+                        TD_SEC_CXLC S
+                    WHERE
+                        S.SEC_CXLC_CICLO = :secCxlcCiclo
+                    AND S.CXLC = :cxlc
+                    ORDER BY 1,2,3,4
+                </prop>
+                
+                <!-- Manuales - Captura -->
+                <prop key="getMaxCxlcManuales">
+                    SELECT 
+                        NVL(MAX(CXLC), 4999) + 1 AS CXLC
+                    FROM 
+                        TD_CXLC
+                    WHERE 
+                        CXLC_CICLO = :cxlcCiclo
+                    AND CXLC <![CDATA[>=]]> 5000 AND CXLC <![CDATA[<]]> 6000
+                </prop>
+                <prop key="getMaxSecCxlcManuales">
+                    SELECT 
+                        NVL(MAX(SEC_CXLC), 0) + 1 AS SEC_CXLC
+                    FROM 
+                        TD_SEC_CXLC
+                    WHERE 
+                        SEC_CXLC_CICLO = :cxlcCiclo
+                </prop>
+                
+                <!-- Manuales - Archivo -->
+                <prop key="getSecCxlcManualArchivo">
+                    SELECT 
+                        P.ID_UNIDAD, 
+                        P.ID_UNIDAD_EJECUTO,
+                        U.ID_EDO, 
+                        P.ID_FUNCION, 
+                        P.ID_PROGRAMA, 
+                        P.ID_ACT_INSTI, 
+                        P.ID_ACT_PRIORITA, 
+                        P.ID_ACT_INSTI_ESP,
+                        P.ID_PARTIDA, 
+                        P.ID_TIPO_GASTO, 
+                        P.ID_FUENTE_FINAN
+                    FROM
+                        TC_UNIDAD_EDO U, TD_PRESUPUESTO P
+                    WHERE 
+                        U.UNI_EDO_CICLO = :ciclo
+                    AND P.PTO_CICLO = U.UNI_EDO_CICLO
+                    AND P.ID_UNIDAD = :unidad
+                    AND P.ID_UNIDAD = U.ID_UNIDAD
+                    AND P.ID_PARTIDA = :partida
+                    AND U.ID_EDO = :estado
+                    ORDER BY 1,2,3
+                </prop>
+                <prop key="getListaUnidades">
+                    SELECT *
+                    FROM 
+                        TC_UNIDAD_EDO
+                    WHERE 
+                        UNI_EDO_CICLO = :ciclo
+                    ORDER BY ID_UNIDAD ASC
+                </prop>
+                <prop key="getListaEstados">
+                    SELECT *
+                    FROM 
+                        TC_UNIDAD_EDO
+                    WHERE 
+                        UNI_EDO_CICLO = :ciclo
+                    AND ID_UNIDAD = :unidad
+                    ORDER BY ID_EDO ASC
+                </prop>
+                
+                <!-- Terceros - Patronales -->
+                <prop key="getClcPatronalReproceso">
+                    SELECT * 
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = :ciclo
+                    AND C.CXLC_QNA_PAGO = :qnaPago
+                    AND C.ID_TIPO_NOMINA = :tipoNomina
+                    AND C.CXLC_COMPLEMENTO = :complemento
+                    AND C.CXLC <![CDATA[<]]> 5000
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

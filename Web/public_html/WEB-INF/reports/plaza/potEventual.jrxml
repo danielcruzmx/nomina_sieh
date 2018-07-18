@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="POT Eventual" pageWidth="1584" pageHeight="576" columnWidth="1528" leftMargin="36" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select distinct h.ID_UNIDAD_NOM, h.ID_PLAZA nip, h.HP_RFC
+           ,e.NOMBRE_EMPLEADO, e.PRIMER_APELLIDO, e.SEGUNDO_APELLIDO
+           ,' ' vacante,
+decode(p.PLAZA_TEL_OF1,null,'NA',p.PLAZA_TEL_OF1) PLAZA_TEL_OF1,  decode(p.PLAZA_CONMUT,null,'S/N',p.PLAZA_CONMUT) PLAZA_CONMUT,
+decode(p.PLAZA_EXT1,null,'S/N',p.PLAZA_EXT1) PLAZA_EXT1,
+decode(e.E_MAIL_OFICIAL,null,'NA',e.E_MAIL_OFICIAL) E_MAIL_OFICIAL,
+ p.ID_INMUEBLE
+           , h.ID_PUESTO_NOM, h.ID_PLAZA id_cargo
+           , ' ' id_cargo_jefe,
+           case when a.ID_NIVEL_PTO like 'G%' then '1'
+                     when a.ID_NIVEL_PTO like 'H%' then '2'
+                     when a.ID_NIVEL_PTO like 'I%' then '3'
+                     when a.ID_NIVEL_PTO like 'J%' then '4'
+                     when a.ID_NIVEL_PTO like 'K%' then '5'
+                     when a.ID_NIVEL_PTO like 'L%' then '6'
+                     when a.ID_NIVEL_PTO like 'M%' then '7'
+                     when a.ID_NIVEL_PTO like 'N%' then '8'
+                     when a.ID_NIVEL_PTO like 'O%' then '9'
+                     when a.ID_NIVEL_PTO like 'P%' then '10'
+           end case
+
+from TN_HISTORICO_PAGO h
+    , TC_ATRIBUTO_PUESTO a
+    , TD_EMPLEADO e
+    , TD_PLAZA p
+--    , TD_ESCENARIO s
+where
+h.HP_QNA_PAGO=($P{PAR_MES})
+and h.HP_NUM_COMPLEM in ( '10')
+and h.ID_TIPO_NOMINA = 'OR'
+and h.HP_NUM_PENSION = '0'
+and h.ID_SIT_PAGO <> 'C'
+and h.ID_PUESTO_NOM = a.ID_ATRIBUTO_PUESTO
+and a.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+and a.ID_JERARQUIA <> '7'
+and h.ID_GRUPOPAGO_NOM = 'V'
+and h.HP_RFC = e.RFC_EMPLEADO
+and h.ID_PLAZA = p.ID_PLAZA
+--and h.ID_PLAZA = s.plaza_escenario
+--and h.ID_FOLIO not in (6027000)
+order by h.ID_UNIDAD_NOM,h.ID_PLAZA]]>
+	</queryString>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="NIP" class="java.math.BigDecimal"/>
+	<field name="HP_RFC" class="java.lang.String"/>
+	<field name="NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<field name="PRIMER_APELLIDO" class="java.lang.String"/>
+	<field name="SEGUNDO_APELLIDO" class="java.lang.String"/>
+	<field name="VACANTE" class="java.lang.String"/>
+	<field name="PLAZA_TEL_OF1" class="java.lang.String"/>
+	<field name="PLAZA_CONMUT" class="java.lang.String"/>
+	<field name="PLAZA_EXT1" class="java.lang.String"/>
+	<field name="E_MAIL_OFICIAL" class="java.lang.String"/>
+	<field name="ID_INMUEBLE" class="java.math.BigDecimal"/>
+	<field name="ID_PUESTO_NOM" class="java.lang.String"/>
+	<field name="ID_CARGO" class="java.math.BigDecimal"/>
+	<field name="ID_CARGO_JEFE" class="java.lang.String"/>
+	<field name="CASE" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="49" height="13"/>
+				<textElement/>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="49" y="0" width="100" height="13"/>
+				<textElement/>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="149" y="0" width="49" height="13"/>
+				<textElement/>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="198" y="0" width="163" height="13"/>
+				<textElement/>
+				<text><![CDATA[Nombre(s)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="361" y="0" width="177" height="13"/>
+				<textElement/>
+				<text><![CDATA[Primer Apellido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="538" y="0" width="189" height="13"/>
+				<textElement/>
+				<text><![CDATA[Segundo Apellido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="727" y="0" width="24" height="13"/>
+				<textElement/>
+				<text><![CDATA[Vac]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="751" y="0" width="83" height="13"/>
+				<textElement/>
+				<text><![CDATA[Teléfono]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="834" y="0" width="78" height="13"/>
+				<textElement/>
+				<text><![CDATA[Conmutador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="912" y="0" width="72" height="13"/>
+				<textElement/>
+				<text><![CDATA[Extensión]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="984" y="0" width="267" height="13"/>
+				<textElement/>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1251" y="0" width="31" height="13"/>
+				<textElement/>
+				<text><![CDATA[Dom]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1282" y="0" width="66" height="13"/>
+				<textElement/>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1348" y="0" width="42" height="13"/>
+				<textElement/>
+				<text><![CDATA[Cargo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1390" y="0" width="55" height="13"/>
+				<textElement/>
+				<text><![CDATA[Superior]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1445" y="0" width="33" height="13"/>
+				<textElement/>
+				<text><![CDATA[Nivel]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="49" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="49" y="0" width="100" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{HP_RFC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="149" y="0" width="49" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{NIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="198" y="0" width="163" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="361" y="0" width="177" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PRIMER_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="538" y="0" width="189" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{SEGUNDO_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="727" y="0" width="24" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{VACANTE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="751" y="0" width="83" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PLAZA_TEL_OF1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="834" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PLAZA_CONMUT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="912" y="0" width="72" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PLAZA_EXT1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1251" y="0" width="31" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_INMUEBLE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1282" y="0" width="66" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{ID_PUESTO_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1348" y="0" width="42" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_CARGO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="1445" y="0" width="33" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CASE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="984" y="0" width="267" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{E_MAIL_OFICIAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

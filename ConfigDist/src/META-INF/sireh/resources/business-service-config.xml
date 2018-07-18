@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:rules="http://www.fsn.shcp.gob/schema/rules"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/rules classpath:/gob/shcp/fsn/rules/service/Rules.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    
+    <!-- BUSINESS SERVICE DEFINITIONS - ANUNCIO -->
+    <bean id="gob.shcp.sireh.service.anuncio.AnuncioService" 
+          class="gob.shcp.sireh.service.anuncio.AnuncioBS" 
+          lazy-init="true" 
+          s:jndiName="Anuncio"/>
+
+    <!-- BUSINESS SERVICE DEFINITIONS - TRAMITES -->
+    <bean id="gob.shcp.sireh.service.oficinaVirtual.TramitesService"
+          class="gob.shcp.sireh.service.oficinaVirtual.TramitesBS"
+          lazy-init="true"
+          s:jndiName="Tramites"/>
+          
+    <bean id="gob.shcp.sireh.service.consultas.ConsultasService"
+          class="gob.shcp.sireh.service.consultas.ConsultasBS"
+          lazy-init="true"
+          s:jndiName="Consultas"/>
+
+    <!-- BUSINESS SERVICE DEFINITIONS - NOTIFICACIONES -->
+    <bean id="gob.shcp.sireh.service.oficinaVirtual.NotificacionesService" 
+          class="gob.shcp.sireh.service.oficinaVirtual.NotificacionesBS" 
+          lazy-init="true" 
+          s:jndiName="Notificaciones"/>
+          
+    <!-- BUSINESS SERVICE DEFINITIONS - SPC - CAPACITACION Y CERTIFICACION -->
+    <bean id="gob.shcp.sireh.service.spc.capcer.registro.RegistroCursoSPCService" 
+          class="gob.shcp.sireh.service.spc.capcer.registro.RegistroCursoSPCBS" 
+          lazy-init="true" 
+          s:jndiName="RegistroCursoSPC"/>
+    <bean id="gob.shcp.sireh.service.spc.jms.CapcerJMSService" 
+          class="gob.shcp.sireh.service.spc.jms.CapcerJMSBS" 
+          lazy-init="true"
+          s:jndiName="CapcerJMS">
+        <property name="connectionFactory" ref="capcerJmsQueueConnectionFactory"/>
+        <property name="destination" ref="capcerQueue"/>
+    </bean>
+    
+    <!-- BUSINESS SERVICE DEFINITIONS - SPC - CAPACITACION Y CERTIFICACION - SEGUIMIENTO Y CONTROL -->
+    <bean id="gob.shcp.sireh.service.spc.capcer.seguimiento.SeguimientoCursoSPCService" 
+          class="gob.shcp.sireh.service.spc.capcer.seguimiento.SeguimientoCursoSPCBS"
+          lazy-init="true" 
+          s:jndiName="SeguimientoCursoSPC"/>
+    <!-- BUSINESS SERVICE DEFINITIONS - SPC - CAPACITACION Y CERTIFICACION - CONSULTAS -->
+    <bean id="gob.shcp.sireh.service.spc.capcer.consulta.ConsultaSPCService" 
+          class="gob.shcp.sireh.service.spc.capcer.consulta.ConsultaSPCBS"
+          lazy-init="true" 
+          s:jndiName="ConsultaSPC"/>
+    <!-- BUSINESS SERVICE DEFINITIONS - SPC - CAPACITACION Y CERTIFICACION - REPORTE -->
+    <bean id="gob.shcp.sireh.service.spc.capcer.reporte.ReporteSPCService" 
+          class="gob.shcp.sireh.service.spc.capcer.reporte.ReporteSPCBS"
+          lazy-init="true" 
+          s:jndiName="ReporteSPC"/>
+    
+    
+    <!-- BUSINESS SERVICE DEFINITIONS - OFICINA VIRTUAL - EXPEDIENTE PERSONAL -->
+    <bean id="gob.shcp.sireh.service.expediente.ExpedienteService" 
+          class="gob.shcp.sireh.service.expediente.ExpedienteBS" 
+          lazy-init="true" 
+          s:jndiName="Expediente"/>
+    <bean id="gob.shcp.sireh.service.expediente.TestJcrService" 
+          class="gob.shcp.sireh.service.expediente.TestJcrBS" 
+          lazy-init="true"
+          s:jndiName="jcr"/>
+    <!-- BUSINESS SERVICE DEFINITIONS - OFICINA VIRTUAL - GESTION DE EXPEDIENTES -->
+    <bean id="gob.shcp.sireh.service.expediente.GestionExpedientesService" 
+          class="gob.shcp.sireh.service.expediente.GestionExpedientesBS" 
+          lazy-init="true" 
+          s:jndiName="gestionExpedientes"/>
+    <!-- BUSINESS SERVICE DEFINITIONS - OFICINA VIRTUAL - GESTION DE DOCUMENTOS -->
+    <bean id="gob.shcp.sireh.service.expediente.GestionDocumentosService" 
+          class="gob.shcp.sireh.service.expediente.GestionDocumentosBS" 
+          lazy-init="true" 
+          s:jndiName="gestionDocumentos"/>
+    
+    <!-- BUSINESS SERVICE DEFINITIONS - RUSP -->
+    <bean id="gob.shcp.sireh.service.rusp.RuspService" 
+          class="gob.shcp.sireh.service.rusp.RuspBS" 
+          lazy-init="true" 
+          s:jndiName="Rusp"/>
+    
+    <!-- BUSINESS SERVICE DEFINITIONS - PLAZAS -->
+    <bean id="gob.shcp.sireh.service.plaza.gestion.PlazaGestionService" 
+          class="gob.shcp.sireh.service.plaza.gestion.PlazaGestionBS" 
+          lazy-init="true" 
+          s:jndiName="PlazaGestion"/>
+    <bean id="gob.shcp.sireh.service.plaza.estructura.PlazaEstructuraService" 
+          class="gob.shcp.sireh.service.plaza.estructura.PlazaEstructuraBS" 
+          lazy-init="true" 
+          s:jndiName="PlazaEstructura"/>
+    <bean id="gob.shcp.sireh.service.plaza.eventual.PlazaEventualService" 
+          class="gob.shcp.sireh.service.plaza.eventual.PlazaEventualBS" 
+          lazy-init="true" 
+          s:jndiName="PlazaEventual"/>
+    <bean id="gob.shcp.sireh.service.plaza.honorarios.PlazaHonorariosService" 
+          class="gob.shcp.sireh.service.plaza.honorarios.PlazaHonorariosBS" 
+          lazy-init="true" 
+          s:jndiName="PlazaHonorarios"/>
+    
+    
+    <!-- BUSINESS SERVICE DEFINITIONS - CLC -->
+    <bean id="gob.shcp.sireh.service.clc.proceso.ClcOrdinariaService" 
+          class="gob.shcp.sireh.service.clc.proceso.ClcOrdinariaBS" 
+          lazy-init="true" 
+          s:jndiName="ClcOrdinaria"/>
+    <bean id="gob.shcp.sireh.service.clc.proceso.ClcTercerosService" 
+          class="gob.shcp.sireh.service.clc.proceso.ClcTercerosBS" 
+          lazy-init="true" 
+          s:jndiName="ClcTerceros"/>
+    <bean id="gob.shcp.sireh.service.clc.herramientas.ClcHerramientasService" 
+          class="gob.shcp.sireh.service.clc.herramientas.ClcHerramientasBS" 
+          lazy-init="true" 
+          s:jndiName="ClcHerramientas"/>
+    <bean id="gob.shcp.sireh.service.clc.interfaz.SolicitudCompromisoService" 
+          class="gob.shcp.sireh.service.clc.interfaz.SolicitudCompromisoBS" 
+          lazy-init="true" 
+          s:jndiName="SolicitudCompromiso"/>
+    <bean id="gob.shcp.sireh.service.clc.interfaz.SolicitudPagoService" 
+          class="gob.shcp.sireh.service.clc.interfaz.SolicitudPagoBS" 
+          lazy-init="true" 
+          s:jndiName="SolicitudPago"/>
+    <bean id="gob.shcp.sireh.service.clc.interfaz.SolicitudCLCService" 
+          class="gob.shcp.sireh.service.clc.interfaz.SolicitudCLCBS" 
+          lazy-init="true" 
+          s:jndiName="SolicitudCLC"/>
+    <bean id="gob.shcp.sireh.service.clc.consultas.ClcRegistraService" 
+          class="gob.shcp.sireh.service.clc.consultas.ClcRegistraBS" 
+          lazy-init="true" 
+          s:jndiName="ClcRegistra"/>
+    <bean id="gob.shcp.sireh.service.clc.proceso.ClcManualesService" 
+          class="gob.shcp.sireh.service.clc.proceso.ClcManualesBS" 
+          lazy-init="true" 
+          s:jndiName="ClcManuales"/>
+    <bean id="gob.shcp.sireh.service.clc.proceso.ClcPatronalesService" 
+          class="gob.shcp.sireh.service.clc.proceso.ClcPatronalesBS" 
+          lazy-init="true" 
+          s:jndiName="ClcPatronales"/>
+    
+    <!-- BUSINESS SERVICE DEFINITIONS -->      
+    <bean id="gob.shcp.sireh.service.nomina.movimientos.CambioNominaService" 
+          class="gob.shcp.sireh.service.nomina.movimientos.CambioNominaBS" 
+          lazy-init="true" 
+          s:jndiName="CambioNomina"/>
+          
+    <bean id="gob.shcp.sireh.service.nomina.movimientos.MovimientoNominaService" 
+          class="gob.shcp.sireh.service.nomina.movimientos.MovimientoNominaBS" 
+          lazy-init="true" 
+          s:jndiName="MovimientoNomina"/>
+          
+    <bean id="gob.shcp.sireh.service.configuracion.movimiento.MovimientoPersonalService" 
+          class="gob.shcp.sireh.service.configuracion.movimiento.MovimientoPersonalBS" 
+          lazy-init="true" 
+          s:jndiName="MovimientoPersonal"/>      
+    
+    <bean id="gob.shcp.sireh.service.configuracion.movimiento.MovimientoConceptosPagoService" 
+          class="gob.shcp.sireh.service.configuracion.movimiento.MovimientoConceptosPagoBS" 
+          lazy-init="true" 
+          s:jndiName="MovimientoConceptosPago"/>      
+
+    <bean id="gob.shcp.sireh.service.configuracion.movimiento.ConceptoPagoService" 
+          class="gob.shcp.sireh.service.configuracion.movimiento.ConceptoPagoBS" 
+          lazy-init="true" 
+          s:jndiName="ConceptoPago"/>
+          
+    <bean id="gob.shcp.sireh.service.nomina.movimientos.ActualizacionNominaService" 
+          class="gob.shcp.sireh.service.nomina.movimientos.ActualizacionNominaBS" 
+          lazy-init="true"
+          s:jndiName="ActualizacionNomina"/>
+          
+    <bean id="gob.shcp.sireh.service.nomina.calculo.ValesNominaService" 
+          class="gob.shcp.sireh.service.nomina.calculo.ValesNominaBS" 
+          lazy-init="true"
+          s:jndiName="ValesNomina"/>      
+
+    <!-- BUSINESS SERVICE DEFINITIONS - CALCULO NOMINA --> 
+    <rules:stateless id="gob.shcp.sireh.service.nomina.calculo.CalculoNominaService"
+                    class="gob.shcp.sireh.service.nomina.calculo.CalculoNominaBS" 
+                    jndiName="CalculoNomina"/>
+    <rules:stateful id="gob.shcp.sireh.service.nomina.calculo.CalculoNominaExtraService"
+                    class="gob.shcp.sireh.service.nomina.calculo.CalculoNominaExtraBS" 
+                    jndiName="CalculoNominaExtra"/>
+    <rules:stateless id="gob.shcp.sireh.service.nomina.calculo.IncrementoNominaService"
+                    class="gob.shcp.sireh.service.nomina.calculo.IncrementoNominaBS" 
+                    jndiName="IncrementoNomina"/>
+                    
+    <bean id="gob.shcp.sireh.service.nomina.gestion.GestionNominaService" 
+          class="gob.shcp.sireh.service.nomina.gestion.GestionNominaBS" 
+          lazy-init="true"
+          s:jndiName="GestionNomina"/>
+    <bean id="gob.shcp.sireh.service.jms.NominaJMSService" 
+          class="gob.shcp.sireh.service.jms.NominaJMSBS" 
+          lazy-init="true"
+          s:jndiName="NominaJMS">
+        <property name="connectionFactory" ref="jmsQueueConnectionFactory"/>
+        <property name="destination" ref="nominaQueue"/>
+    </bean>
+    
+    
+    <!-- BUSINESS SERVICE DEFINITIONS - TERCEROS -->
+    <bean id="gob.shcp.sireh.service.servicios.ServiciosService" 
+          class="gob.shcp.sireh.service.servicios.ServiciosBS"
+          lazy-init="true"
+          s:jndiName="Servicios"/>
+    
+    <bean id="gob.shcp.sireh.service.nomina.terceros.TercerosNominaService" 
+          class="gob.shcp.sireh.service.nomina.terceros.TercerosNominaBS" 
+          lazy-init="true"
+          s:jndiName="TercerosNomina"/>
+    <bean id="gob.shcp.sireh.service.terceros.TercerosService" 
+          class="gob.shcp.sireh.service.terceros.TercerosBS" 
+          lazy-init="true"
+          s:jndiName="Terceros"/>
+    <bean id="gob.shcp.sireh.service.nomina.terceros.aportaciones.SarFovisssteService" 
+          class="gob.shcp.sireh.service.nomina.terceros.aportaciones.SarFovisssteBS" 
+          lazy-init="true"
+          s:jndiName="SarFovissste"/>   
+    
+    <bean id="gob.shcp.sireh.service.merito.MeritoService" 
+          class="gob.shcp.sireh.service.merito.MeritoBS" 
+          lazy-init="true"
+          s:jndiName="Merito"/>
+
+    <bean id="gob.shcp.sireh.service.configuracion.mantenimiento.MantenimientoPlantillasService" 
+          class="gob.shcp.sireh.service.configuracion.mantenimiento.MantenimientoPlantillasBS" 
+          lazy-init="true"
+          s:jndiName="MantenimientoPlantillas"/>
+          
+    <bean id="gob.shcp.sireh.service.plaza.estructura.masivos.PlazaEstructuraMasivaService" 
+          class="gob.shcp.sireh.service.plaza.estructura.masivos.PlazaEstructuraMasivaBS" 
+          lazy-init="true"
+          s:jndiName="PlazaEstructuraMasiva"/>          
+     
+    <bean id="gob.shcp.sireh.service.plaza.eventual.masivos.PlazaEventualMasivaService" 
+          class="gob.shcp.sireh.service.plaza.eventual.masivos.PlazaEventualMasivaBS" 
+          lazy-init="true"
+          s:jndiName="PlazaEventualMasiva"/> 
+          
+    <bean id="gob.shcp.sireh.service.plaza.honorarios.masivos.PlazaHonorarioMasivaService" 
+          class="gob.shcp.sireh.service.plaza.honorarios.masivos.PlazaHonorarioMasivaBS" 
+          lazy-init="true"
+          s:jndiName="PlazaHonorarioMasiva"/>   
+
+    <bean id="gob.shcp.sireh.service.nomina.reportes.MovimientosNominaService"
+          class="gob.shcp.sireh.service.nomina.reportes.MovimientosNominaBS" 
+          lazy-init="true"
+          s:jndiName="MovimientosNomina"/>          
+          
+    <bean id="gob.shcp.sireh.service.nomina.reportes.ReporteCalculoService"
+          class="gob.shcp.sireh.service.nomina.reportes.ReporteCalculoBS" 
+          lazy-init="true"
+          s:jndiName="ReporteCalculo"/>          
+
+    <bean id="gob.shcp.sireh.service.nomina.terceros.enteros.EnterosNominaService" 
+          class="gob.shcp.sireh.service.nomina.terceros.enteros.EnterosNominaBS" 
+          lazy-init="true"
+          s:jndiName="EnterosNomina"/>
+          
+    <bean id="gob.shcp.sireh.service.clc.interfaz.BeneficiariosCLCService" 
+          class="gob.shcp.sireh.service.clc.interfaz.BeneficiariosCLCBS" 
+          lazy-init="true"
+          s:jndiName="BeneficiariosCLC"/>
+          
+    <!-- BUSINESS SERVICE DEFINITIONS - IMPUESTO ANUAL -->
+    <bean id="gob.shcp.sireh.service.nomina.impuestoAnual.ImpuestoAnualService" 
+          class="gob.shcp.sireh.service.nomina.impuestoAnual.ImpuestoAnualBS" 
+          lazy-init="true"
+          s:jndiName="ImpuestoAnual"/>
+          
+    <!-- BUSINESS SERVICE DEFINITIONS - REPORTE CFDI CANCELADOS -->
+    <bean id="gob.shcp.sireh.service.terceros.sat.ReporteTercerosNominaService" 
+          class="gob.shcp.sireh.service.terceros.sat.ReporteTercerosNominaBS" 
+          lazy-init="true"
+          s:jndiName="ReporteTercerosNomina"/>
+    <bean id="gob.shcp.sireh.service.jms.TimbradoJMSService" 
+          class="gob.shcp.sireh.service.jms.TimbradoJMSBS" 
+          lazy-init="true"
+          s:jndiName="TimbradoJMS">
+        <property name="connectionFactory" ref="timbradoJmsQueueConnectionFactory"/>
+        <property name="destination" ref="timbradoQueue"/>
+    </bean>		  
+	<bean id="gob.shcp.sireh.service.nomina.terceros.timbrado.TimbradoSatService" 
+          class="gob.shcp.sireh.service.nomina.terceros.timbrado.TimbradoSatBS" 
+          lazy-init="true" 
+          s:jndiName="TimbradoSat"/>
+    
+</beans>

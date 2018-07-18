@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                <!--RUSP - Herramientas - Datos empleado-plaza-->
+                <prop key="tdPlaza-datosEmpleadoPlazaRusp">
+                    SELECT P.ID_GRUPO_PAGO, G.DESC_GRUPO_PAGO, P.ID_PLAZA, P.PLAZA_RFC,
+                           E.NOMBRE_EMPLEADO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO,
+                           ES.CODIGO_PUESTO, ES.NOMBRE_PUESTO, P.ID_UNIDAD_NOM, U.DESC_UNIDAD,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN P.ID_PUESTO_PRE ELSE P.ID_PUESTO_NOM END ID_PUESTO,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN PH.DESC_PUESTO ELSE PU.DESC_PUESTO END DESC_PUESTO,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN AH.ID_NIVEL_PTO ELSE A.ID_NIVEL_PTO END ID_NIVEL_PTO,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN AH.ID_JERARQUIA ELSE A.ID_JERARQUIA END ID_JERARQUIA,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN JH.DESC_JERARQUIA ELSE J.DESC_JERARQUIA END DESC_JERARQUIA,
+                           A.ID_NOMBRAMIENTO, N.DESC_NOMBRAMIENTO, P.ID_OBLIGADO,
+                           P.ID_MOTIVO_OBLIGADO, M.DESC_MOTIVO_OBLIGADO,
+                           E.E_MAIL_OFICIAL EMAIL_OFICIAL, E.E_MAIL_PERSONAL EMAIL_PERSONAL, E.INGRESO_GOB_FED FEC_GOBIERNO_FEDERAL, E.INGRESO_DEPENDENCIA FEC_SHCP, 
+                           P.PLAZA_ULTIMO_MOVTO, E.FEC_ING_SPC, E.FEC_INI_DECL_PATR,
+                           E.DISCAPACIDAD
+                      FROM TD_PLAZA P, TD_EMPLEADO E, TD_ESCENARIO ES, TC_UNIDAD U, TC_PUESTO PU, TC_ATRIBUTO_PUESTO A, TC_JERARQUIA J, TC_NOMBRAMIENTO N, TC_PUESTO PH, 
+                           TC_ATRIBUTO_PUESTO AH, TC_JERARQUIA JH, TC_MOTIVO_OBLIGADO M, TC_GRUPO_PAGO G
+                     WHERE P.ID_SIT_PLAZA LIKE 'O%'
+                       AND P.ID_PLAZA = ?
+                       AND P.PLAZA_RFC = E.RFC_EMPLEADO
+                       AND P.ID_PLAZA = ES.PLAZA_ESCENARIO(+)
+                       AND ES.FIN_ESCENARIO(+) = '31/12/2099'
+                       AND P.ID_PUESTO_NOM = PU.ID_PUESTO
+                       AND P.ID_PUESTO_NOM = A.ID_ATRIBUTO_PUESTO
+                       AND A.AP_FIN = '01/01/2099'
+                       AND A.ID_JERARQUIA = J.ID_JERARQUIA
+                       AND A.ID_NOMBRAMIENTO = N.ID_NOMBRAMIENTO
+                       AND P.ID_UNIDAD_NOM = U.ID_UNIDAD
+                       AND U.UNI_CICLO = ?
+                       AND P.ID_MOTIVO_OBLIGADO = M.ID_MOTIVO_OBLIGADO(+)
+                       AND P.ID_GRUPO_PAGO = G.ID_GRUPO_PAGO
+                       AND P.ID_PUESTO_PRE = PH.ID_PUESTO
+                       AND P.ID_PUESTO_PRE = AH.ID_ATRIBUTO_PUESTO
+                       AND AH.AP_FIN = '01/01/2099'
+                       AND AH.ID_JERARQUIA = JH.ID_JERARQUIA
+                </prop>
+                <!--RUSP - Interaz - Bajas -->
+                <prop key="tdBajas-Rusp">
+                    SELECT '06' RAMO, RB.ID_UNIDAD, RB.RB_FECHA_BAJA, RB.RB_MOTIVO_BAJA,
+                           RB.RB_RFC, RB.RB_CURP, UPPER(NVL(RB.RB_NOMBRE,'NULL')) NOMBRE,
+                           UPPER(NVL(RB.RB_PRIMER_APELLIDO,'NULL')) PRIMER_APELLIDO,
+                           UPPER(NVL(RB.RB_SEGUNDO_APELLIDO,'NULL')) SEGUNDO_APELLIDO
+                      FROM TD_RUSP_BAJAS RB
+                     WHERE RB.RB_QNA_PAGO = ? AND
+                           RB.RB_RFC IN (SELECT R.RIB_RFC FROM SIREH.TD_RUSP_INFO_BASICA R
+                                          WHERE R.RIB_QNA_PAGO = (? - 1) AND R.ID_SIT_PLAZA = 'O')
+                  ORDER BY 1,2,3,4
+                </prop>
+		<!--RUSP - Interfaz- Bajas RUSP -->
+                <prop key="interfaz-getBajasRusp"> 
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVOS_RUSP.FUNC_BAJAS1 (?))
+                </prop>
+		<!--RUSP - Interfaz- Bajas RUSP -->
+                <prop key="interfaz-getBajasRuspNqna"> 
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVOS_RUSP.FUNC_BAJAS2 (?))
+                </prop>
+		<!--RUSP - Interfaz- Bajas Ciclo RUSP -->
+                <prop key="interfaz-getBajasCicloRusp"> 
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVOS_RUSP.FUNC_BAJ_CICLO (?))
+                </prop>
+		<!--RUSP - Interfaz- Datos Personales RUSP -->
+                <prop key="interfaz-getDatosPersonalesRusp"> 
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVOS_RUSP.FUNC_DATOS_PER (?))
+                </prop>
+		<!--RUSP - Interfaz- Información Básica RUSP -->
+                <prop key="interfaz-getInfoBasicaRusp"> 
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVOS_RUSP.FUNC_INF_BASICA (?))
+                </prop>
+                <!--RUSP - Interaz - Datos Personales -->
+                <prop key="tdDatosPersonales-Rusp">
+                    SELECT RD_RAMO, ID_UNIDAD, RD_RFC_SP, RD_CURP, 
+                           NVL(RD_NOMBRE,'NULL') NOMBRE, 
+                           NVL(RD_PRIMER_APELLIDO,'NULL') PRIMER_APELLIDO, 
+                           NVL(RD_SEGUNDO_APELLIDO,'NULL') SEGUNDO_APELLIDO, RD_SP_AA,
+                           RD_SP_CALLE,RD_SP_COLONIA, RD_SP_MU_DEL, RD_SP_ENTFED, RD_SP_PAIS, 
+                           LPAD(TO_CHAR(RD_SP_CP),5,'0') RD_SP_CP, RD_SP_NUM_EMP 
+                      FROM TD_RUSP_DATOSPERS
+                     WHERE RD_QNA_PAGO = ?
+                  ORDER BY 1,2,3;
+                </prop>
+                <prop key="rusp-Proceso-BajaRUSP-CasosBajas">
+                    SELECT PKG_RUSP_PROCESO.CASOSBAJAS (?) as numRegistros FROM DUAL
+                </prop>
+                <prop key="getNumReg_pInfoBasic">
+                    SELECT PKG_RUSP_PROCESO.CASOSINFOBASICA (?) as numRegistros FROM DUAL
+                </prop>
+                <prop key="getNumReg_pDatosPer">
+                    SELECT PKG_RUSP_PROCESO.CASOSDATOSPER (?) as numRegistros FROM DUAL
+                </prop>
+
+            </props>
+        </property>
+    </bean>
+</beans>

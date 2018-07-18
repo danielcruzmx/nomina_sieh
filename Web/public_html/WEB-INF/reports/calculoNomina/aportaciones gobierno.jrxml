@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="aportaciones gobierno" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PG_QNAPAGO" class="java.lang.String"/>
+	<parameter name="PG_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="PG_UNIDAD" class="java.lang.String"/>
+	<parameter name="PG_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="PG_CICLO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select case when n.id_grupo_pago_nom = 'V' and p.id_tipo_nomina <> 'AG'  and p.id_tipo_nomina <> 'AG' then '12201' else e.id_partida end id_partida, c.desc_con_pag, case when nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CEI' or p.id_tipo_cpto||p.id_cpto_pago = 'CIS' then p.pf_monto * 1 end),0) = 0 then
+                                          nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CEN' or p.id_tipo_cpto||p.id_cpto_pago = 'CIN' OR
+                                                            p.id_tipo_cpto||p.id_cpto_pago = 'CSN' or p.id_tipo_cpto||p.id_cpto_pago = 'C2N' then p.pf_monto * 1 end),0)
+                                     else nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CEI' or p.id_tipo_cpto||p.id_cpto_pago = 'CIS' then p.pf_monto * 1 end),0) end  pf_monto
+from td_perded_fis p, tn_eco_cpto_pago e, tc_concepto_pago c, tn_nomina n
+where p.pf_qna_pago = $P{PG_QNAPAGO}
+  and p.id_unidad_fisica = $P{PG_UNIDAD}
+  and p.id_tipo_nomina = $P{PG_TIPONOMINA}
+  and p.pf_num_complem = $P{PG_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto||p.id_cpto_pago IN ('CEI','CIS','CEN','CIN','CSN','C2N')
+  and p.id_tipo_cpto = e.id_tipo_cpto(+)
+  and p.id_cpto_pago = e.id_cpto_pago(+)
+  and e.ecp_ciclo(+) = $P{PG_CICLO}
+  and p.id_tipo_cpto = c.id_tipo_cpto(+)
+  and p.id_cpto_pago = c.id_concepto(+)
+  and p.pf_qna_pago = n.nom_qna_captura
+  and p.id_tipo_nomina = n.id_tipo_nomina
+  and p.pf_num_complem = n.nom_num_complem
+GROUP BY e.id_partida, c.desc_con_pag, p.ID_CPTO_PAGO, pf_monto, p.pf_num_complem, n.id_grupo_pago_nom, p.id_tipo_nomina
+order by  e.id_partida, NLSSORT(p.ID_CPTO_PAGO,'NLS_SORT=BINARY_AI')]]>
+	</queryString>
+	<field name="ID_PARTIDA" class="java.lang.String"/>
+	<field name="DESC_CON_PAG" class="java.lang.String"/>
+	<field name="PF_MONTO" class="java.math.BigDecimal"/>
+	<variable name="Total1" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{PF_MONTO}]]></variableExpression>
+	</variable>
+	<variable name="Total2" class="java.lang.String"/>
+	<group name="PARTIDA">
+		<groupExpression><![CDATA[$F{DESC_CON_PAG}]]></groupExpression>
+		<groupHeader>
+			<band height="10">
+				<textField>
+					<reportElement x="0" y="0" width="20" height="10"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_PARTIDA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="22" y="0" width="193" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_CON_PAG}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="215" y="0" width="107" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PF_MONTO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="11" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="322" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aportaciones del Gobierno Federal]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

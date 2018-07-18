@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Entero Fovissste" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_QNA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_TIPO_NOMINA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_COMPLEMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    'FOVISSSTE Cifras de Control Correspondiente a la Quincena '||substr(td_perded_fis.pf_qna_pago,5,2)||'-'||substr(td_perded_fis.pf_qna_pago,0,4)||', Nómina Ordinaria' titulo,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D55') THEN td_perded_fis.pf_casos END),0) casos_55,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D55') THEN td_perded_fis.pf_monto END),0) concepto55,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D56')
+     or (td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D5L') THEN td_perded_fis.pf_casos END),0) casos_56,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D56') or
+    (td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D5L') THEN td_perded_fis.pf_monto END),0) concepto56,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D64') THEN td_perded_fis.pf_casos END),0) casos_64,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D64') THEN td_perded_fis.pf_monto END),0) concepto64,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D68') THEN td_perded_fis.pf_casos END),0) casos_68,
+    NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D68') THEN td_perded_fis.pf_monto END),0) concepto68,
+NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D55') THEN td_perded_fis.pf_casos END),0)+
+NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D56') THEN td_perded_fis.pf_casos END),0)+
+NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D5L') THEN td_perded_fis.pf_casos END),0)+
+NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D64') THEN td_perded_fis.pf_casos END),0)+
+NVL(sum(CASE WHEN(td_perded_fis.id_tipo_cpto||td_perded_fis.id_cpto_pago = 'D68') THEN td_perded_fis.pf_casos END),0)
+tot_casos,
+sum(nvl(td_perded_fis.pf_monto,0)) total,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+    td_perded_fis
+WHERE
+    td_perded_fis.pf_qna_pago = $P{PAR_QNA} and
+    td_perded_fis.id_tipo_nomina = $P{PAR_TIPO_NOMINA} AND
+    td_perded_fis.pf_num_complem in ($P!{PAR_COMPLEMENTO}) AND
+    td_perded_fis.id_tipo_cpto = 'D' and
+    td_perded_fis.id_cpto_pago in ('55', '56', '5L', '64','68') and
+    td_perded_fis.id_unidad_fisica <> 'XXX'
+group by td_perded_fis.pf_qna_pago]]>
+	</queryString>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="CASOS_55" class="java.math.BigDecimal"/>
+	<field name="CONCEPTO55" class="java.math.BigDecimal"/>
+	<field name="CASOS_56" class="java.math.BigDecimal"/>
+	<field name="CONCEPTO56" class="java.math.BigDecimal"/>
+	<field name="CASOS_64" class="java.math.BigDecimal"/>
+	<field name="CONCEPTO64" class="java.math.BigDecimal"/>
+	<field name="CASOS_68" class="java.math.BigDecimal"/>
+	<field name="CONCEPTO68" class="java.math.BigDecimal"/>
+	<field name="TOT_CASOS" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="125" y="0" width="340" height="50"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro Bold" size="10" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="596" y="0" width="156" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="20" width="287" height="30"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="492" splitType="Stretch">
+			<rectangle>
+				<reportElement mode="Transparent" x="137" y="55" width="492" height="277" forecolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="163" y="111" width="244" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[FOVISSSTE hipotecario fijo, C  Concepto 55]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="161" width="244" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[FOVISSSTE hipotecario creciente, K  Concepto 56]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="211" width="244" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[FOVISSSTE crédito en SM Concepto 64]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="163" y="264" width="244" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[FOVISSSTE Seguro de Daños Concepto 68]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="427" y="70" width="78" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="535" y="70" width="78" height="10"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<line>
+				<reportElement x="137" y="94" width="492" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<line>
+				<reportElement x="137" y="143" width="492" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<line>
+				<reportElement x="137" y="189" width="492" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<line>
+				<reportElement x="137" y="244" width="492" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<line>
+				<reportElement x="137" y="292" width="492" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<staticText>
+				<reportElement x="313" y="307" width="78" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total : ]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="111" width="57" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASOS_55}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="535" y="111" width="74" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONCEPTO55}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="161" width="57" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASOS_56}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="535" y="161" width="74" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONCEPTO56}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="211" width="57" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASOS_64}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="535" y="211" width="74" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONCEPTO64}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="264" width="57" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CASOS_68}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="535" y="264" width="74" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONCEPTO68}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="436" y="307" width="57" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOT_CASOS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="521" y="307" width="88" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="63" y="5" width="577" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch"/>
+	</summary>
+</jasperReport>

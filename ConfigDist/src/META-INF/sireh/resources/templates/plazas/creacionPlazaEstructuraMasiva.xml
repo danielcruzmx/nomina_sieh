@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<workbook>
+    <worksheet idx="0">
+      <section startRow="0" endRow="4">
+	      	  <mapping cell="A5">encabezadoDTO.a</mapping>	
+	      	  <mapping cell="B5">encabezadoDTO.b</mapping>
+	      	  <mapping cell="C5">encabezadoDTO.c</mapping>
+	      	  <mapping cell="D5">encabezadoDTO.d</mapping>
+	      	  <mapping cell="E5">encabezadoDTO.e</mapping>
+	      	  <mapping cell="F5">encabezadoDTO.f</mapping>
+	      	  <mapping cell="G5">encabezadoDTO.g</mapping>
+	      	  <mapping cell="H5">encabezadoDTO.h</mapping>
+	      	  <mapping cell="I5">encabezadoDTO.i</mapping>
+	      	  <mapping cell="J5">encabezadoDTO.j</mapping>
+	      	  <mapping cell="K5">encabezadoDTO.k</mapping>
+	      	  <mapping cell="L5">encabezadoDTO.l</mapping>
+	      	  <mapping cell="M5">encabezadoDTO.m</mapping>
+		  <mapping cell="N5">encabezadoDTO.n</mapping>	      	  
+		  <mapping cell="O5">encabezadoDTO.o</mapping>
+		  <mapping cell="P5">encabezadoDTO.p</mapping>		  
+		  <mapping cell="Q5">encabezadoDTO.q</mapping>		  
+		  <mapping cell="R5">encabezadoDTO.r</mapping>		  
+		  <mapping cell="S5">encabezadoDTO.s</mapping>		  
+        </section>
+        <loop startRow="5" endRow="5" items="creacionPlazaMasivaDTO.listModel" var="p" varType="gob.shcp.sireh.model.plaza.estructura.masivos.CreacionPlazaMasivaDTO">
+            <section startRow="5" endRow="5">
+            	<mapping row="5" col="0">p.adecuacionCicloAnterior</mapping> 
+               <mapping row="5" col="1">p.adecuacionCicloActual</mapping> 
+                <mapping row="5" col="2">p.unidad</mapping>
+                <mapping row="5" col="3">p.nivel</mapping>
+                <mapping row="5" col="4">p.zona</mapping>
+                <mapping row="5" col="5">p.codigo</mapping> 
+                <mapping row="5" col="6">p.plaza</mapping> 
+                <mapping row="5" col="7">p.casos</mapping> 
+                <mapping row="5" col="8">p.tipo</mapping> 
+                <mapping row="5" col="9">p.estatus</mapping> 
+                <mapping row="5" col="10">p.cancelada</mapping> 
+                <mapping row="5" col="11">p.tipoMovimiento</mapping> 
+                <mapping row="5" col="12">p.regularizable</mapping> 
+                <mapping row="5" col="13">p.tipoPersonal</mapping> 
+                <mapping row="5" col="14">p.entidadFederativa</mapping> 
+				<mapping row="5" col="15">p.inicioVigencia</mapping> 
+				<mapping row="5" col="16">p.idTipoPlaza</mapping> 
+				<mapping row="5" col="17">p.idServPub</mapping> 
+				<mapping row="5" col="18">p.idPtoEstrategico</mapping> 
+                
+            </section> 
+             <loopbreakcondition>
+                    <rowcheck offset="0">
+                        <cellcheck offset="0"></cellcheck>
+                    </rowcheck>
+                </loopbreakcondition>
+        </loop>   
+    </worksheet>
+</workbook>

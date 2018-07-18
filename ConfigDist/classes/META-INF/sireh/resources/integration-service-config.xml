@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util" xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd                            http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+    <!-- SCM:PROXY SERVICES -->
+    <!-- connecton factory -->
+    <bean id="jmsQueueConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="jms/NominaConnectionFactory"/>
+    </bean>
+    
+    <bean id="timbradoJmsQueueConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="jms/TimbradoConnectionFactory"/>
+    </bean>
+    
+    <bean id="capcerJmsQueueConnectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="jms/CapcerConnectionFactory"/>
+    </bean>
+
+    
+    <!-- JMS Destinations -->
+    <bean id="nominaQueue" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="queue/Sireh/Nomina"/>
+    </bean>
+    <bean id="timbradoQueue" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="queue/Sireh/Timbrado"/>
+    </bean>
+    <bean id="capcerQueue" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="queue/Sireh/Capcer"/>
+    </bean>
+    
+    <!-- JMS Listeners -->
+    <bean id="nominaJMSListener" class="gob.shcp.sireh.service.jms.NominaJMSListener"/>
+    <bean id="timbradoJMSListener" class="gob.shcp.sireh.service.jms.TimbradoJMSListener"/>
+    <bean id="capcerJMSListener" class="gob.shcp.sireh.service.spc.jms.CapcerJMSListener"/>
+    
+    <!-- JMS Listener Containers -->
+    <bean id="nominaJMSListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" lazy-init="true">
+        <property name="connectionFactory" ref="jmsQueueConnectionFactory"/>
+        <property name="destination" ref="nominaQueue"/>
+        <property name="messageListener" ref="nominaJMSListener"/>
+    </bean>
+    
+    <bean id="timbradoJMSListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" lazy-init="true">
+        <property name="connectionFactory" ref="timbradoJmsQueueConnectionFactory"/>
+        <property name="destination" ref="timbradoQueue"/>
+        <property name="messageListener" ref="timbradoJMSListener"/>
+    </bean>
+    
+    <bean id="capcerJMSListenerContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer" lazy-init="true">
+        <property name="connectionFactory" ref="capcerJmsQueueConnectionFactory"/>
+        <property name="destination" ref="capcerQueue"/>
+        <property name="messageListener" ref="capcerJMSListener"/>
+    </bean>
+</beans>

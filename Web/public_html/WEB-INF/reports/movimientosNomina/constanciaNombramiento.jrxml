@@ -1,0 +1,990 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ConstanciaNombramiento" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="344"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_ID_MOVTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    CASE WHEN TN_MOVTOS_EMP_PLA.ID_GRUPO_PAGO = 'V' THEN 'Eventual' WHEN TN_MOVTOS_EMP_PLA.ID_NOMBRAMIENTO_NOM = 'B' THEN 'Base' WHEN TN_MOVTOS_EMP_PLA.ID_NOMBRAMIENTO_NOM = 'C' THEN 'Confianza' END NOMBRAMIENTO,
+    CASE WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA <= '6' OR TN_MOVTOS_EMP_PLA.ID_PUESTO_NOM = 'HONORAR' THEN 'Mixto'  WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA  > '6' THEN 'Diurno' END HORARIO,
+    TC_MOVS_PERSONAL.DESC_MOVS_PERSONAL,
+    SUBSTR(TD_EMPLEADO.RFC_UNICO,1,4)||'   '||SUBSTR(TD_EMPLEADO.RFC_UNICO,5,6)||'   '||SUBSTR(TD_EMPLEADO.RFC_UNICO,11,13) RFC_UNICO,
+    TD_EMPLEADO.PRIMER_APELLIDO,
+    TD_EMPLEADO.SEGUNDO_APELLIDO,
+    TD_EMPLEADO.NOMBRE_EMPLEADO,
+    TD_EMPLEADO.CURP_EMPLEADO,
+    TC_GENERO.DESC_GENERO,
+    CASE WHEN TD_EMPLEADO.ID_GENERO = 'F' AND TD_EMPLEADO.ID_EDO_CIVIL = 'C' THEN 'Casada' WHEN TD_EMPLEADO.ID_GENERO = 'M' AND TD_EMPLEADO.ID_EDO_CIVIL = 'C' THEN 'Casado' WHEN TD_EMPLEADO.ID_GENERO = 'F' AND TD_EMPLEADO.ID_EDO_CIVIL <> 'C' THEN 'Soltera' WHEN TD_EMPLEADO.ID_GENERO = 'M' AND TD_EMPLEADO.ID_EDO_CIVIL <> 'C' THEN 'Soltero' END ESTADO_CIVIL,
+    TC_NACIONALIDAD.DESC_NACIONALIDAD,
+    CASE WHEN SUBSTR(TD_EMPLEADO.CURP_EMPLEADO, 11,11) = 'M' THEN 'DOMICILIO    PARTICULAR    DE    LA    TRABAJADORA' WHEN SUBSTR(TD_EMPLEADO.CURP_EMPLEADO, 11,11) = 'H' THEN 'DOMICILIO    PARTICULAR    DEL    TRABAJADOR' ELSE 'DOMICILIO    PARTICULAR    DEL    TRABAJADOR' END TITULO_DOMICILIO,
+    CASE WHEN TN_MOVTOS_EMP_PLA.ID_MOVTO_PERSONA = '602' THEN '' /*TC_REFERENCIA.DOMICILIO_OFICIAL || '        COLONIA: ' || TC_REFERENCIA.COLONIA_OFICIAL || '      C.P. ' || TC_REFERENCIA.CODPOS_OFICIAL || '      DELEGACIÓN O MUNICIPIO: ' ||    MUNI_OFI.DESCRIPCION || '        ENTIDAD FEDERATIVA: '  || EDO_OFI.DESC_ESTADO || '      TELÉFONO:  ' || TC_REFERENCIA.TELEFONO_OFICIAL*/
+           ELSE TD_EMPLEADO.CALLE_PARTICULAR || '    Colonia: ' || TD_EMPLEADO.COLONIA_PARTICULAR || '  C.P. ' || TD_EMPLEADO.CODPOST_PARTICULAR || '  ' || 'Delegación o Municipio: ' || TC_MUNICIPIO.DESC_MUNICIPIO || '    Entidad Federativa: '  || TC_ESTADO.DESC_ESTADO || '  Teléfono:  '|| TD_EMPLEADO.TEL_PARTICULAR END DOMICILIO,
+    LPAD(TN_MOVTOS_EMP_PLA.ID_PLAZA,6,'000000') ID_PLAZA,
+    TN_MOVTOS_EMP_PLA.ID_UNIDAD_NOM,
+    TC_UNIDAD.DESC_UNIDAD,
+    CASE WHEN TN_MOVTOS_EMP_PLA.MEP_QNA_CAPTURA >= 201616 and tn_movtos_emp_pla.id_unidad_nom <> 'G00' THEN
+            case when TC_ATRIBUTO_PUESTO.id_jerarquia <= '5' and TN_MOVTOS_EMP_PLA.id_unidad_nom <> 'G00' and TN_MOVTOS_EMP_PLA.id_puesto_nom not in (' P05377',' P05395',' P05380') --diferente de G00 y Laudos
+                         then substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,1,4)||substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,7,1) ||'00'||substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,5,3)
+                    when TC_ATRIBUTO_PUESTO.id_jerarquia <= '5' and TN_MOVTOS_EMP_PLA.id_unidad_nom <> 'G00' and TN_MOVTOS_EMP_PLA.id_puesto_nom in (' P05377',' P05395',' P05380') --Laudos
+                         then substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,2,1)||'L'||TC_ATRIBUTO_PUESTO.id_nivel_pto||substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,3,5)
+                    when TN_MOVTOS_EMP_PLA.id_unidad_nom = 'G00' then substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,1,2)||TC_ATRIBUTO_PUESTO.id_nivel_pto||substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,3,5)        --G00
+                    else TN_MOVTOS_EMP_PLA.id_puesto_nom
+               end
+         WHEN TN_MOVTOS_EMP_PLA.MEP_QNA_CAPTURA < 201618 and tn_movtos_emp_pla.id_unidad_nom = 'G00' THEN
+              substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,1,4)||substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,7,1) ||'00'||substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,5,3)
+         WHEN TN_MOVTOS_EMP_PLA.MEP_QNA_CAPTURA >= 201618 and tn_movtos_emp_pla.id_unidad_nom = 'G00' THEN
+              substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,1,2)||TC_ATRIBUTO_PUESTO.id_nivel_pto||substr(TN_MOVTOS_EMP_PLA.id_puesto_nom,3,5)        --G00
+         ELSE TN_MOVTOS_EMP_PLA.id_puesto_nom END ID_PUESTO_NOM,
+    TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO,
+    CASE WHEN  TN_MOVTOS_EMP_PLA.ID_EDO_NOM IS NULL THEN '00' WHEN TRIM( TN_MOVTOS_EMP_PLA.ID_EDO_NOM) = '' THEN '00' ELSE lpad(TN_MOVTOS_EMP_PLA.ID_EDO_NOM,2,'0') END ESTADO_PLAZA,
+    CASE WHEN  TN_MOVTOS_EMP_PLA.ID_MUNI_NOM IS NULL THEN '000' WHEN TRIM( TN_MOVTOS_EMP_PLA.ID_MUNI_NOM) = '' THEN '000' ELSE TO_CHAR(TN_MOVTOS_EMP_PLA.ID_MUNI_NOM)
+    END MUNICIPIO_PLAZA,
+    TN_MOVTOS_EMP_PLA.ID_ZONA_ECO_NOM, nvl(td_plaza.ID_ZONA_DIST_NOM,'9000') ID_ZONA_DIST_NOM,
+    CASE WHEN TN_MOVTOS_EMP_PLA.ID_GRUPO_PAGO IN ('E','J') AND TC_ATRIBUTO_PUESTO.ID_JERARQUIA < '7'  THEN TD_ESCENARIO.NOMBRE_PUESTO
+            WHEN TN_MOVTOS_EMP_PLA.ID_GRUPO_PAGO = 'V' AND SUBSTR(TD_EMPLEADO.CURP_EMPLEADO,11,  1) = 'H'  THEN TRIM(TC_PUESTO.DESC_PUESTOHO)
+            WHEN TN_MOVTOS_EMP_PLA.ID_GRUPO_PAGO = 'V' AND SUBSTR(TD_EMPLEADO.CURP_EMPLEADO,11,  1) = 'M'  THEN TRIM(TC_PUESTO.DESC_PUESTOMU)
+            WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA >= '7' AND SUBSTR(TD_EMPLEADO.CURP_EMPLEADO,11,  1) = 'H'  THEN TRIM(TC_PUESTO.DESC_PUESTOHO)
+            WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA >= '7' AND SUBSTR(TD_EMPLEADO.CURP_EMPLEADO,11,  1) = 'M'  THEN TRIM(TC_PUESTO.DESC_PUESTOMU)
+            ELSE TRIM(TC_PUESTO.DESC_PUESTO)  END DENOMINACION_FUNCIONAL,
+    TC_TABULADOR.TAB_SUELDO,
+    TC_TABULADOR.TAB_COMPENSACION,
+    TC_TABULADOR.TAB_SUELDO +  TC_TABULADOR.TAB_COMPENSACION,
+    CASE WHEN SUBSTR(TD_EMPLEADO.CURP_EMPLEADO, 11,1) = 'M' THEN 'TRABAJADORA' WHEN SUBSTR(TD_EMPLEADO.CURP_EMPLEADO, 11,1) = 'H' THEN 'TRABAJADOR' ELSE 'TRABAJADOR' END TITULO_FIRMA,
+    to_char(TN_MOVTOS_EMP_PLA.MEP_INI_CONT, 'dd') || ' ' ||
+    trim(to_char(TN_MOVTOS_EMP_PLA.MEP_INI_CONT, 'MONTH')) || ' ' ||
+    to_char(TN_MOVTOS_EMP_PLA.MEP_INI_CONT, 'yyyy') INICIO,
+    CASE
+    WHEN TN_MOVTOS_EMP_PLA.MEP_FIN_CONT >= TO_DATE('01/01/2099','DD/MM/YYYY')  THEN 'INDEFINIDO'
+    ELSE     to_char(TN_MOVTOS_EMP_PLA.MEP_FIN_CONT, 'dd') || ' ' ||
+    trim(to_char(TN_MOVTOS_EMP_PLA.MEP_FIN_CONT, 'MONTH')) || ' ' ||
+    to_char(TN_MOVTOS_EMP_PLA.MEP_FIN_CONT, 'yyyy') END FINAL,
+    TRIM(TRIM(TD_EMPLEADO.PRIMER_APELLIDO)||' '||TRIM(TD_EMPLEADO.SEGUNDO_APELLIDO)||' '||TRIM(TD_EMPLEADO.NOMBRE_EMPLEADO)) NOMBRE_COMPLETO,
+   CASE WHEN TC_ATRIBUTO_PUESTO.ID_JERARQUIA >= '7' THEN 'Conforme al Último Catálogo de Puestos Autorizado.' ELSE 'Conforme al Último Catálogo de Puestos Autorizado, y/o los que se deriven de la Normatividad vigente aplicable.' END FUNCION_ESPECIFICA,
+    TRIM(NVL(TC_REFERENCIA.REF_ELABORO_TITULO,'-')) ELABORO_TITULO,
+    TRIM(TC_REFERENCIA.REF_ELABORO) ELABORO,
+    TC_REFERENCIA.REF_FRACC_VOBO REFERENCIA_VOBO,
+    TRIM(TC_REFERENCIA.REF_VOBO_TITULO) VOBO_TITULO,
+    TRIM(TC_REFERENCIA.REF_VOBO) VOBO,
+    TC_REFERENCIA.REF_FRACC_AUTORIZO TITULO_REVISO,
+    TRIM(TC_REFERENCIA.REF_AUTORIZO_TITULO) AUTORIZO_TITULO,
+    TRIM(TC_REFERENCIA.REF_AUTORIZO) AUTORIZO,
+    'Protesto, conforme a lo dispuesto por el Artículo 128 de la Constitución Política de los Estados Unidos Mexicanos, guardar ésta y las Leyes que de ella emanen. Así mismo manifiesto que los datos anteriormente señalados son ciertos y me hago sabedor sobre las penas que se le impondrán a quien faltare a la verdad como lo disponen los Artículos 245  y 247 del Código Penal Federal.' PROTESTA,
+    NVL(TN_MOVTOS_EMP_PLA.MEP_OBSERVA,' ') OBSERVACIONES,
+    CASE WHEN TN_MOVTOS_EMP_PLA.ID_EDO_NOM = 9 THEN 'MPO' ELSE 'MPO' END TITULO_MUN,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+    TN_MOVTOS_EMP_PLA,
+    TD_EMPLEADO,
+    TC_MOVS_PERSONAL,
+    TC_GENERO,
+    TC_ATRIBUTO_PUESTO,
+    TC_UNIDAD,
+    TC_PUESTO,
+    TC_TABULADOR,
+    TC_REFERENCIA,
+    TC_NACIONALIDAD,
+    TD_ESCENARIO,
+    TC_ESTADO EDO,
+    TC_MUNICIPIO,
+    TC_ESTADO,
+    TD_PLAZA
+WHERE
+    TN_MOVTOS_EMP_PLA.ID_MOVTOS_EMP_PLA = $P{PAR_ID_MOVTO}
+AND TN_MOVTOS_EMP_PLA.MEP_RFC = TD_EMPLEADO.RFC_EMPLEADO
+AND TN_MOVTOS_EMP_PLA.ID_UNIDAD_NOM = TC_UNIDAD.ID_UNIDAD(+)
+AND TC_UNIDAD.UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE   = 'S')
+AND TN_MOVTOS_EMP_PLA.ID_PUESTO_NOM = TC_PUESTO.ID_PUESTO
+AND TN_MOVTOS_EMP_PLA.ID_UNIDAD_NOM = TC_REFERENCIA.ID_UNIDAD_FISICA
+AND TN_MOVTOS_EMP_PLA.MEP_INI_CONT BETWEEN TO_CHAR(TC_REFERENCIA.REF_FECHA_DOS, 'dd/mm/yyyy') AND TO_CHAR(TC_REFERENCIA.REF_FECHA_TRES, 'dd/mm/yyyy')
+AND TC_REFERENCIA.REF_CIFRAS1 = 100
+AND TRIM(TC_REFERENCIA.REF_PROGRAMA) = 'NOMBRAMIENTO'
+AND TD_EMPLEADO.ID_EDO_PARTICULAR = TC_MUNICIPIO.ID_EDO(+)
+AND TD_EMPLEADO.ID_MUNI_PARTICULAR = TC_MUNICIPIO.ID_MUNICIPIO(+)
+AND TD_EMPLEADO.ID_EDO_PARTICULAR = TC_ESTADO.ID_EDO(+)
+AND TN_MOVTOS_EMP_PLA.ID_MOVTO_PERSONA = TC_MOVS_PERSONAL.ID_MOVS_PERSONAL
+AND TN_MOVTOS_EMP_PLA.ID_PUESTO_NOM = TC_ATRIBUTO_PUESTO.ID_ATRIBUTO_PUESTO
+AND TN_MOVTOS_EMP_PLA.MEP_INI_CONT BETWEEN TO_CHAR(TC_ATRIBUTO_PUESTO.AP_INI, 'dd/mm/yyyy') AND TO_CHAR(TC_ATRIBUTO_PUESTO.AP_FIN, 'dd/mm/yyyy')
+AND TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO = TC_TABULADOR.ID_NIVEL_PTO
+AND TN_MOVTOS_EMP_PLA.ID_ZONA_ECO_NOM = TC_TABULADOR.ID_ZONA_ECON
+AND TN_MOVTOS_EMP_PLA.ID_RANGO_NOM = TC_TABULADOR.ID_RANGO
+AND TN_MOVTOS_EMP_PLA.MEP_INI_CONT BETWEEN TO_CHAR(TC_TABULADOR.TAB_INI, 'dd/mm/yyyy') AND TO_CHAR(TC_TABULADOR.TAB_FIN, 'dd/mm/yyyy')
+AND TN_MOVTOS_EMP_PLA.ID_PLAZA = TD_ESCENARIO.PLAZA_ESCENARIO(+)
+AND TD_ESCENARIO.FIN_ESCENARIO(+) = TO_DATE('31/12/2099','DD/MM/YYYY')
+AND TN_MOVTOS_EMP_PLA.ID_EDO_NOM = EDO.ID_EDO(+)
+AND TN_MOVTOS_EMP_PLA.ID_PLAZA = TD_PLAZA.ID_PLAZA(+)
+AND TD_EMPLEADO.ID_GENERO = TC_GENERO.ID_GENERO
+AND TD_EMPLEADO.ID_NACIONALIDAD = TC_NACIONALIDAD.ID_NACIONALIDAD(+)
+AND ROWNUM < 2]]>
+	</queryString>
+	<field name="NOMBRAMIENTO" class="java.lang.String"/>
+	<field name="HORARIO" class="java.lang.String"/>
+	<field name="DESC_MOVS_PERSONAL" class="java.lang.String"/>
+	<field name="RFC_UNICO" class="java.lang.String"/>
+	<field name="PRIMER_APELLIDO" class="java.lang.String"/>
+	<field name="SEGUNDO_APELLIDO" class="java.lang.String"/>
+	<field name="NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<field name="CURP_EMPLEADO" class="java.lang.String"/>
+	<field name="DESC_GENERO" class="java.lang.String"/>
+	<field name="ESTADO_CIVIL" class="java.lang.String"/>
+	<field name="DESC_NACIONALIDAD" class="java.lang.String"/>
+	<field name="TITULO_DOMICILIO" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="ID_PLAZA" class="java.lang.String"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="DESC_UNIDAD" class="java.lang.String"/>
+	<field name="ID_PUESTO_NOM" class="java.lang.String"/>
+	<field name="ID_NIVEL_PTO" class="java.lang.String"/>
+	<field name="ESTADO_PLAZA" class="java.lang.String"/>
+	<field name="MUNICIPIO_PLAZA" class="java.lang.String"/>
+	<field name="ID_ZONA_ECO_NOM" class="java.math.BigDecimal"/>
+	<field name="ID_ZONA_DIST_NOM" class="java.math.BigDecimal"/>
+	<field name="DENOMINACION_FUNCIONAL" class="java.lang.String"/>
+	<field name="TAB_SUELDO" class="java.math.BigDecimal"/>
+	<field name="TAB_COMPENSACION" class="java.math.BigDecimal"/>
+	<field name="TC_TABULADOR.TAB_SUELDO+TC_TABULADOR.TAB_COMPENSACION" class="java.math.BigDecimal"/>
+	<field name="TITULO_FIRMA" class="java.lang.String"/>
+	<field name="INICIO" class="java.lang.String"/>
+	<field name="FINAL" class="java.lang.String"/>
+	<field name="NOMBRE_COMPLETO" class="java.lang.String"/>
+	<field name="FUNCION_ESPECIFICA" class="java.lang.String"/>
+	<field name="ELABORO_TITULO" class="java.lang.String"/>
+	<field name="ELABORO" class="java.lang.String"/>
+	<field name="REFERENCIA_VOBO" class="java.lang.String"/>
+	<field name="VOBO_TITULO" class="java.lang.String"/>
+	<field name="VOBO" class="java.lang.String"/>
+	<field name="TITULO_REVISO" class="java.lang.String"/>
+	<field name="AUTORIZO_TITULO" class="java.lang.String"/>
+	<field name="AUTORIZO" class="java.lang.String"/>
+	<field name="PROTESTA" class="java.lang.String"/>
+	<field name="OBSERVACIONES" class="java.lang.String"/>
+	<field name="TITULO_MUN" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="lugar" class="java.lang.String"/>
+	<variable name="rfc" class="java.lang.String"/>
+	<background>
+		<band height="752" splitType="Stretch">
+			<elementGroup>
+				<image isLazy="true">
+					<reportElement x="84" y="202" width="400" height="420"/>
+					<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+				</image>
+			</elementGroup>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="107" splitType="Stretch">
+			<staticText>
+				<reportElement x="-25" y="-133" width="351" height="44"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="11"/>
+				</textElement>
+				<text><![CDATA[OFICIALÍA MAYOR
+
+DIRECCIÓN GENERAL DE RECURSOS HUMANOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="221" y="55" width="351" height="13"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="11"/>
+				</textElement>
+				<text><![CDATA[CONSTANCIA DE NOMBRAMIENTO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="84" width="572" height="21"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="11" y="85" width="551" height="21"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<text><![CDATA[Se extiende la presente Constancia de Nombramiento a la persona cuyos datos se proporcionan a continuación, para que ocupe el Puesto que se señala, en los términos y para los efectos de los Artículos  3°,12°,15°, y 18°  de La Ley Federal de los Trabajadores al Servicio del Estado. ]]></text>
+			</staticText>
+			<image isLazy="true">
+				<reportElement x="0" y="0" width="221" height="76"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="431" y="68" width="141" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Trebuchet MS" size="11"/>
+				</textElement>
+				<text><![CDATA[CIUDAD DE MÉXICO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="221" y="0" width="351" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="221" y="20" width="352" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="567" splitType="Stretch">
+			<staticText>
+				<reportElement x="313" y="5" width="259" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO DE MOVIMIENTO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="39" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="40" width="572" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS PERSONALES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="52" width="125" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[R. F. C.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="126" y="52" width="145" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRIMER APELLIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="271" y="52" width="145" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEGUNDO APELLIDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="52" width="156" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE (S)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="79" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="82" width="125" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C U R P]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="126" y="82" width="145" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SEXO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="272" y="82" width="144" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO CIVIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="417" y="82" width="155" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NACIONALIDAD]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="111" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="5" width="170" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO DE NOMBRAMIENTO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="20" width="170" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRAMIENTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="171" y="20" width="142" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{HORARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="312" y="20" width="260" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_MOVS_PERSONAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="65" width="125" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RFC_UNICO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="126" y="65" width="145" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRIMER_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="272" y="65" width="144" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEGUNDO_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="417" y="65" width="155" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="97" width="125" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURP_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="126" y="97" width="145" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_GENERO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="271" y="97" width="145" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTADO_CIVIL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="417" y="97" width="155" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_NACIONALIDAD}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="111" width="572" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO_DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="11" y="122" width="551" height="37"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="125" y="51" width="1" height="60"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="271" y="51" width="1" height="60"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="416" y="51" width="1" height="60"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="1" y="51" width="571" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="1" y="534" width="181" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ELABORO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="197" y="458" width="181" height="44"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VOBO_TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="197" y="443" width="181" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REFERENCIA_VOBO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="163" width="572" height="261"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="152" y="326" width="139" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FINAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="299" y="252" width="263" height="45"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PROTESTA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="507" y="164" width="66" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ZONA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="176" width="39" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLAZA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="39" y="176" width="307" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="351" y="176" width="56" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PUESTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="408" y="176" width="33" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NIVEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="176" width="32" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EDO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="507" y="176" width="33" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ECON.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="176" width="33" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="188" width="38" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="39" y="188" width="25" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="64" y="188" width="282" height="14"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="351" y="188" width="57" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_PUESTO_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="408" y="188" width="33" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_NIVEL_PTO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="39" y="175" width="1" height="28"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="350" y="176" width="1" height="27"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="407" y="176" width="1" height="26"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="441" y="175" width="1" height="27"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="473" y="175" width="1" height="27"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="506" y="163" width="1" height="39"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="539" y="175" width="1" height="27"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="441" y="188" width="32" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ESTADO_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="474" y="188" width="33" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MUNICIPIO_PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="507" y="188" width="32" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_ZONA_ECO_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="540" y="188" width="32" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ID_ZONA_DIST_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="326" width="141" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INICIO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="240" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="203" width="572" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DENOMINACIÓN FUNCIONAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="11" y="220" width="551" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DENOMINACION_FUNCIONAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="241" width="292" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERCEPCIONES MENSUALES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="252" width="97" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUELDO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="293" y="241" width="1" height="102"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="171" y="5" width="142" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HORARIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="97" y="252" width="96" height="31"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPENSACIÓN GARANTIZADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="193" y="252" width="100" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="298" width="292" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VIGENCIA]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="309" width="293" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="202" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="250" width="293" height="2"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="297" width="293" height="2"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<textField pattern="#,##0.00">
+				<reportElement x="1" y="277" width="96" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TAB_SUELDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="97" y="277" width="96" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TAB_COMPENSACION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="193" y="277" width="100" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TC_TABULADOR.TAB_SUELDO+TC_TABULADOR.TAB_COMPENSACION}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="310" width="141" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="152" y="310" width="141" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FINAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="293" y="241" width="279" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO_FIRMA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="298" y="326" width="264" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_COMPLETO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="343" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="11" y="344" width="561" height="11"/>
+				<textElement>
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FUNCIÓN ESPECÍFICA]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="11" y="358" width="551" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FUNCION_ESPECIFICA}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="175" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="164" width="506" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DE LA PLAZA - PUESTO]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="378" width="572" height="1"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="11" y="379" width="561" height="11"/>
+				<textElement>
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[OBSERVACIONES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="11" y="393" width="551" height="31"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{OBSERVACIONES}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="1" y="430" width="181" height="124"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="196" y="430" width="181" height="124"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="391" y="430" width="181" height="124"/>
+				<graphicElement>
+					<pen lineWidth="0.75" lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="11" y="432" width="160" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SOLICITÓ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="432" width="160" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AUTORIZÓ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="432" width="160" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALIDÓ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="458" width="181" height="44"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ELABORO_TITULO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="170" y="4" width="1" height="35"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="312" y="4" width="1" height="35"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="391" y="458" width="181" height="44"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AUTORIZO_TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="391" y="534" width="182" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AUTORIZO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="391" y="444" width="182" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO_REVISO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="534" width="182" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VOBO}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="0" y="5" width="572" height="154"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="1" y="534" width="181" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ELABORO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="196" y="458" width="182" height="44"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{VOBO_TITULO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="197" y="443" width="180" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{REFERENCIA_VOBO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="474" y="176" width="32" height="11"/>
+				<textElement textAlignment="Center">
+					<font fontName="Trebuchet MS" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO_MUN}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

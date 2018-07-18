@@ -1,0 +1,1213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+<!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+<!-- G E N E R A L -->
+                <!--Plazas - Liberacion-->
+                <prop key="tcSitPlazaLibera">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('C','V')
+                </prop>
+                <prop key="tcUnidadLibera">
+                    SELECT 
+                        ID_UNIDAD, ID_UNIDAD ||' - '|| DESC_UNIDAD AS DESCRIPCION
+                    FROM 
+                        TC_UNIDAD
+                    WHERE
+                        UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    ORDER BY ID_UNIDAD ASC 
+                </prop>
+                <prop key="tcVacancia">
+                    SELECT
+                        V.ID_VACANCIA, V.ID_VACANCIA || ' - ' || V.DESC_VACANCIA AS DESCRIPCION
+                    FROM
+                        TC_VACANCIA V
+                    ORDER BY V.ID_VACANCIA ASC
+                </prop>
+                <prop key="tcPuestoLibera">                    
+                    SELECT 
+                        P.ID_PUESTO, P.ID_PUESTO ||' - '|| P.DESC_PUESTO AS DESCRIPCION
+                    FROM 
+                        TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                    WHERE 
+                        P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    ORDER BY P.ID_PUESTO ASC
+                </prop>
+                <prop key="tcPuestoLiberaVacancia">
+                 SELECT   PV.ID_PTO_DESTINO AS ID_PUESTO,
+                             PV.ID_PTO_DESTINO || ' - ' || P.DESC_PUESTO AS DESCRIPCION
+                        FROM TC_PUESTO_VACANCIA PV, TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                       WHERE ##PV.ID_PTO_ORIGEN##
+                         AND PV.ID_PTO_DESTINO = P.ID_PUESTO
+                         AND P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO
+                         AND TO_CHAR (AP.AP_FIN, 'DD-MM-YYYY') = '01-01-2099'
+                         AND PV.PTO_EXCEPCION = 0
+                </prop>
+                <prop key="tcTipoPlazaLibera">
+                    SELECT 
+                        ID_TIPO_PLAZA, ID_TIPO_PLAZA ||' - '|| DESC_TIPO_PLAZA AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_PLAZA
+                </prop>
+                
+                <prop key="tcTipoPlazaLiberaPopup">
+                    SELECT 
+                        ID_TIPO_PLAZA, ID_TIPO_PLAZA ||' - '|| DESC_TIPO_PLAZA AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_PLAZA
+                </prop>
+                
+                <prop key="tcTipoServPubLibera">
+                    SELECT 
+                        ID_SERV_PUB, ID_SERV_PUB ||' - '|| DESC_TIPO_SERV_PUB AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_SERV_PUB
+                </prop>
+                <prop key="nivelLiberaPlaza">
+                    SELECT 
+                        AP.ID_NIVEL_PTO, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO 
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP
+                    WHERE
+                        AP.ID_ATRIBUTO_PUESTO = ?
+                </prop>
+                <prop key="nivelLiberaPlazaHonorarios">
+                    SELECT 
+                        AP.ID_NIVEL_PTO, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO 
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP
+                    WHERE
+                        AP.ID_ATRIBUTO_PUESTO = 'HONORAR'
+                </prop>
+                <prop key="sueldoLiberaPlaza">
+                    SELECT DISTINCT 
+                       TAB.TAB_SUELDO, TRIM(to_char(TAB.TAB_SUELDO,'$999,999,999,999,999.99')) AS SUELDO
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                        AND ##TAB.ID_ZONA_ECON## 
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="compensacionLiberaPlaza">
+                    SELECT DISTINCT 
+                       TAB.TAB_COMPENSACION, TRIM(to_char(TAB.TAB_COMPENSACION,'$999,999,999,999,999.99')) AS COMPENSACION
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                        AND ##TAB.ID_ZONA_ECON## 
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="zonaEconomicaLiberaPlaza">
+                    SELECT DISTINCT 
+                       TAB.ID_ZONA_ECON, Z.DESC_ZONA_ECON
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB, TC_ZONA_ECON Z
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO AND 
+                        TAB.ID_ZONA_ECON = Z.ID_ZONA_ECON  
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="zonaEconomicaLiberaPlazaHonorarios">
+                    SELECT DISTINCT 
+                       TAB.ID_ZONA_ECON, Z.DESC_ZONA_ECON
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB, TC_ZONA_ECON Z
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        AP.ID_ATRIBUTO_PUESTO = 'HONORAR' AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO AND 
+                        TAB.ID_ZONA_ECON = Z.ID_ZONA_ECON  
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                
+                <!--Plazas - Cambio de Situacion-->
+                <prop key="tcCambioSitPlaza">                    
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN (SELECT ID_SIT_PLAZA_ORIGEN FROM TC_SITUACION_OK GROUP BY ID_SIT_PLAZA_ORIGEN)
+                </prop>
+                <prop key="tcSituacionOk">
+                    SELECT 
+                        SIT.ID_SIT_PLAZA_DESTINO, SIT.ID_SIT_PLAZA_DESTINO ||' - '|| S.DESC_SIT_PLAZA
+                    FROM 
+                        TC_SITUACION_OK SIT, TC_SIT_PLAZA S
+                    WHERE 
+                        SIT.ID_SIT_PLAZA_DESTINO = S.ID_SIT_PLAZA
+                </prop>
+                
+                <!--Plazas - Cambio de Puesto Fisico-->
+                <prop key="tcCambioPtoFisicoPlaza">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('O','V','C')
+                </prop>
+                <prop key="tcPuestoCambioPtoFisicoPlaza">                    
+                    SELECT 
+                        P.ID_PUESTO, P.ID_PUESTO ||' - '|| P.DESC_PUESTO AS DESCRIPCION
+                    FROM 
+                        TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                    WHERE 
+                        P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    ORDER BY P.ID_PUESTO ASC
+                </prop>
+                <prop key="zonaEconomicaCambioPtoFisicoPlaza">
+                    SELECT DISTINCT 
+                       TAB.ID_ZONA_ECON, Z.DESC_ZONA_ECON
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB, TC_ZONA_ECON Z
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO AND 
+                        TAB.ID_ZONA_ECON = Z.ID_ZONA_ECON  
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="sueldoCambioPtoFisicoPlaza">
+                    SELECT DISTINCT 
+                       TAB.TAB_SUELDO, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO ||' - '|| TAB.TAB_SUELDO
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                        AND ##TAB.ID_ZONA_ECON## 
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="compensacionCambioPtoFisicoPlaza">
+                    SELECT DISTINCT 
+                       TAB.TAB_COMPENSACION, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO ||' - '|| TAB.TAB_COMPENSACION
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                        AND ##TAB.ID_ZONA_ECON## 
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                
+                <!--Plazas - Cambio Unidad Responsable-->
+                <prop key="tcCambioURFisicaPlaza">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('O','V','C')
+                </prop>
+                <prop key="tcUnidadCambioURFisica">
+                    SELECT 
+                        ID_UNIDAD, ID_UNIDAD ||' - '|| DESC_UNIDAD AS DESCRIPCION
+                    FROM 
+                        TC_UNIDAD
+                    WHERE 
+                        ID_UNIDAD NOT LIKE 'A%' AND 
+                        ID_UNIDAD NOT LIKE 'H%' AND
+                        ID_UNIDAD NOT LIKE 'Z%'
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    ORDER BY ID_UNIDAD ASC
+                </prop>
+                <prop key="tcUnidadCambioURFisicaSinEspeciales">
+                    SELECT 
+                        ID_UNIDAD, ID_UNIDAD ||' - '|| DESC_UNIDAD AS DESCRIPCION
+                    FROM 
+                        TC_UNIDAD
+                    WHERE 
+                        ID_UNIDAD NOT LIKE 'X%' AND
+                        ID_UNIDAD NOT LIKE 'A%' AND 
+                        ID_UNIDAD NOT LIKE 'H%' AND
+                        ID_UNIDAD NOT LIKE 'Z%'
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    ORDER BY ID_UNIDAD ASC
+                </prop>
+                
+                <!--Plazas - Busqueda-->
+                <prop key="tcPuestoBusqueda">
+                    SELECT 
+                        P.ID_PUESTO, P.ID_PUESTO ||' - '|| SUBSTR(P.DESC_PUESTO, 1, 28) AS DESCRIPCION
+                    FROM 
+                        TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                    WHERE 
+                        P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    ORDER BY P.ID_PUESTO ASC
+                </prop>
+                <prop key="tcUnidadBusqueda">
+                    SELECT 
+                        ID_UNIDAD, ID_UNIDAD ||' - '|| SUBSTR(DESC_UNIDAD, 1, 75) AS DESCRIPCION
+                    FROM 
+                        TC_UNIDAD
+                    WHERE
+                        1=1
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    ORDER BY ID_UNIDAD ASC
+                </prop>
+                
+                <prop key="tcUnidadBusquedaNotLike">
+                    SELECT 
+                        ID_UNIDAD, ID_UNIDAD ||' - '|| SUBSTR(DESC_UNIDAD, 1, 75) AS DESCRIPCION
+                    FROM 
+                        TC_UNIDAD 
+                    WHERE 
+                        ID_UNIDAD NOT LIKE 'X%' AND 
+                        ID_UNIDAD NOT LIKE 'A%' AND 
+                        ID_UNIDAD NOT LIKE 'H%' AND
+                        ID_UNIDAD NOT LIKE 'Z%'
+                        AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                        AND UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        ORDER BY ID_UNIDAD ASC
+                </prop>
+                
+                
+<!-- E S T R U C T U R A -->
+                <!--Consulta General de Plazas - Liberacion Plaza - Estructura-->
+                <prop key="liberaPlazas">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                            P.ID_SIT_PLAZA IN ('C','V') 
+                        AND P.ID_GRUPO_PAGO IN ('E','J') 
+                        AND P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Cambio Situacion - Estructura-->
+                <prop key="cambioSitPlazas">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        --P.ID_SIT_PLAZA IN ('C','V','VT','VR','VK','O','OR') AND
+                        P.ID_SIT_PLAZA IN (SELECT ID_SIT_PLAZA_ORIGEN FROM TC_SITUACION_OK GROUP BY ID_SIT_PLAZA_ORIGEN) AND
+                        P.ID_GRUPO_PAGO = 'E' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Cambio Puesto Fisico - Estructura-->
+                <prop key="cambioPtoFisicoPlazas">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O','V','C') AND 
+                        P.ID_GRUPO_PAGO IN ('E', 'J') AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Cambio Unidad Responsable - Estructura-->
+                <prop key="cambioURFisicaPlazas">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O','V','C') AND 
+                        P.ID_GRUPO_PAGO = 'E' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Asigna Plaza Soporte - Estructura-->
+                <prop key="asignaPlazaSoporte">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O') AND 
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA AND 
+                        P.PLAZA_RESPALDO = 0
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="asignaPlazaSoporteDisp">
+                    SELECT 
+                        P.ID_PLAZA, P.ID_PLAZA ||' - '|| T.DESC_TIPO_PLAZA
+                    FROM 
+                        TD_PLAZA P, TC_TIPO_PLAZA T
+                    WHERE 
+                        P.ID_TIPO_PLAZA = T.ID_TIPO_PLAZA AND
+                        P.ID_SIT_PLAZA = 'C' AND
+                        P.ID_GRUPO_PAGO = 'E' AND
+                        P.PLAZA_RESPALDO = 0
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                    ORDER BY P.ID_PLAZA ASC
+                </prop>
+                
+                <!--Consulta General de Plazas - Elimina Plaza Soporte - Estructura-->
+                <prop key="eliminaPlazaSoporte">
+                    SELECT
+                        P.ID_PLAZA, P.ID_PLAZA AS ID_PLAZAS_SOPORTE, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.PLAZA_RESPALDO, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O') AND 
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA AND 
+                        P.PLAZA_RESPALDO != 0
+                        AND ##P.ID_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Modifica Tipo SP - Estructura-->
+                <prop key="modificaTipoSP_PE">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('C', 'V', 'O') AND
+                        P.ID_GRUPO_PAGO = 'E' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="tcSitModificaTipoSP_PE">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('C', 'V', 'O')
+                </prop>
+                <prop key="tcTipoPlazaModificaTipoSP_PE">
+                    SELECT 
+                        ID_TIPO_PLAZA, ID_TIPO_PLAZA ||' - '|| DESC_TIPO_PLAZA AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_PLAZA
+                </prop>
+                <prop key="tcModificaTipoSP_PE">
+                    SELECT 
+                        ID_SERV_PUB, ID_SERV_PUB ||' - '|| DESC_TIPO_SERV_PUB AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_SERV_PUB
+                    WHERE ID_SERV_PUB NOT LIKE 'V%'
+                </prop>
+                
+                <!--Consulta General de Plazas - Modifica Denominacion Funcional - Estructura-->
+                <prop key="modificaDenomFunc_PE">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O') AND
+                        P.ID_GRUPO_PAGO = 'E' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Modifica Observaciones - Estructura-->
+                <prop key="modificaObservaciones_PE">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O') 
+                    AND P.ID_GRUPO_PAGO = 'E' 
+                    AND P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                    AND ##P.ID_PLAZA##
+                    AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                    AND ##P.ID_UNIDAD_PRE##
+                    AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                    AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Prorroga Art.34 - Estructura-->
+                <prop key="prorrogaArt34_PE">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O') 
+                    AND P.ID_GRUPO_PAGO = 'E' 
+                    AND P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                    AND P.ID_TIPO_PLAZA IN ('A', 'C') 
+                    AND P.ID_SERV_PUB IN ('BBAA0', 'BBBC0')
+                    AND ##P.ID_PLAZA##
+                    AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                    AND ##P.ID_UNIDAD_PRE##
+                    AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                    AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Intercambio Datos Presupuestales - Estructura-->
+                <prop key="modDatPrePlazaPopUp">
+                    SELECT DISTINCT 
+                        P.ID_PLAZA, 
+                        P.ID_SIT_PLAZA,
+                        SIT.DESC_SIT_PLAZA,
+                        P.ID_UNIDAD_PRE,
+                        U.DESC_UNIDAD,
+                        P.ID_PUESTO_PRE,
+                        PTO.DESC_PUESTO,
+                        E.ID_EDO,
+                        E.DESC_ESTADO,
+                        AP.ID_NIVEL_PTO,
+                        Z.ID_ZONA_ECON,
+                        Z.DESC_ZONA_ECON
+                    FROM 
+                        TD_PLAZA P, 
+                        TC_SIT_PLAZA SIT, 
+                        TC_ATRIBUTO_PUESTO AP, 
+                        TC_JERARQUIA J, 
+                        TC_PUESTO PTO, 
+                        TC_UNIDAD U, 
+                        TC_ESTADO E, 
+                        TC_TABULADOR TAB, 
+                        TC_ZONA_ECON Z
+                    WHERE
+                        P.ID_GRUPO_PAGO = 'E' 
+                    AND P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                    AND AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_PRE
+                    AND U.ID_UNIDAD = P.ID_UNIDAD_PRE
+                    AND U.UNI_CICLO = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    AND PTO.ID_PUESTO = P.ID_PUESTO_PRE
+                    AND PTO.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO 
+                    AND TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    AND TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    AND P.ID_EDO_PRE = E.ID_EDO
+                    AND TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                    AND TAB.ID_ZONA_ECON = Z.ID_ZONA_ECON
+                    AND TAB.ID_ZONA_ECON = P.ID_ZONA_ECO_PRE
+                    AND TAB.ID_RANGO = P.ID_RANGO_PRE
+                    AND AP.ID_JERARQUIA = J.ID_JERARQUIA 
+                    AND J.ID_JERARQUIA = '7'
+                    AND ##U.ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND ROWNUM <![CDATA[<]]> 200                       
+                </prop>
+                
+                <!--Consulta General de Plazas - Promocion Permita - Estructura-->
+                <prop key="promocionPermutaPopUp">
+                    SELECT 
+                        P.ID_PLAZA,
+                        EMP.RFC_EMPLEADO,
+                        EMP.NOMBRE_EMPLEADO,
+                        EMP.PRIMER_APELLIDO,
+                        EMP.SEGUNDO_APELLIDO,
+                        P.ID_SIT_PLAZA,
+                        SIT.DESC_SIT_PLAZA, 
+                        P.ID_UNIDAD_NOM,
+                        U.DESC_UNIDAD, 
+                        P.ID_PUESTO_NOM,
+                        PTO.DESC_PUESTO,
+                        EDO.ID_EDO,
+                        EDO.DESC_ESTADO,
+                        AP.ID_NIVEL_PTO,
+                        Z.ID_ZONA_ECON,
+                        Z.DESC_ZONA_ECON, 
+                        P.ID_ZONA_DIST_NOM
+                    FROM 
+                        TD_PLAZA P LEFT OUTER JOIN TD_EMPLEADO EMP ON P.PLAZA_RFC = EMP.RFC_EMPLEADO,
+                        TC_SIT_PLAZA SIT, 
+                        TC_ATRIBUTO_PUESTO AP, 
+                        TC_JERARQUIA J, 
+                        TC_PUESTO PTO, 
+                        TC_UNIDAD U, 
+                        TC_ESTADO EDO, 
+                        TC_TABULADOR TAB, 
+                        TC_ZONA_ECON Z
+                    WHERE
+                        P.ID_SIT_PLAZA = 'O'
+                    AND P.ID_GRUPO_PAGO = 'E' 
+                    AND P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                    AND AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_NOM
+                    AND U.ID_UNIDAD = P.ID_UNIDAD_NOM
+                    AND U.UNI_CICLO = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    AND PTO.ID_PUESTO = P.ID_PUESTO_NOM 
+                    AND PTO.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO 
+                    AND P.ID_EDO_NOM = EDO.ID_EDO
+                    AND TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099'
+                    AND TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099'
+                    AND TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                    AND TAB.ID_ZONA_ECON = Z.ID_ZONA_ECON
+                    AND TAB.ID_ZONA_ECON = P.ID_ZONA_ECO_NOM
+                    AND TAB.ID_RANGO = P.ID_RANGO_NOM
+                    AND AP.ID_JERARQUIA = J.ID_JERARQUIA 
+                    AND ##U.ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                
+<!-- E V E N T U A L -->
+                <!--Plazas - Creacion - Eventual-->
+                <prop key="tcSitPlazaCreacion">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('C','V')
+                </prop>
+                <prop key="tcUnidadCreacion">
+                    SELECT 
+                        ID_UNIDAD, ID_UNIDAD ||' - '|| DESC_UNIDAD AS DESCRIPCION
+                    FROM 
+                        TC_UNIDAD
+                    WHERE 
+                        ID_UNIDAD NOT LIKE 'X%' AND 
+                        ID_UNIDAD NOT LIKE 'A%' AND 
+                        ID_UNIDAD NOT LIKE 'H%' AND
+                        ID_UNIDAD NOT LIKE 'Z%'
+                    AND ##ID_UNIDAD#SIREHUNIDAD#PRIMARY##
+                    AND UNI_CICLO IN (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S') 
+                    ORDER BY ID_UNIDAD ASC
+                </prop>
+                <prop key="tcPuestoCreacion">
+                    SELECT 
+                        P.ID_PUESTO, P.ID_PUESTO ||' - '|| P.DESC_PUESTO AS DESCRIPCION
+                    FROM 
+                        TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                    WHERE 
+                        P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO AND 
+                        AP.ID_NOMBRAMIENTO != 'B' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    ORDER BY P.ID_PUESTO ASC
+                </prop>
+                <prop key="tcUnidadEdoCreacion">
+                    SELECT DISTINCT 
+                        UE.ID_EDO, E.ID_EDO ||' - '|| E.DESC_ESTADO
+                    FROM 
+                        TC_UNIDAD_EDO UE, TC_ESTADO E
+                    WHERE 
+                        UE.ID_EDO = E.ID_EDO AND
+                        UE.ID_UNIDAD = ?
+                </prop>
+                <prop key="tcTipoPlazaCreacion">
+                    SELECT 
+                        ID_TIPO_PLAZA, ID_TIPO_PLAZA ||' - '|| SUBSTR(DESC_TIPO_PLAZA, 1, 28) AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_PLAZA
+                </prop>
+                <prop key="tcTipoServPubCreacion">
+                    SELECT 
+                        ID_SERV_PUB, ID_SERV_PUB ||' - '|| DESC_TIPO_SERV_PUB AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_SERV_PUB
+                    WHERE 
+                        ID_SERV_PUB like 'VVV%'
+                </prop>
+                <prop key="nivelCreacionPlaza">
+                    SELECT 
+                        AP.ID_NIVEL_PTO, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO 
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP
+                    WHERE
+                        AP.ID_ATRIBUTO_PUESTO = ?
+                </prop>
+                <prop key="sueldoCreacionPlaza">
+                    SELECT DISTINCT 
+                       TAB.TAB_SUELDO, TRIM(to_char(TAB.TAB_SUELDO,'$999,999,999,999,999.99')) AS SUELDO
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                        AND TAB.ID_ZONA_ECON = ? 
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="compensacionCreacionPlaza">
+                    SELECT DISTINCT 
+                       TAB.TAB_COMPENSACION, TRIM(to_char(TAB.TAB_COMPENSACION,'$999,999,999,999,999.99')) AS COMPENSACION
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO
+                        AND TAB.ID_ZONA_ECON = ? 
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="zonaEconomicaCreacionPlaza">
+                    SELECT DISTINCT 
+                       TAB.ID_ZONA_ECON, Z.DESC_ZONA_ECON
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB, TC_ZONA_ECON Z
+                    WHERE
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND
+                        AP.ID_ATRIBUTO_PUESTO = ? AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO AND 
+                        TAB.ID_ZONA_ECON = Z.ID_ZONA_ECON  
+                        AND TAB.ID_RANGO = 0
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="nombramientoCreacionPlaza">
+                    SELECT 
+                       N.ID_NOMBRAMIENTO, AP.ID_ATRIBUTO_PUESTO ||' - '|| N.ID_NOMBRAMIENTO ||' - '|| N.DESC_NOMBRAMIENTO
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_NOMBRAMIENTO N
+                    WHERE
+                        AP.ID_ATRIBUTO_PUESTO = ?  AND 
+                        AP.ID_NOMBRAMIENTO = N.ID_NOMBRAMIENTO
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="jerarquiaCreacionPlaza">
+                    SELECT 
+                       J.ID_JERARQUIA, AP.ID_ATRIBUTO_PUESTO ||' - '|| J.ID_JERARQUIA ||' - '|| J.DESC_JERARQUIA
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_JERARQUIA J
+                    WHERE
+                        AP.ID_ATRIBUTO_PUESTO = ?  AND 
+                        AP.ID_JERARQUIA = J.ID_JERARQUIA
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="respaldoCreacionPlaza">
+                    SELECT 
+                        P.ID_PLAZA, P.ID_PLAZA ||' - '|| T.DESC_TIPO_PLAZA
+                    FROM 
+                        TD_PLAZA P, TC_TIPO_PLAZA T
+                    WHERE 
+                        P.ID_TIPO_PLAZA = T.ID_TIPO_PLAZA AND
+                        P.ID_SIT_PLAZA = 'C' AND
+                        P.ID_GRUPO_PAGO = 'E' AND
+                        P.PLAZA_RESPALDO = 0
+                    ORDER BY P.ID_PLAZA ASC
+                </prop>
+                <prop key="respaldoCreacionPlazaDetalle">
+                    SELECT 
+                        P.ID_PLAZA,
+                        P.ID_PLAZA ||' - '|| 
+                        T.DESC_TIPO_PLAZA ||' - (PTO) '|| 
+                        AP.ID_ATRIBUTO_PUESTO ||' - $'|| 
+                        (TAB.TAB_SUELDO + TAB.TAB_COMPENSACION)
+                    FROM 
+                        TD_PLAZA P, TC_TIPO_PLAZA T, TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE 
+                        P.ID_TIPO_PLAZA = T.ID_TIPO_PLAZA AND
+                        P.ID_SIT_PLAZA = 'C' AND
+                        P.ID_GRUPO_PAGO = 'E' AND
+                        P.PLAZA_RESPALDO = 0 AND
+                        AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_PRE AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO AND 
+                        TAB.ID_ZONA_ECON = P.ID_ZONA_ECO_PRE AND
+                        TAB.ID_RANGO = '0' AND 
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                    ORDER BY P.ID_PLAZA ASC
+                </prop>
+                <prop key="nivelCreacionPlazaSoporte">
+                    SELECT 
+                        AP.ID_NIVEL_PTO, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO 
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TD_PLAZA P
+                    WHERE
+                        P.ID_PLAZA = ? AND
+                        AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_PRE
+                </prop>
+                <prop key="nombramientoCreacionPlazaSoporte">
+                    SELECT 
+                       N.ID_NOMBRAMIENTO, AP.ID_ATRIBUTO_PUESTO ||' - '|| N.ID_NOMBRAMIENTO ||' - '|| N.DESC_NOMBRAMIENTO
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_NOMBRAMIENTO N, TD_PLAZA P
+                    WHERE
+                        P.ID_PLAZA = ? AND
+                        AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_PRE AND
+                        AP.ID_NOMBRAMIENTO = N.ID_NOMBRAMIENTO
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="jerarquiaCreacionPlazaSoporte">
+                    SELECT 
+                       J.ID_JERARQUIA, AP.ID_ATRIBUTO_PUESTO ||' - '|| J.ID_JERARQUIA ||' - '|| J.DESC_JERARQUIA
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_JERARQUIA J, TD_PLAZA P
+                    WHERE
+                        P.ID_PLAZA = ? AND
+                        AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_PRE AND
+                        AP.ID_JERARQUIA = J.ID_JERARQUIA
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="sueldoCreacionPlazaSoporte">
+                    SELECT DISTINCT 
+                       TAB.TAB_SUELDO, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO ||' - '|| TAB.TAB_SUELDO
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB, TD_PLAZA P
+                    WHERE
+                        P.ID_PLAZA = ? AND
+                        AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_PRE AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO AND
+                        TAB.ID_ZONA_ECON = P.ID_ZONA_ECO_PRE AND 
+                        TAB.ID_RANGO = '0' AND 
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                <prop key="compensacionCreacionPlazaSoporte">
+                    SELECT DISTINCT 
+                       TAB.TAB_COMPENSACION, AP.ID_ATRIBUTO_PUESTO ||' - '|| AP.ID_NIVEL_PTO ||' - '|| TAB.TAB_COMPENSACION
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB, TD_PLAZA P
+                    WHERE
+                        P.ID_PLAZA = ? AND
+                        AP.ID_ATRIBUTO_PUESTO = P.ID_PUESTO_PRE AND
+                        TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO AND 
+                        TAB.ID_ZONA_ECON = P.ID_ZONA_ECO_PRE AND 
+                        TAB.ID_RANGO = '0' AND 
+                        TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' AND 
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        AND ROWNUM <![CDATA[<]]> 10
+                </prop>
+                
+                <!--Consulta General de Plazas - Liberacion Plaza - Eventual-->
+                <prop key="liberaPlazasEventual">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('C','V') AND 
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Cambio Situacion - Eventual-->
+                <prop key="cambioSitPlazasEventual">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN (SELECT ID_SIT_PLAZA_ORIGEN FROM TC_SITUACION_OK GROUP BY ID_SIT_PLAZA_ORIGEN) AND
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Cambio Puesto Fisico - Eventual-->
+                <prop key="cambioPtoFisicoPlazasEventual">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O','V','C') AND 
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Cambio Unidad Responsable - Eventual-->
+                <prop key="cambioURFisicaPlazasEventual">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O','V','C') AND 
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="tcDistUnidadCambioUR">
+                    SELECT 
+                        ID_DIST_UNIDAD AS DISTUNIDAD, ID_DIST_UNIDAD FROM TC_DIST_UNIDAD
+                    WHERE 
+                        ID_UNIDAD = ?
+                </prop>
+                
+                <!--Consulta General de Plazas - Depura Plazas - Eventual-->
+                <prop key="depuraPlazasEventuales">
+                    SELECT
+                        P.ID_PLAZA, P.ID_PLAZA AS ID_PLAZAS, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('C','V') AND
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA AND
+                        P.PLAZA_RESPALDO = 0
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="tcSitPlazaDepuraEventuales">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('C','V')
+                </prop>
+                
+                <!--Consulta General de Plazas - Prorroga Contrato - Eventual-->
+                <prop key="prorrogaContratoPlazasEventual">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O') AND
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Modifica Tipo SP - Eventual-->
+                <prop key="modificaTipoSPPlazasEventual">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('C', 'V', 'O') AND
+                        P.ID_GRUPO_PAGO = 'V' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="tcSitModificaTipoSP">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('C', 'V', 'O')
+                </prop>
+                <prop key="tcTipoPlazaModificaTipoSP">
+                    SELECT 
+                        ID_TIPO_PLAZA, ID_TIPO_PLAZA ||' - '|| DESC_TIPO_PLAZA AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_PLAZA
+                </prop>
+                <prop key="tcModificaTipoSP">
+                    SELECT 
+                        ID_SERV_PUB, ID_SERV_PUB ||' - '|| DESC_TIPO_SERV_PUB AS DESCRIPCION
+                    FROM 
+                        TC_TIPO_SERV_PUB
+                    WHERE 
+                        ID_SERV_PUB like 'VVV%'
+                </prop>
+
+         
+<!-- H O N O R A R I O S -->
+                <!--Consulta General de Plazas - Liberacion Plaza - Honorarios-->
+                <prop key="liberaPlazasHonorarios">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('C','V') AND 
+                        P.ID_GRUPO_PAGO = 'H' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Cambio Situacion - Honorarios-->
+                <prop key="cambioSitPlazasHonorarios">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        --P.ID_SIT_PLAZA IN ('C','V','VT','VR','VK','O','OR') AND
+                        P.ID_SIT_PLAZA IN (SELECT ID_SIT_PLAZA_ORIGEN FROM TC_SITUACION_OK GROUP BY ID_SIT_PLAZA_ORIGEN) AND
+                        P.ID_GRUPO_PAGO = 'H' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Depura Plazas - Honorarios-->
+                <prop key="depuraPlazasHonorarios">
+                    SELECT
+                        P.ID_PLAZA, P.ID_PLAZA AS ID_PLAZAS, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('C','V') AND
+                        P.ID_GRUPO_PAGO = 'H' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA AND
+                        (P.PLAZA_RESPALDO = 0 OR P.PLAZA_RESPALDO is null)
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="tcSitPlazaDepuraHonorarios">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('C','V')
+                </prop>
+                
+                <!--Consulta General de Plazas - Prorroga Contrato - Honorarios-->
+                <prop key="prorrogaContratoPlazasHonorarios">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('O') AND
+                        P.ID_GRUPO_PAGO = 'H' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!--Consulta General de Plazas - Modifica Importe - Honorarios-->
+                <prop key="modificaImportePlazasHonorarios">
+                    SELECT
+                        P.ID_PLAZA, P.ID_SIT_PLAZA AS SITUACION, SIT.DESC_SIT_PLAZA, P.ID_UNIDAD_PRE, P.ID_PUESTO_PRE
+                    FROM 
+                        TD_PLAZA P, TC_SIT_PLAZA SIT
+                    WHERE
+                        P.ID_SIT_PLAZA IN ('C','V','O') AND
+                        P.ID_GRUPO_PAGO = 'H' AND
+                        P.ID_SIT_PLAZA = SIT.ID_SIT_PLAZA 
+                        AND ##P.ID_PLAZA##
+                        AND ##P.ID_SIT_PLAZA##
+                        AND P.ID_PUESTO_PRE IN (SELECT AP.ID_ATRIBUTO_PUESTO FROM TC_ATRIBUTO_PUESTO AP WHERE TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099' AND ##TRIM(AP.ID_ATRIBUTO_PUESTO)##)  
+                        AND ##P.ID_UNIDAD_PRE##
+                        AND ##P.ID_UNIDAD_PRE#SIREHUNIDAD#PRIMARY##
+                        AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="tcSitModificaImportePlaza">
+                    SELECT 
+                        ID_SIT_PLAZA, ID_SIT_PLAZA ||' - '|| DESC_SIT_PLAZA
+                    FROM 
+                        TC_SIT_PLAZA 
+                    WHERE 
+                        ID_SIT_PLAZA IN ('C','V','O')
+                </prop>
+                
+<!-- R E P O R T E S -->
+                <prop key="tcUnidadCicloReportes">
+                    SELECT UNI_CICLO, UNI_CICLO AS CICLO 
+                    FROM TC_UNIDAD
+                    WHERE ##id_unidad#SIREHUNIDAD#PRIMARY##
+                    GROUP BY UNI_CICLO
+                    ORDER BY UNI_CICLO DESC
+                </prop>
+                <prop key="tcUnidadCicloReportesCLC">
+                    select *
+                    from (
+                    select td_cxlc.CXLC_CICLO, td_cxlc.CXLC_CICLO as CICLO
+                    from td_cxlc
+                    group by td_cxlc.CXLC_CICLO
+                    order by td_cxlc.CXLC_CICLO desc
+                    )
+                    where rownum <![CDATA[<]]>=2
+                </prop>
+                <prop key="tcUnidadReportes">
+                    SELECT 
+                      DISTINCT  ID_UNIDAD, ID_UNIDAD ||' - '|| SUBSTR(DESC_UNIDAD, 1, 28) AS DESCRIPCION
+                    FROM 
+                        TC_UNIDAD
+                    WHERE ##id_unidad#SIREHUNIDAD#PRIMARY##
+                    ORDER BY ID_UNIDAD 
+                </prop>
+                <prop key="tcQnaCapturaReportes">
+                    select 
+                        rc_qna_captura as id, rc_qna_captura as descripcion 
+                    from 
+                        (select distinct rc_qna_captura from tn_reg_control order by rc_qna_captura desc)
+                    where rownum <![CDATA[<]]> 24 
+                    order by rc_qna_captura DESC
+                </prop>
+                <prop key="tcMesQnaReportes">
+                    SELECT 
+                        ID_MES, ID_MES AS DESCRIPCION
+                    FROM 
+                        TC_MES_QNA
+                    ORDER BY QNA_NON ASC
+                </prop>
+                <prop key="listaQuincenasReportePlazas">
+                    SELECT DISTINCT c.rc_qna_captura id, c.rc_qna_captura quincena
+                    FROM tn_reg_control c
+                    WHERE c.rc_qna_captura <![CDATA[<=]]>  (SELECT rc_qna_captura
+                                               FROM tn_reg_control
+                                              WHERE rc_vigente = 'S')
+                   ORDER BY 1 DESC
+                </prop>
+                <prop key="listaQuincenasCicloPBajas">
+                    select nom_qna_captura, nom_qna_captura as qna_pago 
+                    from tn_nomina
+                    where substr(nom_qna_captura,1,4) = ?
+                    group by nom_qna_captura
+                    order by nom_qna_captura desc
+                </prop>
+                <prop key="listTcEtapasPlazaConcurso">
+                    SELECT ID_ETAPA as clave, DESC_ETAPA as descripcion
+                    FROM TC_ETAPA_CONCURSO
+                    ORDER BY 1
+                </prop>
+                <prop key="tdArbolUbicacion">
+                    SELECT  ID_NODO as key, ID_NODO || ' - ' || AU_DESCRIPCION_NODO as value
+                    FROM    TD_ARBOL_UBICACION
+                            ORDER BY 1
+                </prop>
+                <prop key="tcObligado">
+                    SELECT  ID_OBLIGADO as key, ID_OBLIGADO || ' - ' || DESC_OBLIGADO as value
+                    FROM    TC_OBLIGADO
+                            ORDER BY 1
+                </prop>
+                <prop key="tcMotivoObligado">
+                    SELECT  ID_MOTIVO_OBLIGADO as key, ID_MOTIVO_OBLIGADO || ' - ' || DESC_MOTIVO_OBLIGADO as value
+                    FROM    TC_MOTIVO_OBLIGADO
+                            ORDER BY 1
+                </prop>
+                <prop key="tcRangoTabul">
+                    SELECT  ID_RANGO_TABUL as key, ID_RANGO_TABUL || ' - ' || DESC_RANGO_TABUL as value
+                    FROM    TC_RANGO_TABUL
+                            ORDER BY 1
+                </prop>
+                <prop key="tcProyRegulariza">
+                    SELECT  ID_PROY_REGUL as key, ID_PROY_REGUL || ' - ' || DESC_PROY_REGUL as value
+                    FROM    TC_PROY_REGULARIZA
+                    WHERE   ##PR_CICLO##
+                            ORDER BY 1
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

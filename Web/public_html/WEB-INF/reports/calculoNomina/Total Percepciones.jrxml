@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Total Percepciones" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="533"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PPT_QNAPAGO" class="java.lang.String"/>
+	<parameter name="PPT_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="PPT_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="PPT_UNIDAD" class="java.lang.String"/>
+	<parameter name="PPT_CICLO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 'Total de Percepciones en Nómina' TOTALDEPERCEPCIONESENNOMINA, sum(p.pf_monto)
+from td_perded_fis p
+where p.pf_qna_pago = $P{PPT_QNAPAGO}
+  and p.id_unidad_fisica = $P{PPT_UNIDAD}
+  and p.id_tipo_nomina = $P{PPT_TIPONOMINA}
+  and p.pf_num_complem = $P{PPT_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto = 'P'
+  and p.id_cpto_pago <> '62'
+GROUP BY 1]]>
+	</queryString>
+	<field name="TOTALDEPERCEPCIONESENNOMINA" class="java.lang.String"/>
+	<field name="SUM(P.PF_MONTO)" class="java.math.BigDecimal"/>
+	<group name="ENCABEZADO">
+		<groupExpression><![CDATA[$F{TOTALDEPERCEPCIONESENNOMINA}]]></groupExpression>
+		<groupHeader>
+			<band height="11">
+				<textField>
+					<reportElement x="0" y="0" width="270" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TOTALDEPERCEPCIONESENNOMINA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="270" y="0" width="60" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUM(P.PF_MONTO)}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

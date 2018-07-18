@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="promocionesSpc" pageWidth="936" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="896" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="194"/>
+	<property name="ireport.y" value="48"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="P_QNA_CAPTURA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT ES.CARAC_OCUP, M.MEP_QNA_CAPTURA, M.ID_UNIDAD_NOM, M.MEP_RFC,
+       TRIM(E.NOMBRE_EMPLEADO)||' '||TRIM(E.PRIMER_APELLIDO)||' '||TRIM(E.SEGUNDO_APELLIDO) NOMBRE,
+       TO_CHAR(M.MEP_PLAZA_ANT,'000000') PZA, TO_CHAR(M.ID_PLAZA,'000000') PZA, ESS.CODIGO_PUESTO ORIGEN,
+       ES.CODIGO_PUESTO DESTINO, TO_CHAR(M.MEP_ULTIMO_MOVTO,'DD/MM/YYYY') FECHA, M.ID_MOVTO_PERSONA,
+       MP.DESC_MOVS_PERSONAL,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+  FROM SIREH.TN_MOVTOS_EMP_PLA M, SIREH.TD_ESCENARIO ES, SIREH.TD_ESCENARIO ESS, SIREH.TD_EMPLEADO E, SIREH.TC_MOVS_PERSONAL MP
+ WHERE M.ID_MOVTO_PERSONA IN ('221','225')
+       AND M.MEP_QNA_CAPTURA = $P{P_QNA_CAPTURA}
+       AND M.ID_GRUPO_PAGO NOT IN ('V','H')
+       AND M.ID_PLAZA = ES.PLAZA_ESCENARIO
+       AND ES.FIN_ESCENARIO = '31/12/2099'
+       AND ES.CARAC_OCUP IN ('C','X','L','S','G')
+       AND M.MEP_RFC = E.RFC_EMPLEADO
+       AND M.MEP_PLAZA_ANT = ESS.PLAZA_ESCENARIO
+       AND ESS.FIN_ESCENARIO = '31/12/2099'
+       AND M.ID_MOVTO_PERSONA = MP.ID_MOVS_PERSONAL
+ORDER BY ES.CARAC_OCUP, M.MEP_QNA_CAPTURA, M.ID_UNIDAD_NOM, M.MEP_RFC]]>
+	</queryString>
+	<field name="CARAC_OCUP" class="java.lang.String"/>
+	<field name="MEP_QNA_CAPTURA" class="java.math.BigDecimal"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="MEP_RFC" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="PZA" class="java.lang.String"/>
+	<field name="ORIGEN" class="java.lang.String"/>
+	<field name="DESTINO" class="java.lang.String"/>
+	<field name="FECHA" class="java.lang.String"/>
+	<field name="ID_MOVTO_PERSONA" class="java.math.BigDecimal"/>
+	<field name="DESC_MOVS_PERSONAL" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<group name="MEP_RFC">
+		<groupExpression><![CDATA[$F{MEP_RFC}]]></groupExpression>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="251" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="239" y="14" width="429" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Promociones de Servidores Públicos]]></text>
+			</staticText>
+			<image isUsingCache="false" isLazy="true">
+				<reportElement x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="681" y="26" width="214" height="24"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="681" y="1" width="213" height="25"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="32" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="896" height="32" forecolor="#FFFFFF" backcolor="#F1F1F1"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="157" y="10" width="68" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[R.F.C.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="394" y="10" width="44" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLAZA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="230" y="10" width="164" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="49" y="3" width="79" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[QUINCENA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="51" y="16" width="40" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="10" width="38" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LITERAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="584" y="10" width="130" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO DE RHNET DESTINO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="16" width="40" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FINAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="10" width="130" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CÓDIGO DE RHNET ORIGEN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="10" width="23" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="715" y="5" width="68" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DEL MOVIMIENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="784" y="10" width="109" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO DE MOVIMIENTO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="17" width="893" height="1" forecolor="#F1F1F1"/>
+			</line>
+			<textField>
+				<reportElement x="450" y="3" width="130" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORIGEN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="783" y="3" width="113" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_MOVS_PERSONAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="394" y="3" width="44" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PZA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="230" y="3" width="164" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="155" y="3" width="68" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_RFC}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="3" width="21" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CARAC_OCUP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="81" y="3" width="44" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_QNA_CAPTURA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="37" y="3" width="44" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MEP_QNA_CAPTURA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="128" y="3" width="23" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="584" y="3" width="130" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESTINO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="729" y="3" width="43" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FECHA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="789" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="854" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEE dd/MMM/yyyy HH:mm">
+				<reportElement x="793" y="15" width="89" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="893" height="1" forecolor="#999999"/>
+			</line>
+			<textField>
+				<reportElement x="165" y="6" width="578" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

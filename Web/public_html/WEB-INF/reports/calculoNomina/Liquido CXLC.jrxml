@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Liquido CXLC" pageWidth="612" pageHeight="792" columnWidth="612" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="366"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PTL_QNAPAGO" class="java.lang.String"/>
+	<parameter name="PTL_NUMCOMPLEMENTO" class="java.lang.String"/>
+	<parameter name="PTL_TIPONOMINA" class="java.lang.String"/>
+	<parameter name="PTL_CICLO" class="java.lang.String"/>
+	<parameter name="PTL_UNIDAD" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select p.pf_qna_pago, p.id_unidad_fisica, p.id_tipo_nomina, p.pf_num_complem, 'Percepciones de la Cuenta por Liquidar' PERCEPCIONESCUENTA,
+       ((sum(CASE WHEN(p.id_tipo_cpto = 'P') THEN (p.pf_monto*1) end)) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PIV' or p.id_tipo_cpto||p.id_cpto_pago = 'P61' or p.id_tipo_cpto||p.id_cpto_pago = 'PDC' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD1' or p.id_tipo_cpto||p.id_cpto_pago = 'PD2' or p.id_tipo_cpto||p.id_cpto_pago = 'PD3' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD4' or p.id_tipo_cpto||p.id_cpto_pago = 'PD5' or p.id_tipo_cpto||p.id_cpto_pago = 'PD6' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDE' or p.id_tipo_cpto||p.id_cpto_pago = 'PDG' or p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDN' or p.id_tipo_cpto||p.id_cpto_pago = 'PDR' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDF' or p.id_tipo_cpto||p.id_cpto_pago = 'PDP' or p.id_tipo_cpto||p.id_cpto_pago = 'P0A' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0B' or p.id_tipo_cpto||p.id_cpto_pago = 'P0C' or p.id_tipo_cpto||p.id_cpto_pago = 'P0D' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0E' or p.id_tipo_cpto||p.id_cpto_pago = 'P35' then (p.pf_monto) END),0)) percecpiones,
+       'Subtotal de Deducciones' SUBTOTALDEDEDUCCIONES,
+       nvl(sum(CASE WHEN(p.id_tipo_cpto = 'D') THEN (p.pf_monto*-1) END),0) deducciones,
+       'Subtotal de Devoluciones' SUBTOTALDEDEVOLUCIONES,
+       (nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PIV' or p.id_tipo_cpto||p.id_cpto_pago = 'P61' or p.id_tipo_cpto||p.id_cpto_pago = 'PDC' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD1' or p.id_tipo_cpto||p.id_cpto_pago = 'PD2' or p.id_tipo_cpto||p.id_cpto_pago = 'PD3' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD4' or p.id_tipo_cpto||p.id_cpto_pago = 'PD5' or p.id_tipo_cpto||p.id_cpto_pago = 'PD6' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDE' or p.id_tipo_cpto||p.id_cpto_pago = 'PDG' or p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDN' or p.id_tipo_cpto||p.id_cpto_pago = 'PDR' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDF' or p.id_tipo_cpto||p.id_cpto_pago = 'PDP' or p.id_tipo_cpto||p.id_cpto_pago = 'P0A' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0B' or p.id_tipo_cpto||p.id_cpto_pago = 'P0C' or p.id_tipo_cpto||p.id_cpto_pago = 'P0D' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0E' or p.id_tipo_cpto||p.id_cpto_pago = 'P35' then (p.pf_monto*-1) END),0)*-1) devolucion,
+       'Subtotal de ISR' SUBTOTALDEISR,
+       ((nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PD1' or p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' then p.pf_monto*-1 end),0) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'P35' or p.id_tipo_cpto||p.id_cpto_pago = 'PJ3' then p.pf_monto * 1 end),0) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'D01' or p.id_tipo_cpto||p.id_cpto_pago = 'DIC' or p.id_tipo_cpto||p.id_cpto_pago = 'DIL' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIV' or p.id_tipo_cpto||p.id_cpto_pago = 'D0I' or p.id_tipo_cpto||p.id_cpto_pago = 'DIJ' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIE' or p.id_tipo_cpto||p.id_cpto_pago = 'DIP' or p.id_tipo_cpto||p.id_cpto_pago = 'DIS' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIR' or p.id_tipo_cpto||p.id_cpto_pago = 'DIT' or p.id_tipo_cpto||p.id_cpto_pago = 'DID' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIA' or p.id_tipo_cpto||p.id_cpto_pago = 'DIB' or p.id_tipo_cpto||p.id_cpto_pago = 'DIM' then p.pf_monto *  -1 end),0))*-1) ISR,
+       'Subtotal de ISPT Retenido' SUBTOTALDEISPTRETENIDO,
+       ((nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CE0' then p.pf_monto*1 end),0) -
+        nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CJ1' or p.id_tipo_cpto||p.id_cpto_pago = 'CSS' or p.id_tipo_cpto||p.id_cpto_pago = 'CIE' or p.id_tipo_cpto||p.id_cpto_pago = 'CIP' or p.id_tipo_cpto||p.id_cpto_pago = 'CIB' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'CIA' or p.id_tipo_cpto||p.id_cpto_pago = 'C01' or p.id_tipo_cpto||p.id_cpto_pago = 'CIM' then p.pf_monto * 1 end),0))*-1) ISPT,
+       'Liquido Cuenta por Liquidar Certificada' LIQUIDOCERTIFICADA,       ((sum(CASE WHEN(p.id_tipo_cpto = 'P') THEN (p.pf_monto*1) end)) +
+       (nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PIV' or p.id_tipo_cpto||p.id_cpto_pago = 'P61' or p.id_tipo_cpto||p.id_cpto_pago = 'PDC' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD1' or p.id_tipo_cpto||p.id_cpto_pago = 'PD2' or p.id_tipo_cpto||p.id_cpto_pago = 'PD3' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD4' or p.id_tipo_cpto||p.id_cpto_pago = 'PD5' or p.id_tipo_cpto||p.id_cpto_pago = 'PD6' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDE' or p.id_tipo_cpto||p.id_cpto_pago = 'PDG' or p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDN' or p.id_tipo_cpto||p.id_cpto_pago = 'PDR' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDF' or p.id_tipo_cpto||p.id_cpto_pago = 'PDP' or p.id_tipo_cpto||p.id_cpto_pago = 'P0A' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0B' or p.id_tipo_cpto||p.id_cpto_pago = 'P0C' or p.id_tipo_cpto||p.id_cpto_pago = 'P0D' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0E' then (p.pf_monto*1) END),0)) +
+       ((nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PD1' then p.pf_monto*-1 end),0) -
+        (nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CE0' then p.pf_monto*-1 end),0)) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'CJ1' or p.id_tipo_cpto||p.id_cpto_pago = 'CSS' or p.id_tipo_cpto||p.id_cpto_pago = 'CIE' or p.id_tipo_cpto||p.id_cpto_pago = 'CIP' or p.id_tipo_cpto||p.id_cpto_pago = 'CIB' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'CIA' or p.id_tipo_cpto||p.id_cpto_pago = 'C01' or p.id_tipo_cpto||p.id_cpto_pago = 'CIM' then p.pf_monto * 1 end),0)))*-1) -
+       (nvl((sum(CASE WHEN(p.id_tipo_cpto = 'D') THEN (p.pf_monto) END)),0) +
+       ((nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' then p.pf_monto*1 end),0) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'P35' or p.id_tipo_cpto||p.id_cpto_pago = 'PJ3' then p.pf_monto * -1 end),0) -
+       nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'D01' or p.id_tipo_cpto||p.id_cpto_pago = 'DIC' or p.id_tipo_cpto||p.id_cpto_pago = 'DIL' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIV' or p.id_tipo_cpto||p.id_cpto_pago = 'D0I' or p.id_tipo_cpto||p.id_cpto_pago = 'DIJ' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIE' or p.id_tipo_cpto||p.id_cpto_pago = 'DIP' or p.id_tipo_cpto||p.id_cpto_pago = 'DIS' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIR' or p.id_tipo_cpto||p.id_cpto_pago = 'DIT' or p.id_tipo_cpto||p.id_cpto_pago = 'DID' or
+                         p.id_tipo_cpto||p.id_cpto_pago = 'DIA' or p.id_tipo_cpto||p.id_cpto_pago = 'DIB' or p.id_tipo_cpto||p.id_cpto_pago = 'DIM' then p.pf_monto *  1 end),0))*-1)-
+       (nvl(sum(case when p.id_tipo_cpto||p.id_cpto_pago = 'PIV' or p.id_tipo_cpto||p.id_cpto_pago = 'P61' or p.id_tipo_cpto||p.id_cpto_pago = 'PDC' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD1' or p.id_tipo_cpto||p.id_cpto_pago = 'PD2' or p.id_tipo_cpto||p.id_cpto_pago = 'PD3' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PD4' or p.id_tipo_cpto||p.id_cpto_pago = 'PD5' or p.id_tipo_cpto||p.id_cpto_pago = 'PD6' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDE' or p.id_tipo_cpto||p.id_cpto_pago = 'PDG' or p.id_tipo_cpto||p.id_cpto_pago = 'PDI' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDN' or p.id_tipo_cpto||p.id_cpto_pago = 'PDR' or p.id_tipo_cpto||p.id_cpto_pago = 'PIS' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'PDF' or p.id_tipo_cpto||p.id_cpto_pago = 'PDP' or p.id_tipo_cpto||p.id_cpto_pago = 'P0A' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0B' or p.id_tipo_cpto||p.id_cpto_pago = 'P0C' or p.id_tipo_cpto||p.id_cpto_pago = 'P0D' or
+                  p.id_tipo_cpto||p.id_cpto_pago = 'P0E' then (p.pf_monto*-1) END),0))) liquido
+from td_perded_fis p
+where p.pf_qna_pago = $P{PTL_QNAPAGO}
+  and p.id_unidad_fisica = $P{PTL_UNIDAD}
+  and p.id_tipo_nomina = $P{PTL_TIPONOMINA}
+  and p.pf_num_complem = $P{PTL_NUMCOMPLEMENTO}
+  and p.id_tipo_cpto||p.id_cpto_pago <> 'P62'
+group by p.pf_qna_pago, p.id_unidad_fisica, p.id_tipo_nomina, p.pf_num_complem]]>
+	</queryString>
+	<field name="PF_QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="ID_UNIDAD_FISICA" class="java.lang.String"/>
+	<field name="ID_TIPO_NOMINA" class="java.lang.String"/>
+	<field name="PF_NUM_COMPLEM" class="java.lang.String"/>
+	<field name="PERCEPCIONESCUENTA" class="java.lang.String"/>
+	<field name="PERCECPIONES" class="java.math.BigDecimal"/>
+	<field name="SUBTOTALDEDEDUCCIONES" class="java.lang.String"/>
+	<field name="DEDUCCIONES" class="java.math.BigDecimal"/>
+	<field name="SUBTOTALDEDEVOLUCIONES" class="java.lang.String"/>
+	<field name="DEVOLUCION" class="java.math.BigDecimal"/>
+	<field name="SUBTOTALDEISR" class="java.lang.String"/>
+	<field name="ISR" class="java.math.BigDecimal"/>
+	<field name="SUBTOTALDEISPTRETENIDO" class="java.lang.String"/>
+	<field name="ISPT" class="java.math.BigDecimal"/>
+	<field name="LIQUIDOCERTIFICADA" class="java.lang.String"/>
+	<field name="LIQUIDO" class="java.math.BigDecimal"/>
+	<group name="QNA">
+		<groupExpression><![CDATA[$F{PF_QNA_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="107">
+				<textField>
+					<reportElement x="0" y="0" width="226" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PERCEPCIONESCUENTA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="226" y="0" width="98" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PERCECPIONES}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="28" width="226" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUBTOTALDEDEDUCCIONES}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="226" y="28" width="98" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DEDUCCIONES}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="52" width="226" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUBTOTALDEISR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="226" y="52" width="98" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ISR}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="64" width="226" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUBTOTALDEISPTRETENIDO}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="226" y="64" width="98" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ISPT}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="95" width="226" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIQUIDOCERTIFICADA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="226" y="95" width="98" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{LIQUIDO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="40" width="226" height="10"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SUBTOTALDEDEVOLUCIONES}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="226" y="40" width="98" height="10"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="7"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DEVOLUCION}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

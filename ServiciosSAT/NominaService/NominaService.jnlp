@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp  spec="1.0+" xmlns:jfx="http://javafx.com"  href="_downloader.jnlp_">
+    <information>
+        <title>NominaService</title>
+        <vendor>SHCP</vendor>
+        <description>SCHP</description>
+        <offline-allowed/>
+    </information>
+    <resources>
+        <j2se version="1.7+" href="http://java.sun.com/products/autodl/j2se"/>
+        <jar href="_reqURL_/app/NominaService-1.0-SNAPSHOT.jar" download="eager" main="true" size="5000000" />    
+    </resources>
+    <security>
+        <all-permissions/>
+    </security>
+    <jfx:javafx-desc  width="600" height="200" main-class="gob.shcp.certificados.nominaservice.MainApp" name="MainApp" >
+        <fx:param name="service" value="_service_"/>
+        <fx:param name="rfc" value="_rfc_"/>
+        <fx:param name="file" value="_file_"/>
+        <fx:param name="fileName" value="_fileName_"/>
+        <fx:param name="idPaquete" value="_idPaquete_"/>
+        <fx:param name="urlRequest" value="_urlRequest_"/>
+        <fx:param name="cookies" value="_cookies_"/>
+        <fx:param name="idNomina" value="_idNomina_"/>
+    </jfx:javafx-desc>
+    <update check="always" policy="always"/>
+</jnlp>

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+    
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                
+                <!--SPC - Capacitación y certificación - Reportes-->
+                <prop key="tnCapCurso-ciclo-reportes">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+                <prop key="tnCapCurso-subprograma-reportes">
+                    SELECT SUB.ID_SUBPROGRAMA, SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_SUBPROGRAMA SUB
+                    WHERE C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA
+                    AND SUB.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = ? 
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA 
+                    ORDER BY SUB.ID_SUBPROGRAMA ASC
+                </prop>
+                <prop key="tnCapCurso-ejeTematico-reportes">
+                    SELECT E.ID_EJE_TEMATICO, E.ID_EJE_TEMATICO || ' - ' || E.DESC_EJE_TEMATICO AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_EJE_TEMATICO E
+                    WHERE C.ID_EJE_TEMATICO = E.ID_EJE_TEMATICO
+                    AND E.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = E.CICLO_EJE_TEMATICO
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY E.ID_EJE_TEMATICO, E.DESC_EJE_TEMATICO 
+                    ORDER BY E.ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tnCapCurso-modalidad-reportes">
+                    SELECT M.ID_MODALIDAD, M.ID_MODALIDAD || ' - ' || M.DESC_MODALIDAD AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_MODALIDAD M
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_MODALIDAD = M.ID_MODALIDAD
+                    AND CP.ID_STATUS = 'ACT'
+                    AND M.ID_STATUS = 'ACT'
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY M.ID_MODALIDAD, M.DESC_MODALIDAD 
+                    ORDER BY M.ID_MODALIDAD ASC
+                </prop>
+                <prop key="tnCapCurso-curso-reportes">
+                    SELECT C.ID_CURSO, C.ID_CURSO || ' - ' || C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_STATUS = 'ACT'
+                    AND CP.ID_MODALIDAD = ?
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.ID_CURSO, C.CURSO_CLAVE, CP.DESC_CURSO_PRINCIPAL 
+                    ORDER BY C.CURSO_CLAVE ASC
+                </prop>
+                <prop key="tnCapCurso-participantes-reportes">
+                    SELECT PA.RFC_EMPLEADO, PA.RFC_EMPLEADO ||'-'||PA.PARTICIPANTE_NOMBRE || ' ' ||PA.PARTICIPANTE_PRIMER_APELLIDO|| ' ' ||
+                           PA.PARTICIPANTE_SEGUNDO_APELLIDO AS NOMBRE_PARTICIPANTE
+                      FROM TN_CAP_PARTICIPANTE PA
+                     WHERE PA.ID_CURSO = ?
+                       AND PA.ID_SITUACION_PARTICIPANTE = 2
+                    ORDER BY RFC_EMPLEADO 
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Reportes - Evaluacion de reaccion-->
+                <prop key="tnCapCurso-ciclo-reportes-evaluacionReaccion">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+                <prop key="tnCapCurso-coordinacionAdministrativa-reportes-evaluacionReaccion">
+                    SELECT ID_UNIDAD ID, ID_UNIDAD||' - '||DESC_UNIDAD DESCRIPCION
+                    FROM TC_UNIDAD 
+                    WHERE ##id_unidad#SIREHUNIDAD#PRIMARY##
+                      AND UNI_CICLO = ?
+                    ORDER BY ID_UNIDAD
+                </prop>                
+                <prop key="tnCapCurso-subprograma-reportes-evaluacionReaccion">
+                    SELECT SUB.ID_SUBPROGRAMA, SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_SUBPROGRAMA SUB
+                    WHERE C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA
+                    AND SUB.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = ? 
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA 
+                    ORDER BY SUB.ID_SUBPROGRAMA ASC
+                </prop>
+                <prop key="tnCapCurso-ejeTematico-reportes-evaluacionReaccion">
+                    SELECT E.ID_EJE_TEMATICO, E.ID_EJE_TEMATICO || ' - ' || E.DESC_EJE_TEMATICO AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_EJE_TEMATICO E
+                    WHERE C.ID_EJE_TEMATICO = E.ID_EJE_TEMATICO
+                    AND E.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = E.CICLO_EJE_TEMATICO
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY E.ID_EJE_TEMATICO, E.DESC_EJE_TEMATICO 
+                    ORDER BY E.ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tnCapCurso-modalidad-reportes-evaluacionReaccion">
+                    SELECT M.ID_MODALIDAD, M.ID_MODALIDAD || ' - ' || M.DESC_MODALIDAD AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_MODALIDAD M
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_MODALIDAD = M.ID_MODALIDAD
+                    AND CP.ID_STATUS = 'ACT'
+                    AND M.ID_STATUS = 'ACT'
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY M.ID_MODALIDAD, M.DESC_MODALIDAD 
+                    ORDER BY M.ID_MODALIDAD ASC
+                </prop>
+				
+                <!--SPC - Capacitación y certificación - Reportes - Informe del curso-->
+                <prop key="tnCapCurso-curso-reportes-evaluacionReaccion">
+                SELECT C.ID_CURSO, C.ID_CURSO || ' - ' || C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_STATUS = 'ACT'
+                    AND CP.ID_MODALIDAD = ?
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.ID_CURSO, C.CURSO_CLAVE, CP.DESC_CURSO_PRINCIPAL 
+                    ORDER BY C.CURSO_CLAVE ASC
+                </prop>       
+                <prop key="tnCapCurso-ciclo-reportes-informeCurso">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+                <prop key="tnCapCurso-coordinacionAdministrativa-reportes-informeCurso">
+                    SELECT ID_UNIDAD ID, ID_UNIDAD||' - '||DESC_UNIDAD DESCRIPCION
+                    FROM TC_UNIDAD 
+                    WHERE ##id_unidad#SIREHUNIDAD#PRIMARY##
+                      AND UNI_CICLO = ?
+                    ORDER BY ID_UNIDAD
+                </prop>                
+                <prop key="tnCapCurso-subprograma-reportes-informeCurso">
+                    SELECT SUB.ID_SUBPROGRAMA, SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_SUBPROGRAMA SUB
+                    WHERE C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA
+                    AND SUB.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = ? 
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA 
+                    ORDER BY SUB.ID_SUBPROGRAMA ASC
+                </prop>
+                <prop key="tnCapCurso-ejeTematico-reportes-informeCurso">
+                    SELECT E.ID_EJE_TEMATICO, E.ID_EJE_TEMATICO || ' - ' || E.DESC_EJE_TEMATICO AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_EJE_TEMATICO E
+                    WHERE C.ID_EJE_TEMATICO = E.ID_EJE_TEMATICO
+                    AND E.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = E.CICLO_EJE_TEMATICO
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY E.ID_EJE_TEMATICO, E.DESC_EJE_TEMATICO 
+                    ORDER BY E.ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tnCapCurso-modalidad-reportes-informeCurso">
+                    SELECT M.ID_MODALIDAD, M.ID_MODALIDAD || ' - ' || M.DESC_MODALIDAD AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_MODALIDAD M
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_MODALIDAD = M.ID_MODALIDAD
+                    AND CP.ID_STATUS = 'ACT'
+                    AND M.ID_STATUS = 'ACT'
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY M.ID_MODALIDAD, M.DESC_MODALIDAD 
+                    ORDER BY M.ID_MODALIDAD ASC
+                </prop>
+                <prop key="tnCapCurso-curso-reportes-informeCurso">
+                    SELECT C.ID_CURSO, C.ID_CURSO || ' - ' || C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_STATUS = 'ACT'
+                    AND CP.ID_MODALIDAD = ?
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.ID_CURSO, C.CURSO_CLAVE, CP.DESC_CURSO_PRINCIPAL 
+                    ORDER BY C.CURSO_CLAVE ASC
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Reportes - Evaluaciones-->
+                <prop key="tnCapCurso-ciclo-reportes-reporteEvaluaciones">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+                <prop key="tnCapCurso-coordinacionAdministrativa-reportes-reporteEvaluaciones">
+                    SELECT ID_UNIDAD ID, ID_UNIDAD||' - '||DESC_UNIDAD DESCRIPCION
+                    FROM TC_UNIDAD 
+                    WHERE ##id_unidad#SIREHUNIDAD#PRIMARY##
+                      AND UNI_CICLO = ?
+                    ORDER BY ID_UNIDAD
+                </prop>                
+                <prop key="tnCapCurso-subprograma-reportes-reporteEvaluaciones">
+                    SELECT SUB.ID_SUBPROGRAMA, SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_SUBPROGRAMA SUB
+                    WHERE C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA
+                    AND SUB.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = ? 
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA 
+                    ORDER BY SUB.ID_SUBPROGRAMA ASC
+                </prop>
+                <prop key="tnCapCurso-ejeTematico-reportes-reporteEvaluaciones">
+                    SELECT E.ID_EJE_TEMATICO, E.ID_EJE_TEMATICO || ' - ' || E.DESC_EJE_TEMATICO AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_EJE_TEMATICO E
+                    WHERE C.ID_EJE_TEMATICO = E.ID_EJE_TEMATICO
+                    AND E.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = E.CICLO_EJE_TEMATICO
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY E.ID_EJE_TEMATICO, E.DESC_EJE_TEMATICO 
+                    ORDER BY E.ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tnCapCurso-modalidad-reportes-reporteEvaluaciones">
+                    SELECT M.ID_MODALIDAD, M.ID_MODALIDAD || ' - ' || M.DESC_MODALIDAD AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_MODALIDAD M
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_MODALIDAD = M.ID_MODALIDAD
+                    AND CP.ID_STATUS = 'ACT'
+                    AND M.ID_STATUS = 'ACT'
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY M.ID_MODALIDAD, M.DESC_MODALIDAD 
+                    ORDER BY M.ID_MODALIDAD ASC
+                </prop>
+                <prop key="tnCapCurso-curso-reportes-reporteEvaluaciones">
+                    SELECT C.ID_CURSO, C.ID_CURSO || ' - ' || C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_STATUS = 'ACT'
+                    AND CP.ID_MODALIDAD = ?
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.ID_CURSO, C.CURSO_CLAVE, CP.DESC_CURSO_PRINCIPAL 
+                    ORDER BY C.CURSO_CLAVE ASC
+                </prop>
+                
+                 <!--SPC - Capacitación y certificación - Reportes - Acuerdos-->
+                 <prop key="tnCapCurso-ciclo-reportes-acuerdoUnidad">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+
+                <!--SPC - Capacitación y certificación - Reportes - Control - Firmas-->
+                <prop key="tnCapCurso-ciclo-reportes-relacionFirmas">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('EVR','EVP','CER','CUR')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+                <prop key="tnCapCurso-subprograma-reportes-relacionFirmas">
+                    SELECT SUB.ID_SUBPROGRAMA, SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_SUBPROGRAMA SUB
+                    WHERE C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA
+                    AND SUB.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = ? 
+                    AND C.ID_CONTROL_CURSO IN ('EVR','EVP','CER','CUR')
+                    GROUP BY SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA 
+                    ORDER BY SUB.ID_SUBPROGRAMA ASC
+                </prop>
+                <prop key="tnCapCurso-ejeTematico-reportes-relacionFirmas">
+                    SELECT E.ID_EJE_TEMATICO, E.ID_EJE_TEMATICO || ' - ' || E.DESC_EJE_TEMATICO AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_EJE_TEMATICO E
+                    WHERE C.ID_EJE_TEMATICO = E.ID_EJE_TEMATICO
+                    AND E.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = E.CICLO_EJE_TEMATICO
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('EVR','EVP','CER','CUR')
+                    GROUP BY E.ID_EJE_TEMATICO, E.DESC_EJE_TEMATICO 
+                    ORDER BY E.ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tnCapCurso-modalidad-reportes-relacionFirmas">
+                    SELECT M.ID_MODALIDAD, M.ID_MODALIDAD || ' - ' || M.DESC_MODALIDAD AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_MODALIDAD M
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_MODALIDAD = M.ID_MODALIDAD
+                    AND CP.ID_STATUS = 'ACT'
+                    AND M.ID_STATUS = 'ACT'
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('EVR','EVP','CER','CUR')
+                    GROUP BY M.ID_MODALIDAD, M.DESC_MODALIDAD 
+                    ORDER BY M.ID_MODALIDAD ASC
+                </prop>
+                <prop key="tnCapCurso-curso-reportes-relacionFirmas">
+                    SELECT C.ID_CURSO, C.ID_CURSO || ' - ' || C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_STATUS = 'ACT'
+                    AND CP.ID_MODALIDAD = ?
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('EVR','EVP','CER','CUR')
+                    GROUP BY C.ID_CURSO, C.CURSO_CLAVE, CP.DESC_CURSO_PRINCIPAL 
+                    ORDER BY C.CURSO_CLAVE ASC
+                </prop>
+                <!--SPC - Capacitación y certificación - Reportes - Entrega - Constancias-->
+                <prop key="tnCapCurso-ciclo-reportes-entregaConstancias">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CER', 'EVP')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+                <prop key="tnCapCurso-subprograma-reportes-entregaConstancias">
+                    SELECT SUB.ID_SUBPROGRAMA, SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_SUBPROGRAMA SUB
+                    WHERE C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA
+                    AND SUB.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = ? 
+                    AND C.ID_CONTROL_CURSO IN ('CER', 'EVP')
+                    GROUP BY SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA 
+                    ORDER BY SUB.ID_SUBPROGRAMA ASC
+                </prop>
+                <prop key="tnCapCurso-ejeTematico-reportes-entregaConstancias">
+                    SELECT E.ID_EJE_TEMATICO, E.ID_EJE_TEMATICO || ' - ' || E.DESC_EJE_TEMATICO AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_EJE_TEMATICO E
+                    WHERE C.ID_EJE_TEMATICO = E.ID_EJE_TEMATICO
+                    AND E.ID_STATUS = 'ACT' 
+                    AND C.CICLO_EJE_TEMATICO = E.CICLO_EJE_TEMATICO
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CER', 'EVP')
+                    GROUP BY E.ID_EJE_TEMATICO, E.DESC_EJE_TEMATICO 
+                    ORDER BY E.ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tnCapCurso-modalidad-reportes-entregaConstancias">
+                    SELECT M.ID_MODALIDAD, M.ID_MODALIDAD || ' - ' || M.DESC_MODALIDAD AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_MODALIDAD M
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_MODALIDAD = M.ID_MODALIDAD
+                    AND CP.ID_STATUS = 'ACT'
+                    AND M.ID_STATUS = 'ACT'
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CER', 'EVP')
+                    GROUP BY M.ID_MODALIDAD, M.DESC_MODALIDAD 
+                    ORDER BY M.ID_MODALIDAD ASC
+                </prop>
+                <prop key="tnCapCurso-curso-reportes-entregaConstancias">
+                    SELECT C.ID_CURSO, C.ID_CURSO || ' - ' || C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESCRIPCION
+                    FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP
+                    WHERE C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                    AND CP.ID_STATUS = 'ACT'
+                    AND CP.ID_MODALIDAD = ?
+                    AND C.ID_EJE_TEMATICO = ?
+                    AND C.ID_SUBPROGRAMA = ?
+                    AND C.CICLO_EJE_TEMATICO = ?
+                    AND C.ID_CONTROL_CURSO IN ('CER', 'EVP')
+                    GROUP BY C.ID_CURSO, C.CURSO_CLAVE, CP.DESC_CURSO_PRINCIPAL 
+                    ORDER BY C.CURSO_CLAVE ASC
+                </prop>
+                <prop key="tnCapCurso-coordinacionAdministrativa-reportes-entregaConstancias">
+                  SELECT P.ID_UNIDAD ID, U.ID_UNIDAD||' - '||DESC_UNIDAD DESCRIPCION
+                    FROM TC_UNIDAD U, TN_CAP_PARTICIPANTE P
+                    WHERE P.ID_CURSO = ?
+                      AND U.UNI_CICLO = ?
+                      AND U.ID_UNIDAD = P.ID_UNIDAD  
+                    ORDER BY U.ID_UNIDAD
+                </prop>                
+            </props>
+        </property>
+    </bean>
+</beans>

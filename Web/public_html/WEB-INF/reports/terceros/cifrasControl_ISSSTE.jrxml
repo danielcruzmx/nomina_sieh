@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Entero ISSSTE" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="231"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_QNA" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_COMPLEMENTO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_TIPO_REPORTE" class="java.lang.String"/>
+	<parameter name="PAR_FECHA" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+    x0.HP_FOLIO,
+    'Ramo:  00006' ramo,
+    'Pagaduría: 99900' pagaduria,
+    'Nombre:  SECRETARÍA DE HACIENDA Y CRÉDITO PÚBLICO' dependencia,
+    'Reporte:  Quincena  '||SUBSTR(x0.hp_qna_pago,0,4)||'/'||SUBSTR(x0.hp_qna_pago,5,2) u_qna_pago,
+    case when     NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P07' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P02' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P05' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P77' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA1' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA2' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA3' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA4' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA5' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PH4' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P30' )  THEN x1.cp_monto  END ) ,0 ) > ((s.SAL_MIN_DIA*10)*30)/2 then
+    ((s.SAL_MIN_DIA*10)*30)/2 else
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P07' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P02' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P05' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P77' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA1' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA2' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA3' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA4' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PA5' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'PH4' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'P30' )  THEN x1.cp_monto  END ) ,0 ) end sueldo_base,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0A' )  THEN x1.cp_folio  END ) ,0 ) casos_D0A,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0A' )  THEN x1.cp_monto  END ) ,0 ) monto_D0A,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0B' )  THEN x1.cp_folio  END ) ,0 ) casos_D0B,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0B' )  THEN x1.cp_monto  END ) ,0 ) monto_D0B,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0C' )  THEN x1.cp_folio  END ) ,0 ) casos_D0C,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0C' )  THEN x1.cp_monto  END ) ,0 ) monto_D0C,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0D' )  THEN x1.cp_folio  END ) ,0 ) casos_D0D,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0D' )  THEN x1.cp_monto  END ) ,0 ) monto_D0D,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0E' )  THEN x1.cp_folio  END ) ,0 ) casos_D0E,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0E' )  THEN x1.cp_monto  END ) ,0 ) monto_D0E,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D03' )  THEN x1.cp_folio  END ) ,0 ) casos_D03,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D03' )  THEN x1.cp_monto  END ) ,0 ) monto_D03,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D12' )  THEN x1.cp_monto  END ) ,0 ) casos_D12,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D12' )  THEN x1.cp_monto  END ) ,0 ) monto_D12,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D06' )  THEN x1.cp_folio  END ) ,0 ) casos_D06,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D06' )  THEN x1.cp_monto  END ) ,0 ) monto_D06,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D07' )  THEN x1.cp_folio  END ) ,0 ) casos_D07,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D07' )  THEN x1.cp_monto  END ) ,0 ) monto_D07,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D08' )  THEN x1.cp_folio  END ) ,0 ) casos_D08,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D08' )  THEN x1.cp_monto  END ) ,0 ) monto_D08,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D10' )  THEN x1.cp_folio  END ) ,0 ) casos_D10,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D10' )  THEN x1.cp_monto  END ) ,0 ) monto_D10,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D55' )  THEN x1.cp_folio  END ) ,0 )+
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D5L' )  THEN x1.cp_folio  END ) ,0 ) casos_D55,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D55' )  THEN x1.cp_monto  END ) ,0 )+
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D5L' )  THEN x1.cp_monto  END ) ,0 ) monto_D55,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D56' )  THEN x1.cp_folio  END ) ,0 ) casos_D56,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D56' )  THEN x1.cp_monto  END ) ,0 ) monto_D56,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D64' )  THEN x1.cp_folio  END ) ,0 ) casos_D64,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D64' )  THEN x1.cp_monto  END ) ,0 ) monto_D64,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D68' )  THEN x1.cp_folio  END ) ,0 ) casos_D68,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D68' )  THEN x1.cp_monto  END ) ,0 ) monto_D68,
+    NVL (count(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0D' )  THEN x1.cp_folio  END ) ,0 ) casos_SA,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0D' )  THEN x1.cp_monto  END ) ,0 ) monto_DSA,
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0A' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0B' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0C' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0D' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0E' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D03' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D12' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D06' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D07' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D08' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D10' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D55' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D56' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D5L' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D64' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D68' )  THEN x1.cp_monto  END ) ,0 ) +
+    NVL (sum(CASE WHEN ((x1.id_tipo_cpto || x1.id_cpto_pago ) = 'D0D' )  THEN x1.cp_monto  END ) ,0 ) MONTO_TOTAL,
+
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+
+from tn_historico_pago x0, tn_concepto_pagado x1, tc_sal_min s
+where x0.id_tipo_nomina||x0.hp_num_complem in ($P!{PAR_COMPLEMENTO}) AND
+     x0.hp_qna_pago = $P{PAR_QNA} and
+     x0.hp_num_pension = 0 AND
+     to_char(x0.hp_ini_pago, 'dd/MM/yyyy') $P!{PAR_TIPO_REPORTE} $P{PAR_FECHA} and
+     x0.HP_FOLIO = x1.cp_folio AND
+     x0.hp_dif_folio = x1.cp_dif_folio ANd
+     x1.id_tipo_cpto IN ('P' ,'D' ) AND
+     x1.id_cpto_pago IN ('07' ,'02' ,'05' ,'77' ,'A1' ,'A2' ,'A3' ,'A4' ,'A5' ,'30' ,'H4','0A' ,'0B' ,'0C' ,'0D',
+		     '0E' ,'03' ,'12' ,'06' ,'08' ,'10' ,'55', '5L' ,'56' ,'64' ,'68' ) and
+     s.id_zona_sal_min = 'A'  and
+    s.SAL_MIN_fin = TO_DATE('01/01/2099','DD/MM/YYYY')
+group by x0.HP_FOLIO,2,3,4, x0.hp_qna_pago,s.SAL_MIN_DIA]]>
+	</queryString>
+	<field name="HP_FOLIO" class="java.math.BigDecimal"/>
+	<field name="RAMO" class="java.lang.String"/>
+	<field name="PAGADURIA" class="java.lang.String"/>
+	<field name="DEPENDENCIA" class="java.lang.String"/>
+	<field name="U_QNA_PAGO" class="java.lang.String"/>
+	<field name="SUELDO_BASE" class="java.math.BigDecimal"/>
+	<field name="CASOS_D0A" class="java.math.BigDecimal"/>
+	<field name="MONTO_D0A" class="java.math.BigDecimal"/>
+	<field name="CASOS_D0B" class="java.math.BigDecimal"/>
+	<field name="MONTO_D0B" class="java.math.BigDecimal"/>
+	<field name="CASOS_D0C" class="java.math.BigDecimal"/>
+	<field name="MONTO_D0C" class="java.math.BigDecimal"/>
+	<field name="CASOS_D0D" class="java.math.BigDecimal"/>
+	<field name="MONTO_D0D" class="java.math.BigDecimal"/>
+	<field name="CASOS_D0E" class="java.math.BigDecimal"/>
+	<field name="MONTO_D0E" class="java.math.BigDecimal"/>
+	<field name="CASOS_D03" class="java.math.BigDecimal"/>
+	<field name="MONTO_D03" class="java.math.BigDecimal"/>
+	<field name="CASOS_D12" class="java.math.BigDecimal"/>
+	<field name="MONTO_D12" class="java.math.BigDecimal"/>
+	<field name="CASOS_D06" class="java.math.BigDecimal"/>
+	<field name="MONTO_D06" class="java.math.BigDecimal"/>
+	<field name="CASOS_D07" class="java.math.BigDecimal"/>
+	<field name="MONTO_D07" class="java.math.BigDecimal"/>
+	<field name="CASOS_D08" class="java.math.BigDecimal"/>
+	<field name="MONTO_D08" class="java.math.BigDecimal"/>
+	<field name="CASOS_D10" class="java.math.BigDecimal"/>
+	<field name="MONTO_D10" class="java.math.BigDecimal"/>
+	<field name="CASOS_D55" class="java.math.BigDecimal"/>
+	<field name="MONTO_D55" class="java.math.BigDecimal"/>
+	<field name="CASOS_D56" class="java.math.BigDecimal"/>
+	<field name="MONTO_D56" class="java.math.BigDecimal"/>
+	<field name="CASOS_D64" class="java.math.BigDecimal"/>
+	<field name="MONTO_D64" class="java.math.BigDecimal"/>
+	<field name="CASOS_D68" class="java.math.BigDecimal"/>
+	<field name="MONTO_D68" class="java.math.BigDecimal"/>
+	<field name="CASOS_SA" class="java.math.BigDecimal"/>
+	<field name="MONTO_DSA" class="java.math.BigDecimal"/>
+	<field name="MONTO_TOTAL" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="TOT_DA0" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D0A}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_DA0" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D0A}]]></variableExpression>
+	</variable>
+	<variable name="TOT_SDOS" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{SUELDO_BASE}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D0B" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D0B}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D0B" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D0B}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D0C" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D0C}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D0C" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D0C}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D0D" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D0D}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D0D" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D0D}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D0E" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D0E}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D0E" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D0E}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D03" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D03}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D03" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D03}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D12" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D12}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D12" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D12}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D06" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D06}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D06" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D06}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D07" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D07}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D07" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D07}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D08" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D08}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D08" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D08}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D10" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D10}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D10" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D10}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D55" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D55}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D55" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D55}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D56" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D56}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D56" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D56}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D64" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D64}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D64" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D64}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_D68" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_D68}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_D68" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_D68}]]></variableExpression>
+	</variable>
+	<variable name="TOT_CASOS_SA" class="java.lang.Number" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_SA}]]></variableExpression>
+	</variable>
+	<variable name="TOT_MONTO_SA" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_DSA}]]></variableExpression>
+	</variable>
+	<variable name="TOT_GRAL" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_ramo" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO_TOTAL}]]></variableExpression>
+	</variable>
+	<group name="Gpo_ramo">
+		<groupExpression><![CDATA[$F{RAMO}]]></groupExpression>
+		<groupFooter>
+			<band height="470">
+				<rectangle>
+					<reportElement mode="Transparent" x="95" y="35" width="546" height="428"/>
+				</rectangle>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="65" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_SDOS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="137" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D0B}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="137" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D0B}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="185" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D0C}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="185" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D0C}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="152" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D0D}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="152" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D0D}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="168" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D0E}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="168" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D0E}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="229" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D03}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="229" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D03}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="248" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D12}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="248" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D12}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="269" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D06}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="269" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D06}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="289" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D07}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="289" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D07}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="309" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D08}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="309" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D08}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="328" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D10}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="328" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D10}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="350" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D55}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="350" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D55}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="370" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D56}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="370" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D56}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="390" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D64}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="390" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D64}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="410" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_D68}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="410" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_D68}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="430" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_SA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="549" y="430" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_MONTO_SA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="96" y="4" width="105" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{RAMO}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="213" y="4" width="99" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PAGADURIA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="96" y="19" width="271" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DEPENDENCIA}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="501" y="21" width="142" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{U_QNA_PAGO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="114" y="41" width="178" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[C  O  N  C  E  P  T  O]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="354" y="41" width="48" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Art. Ley]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="41" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[%]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="465" y="41" width="54" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[No. Reg.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="537" y="41" width="99" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nómina Ordinaria]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="65" width="178" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Importe Total de Sueldos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="102" y="87" width="178" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cuotas de los Trabajadores]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="102" width="225" height="20"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[- Seguro de Salud de los Trabajores en Activo y Familiares Derechohabientes.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="127" width="225" height="20"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[- Seguro de Salud de los Pensionistas Familiares Derechohabientes.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="152" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[- Retiro por Edad Avanzada y Vejez.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="168" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[- Seguro de Invalidez y Vida.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="185" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[- Servicios Sociales y Culturales.]]></text>
+				</staticText>
+				<textField pattern="#,##0.00">
+					<reportElement x="548" y="112" width="78" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_DA0}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="412" y="112" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[2.750]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="137" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[0.625]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="152" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[6.125]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="168" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[0.625]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="185" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[0.500]]></text>
+				</staticText>
+				<line>
+					<reportElement x="94" y="199" width="546" height="1"/>
+				</line>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="112" width="53" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_DA0}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="95" y="58" width="546" height="1"/>
+				</line>
+				<line>
+					<reportElement x="95" y="214" width="546" height="1"/>
+				</line>
+				<line>
+					<reportElement x="95" y="80" width="546" height="1"/>
+				</line>
+				<staticText>
+					<reportElement x="365" y="112" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[042]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="365" y="137" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[042]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="365" y="152" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[102]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="365" y="168" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[140]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="365" y="185" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[199]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="412" y="202" width="37" height="10"/>
+					<textElement textAlignment="Center">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[10.625]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="229" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Préstamo Personal]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="102" y="216" width="178" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Descuento a Trabajadores]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="248" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Adeudos Servicios Médicos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="269" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Préstamo Hipotecario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="289" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Seguro Hipotecario]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="309" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Créditos Adicionales]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="328" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Seguro Hipotecario Avalado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="350" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[FOVISSSTE CONSTANTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="370" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[FOVISSSTE CRECIENTE]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="390" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[FOVISSSTE Salarios Mínimos]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="410" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Seguro de Daños]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="114" y="430" width="225" height="10"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Importe SAR]]></text>
+				</staticText>
+				<line>
+					<reportElement x="95" y="444" width="546" height="1"/>
+				</line>
+				<line>
+					<reportElement x="350" y="35" width="1" height="409"/>
+				</line>
+				<line>
+					<reportElement x="407" y="35" width="1" height="409"/>
+				</line>
+				<line>
+					<reportElement x="456" y="35" width="1" height="409"/>
+				</line>
+				<line>
+					<reportElement x="532" y="35" width="1" height="409"/>
+				</line>
+				<staticText>
+					<reportElement x="292" y="449" width="47" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL :]]></text>
+				</staticText>
+				<textField pattern="#,##0">
+					<reportElement x="465" y="449" width="54" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_CASOS_SA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="541" y="449" width="85" height="10"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOT_GRAL}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="312" y="-61" width="446" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[ISSSTE Reporte de Cifras de Control de la Información de Nómina Ordinaria]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="600" y="0" width="152" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="407" y="20" width="345" height="30"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="65" y="5" width="562" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,2633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+<!--campos complejos-->
+        <bean name="TC_SAL_MIN-has-TC_ZONA_SAL_MIN-ID_ZONA_SAL_MIN"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_ZONA_SAL_MIN" p:nombreCampoForaneo="ID_ZONA_SAL_MIN" p:campoDespliegue="USUARIO,FEC_MODIFICO" p:tablaForanea="TC_ZONA_SAL_MIN"/>		
+
+        <bean name="TC_UNIDAD_EDO-has-TC_UNIDAD-ID_CICLO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_CICLO" p:nombreCampoForaneo="UNI_CICLO" p:campoDespliegue="ID_UNIDAD_SUBSE,UNI_CENTRAL_FORANEA,DESC_UNIDAD,DESC_UNIDAD_ABREV,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_UNIDAD"/>		
+        <bean name="TC_UNIDAD_EDO-has-TC_UNIDAD-ID_UNIDAD"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_UNIDAD" p:nombreCampoForaneo="ID_UNIDAD" p:campoDespliegue="ID_UNIDAD_SUBSE,UNI_CENTRAL_FORANEA,DESC_UNIDAD,DESC_UNIDAD_ABREV,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_UNIDAD"/>		
+        <bean name="TC_UNIDAD_EDO-has-TC_ESTADO-ID_EDO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_EDO" p:nombreCampoForaneo="ID_EDO" p:campoDespliegue="DESC_ESTADO,ESTADO_ABREV,ESTADO_SIGLA,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_ESTADO"/>		
+
+        <bean name="TC_ATRIBUTO_PUESTO-has-TC_JERARQUIA-ID_JERARQUIA"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_JERARQUIA" p:nombreCampoForaneo="ID_JERARQUIA" p:campoDespliegue="DESC_JERARQUIA,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_JERARQUIA"/>		
+        <bean name="TC_ATRIBUTO_PUESTO-has-TC_NOMBRAMIENTO-ID_NOMBRAMIENTO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_NOMBRAMIENTO" p:nombreCampoForaneo="ID_NOMBRAMIENTO" p:campoDespliegue="DESC_NOMBRAMIENTO,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_NOMBRAMIENTO"/>		
+
+        <bean name="TC_ECONOMICA-has-TC_PARTIDA-ID_PARTIDA"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_PARTIDA" p:nombreCampoForaneo="ID_PARTIDA" p:campoDespliegue="DESC_PARTIDA,PTDA_INFO_CPTO,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_PARTIDA"/>		
+
+        <bean name="TC_SITUACION_OK-has-TC_SIT_PLAZAByIdSitPlazaDestino-ID_SIT_PLAZA_DESTINO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_SIT_PLAZA_DESTINO" p:nombreCampoForaneo="ID_SIT_PLAZA" p:campoDespliegue="DESC_SIT_PLAZA,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_SIT_PLAZA"/>		
+        <bean name="TC_SITUACION_OK-has-TC_SIT_PLAZAByIdSitPlazaOrigen-ID_SIT_PLAZA_ORIGEN"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_SIT_PLAZA_ORIGEN" p:nombreCampoForaneo="ID_SIT_PLAZA" p:campoDespliegue="DESC_SIT_PLAZA,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_SIT_PLAZA"/>		
+        <bean name="TC_SITUACION_OK-has-TC_MOVS_PERSONAL-ID_MOVTO_PERSONA"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_MOVTO_PERSONA" p:nombreCampoForaneo="ID_MOVS_PERSONAL" p:campoDespliegue="MP_CONSTANCIA,DESC_MOVS_PERSONAL,ID_SIT_PLA_ANT,ID_SIT_PLA_NVA,MP_GRUPO_PAGO,MP_JERARQUIA,MP_NOMBRAMIENTO,MP_TIPO_MOV_MENU,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_MOVS_PERSONAL"/>		
+
+        <bean name="TC_ISPT-has-TC_TIPO_TABLA-ID_TIPO_TABLA"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_TIPO_TABLA" p:nombreCampoForaneo="ID_TIPO_TABLA" p:campoDespliegue="DESC_TIPO_TABLA,ISPT_SUBSIDIO,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_TIPO_TABLA"/>		
+
+        <bean name="TC_UNIDAD-2-has-TC_UNIDAD-1-UNI_CICLO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="UNI_CICLO" p:nombreCampoForaneo="UNI_CICLO" p:campoDespliegue="UNI_CICLO,ID_UNIDAD_SUBSE,UNI_CENTRAL_FORANEA,DESC_UNIDAD,UNI_DESC_ABR,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_UNIDAD"/>		
+        <bean name="TC_UNIDAD-2-has-TC_UNIDAD-1-ID_UNIDAD"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_UNIDAD" p:nombreCampoForaneo="ID_UNIDAD" p:campoDespliegue="DESC_UNIDAD,ID_UNIDAD_SUBSE,UNI_CENTRAL_FORANEA,UNI_DESC_ABR,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_UNIDAD"/>		
+
+        <bean name="TC_PARTIDA_FUNCION-has-TC_PARTIDA-ID_PARTIDA"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_PARTIDA" p:nombreCampoForaneo="ID_PARTIDA" p:campoDespliegue="DESC_PARTIDA,PTDA_INFO_CPTO,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_PARTIDA"/>		
+        <bean name="TC_PARTIDA_FUNCION-has-TC_UNIDAD-PF_CICLO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="PF_CICLO" p:nombreCampoForaneo="UNI_CICLO" p:campoDespliegue="ID_UNIDAD_SUBSE,UNI_CENTRAL_FORANEA,UNI_DESC,UNI_DESC_ABR,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_UNIDAD"/>		
+        <bean name="TC_PARTIDA_FUNCION-has-TC_UNIDAD-ID_UNIDAD"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_UNIDAD" p:nombreCampoForaneo="ID_UNIDAD" p:campoDespliegue="ID_UNIDAD_SUBSE,UNI_CENTRAL_FORANEA,UNI_DESC,UNI_DESC_ABR,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_UNIDAD"/>		
+        
+        
+        <!--CAPACITACION Y CERTIFICACION-->
+        <bean name="TC_CAP_UNIDAD_COORD-has-TC_CAP_COORDINACION-ID_COORDINACION" class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_COORDINACION" p:nombreCampoForaneo="ID_COORDINACION" p:campoDespliegue="DESC_COORDINACION,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_COORDINACION"/>
+        <bean name="TC_CAP_UNIDAD_COORD-has-TC_UNIDAD-UNI_CICLO-ID_UNIDAD" class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="UNI_CICLO,ID_UNIDAD" p:nombreCampoForaneo="UNI_CICLO,ID_UNIDAD" p:campoDespliegue="DESC_UNIDAD,ID_UNIDAD_SUBSE,UNI_CENTRAL_FORANEA,DESC_UNIDAD_ABREV,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_UNIDAD"/>
+        
+        <bean name="TC_CAP_AULA-has-TC_CAP_SEDE-ID_SEDE"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_SEDE" p:nombreCampoForaneo="ID_SEDE" p:campoDespliegue="DESC_SEDE,DIRECCION_SEDE,ID_STATUS,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_SEDE"/>
+        
+        <bean name="TC_CAP_INSTRUCTOR-has-TC_CAP_PROVEEDOR-ID_PROVEEDOR"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_PROVEEDOR" p:nombreCampoForaneo="ID_PROVEEDOR" p:campoDespliegue="DESC_PROVEEDOR,COORDINADOR_PROVEEDOR,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_PROVEEDOR"/>
+        
+        <bean name="TC_CAP_CURSO_PRINCP-has-TC_CAP_EJE_TEMATICO-CICLO_EJE_TEMATICO-ID_TIPO_CURSO-ID_EJE_TEMATICO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="CICLO_EJE_TEMATICO,ID_TIPO_CURSO,ID_EJE_TEMATICO" p:nombreCampoForaneo="CICLO_EJE_TEMATICO,ID_TIPO_CURSO,ID_EJE_TEMATICO" p:campoDespliegue="DESC_EJE_TEMATICO,ID_STATUS,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_EJE_TEMATICO"/>
+        <bean name="TC_CAP_CURSO_PRINCP-has-TC_CAP_MODALIDAD-ID_MODALIDAD"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_MODALIDAD" p:nombreCampoForaneo="ID_MODALIDAD" p:campoDespliegue="DESC_MODALIDAD,ID_STATUS,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_MODALIDAD"/>
+        <bean name="TC_CAP_CURSO_PRINCP-has-TC_CAP_FINALIDAD-ID_FINALIDAD"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_FINALIDAD" p:nombreCampoForaneo="ID_FINALIDAD" p:campoDespliegue="DESC_FINALIDAD,ID_STATUS,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_FINALIDAD"/>
+        <bean name="TC_CAP_CURSO_PRINCP-has-TC_CAP_CARACTER-ID_CARACTER"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_CARACTER" p:nombreCampoForaneo="ID_CARACTER" p:campoDespliegue="DESC_CARACTER,ID_STATUS,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_CARACTER"/>
+        <bean name="TC_CAP_CURSO_PRINCP-has-TC_CAP_TIPO_ACCION-ID_TIPO_ACCION"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_TIPO_ACCION" p:nombreCampoForaneo="ID_TIPO_ACCION" p:campoDespliegue="DESC_TIPO_ACCION,ID_STATUS,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_TIPO_ACCION"/>
+        
+        <bean name="TC_CAP_NOTIF_CURSO-has-TC_CAP_MODALIDAD-ID_MODALIDAD"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_MODALIDAD" p:nombreCampoForaneo="ID_MODALIDAD" p:campoDespliegue="DESC_MODALIDAD,USUARIO,FEC_MODIFICO," p:tablaForanea="TC_CAP_MODALIDAD"/>
+        
+        <bean name="TC_CAP_PROVEEDOR-has-TC_CAP_TIPO_INST_EDU-ID_TIPO_INST_EDUCAT"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_TIPO_INST_EDUCAT" p:nombreCampoForaneo="ID_TIPO_INST_EDUCAT" p:campoDespliegue="DESC_TIPO_INST_EDUCAT,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_TIPO_INST_EDU"/>
+        
+        <bean name="TC_CAP_ESC_CAPACIDAD-has-TC_CAP_TIPO_CAPAC-ID_TIPO_CAPACIDAD"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_TIPO_CAPACIDAD" p:nombreCampoForaneo="ID_TIPO_CAPACIDAD" p:campoDespliegue="DESC_TIPO_CAPACIDAD,ID_TIPO_CAPACIDAD,ID_STATUS,USUARIO,FEC_MODIFICO" p:tablaForanea="TC_CAP_TIPO_CAPAC"/>
+        <bean name="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-ID_ESCENARIO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="ID_ESCENARIO" p:nombreCampoForaneo="ID_ESCENARIO" p:campoDespliegue="ID_ESCENARIO,FIN_ESCENARIO,PLAZA_ESCENARIO,CODIGO_PUESTO,USUARIO,FEC_MODIFICO" p:tablaForanea="TD_ESCENARIO"/>
+        <bean name="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-FIN_ESCENARIO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="FIN_ESCENARIO" p:nombreCampoForaneo="FIN_ESCENARIO" p:campoDespliegue="ID_ESCENARIO,FIN_ESCENARIO,PLAZA_ESCENARIO,CODIGO_PUESTO,USUARIO,FEC_MODIFICO" p:tablaForanea="TD_ESCENARIO"/>
+        <bean name="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-PLAZA_ESCENARIO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="PLAZA_ESCENARIO" p:nombreCampoForaneo="PLAZA_ESCENARIO" p:campoDespliegue="ID_ESCENARIO,FIN_ESCENARIO,PLAZA_ESCENARIO,CODIGO_PUESTO,USUARIO,FEC_MODIFICO" p:tablaForanea="TD_ESCENARIO"/>
+        <bean name="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-CODIGO_PUESTO"  class="gob.shcp.catalog.core.common.dto.CampoComplejoVO" p:nombreCampo="CODIGO_PUESTO" p:nombreCampoForaneo="CODIGO_PUESTO" p:campoDespliegue="ID_ESCENARIO,FIN_ESCENARIO,PLAZA_ESCENARIO,CODIGO_PUESTO,USUARIO,FEC_MODIFICO" p:tablaForanea="TD_ESCENARIO"/>
+        
+<!--campos complejos-->
+        <bean id="gob.shcp.catalog.core.manager.config.CatalogManagerConfig" class="gob.shcp.catalog.core.manager.config.CatalogManagerConfig" scope="singleton">
+            <property name="catalogs">
+                <list>
+<!-- tablas-->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PARENTESCO" p:nombreFisico="TC_PARENTESCO" p:filters="ID_PARENTESCO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_SITUACION_AFECTACION" p:nombreFisico="TC_SITUACION_AFECTACION" p:filters="ID_SIT_AFECTACI">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_DIST_UNIDAD" p:nombreFisico="TC_DIST_UNIDAD" p:filters="ID_DIST_UNIDAD,ID_UNIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_AFECTACION" p:nombreFisico="TC_TIPO_AFECTACION" p:filters="ID_TIPO_AFECTACI">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_GRUPO_PAGO" p:nombreFisico="TC_GRUPO_PAGO" p:filters="ID_GRUPO_PAGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ACT_INSTITUCIONAL" p:nombreFisico="TC_ACT_INSTITUCIONAL" p:filters="AI_CICLO,ID_ACT_INSTI">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_JERARQUIA" p:nombreFisico="TC_JERARQUIA" p:filters="ID_JERARQUIA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_REGULARIZABLE" p:nombreFisico="TC_REGULARIZABLE" p:filters="ID_REGULARIZABLE">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ESTADO_CIVIL" p:nombreFisico="TC_ESTADO_CIVIL" p:filters="ID_EDO_CIVIL">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_SERV_PUB" p:nombreFisico="TC_TIPO_SERV_PUB" p:filters="ID_SERV_PUB,DESC_TIPO_SERV_PUB,TSP_NIVELES">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                        <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ACT_INSTI_ESPECIFICO" p:nombreFisico="TC_ACT_INSTI_ESPECIFICO" p:filters="AIE_CICLO,ID_ACT_INSTI_ESP">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_GENERO" p:nombreFisico="TC_GENERO" p:filters="ID_GENERO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_CONCEPTO" p:nombreFisico="TC_TIPO_CONCEPTO" p:filters="ID_TIPO_CONCEPTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_SAL_MIN" p:nombreFisico="TC_SAL_MIN" p:filters="SAL_MIN_FIN,ID_ZONA_SAL_MIN">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_SAL_MIN-has-TC_ZONA_SAL_MIN-ID_ZONA_SAL_MIN"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>                    
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_PAGO" p:nombreFisico="TC_TIPO_PAGO" p:filters="ID_TIPO_PAGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_BENEFICIARIO_SICOP" p:nombreFisico="TC_BENEFICIARIO_SICOP" p:filters="ID_BENE_SICOP,DESC_BENE_SICOP,BS_TIPO_MONEDA,BS_TIPO_NOM">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CONTABLE_REINTEGRO" p:nombreFisico="TC_CONTABLE_REINTEGRO" p:filters="CR_GUIA_CONT_REIN">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_UNIDAD_EDO" p:nombreFisico="TC_UNIDAD_EDO" p:filters="UNI_EDO_CICLO,ID_UNIDAD,ID_EDO">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_UNIDAD_EDO-has-TC_UNIDAD-ID_CICLO"/>
+                                <ref bean="TC_UNIDAD_EDO-has-TC_UNIDAD-ID_UNIDAD"/>
+                                <ref bean="TC_UNIDAD_EDO-has-TC_ESTADO-ID_EDO"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_BANCO" p:nombreFisico="TC_BANCO" p:filters="ID_BANCO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_INMUEBLE" p:nombreFisico="TC_INMUEBLE" p:filters="INMUEBLE_CALLE">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PROGRAMA" p:nombreFisico="TC_PROGRAMA" p:filters="ID_PROGRAMA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_RANGO_TABUL" p:nombreFisico="TC_RANGO_TABUL" p:filters="ID_RANGO_TABUL,DESC_RANGO_TABUL">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ATRIBUTO_PUESTO" p:nombreFisico="TC_ATRIBUTO_PUESTO" p:filters="ID_ATRIBUTO_PUESTO,AP_FIN,ID_NOMBRAMIENTO,ID_JERARQUIA,ID_NIVEL_PTO">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_ATRIBUTO_PUESTO-has-TC_JERARQUIA-ID_JERARQUIA"/>
+                                <ref bean="TC_ATRIBUTO_PUESTO-has-TC_NOMBRAMIENTO-ID_NOMBRAMIENTO"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_SIT_PAGO" p:nombreFisico="TC_SIT_PAGO" p:filters="ID_SIT_PAGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_UNIDAD_EJECUTORA" p:nombreFisico="TC_UNIDAD_EJECUTORA" p:filters="UNI_EJEC_CICLO,ID_UNIDAD,ID_UNIDAD_EJEC,DESC_UNIDAD_EJEC">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ECONOMICA" p:nombreFisico="TC_ECONOMICA" p:filters="ECO_CICLO,ID_PARTIDA,ID_TIPO_GASTO,ID_FUENTE_FINAN">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_ECONOMICA-has-TC_PARTIDA-ID_PARTIDA"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ESTADO_NOMINA" p:nombreFisico="TC_ESTADO_NOMINA" p:filters="ID_EDO_NOM">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ZONA_SAL_MIN" p:nombreFisico="TC_ZONA_SAL_MIN" p:filters="ID_ZONA_SAL_MIN">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PROGRAMATICA" p:nombreFisico="TC_PROGRAMATICA" p:filters="PROG_CICLO,ID_FUNCION,ID_PROGRAMA,ID_ACT_INSTI,ID_ACT_PRIORITA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_NOMBRAMIENTO" p:nombreFisico="TC_NOMBRAMIENTO" p:filters="ID_NOMBRAMIENTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_FUENTE_FINA" p:nombreFisico="TC_FUENTE_FINA" p:filters="FF_CICLO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_FUNCION" p:nombreFisico="TC_FUNCION" p:filters="FUN_CICLO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_SIT_CAPTURA" p:nombreFisico="TC_SIT_CAPTURA" p:filters="ID_SIT_CAPTURA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PROY_REGULARIZA" p:nombreFisico="TC_PROY_REGULARIZA" p:filters="PR_CICLO,ID_PROY_REGUL,DESC_PROY_REGUL">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_UNIDAD_PRIORITARIA" p:nombreFisico="TC_UNIDAD_PRIORITARIA" p:filters="UP_CICLO,ID_UNIDAD,ID_ACT_PRIORITA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ESTADO" p:nombreFisico="TC_ESTADO" p:filters="ID_EDO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_INST_EDUCAT" p:nombreFisico="TC_INST_EDUCAT" p:filters="ID_INST_EDUCAT">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PUESTO" p:nombreFisico="TC_PUESTO" p:filters="ID_PUESTO,DESC_PUESTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_NIVEL_PTO" p:nombreFisico="TC_NIVEL_PTO" p:filters="ID_NIVEL_PTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TERCERO" p:nombreFisico="TC_TERCERO" p:filters="ID_TERCERO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ZONA_ECON" p:nombreFisico="TC_ZONA_ECON" p:filters="ID_ZONA_ECON">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CONCEPTO_PAGO_CAPTURA" p:nombreFisico="TC_CONCEPTO_PAGO_CAPTURA" p:filters="ID_TIPO_CPTO,ID_CPTO_PAGO,CPC_TIPO_CAPTURA,CPC_TIPO_CALCULO,CPC_NIVELES_PTO,CPC_NOMBRAMIENTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_SIT_PLAZA" p:nombreFisico="TC_SIT_PLAZA" p:filters="ID_SIT_PLAZA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_SITUACION_OK" p:nombreFisico="TC_SITUACION_OK" p:filters="ID_SIT_PLAZA_ORIGEN">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_SITUACION_OK-has-TC_SIT_PLAZAByIdSitPlazaDestino-ID_SIT_PLAZA_DESTINO"/>
+                                <ref bean="TC_SITUACION_OK-has-TC_SIT_PLAZAByIdSitPlazaOrigen-ID_SIT_PLAZA_ORIGEN"/>
+                                <ref bean="TC_SITUACION_OK-has-TC_MOVS_PERSONAL-ID_MOVTO_PERSONA"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CONTABLE_RECTIFICA" p:nombreFisico="TC_CONTABLE_RECTIFICA" p:filters="CR_GUIA_CONT_RECT">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_NIVEL_CARGO" p:nombreFisico="TC_NIVEL_CARGO" p:filters="ID_NIVEL_CARGO,DESC_NIVEL_CARGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_GASTO" p:nombreFisico="TC_TIPO_GASTO" p:filters="TG_CICLO,DESC_TIPO_GASTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CONTABLE_EJERCICIO" p:nombreFisico="TC_CONTABLE_EJERCICIO" p:filters="CE_GUIA_CONT_EJER">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ISPT" p:nombreFisico="TC_ISPT" p:filters="ISPT_FIN,ID_TIPO_TABLA">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_ISPT-has-TC_TIPO_TABLA-ID_TIPO_TABLA"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_PLAZA" p:nombreFisico="TC_TIPO_PLAZA" p:filters="ID_TIPO_PLAZA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_NM_CAUSAL" p:nombreFisico="TC_NM_CAUSAL" p:filters="ID_NM_CAUSAL">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_GUIA_CONTABLE" p:nombreFisico="TC_GUIA_CONTABLE" p:filters="ID_TIPO_CPTO,ID_CPTO_PAGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_IDIOMA" p:nombreFisico="TC_IDIOMA" p:filters="ID_IDIOMA,DESC_IDIOMA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_NOMINA" p:nombreFisico="TC_TIPO_NOMINA" p:filters="ID_TIPO_NOMINA,TIPO_NOM_CXLC,TIPO_NOM_OFI_REC,DESC_TIPO_NOMINA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_RADICACION" p:nombreFisico="TC_RADICACION" p:filters="RAD_CICLO,ID_UNIDAD,ID_EDO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_OPERACION" p:nombreFisico="TC_OPERACION" p:filters="ID_OPERACION">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PTO_ESTRATEGICO" p:nombreFisico="TC_PTO_ESTRATEGICO" p:filters="ID_PTO_ESTRATEGICO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_NACIONALIDAD" p:nombreFisico="TC_NACIONALIDAD" p:filters="ID_NACIONALIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_NIVEL_ESCOLAR" p:nombreFisico="TC_NIVEL_ESCOLAR" p:filters="ID_NIVEL_ESCOLAR">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_MUNICIPIO" p:nombreFisico="TC_MUNICIPIO" p:filters="ID_EDO,ID_MUNICIPIO,DESC_MUNICIPIO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PROFN_CARRERA" p:nombreFisico="TC_PROFN_CARRERA" p:filters="ID_PROFN_CARRERA,DESC_PROFN_CARRERA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_MOVS_PERSONAL" p:nombreFisico="TC_MOVS_PERSONAL" p:filters="ID_MOVS_PERSONAL,DESC_MOVS_PERSONAL">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ESP_PROT_CIVIL" p:nombreFisico="TC_ESP_PROT_CIVIL" p:filters="ID_ESP_PROT_CIVIL">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CONCEPTO_PAGO" p:nombreFisico="TC_CONCEPTO_PAGO" p:filters="ID_TIPO_CPTO,ID_CONCEPTO,PRIORIDAD,DESC_CON_PAG,CP_CON_PENSION,CP_IMPRESION">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_DOCUMENTO" p:nombreFisico="TC_TIPO_DOCUMENTO" p:filters="ID_TIPO_DOCTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PARTIDA" p:nombreFisico="TC_PARTIDA" p:filters="ID_PARTIDA,DESC_PARTIDA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ZONA_DIST" p:nombreFisico="TC_ZONA_DIST" p:filters="ID_ZONA_DIST,ZD_RFC">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_UNIDAD" p:nombreFisico="TC_UNIDAD" p:filters="UNI_CICLO,ID_UNIDAD,UNI_DESC">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_TABLA" p:nombreFisico="TC_TIPO_TABLA" p:filters="ID_TIPO_TABLA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_MOTIVO_CANCELA" p:nombreFisico="TC_MOTIVO_CANCELA" p:filters="ID_MOTIVO_CANCELA,DESC_MOTIVO_CANCELA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAT_ERROR" p:nombreFisico="TC_CAT_ERROR" p:filters="ID_CAT_ERROR">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_INST_PROT_CIV" p:nombreFisico="TC_INST_PROT_CIV" p:filters="ID_INST_PROT_CIV">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_DOMINIO_IDIOMA" p:nombreFisico="TC_DOMINIO_IDIOMA" p:filters="ID_DOMINIO_IDIOMA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_JUSTIFICACION" p:nombreFisico="TC_JUSTIFICACION" p:filters="ID_JUSTIFICACION">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ACT_PRIORITARIA" p:nombreFisico="TC_ACT_PRIORITARIA" p:filters="AP_CICLO,ID_ACT_PRIORITA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CXLC_ERROR" p:nombreFisico="TC_CXLC_ERROR" p:filters="ID_CXLC_ERROR">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_REFERENCIA" p:nombreFisico="TC_REFERENCIA" p:filters="REF_PROGRAMA,ID_UNIDAD_FISICA,REF_ELABORO,REF_AUTORIZO,REF_VOBO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TABULADOR" p:nombreFisico="TC_TABULADOR" p:filters="TAB_FIN,ID_NIVEL_PTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PARTIDA_FUNCION" p:nombreFisico="TC_PARTIDA_FUNCION" p:filters="PF_CICLO,ID_UNIDAD,ID_PARTIDA,ID_FUNCION">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_PARTIDA_FUNCION-has-TC_PARTIDA-ID_PARTIDA"/>
+                                <ref bean="TC_PARTIDA_FUNCION-has-TC_UNIDAD-PF_CICLO"/>
+                                <ref bean="TC_PARTIDA_FUNCION-has-TC_UNIDAD-ID_UNIDAD"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_UNIDAD_AI" p:nombreFisico="TC_UNIDAD_AI" p:filters="UAI_CICLO,ID_UNIDAD,ID_ACT_INSTI">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_GENERA_ARCHIVO_TERCEROS" p:nombreFisico="TC_GENERA_ARCHIVO_TERCEROS" p:filters="ID_TERCERO,DAT_TIPO_CPTO,DAT_CONCEPTO,DAT_ALIAS_CAMPO,DAT_TABLA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TN_PARAMETROS" p:nombreFisico="TN_PARAMETROS" p:filters="PAR_CICLO,PAR_NOM_TABLA,PAR_NOM_CAMPO,PAR_VAL_CAMPO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TN_ECO_CPTO_PAGO" p:nombreFisico="TN_ECO_CPTO_PAGO" p:filters="ECP_CICLO, ID_TIPO_CPTO, ID_CPTO_PAGO, ID_PARTIDA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TN_CXLC_DIVIDE" p:nombreFisico="TN_CXLC_DIVIDE" p:filters="ID_TIPO_NOMINA, TIPO_CXLC, ID_PRIORIDAD, PERIODO_TERCERO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TN_CXLC_FISICA" p:nombreFisico="TN_CXLC_FISICA" p:filters="CF_CICLO, ID_UNIDAD, ID_TIPO_CPTO, ID_CPTO_PAGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TN_CXLC_DEVOLUCION" p:nombreFisico="TN_CXLC_DEVOLUCION" p:filters="ID_TIPO_CPTO, ID_CPTO_PAGO, ID_GRUPOPAGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PRESTACION" p:nombreFisico="TC_PRESTACION" p:filters="ID_PRESTACION, DESC_PRESTACION">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_UNIDAD_VIRTUAL" p:nombreFisico="TC_UNIDAD_VIRTUAL" p:filters="UV_CICLO, ID_UNI_VIRTUAL, DESC_UNI_VIRTUAL">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ESTADO_COMPROBANTE" p:nombreFisico="TC_ESTADO_COMPROBANTE" p:filters="ID_EDO_COMPROBANTE, DESC_EDO_COMPROBANTE">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_DEPENDENCIA" p:nombreFisico="TC_DEPENDENCIA" p:filters="DEP_RAMO, DEP_RFC">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                    
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_POT_FUNCIONES" p:nombreFisico="TC_POT_FUNCIONES" p:filters="FUN_CICLO, ID_FACULTAD, ID_ESCENARIO, FUNDAMENTO_LEGAL, ID_DOC_REGIS, ID_PLAZA_CARGO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+
+
+
+
+
+
+
+
+                    <!-- EXPEDIENTE -->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ACT_PRINCIPAL" p:nombreFisico="TC_ACT_PRINCIPAL" p:filters="ID_ACT_PRINC, DESC_ACT_PRIN, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_DOCTOS_EXPEDIENTE" p:nombreFisico="TC_TIPO_DOCTOS_EXPEDIENTE" p:filters="ID_DOCTO, DESC_DOCTO, TIPO_DOCTO, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CODIGO_POSTAL" p:nombreFisico="TC_CODIGO_POSTAL" p:filters="ID_COD_POST, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                     <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PAISES" p:nombreFisico="TC_PAISES" p:filters="ID_PAIS, DESC_PAIS, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                     <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_BENEFICIO" p:nombreFisico="TC_TIPO_BENEFICIO" p:filters="ID_TIPO_BENEFICIO, DESC_BENEFICIO, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property><property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                     <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_FECHAS_LABORALES" p:nombreFisico="TC_TIPO_FECHAS_LABORALES" p:filters="ID_FEC_LAB, DESC_FEC_LAB, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_SANGRE" p:nombreFisico="TC_TIPO_SANGRE" p:filters="ID_TIPO_SANGRE, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_DISCAPACIDAD" p:nombreFisico="TC_TIPO_DISCAPACIDAD" p:filters="ID_DISCAPACIDAD, DESC_DISCAPACIDAD, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAPACITACION" p:nombreFisico="TC_CAPACITACION" p:filters="ID_CAPACITACION, DESC_CAPACITACION, ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                     <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ESTADO_REGISTRO" p:nombreFisico="TC_ESTADO_REGISTRO" p:filters="ID_STATUS, DES_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_EXP_RECHAZO" p:nombreFisico="TC_EXP_RECHAZO" p:filters="ID_EXP_RECHAZO, DESC_RECHAZO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                    
+                    <!--CAPACITACION Y CERTIFICACION-->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_AULA" p:nombreFisico="TC_CAP_AULA" p:filters="ID_AULA, DESC_AULA, ID_SEDE">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_CAP_AULA-has-TC_CAP_SEDE-ID_SEDE"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_CAPACIDAD_CER" p:nombreFisico="TC_CAP_CAPACIDAD_CER" p:filters="ID_CAPACIDAD_CERT, DESC_CAPACIDAD_CERT">
+                        <property name="camposComplejos">
+                            <list>    
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_CARACTER" p:nombreFisico="TC_CAP_CARACTER" p:filters="ID_CARACTER,DESC_CARACTER">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_CONTROL_CURSO" p:nombreFisico="TC_CAP_CONTROL_CURSO" p:filters="ID_CONTROL_CURSO,DESC_CONTROL_CURSO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_COORDINACION" p:nombreFisico="TC_CAP_COORDINACION" p:filters="ID_COORDINACION,DESC_COORDINACION">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_CURSO_PRINCP" p:nombreFisico="TC_CAP_CURSO_PRINCP" p:filters="ID_CURSO_PRINCIPAL, DESC_CURSO_PRINCIPAL, CICLO_EJE_TEMATICO, ID_EJE_TEMATICO, ID_MODALIDAD, ID_FINALIDAD, ID_CARACTER, ID_TIPO_ACCION">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_CAP_CURSO_PRINCP-has-TC_CAP_EJE_TEMATICO-CICLO_EJE_TEMATICO-ID_TIPO_CURSO-ID_EJE_TEMATICO"/>
+                                <ref bean="TC_CAP_CURSO_PRINCP-has-TC_CAP_MODALIDAD-ID_MODALIDAD"/>
+                                <ref bean="TC_CAP_CURSO_PRINCP-has-TC_CAP_FINALIDAD-ID_FINALIDAD"/>
+                                <ref bean="TC_CAP_CURSO_PRINCP-has-TC_CAP_CARACTER-ID_CARACTER"/>
+                                <ref bean="TC_CAP_CURSO_PRINCP-has-TC_CAP_TIPO_ACCION-ID_TIPO_ACCION"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_EJE_TEMATICO" p:nombreFisico="TC_CAP_EJE_TEMATICO" p:filters="ID_EJE_TEMATICO,CICLO_EJE_TEMATICO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_ESC_CAPACIDAD" p:nombreFisico="TC_CAP_ESC_CAPACIDAD" p:filters="ID_ESCENARIO,FIN_ESCENARIO,PLAZA_ESCENARIO,CODIGO_PUESTO,ID_TIPO_CAPACIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-ID_ESCENARIO"/>
+                                <ref bean="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-ID_ESCENARIO"/>
+                                <ref bean="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-FIN_ESCENARIO"/>
+                                <ref bean="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-PLAZA_ESCENARIO"/>
+                                <ref bean="TC_CAP_ESC_CAPACIDAD-has-TD_ESCENARIO-CODIGO_PUESTO"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_FINALIDAD" p:nombreFisico="TC_CAP_FINALIDAD" p:filters="ID_FINALIDAD,DESC_FINALIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_HORARIO_CURSO" p:nombreFisico="TC_CAP_HORARIO_CURSO" p:filters="ID_HORARIO_CURSO,DESC_HORARIO_CURSO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_INSTRUCTOR" p:nombreFisico="TC_CAP_INSTRUCTOR" p:filters="ID_INSTRUCTOR, NOMBRE_INSTRUCTOR, PRIMER_APELLIDO, ID_PROVEEDOR">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_CAP_INSTRUCTOR-has-TC_CAP_PROVEEDOR-ID_PROVEEDOR"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_MODALIDAD" p:nombreFisico="TC_CAP_MODALIDAD" p:filters="ID_MODALIDAD,DESC_MODALIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_MOT_DES_INSTR" p:nombreFisico="TC_CAP_MOT_DES_INSTR" p:filters="ID_MOTIVO_DESASIGNA_INSTR,DESC_MOTIVO_DESASIGNA_INSTR">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_MOT_DES_PART" p:nombreFisico="TC_CAP_MOT_DES_PART" p:filters="ID_MOTIVO_DESASIGNA_PARTIC,DESC_MOTIVO_DESASIGNA_PARTIC">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_MOVTO" p:nombreFisico="TC_CAP_MOVTO" p:filters="ID_CAP_MOVTO,DESC_CAP_MOVTO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_NIVEL_CURSO" p:nombreFisico="TC_CAP_NIVEL_CURSO" p:filters="ID_NIVEL_CURSO,DESC_NIVEL_CURSO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_NOTIF_CURSO" p:nombreFisico="TC_CAP_NOTIF_CURSO" p:filters="ID_MODALIDAD, CAP_NOTIF_CURSO_CICLO,CAP_NOTIF_CURSO_ASUNTO,ID_MODALIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_CAP_NOTIF_CURSO-has-TC_CAP_MODALIDAD-ID_MODALIDAD"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_OPER_DGRH" p:nombreFisico="TC_CAP_OPER_DGRH" p:filters="RFC_OPER_DGRH">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_PROVEEDOR" p:nombreFisico="TC_CAP_PROVEEDOR" p:filters="ID_PROVEEDOR,DESC_PROVEEDOR">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_CAP_PROVEEDOR-has-TC_CAP_TIPO_INST_EDU-ID_TIPO_INST_EDUCAT"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_SEDE" p:nombreFisico="TC_CAP_SEDE" p:filters="ID_SEDE,DESC_SEDE">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_SIT_CONTRATO" p:nombreFisico="TC_CAP_SIT_CONTRATO" p:filters="ID_SITUACION_CONTRATO,DESC_SITUACION_CONTRATO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_SIT_CURSO" p:nombreFisico="TC_CAP_SIT_CURSO" p:filters="ID_SITUACION_CURSO,DESC_SITUACION_CURSO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_SIT_FACTURA" p:nombreFisico="TC_CAP_SIT_FACTURA" p:filters="ID_SITUACION_FACTURA,DESC_SITUACION_FACTURA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_SIT_PARTICIPA" p:nombreFisico="TC_CAP_SIT_PARTICIPA" p:filters="ID_SITUACION_PARTICIPANTE,DESC_SITUACION_PARTICIPANTE">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_SIT_PROVEEDOR" p:nombreFisico="TC_CAP_SIT_PROVEEDOR" p:filters="ID_SITUACION_PROVEEDOR,DESC_SITUACION_PROVEEDOR">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_SUBPROGRAMA" p:nombreFisico="TC_CAP_SUBPROGRAMA" p:filters="ID_SUBPROGRAMA,DESC_SUBPROGRAMA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean> 
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_TIPO_ACCION" p:nombreFisico="TC_CAP_TIPO_ACCION" p:filters="ID_TIPO_ACCION,DESC_TIPO_ACCION">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_TIPO_CAPAC" p:nombreFisico="TC_CAP_TIPO_CAPAC" p:filters="ID_TIPO_CAPACIDAD,DESC_TIPO_CAPACIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_TIPO_CONTRATA" p:nombreFisico="TC_CAP_TIPO_CONTRATA" p:filters="ID_TIPO_CONTRATACION,DESC_TIPO_CONTRATACION">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_TIPO_CURSO" p:nombreFisico="TC_CAP_TIPO_CURSO" p:filters="ID_TIPO_CURSO,DESC_TIPO_CURSO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_TIPO_INST_EDU" p:nombreFisico="TC_CAP_TIPO_INST_EDU" p:filters="ID_TIPO_INST_EDUCAT,DESC_TIPO_INST_EDUCAT">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CAP_UNIDAD_COORD" p:nombreFisico="TC_CAP_UNIDAD_COORD" p:filters="ID_COORDINACION, UNI_CICLO, ID_UNIDAD, DESC_UNIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                                <ref bean="TC_CAP_UNIDAD_COORD-has-TC_CAP_COORDINACION-ID_COORDINACION"/>
+                                <ref bean="TC_CAP_UNIDAD_COORD-has-TC_UNIDAD-UNI_CICLO-ID_UNIDAD"/>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH_CAP_ADM" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                         <!--PNT-->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PNT_REFERENCIA" p:nombreFisico="TC_PNT_REFERENCIA" p:filters="REF_RFC_FUNC,REF_PNT_OBLIG,ID_UNIDAD, REF_FEC_INI, REF_FEC_FIN,REF_AREA_RESP">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+	                 </bean>  
+                     <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_LOCALIDAD" p:nombreFisico="TC_LOCALIDAD" p:filters="ID_LOCALIDAD,ID_EDO,ID_MUNICIPIO, DESC_LOCALIDAD, TIPO_LOCALIDAD">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+     	            </bean> 
+                    <!--ANUNCIOS-->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TN_ANUNCIO" p:nombreFisico="TN_ANUNCIO" p:filters="ID_ANUNCIO,TITULO_ANUNCIO,ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                    <!--TIPOS DE DESCRIPCION AUXILIAR DE DOCUMENTOS-->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_TIPO_DOC_EXP_AUX" p:nombreFisico="TC_TIPO_DOC_EXP_AUX" p:filters="ID_DOCTO_AUX,DESC_DOCTO,ID_STATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_VACANCIA" p:nombreFisico="TC_VACANCIA" p:filters="ID_VACANCIA,DESC_VACANCIA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_PUESTO_VACANCIA" p:nombreFisico="TC_PUESTO_VACANCIA" p:filters="ID_PTO_ORIGEN,ID_PTO_DESTINO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_ESTATUS_TIMBRADO" p:nombreFisico="TC_ESTATUS_TIMBRADO" p:filters="ID_ESTATUS,DESC_ESTATUS">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_IMAGEN_AVISO_CFDI" p:nombreFisico="TC_IMAGEN_AVISO_CFDI" p:filters="ID_IMAGEN,IMAGEN_AVISO,REDIRECCION,ACTIVO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                    
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_CLASIFICA" p:nombreFisico="TC_CLASIFICA" p:filters="ID_CLASIFICA,DESC_CLASIFICA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_UNIDAD_CLASIFICA" p:nombreFisico="TC_UNIDAD_CLASIFICA" p:filters="UNI_CICLO,ID_UNIDAD,ID_CLASIFICA">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                    <!--  TC_OBLIGADO  -->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_OBLIGADO" p:nombreFisico="TC_OBLIGADO" p:filters="ID_OBLIGADO,DESC_OBLIGADO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                    <!--  TC_MOTIVO_OBLIGADO  -->
+                    <bean class="gob.shcp.catalog.core.common.dto.TablaVO" p:nombre="TC_MOTIVO_OBLIGADO" p:nombreFisico="TC_MOTIVO_OBLIGADO" p:filters="ID_MOTIVO_OBLIGADO,DESC_MOTIVO_OBLIGADO">
+                        <property name="camposComplejos">
+                            <list>
+                            </list>					
+                        </property>
+                        <property name="rights">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.util.RightsVO" p:role="SIREH-ADMIN" p:insert="true" p:update="true" p:delete="true"/>
+                            </list>
+                        </property>
+                        <property name="valoresDefault">
+                            <list>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="FEC_MODIFICO" p:defaultValue="SYSDATE" p:insert="true"/>
+                                <bean class="gob.shcp.catalog.core.common.dto.DefaultValueVO" p:field="USUARIO" p:defaultValue="USERNAME" p:insert="true"/>
+                            </list>
+                        </property>
+                    </bean>
+                    
+                </list>
+            </property>
+            <property name="catalogAdmin">
+                <ref bean="gob.shcp.catalog.core.admin.dao.ICatalogAdmin" />
+            </property>
+        </bean>         
+</beans>
+

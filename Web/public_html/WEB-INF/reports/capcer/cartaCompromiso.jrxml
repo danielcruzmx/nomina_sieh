@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cartaCompromiso" printOrder="Horizontal" columnDirection="RTL" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="2.415765000000001"/>
+	<property name="ireport.x" value="131"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CURSO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+       INS.NOMBRE_INSTRUCTOR || ' ' || INS.PRIMER_APELLIDO || ' ' || INS.SEGUNDO_APELLIDO AS INSTRUCTOR,
+       CU.CURSO_CLAVE,
+       CP.DESC_CURSO_PRINCIPAL,
+       PR.DESC_PROVEEDOR,
+       SE.DIRECCION_SEDE,
+       'DEL:   ' ||
+       to_char(CU.curso_fec_ini, 'dd') || '-' ||
+       trim(to_char(CU.curso_fec_ini, 'Month')) || '-' ||
+       to_char(CU.curso_fec_ini, 'yyyy') ||
+       '   AL   ' ||
+       to_char(CU.curso_fec_fin, 'dd') || '-' ||
+       trim(to_char(CU.curso_fec_fin, 'Month')) || '-' ||
+       to_char(CU.curso_fec_fin, 'yyyy') periodo,
+       PKG_DATOS_DEPENDENCIA.FUNC_RAZON DEP_NOM,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICLIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM TN_CAP_CURSO CU,
+     TC_CAP_CURSO_PRINCP CP,
+     TC_CAP_SEDE SE,
+     TC_CAP_PROVEEDOR PR,
+     TC_CAP_INSTRUCTOR INS
+WHERE CU.CICLO_EJE_TEMATICO = $P{PAR_CICLO}
+  AND CU.ID_CURSO = $P{PAR_CURSO}
+  AND CU.ID_CONTROL_CURSO IN ('CON', 'CUR')
+  AND CU.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+  AND CU.ID_PROVEEDOR = PR.ID_PROVEEDOR(+)
+  AND CU.ID_SEDE = SE.ID_SEDE(+)
+  AND CU.ID_INSTRUCTOR_TITULAR = INS.ID_INSTRUCTOR(+)]]>
+	</queryString>
+	<field name="INSTRUCTOR" class="java.lang.String"/>
+	<field name="CURSO_CLAVE" class="java.lang.String"/>
+	<field name="DESC_CURSO_PRINCIPAL" class="java.lang.String"/>
+	<field name="DESC_PROVEEDOR" class="java.lang.String"/>
+	<field name="DIRECCION_SEDE" class="java.lang.String"/>
+	<field name="PERIODO" class="java.lang.String"/>
+	<field name="DEP_NOM" class="java.lang.String"/>
+	<field name="DOMICLIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="61" y="93" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="47" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="125" y="5" width="231" height="34"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Adobe Caslon Pro" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CARTA COMPROMISO INSTRUCTOR/A PAC  /  " + $P{PAR_CICLO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="328" y="10" width="210" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="328" y="21" width="210" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="655">
+			<rectangle>
+				<reportElement x="1" y="0" width="555" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="2" y="45" width="371" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Presente.
+]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="18" y="91" width="538" height="10" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="2" y="60" width="554" height="31"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[En el marco del convenio /contrato en materia de capacitación celebrado con la institución/empresa a continuación detallada, suscribo esta Carta Compromiso en la cual acepto las obligaciones que adquiero en mi calidad de instructor/a en la Secretaría de Hacienda y Crédito Público y me comprometo a cumplir en cada una de las etapas con las siguientes especificaciones:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="91" width="107" height="10" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ I.Planeación del curso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="101" width="526" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Conforme a la carta descriptiva, planear actividades que faciliten el desarrollo de los temas establecidos, con el fin de lograr los objetivos programados.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="111" width="12" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="111" width="526" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Verificar que la planeación sea acorde con el contenido del manual del curso.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="18" y="124" width="538" height="11" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="125" width="107" height="10" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[II.Desarrollo del curso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="135" width="12" height="11" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[3.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="135" width="523" height="11"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Presentarme en el aula de capacitación, con al menos 10 minutos de anticipación durante el período de duración del curso programado.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="146" width="12" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[4.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="146" width="523" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[En la primera sesión realizar las actividades siguientes:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="159" width="18" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[a)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="172" width="18" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[b)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="185" width="18" height="11"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[c)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="159" width="483" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dinámica grupal de presentación.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="172" width="483" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entrega del manual y, en su caso, del material de apoyo a cada participante.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="185" width="483" height="41"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Dar a conocer las reglas que regirán la dinámica del curso estableciendo una relación y convivencia de respeto con los participantes, siendo:
+                     i.La prohibición de introducir alimentos y/o bebidas a las aulas de capacitación.
+                     ii.Preservar el mobiliario y equipo del aula de capacitación.
+                     iii.La prohibición del uso de telefonía celular dentro del aula de capacitación.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="226" width="18" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[d)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="226" width="483" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aplicar una evaluación diagnóstica del grupo con el fin de que cada participante identifique sus fortalezas y debilidades a trabajar durante el curso.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="236" width="12" height="11" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[5.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="236" width="523" height="21"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Realizar diariamente el registro de asistencia de los participantes, para lo cual deberé tomar la asistencia al menos dos veces, la primera en la hora en punto del inicio del curso (para efectos de asistencia) y la otra con una diferencia de 10 minutos (para efectos de retardo).]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="257" width="12" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[6.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="257" width="523" height="24"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Indicar a los participantes que cuando el curso tenga una duración menor a tres horas diarias, no deberá haber recesos, con excepción de los señalados por el personal de Protección Civil.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="281" width="12" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[7.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="281" width="523" height="23"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Aplicar técnicas didácticas que favorezcan el aprendizaje de los participantes, propiciando su participación y esclareciendo las dudas que surjan durante el desarrollo del curso.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="304" width="12" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[8.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="304" width="523" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remitir a los participantes con los enlaces de capacitación de su unidad de adscripción en caso de entrega de justificantes sobre faltas o retardos.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="317" width="12" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[9.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="317" width="523" height="29"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[En la última sesión, aplicar la evaluación final que permita a los participantes conocer cuáles fueron sus logros con relación a su evaluación diagnóstica.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="346" width="15" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[10.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="346" width="523" height="27"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mi conducta antes, durante y después del evento de capacitación será respetuosa con los participantes, enlaces de capacitación y el personal de la Secretaría, considerando lo siguiente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="61" y="373" width="18" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[a)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="61" y="404" width="18" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[b)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="61" y="430" width="18" height="12"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[c)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="61" y="442" width="18" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[d)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="61" y="454" width="18" height="11"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[e)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="373" width="477" height="31"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No realizar acuerdos con los participantes sobre modificación de horarios o días programados para el curso, respetando los horarios previamente establecidos, a menos que se trate de alguna situación autorizada de manera exprofeso por la Dirección de Capacitación y Certificación, por así convenir a los intereses de la Secretaría.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="404" width="477" height="26"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Por ningún motivo realizar actos de comercio personales de cualquier naturaleza con los participantes del curso, dentro o fuera de las instalaciones de la Secretaría, ni de manera personal ni por cualquier otra vía (ej. correo electrónico).]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="430" width="477" height="12"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No hacer recomendaciones de cursos con nivel más avanzado o de cualquier otra índole.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="442" width="477" height="12"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Por ningún motivo dar informes sobre calificaciones u opiniones de acreditación del curso.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="454" width="477" height="12"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reportar cualquier anomalía al enlace de capacitación de la SHCP.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="21" y="466" width="535" height="11" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="21" y="466" width="107" height="10" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[III.Finalizado el curso]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="477" width="15" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[11.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="477" width="523" height="23"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Presentar un informe por escrito del desarrollo de éste, mostrando fortalezas y debilidades del grupo, participantes más avanzados, comportamientos generales y cualquier situación que resulte necesaria comentar, asimismo se deberá anexar el listado de asistencia debidamente llenado y firmado. Remitir a los participantes con los enlaces de capacitación de su unidad de adscripción en caso de entrega de justificantes sobre faltas o retardos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="500" width="15" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[12.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="500" width="523" height="32"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Entregar el listado de asistencia debidamente firmado y con calificaciones asentadas en tinta, utilizando la escala de 0-100 en dónde 70 es el mínimo de aprobación, considerando que para el personal identificado con nivel de enlace (E) y mando (MM), se deberá contar al menos con el 80% de asistencia y para el personal operativo (OP), con el 90% a fin de que el cuso le sea considerado aprobatorio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="33" y="542" width="523" height="13"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[El incumplimiento a estas disposiciones dará como resultado que se me inhabilite para la impartición de otros eventos de capacitación en la SHCP.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="565" width="172" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Atentamente]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="600" width="171" height="1" forecolor="#000000"/>
+			</line>
+			<staticText>
+				<reportElement x="240" y="620" width="93" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Institución / Empresa:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="601" width="172" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INSTRUCTOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="620" width="223" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_PROVEEDOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="632" width="223" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DIRECCION_SEDE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="620" width="93" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURSO_CLAVE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="632" width="223" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_CURSO_PRINCIPAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="644" width="223" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PERIODO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="18" y="101" width="12" height="13" forecolor="#666666"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="27" width="157" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DEP_NOM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="36" width="331" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="26" splitType="Stretch">
+			<textField pattern="#,##0">
+				<reportElement x="461" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="521" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="300" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICLIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

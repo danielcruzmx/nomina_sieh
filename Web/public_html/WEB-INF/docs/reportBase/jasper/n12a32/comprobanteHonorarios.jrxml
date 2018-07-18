@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.948717100000003"/>
+	<property name="ireport.x" value="42"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="Table Dataset 1"/>
+	<subDataset name="dataset1"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="subreporteDeduccion" class="java.lang.String"/>
+	<parameter name="subreportePercepcion" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<field name="compFolio" class="java.lang.String"/>
+	<field name="emisorNombre" class="java.lang.String"/>
+	<field name="emisorRfc" class="java.lang.String"/>
+	<field name="receptorNombre" class="java.lang.String"/>
+	<field name="receptorRfc" class="java.lang.String"/>
+	<field name="complNomRecCurp" class="java.lang.String"/>
+	<field name="compNomTipoNomina" class="java.lang.String"/>
+	<field name="emisorRegimen" class="java.lang.String"/>
+	<field name="compFecha" class="java.lang.String"/>
+	<field name="complNomRecNumSeguridadSocial" class="java.lang.String"/>
+	<field name="complNomRecPuesto" class="java.lang.String"/>
+	<field name="complNomRecTipoContrato" class="java.lang.String"/>
+	<field name="compNomFechaInicialPago" class="java.lang.String"/>
+	<field name="compNomFechaFinalPago" class="java.lang.String"/>
+	<field name="compNomFechaPago" class="java.lang.String"/>
+	<field name="complNomRecTipoRegimen" class="java.lang.String"/>
+	<field name="compNomNumDiasPagados" class="java.lang.String"/>
+	<field name="compMoneda" class="java.lang.String"/>
+	<field name="compFormaPago" class="java.lang.String"/>
+	<field name="compMetodoPago" class="java.lang.String"/>
+	<field name="compTipoComprobante" class="java.lang.String"/>
+	<field name="compSelloDigital" class="java.lang.String"/>
+	<field name="timbreFiscalDigitalSelloCFD" class="java.lang.String"/>
+	<field name="compNoCertificado" class="java.lang.String"/>
+	<field name="timbreFiscalDigitalFechaTimbrado" class="java.lang.String"/>
+	<field name="compLugarExpedicion" class="java.lang.String"/>
+	<field name="complNomRecNumEmpleado" class="java.lang.String"/>
+	<field name="percepciones" class="java.util.Collection"/>
+	<field name="deducciones" class="java.util.Collection"/>
+	<field name="unidad" class="java.lang.String"/>
+	<field name="descUnidad" class="java.lang.String"/>
+	<field name="puesto" class="java.lang.String"/>
+	<field name="descPuesto" class="java.lang.String"/>
+	<field name="ciclo" class="java.lang.String"/>
+	<field name="qnaPago" class="java.lang.String"/>
+	<field name="plaza" class="java.lang.String"/>
+	<field name="nivel" class="java.lang.String"/>
+	<field name="complNomPercsTotalGravado" class="java.lang.String"/>
+	<field name="complNomPercsTotalExento" class="java.lang.String"/>
+	<field name="complNomDeducsTotalOtrasDeducciones" class="java.lang.String"/>
+	<field name="complNomDeducsTotalImpuestosRetenidos" class="java.lang.String"/>
+	<field name="complNomPercsTotalSueldos" class="java.lang.String"/>
+	<field name="cadenaOriginal" class="java.lang.String"/>
+	<field name="compTotal" class="java.lang.String"/>
+	<field name="compDescuento" class="java.lang.String"/>
+	<field name="compNomTotalDeducciones" class="java.lang.String"/>
+	<field name="pcp" class="java.lang.String"/>
+	<field name="timbreFiscalDigitalUuid" class="java.lang.String"/>
+	<field name="nomLeyenda" class="java.lang.String"/>
+	<field name="timbreFiscalDigitalSelloSAT" class="java.lang.String"/>
+	<field name="compCodeQr" class="java.lang.String"/>
+	<background>
+		<band height="752" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="752"/>
+			</rectangle>
+			<image isLazy="true">
+				<reportElement x="82" y="150" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<detail>
+		<band height="84" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="52" width="572" height="11" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="53" width="568" height="10" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL EMISOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="64" width="73" height="8"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE DEL EMISOR:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="74" width="73" height="8"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RFC DEL EMISOR:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="64" width="93" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REGIMEN: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="74" width="93" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LUGAR Y FECHA: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="0" width="260" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPROBANTE DE PAGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="406" y="0" width="39" height="23"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FOLIO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="148" y="25" width="116" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AREA DE ADSCRIPCION:
+
+]]></text>
+			</staticText>
+			<line>
+				<reportElement x="78" y="63" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="277" y="63" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="374" y="63" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="0" y="82" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="145" y="0" width="1" height="52"/>
+			</line>
+			<line>
+				<reportElement x="400" y="1" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="146" y="23" width="426" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="72" width="572" height="1"/>
+			</line>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="11" y="4" width="121" height="45"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SHCP.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="443" y="0" width="80" height="23"/>
+				<textElement verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compFolio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="64" width="178" height="8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{emisorNombre}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="74" width="180" height="8"/>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{emisorRfc}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="380" y="64" width="135" height="8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{emisorRegimen}.equals("603") ? "PERSONA MORAL" : $F{emisorRegimen}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="442" y="73" width="127" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compFecha}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="148" y="37" width="19" height="13"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{unidad}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="380" y="73" width="63" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CIUDAD DE MÉXICO, ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="532" y="23" width="37" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RAMO 06]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="178" y="37" width="376" height="13"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[$F{descUnidad}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="167" y="37" width="11" height="13"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression><![CDATA[" - "]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="-1" width="570" height="12" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL EMPLEADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="12" width="73" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="21" width="73" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RFC: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="150" y="22" width="28" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CURP: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="42" width="73" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMINA: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="31" width="75" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE PAGO: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="43" width="75" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REGIMEN: ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="82" width="572" height="12" backcolor="#999999"/>
+			</rectangle>
+			<line>
+				<reportElement x="0" y="71" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="277" y="12" width="1" height="81"/>
+			</line>
+			<line>
+				<reportElement x="78" y="12" width="1" height="70"/>
+			</line>
+			<line>
+				<reportElement x="357" y="12" width="1" height="70"/>
+			</line>
+			<line>
+				<reportElement x="0" y="11" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="428" y="12" width="1" height="9"/>
+			</line>
+			<line>
+				<reportElement x="0" y="61" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="21" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="31" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="41" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="51" width="572" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="82" width="275" height="11" backcolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERCEPCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="82" width="291" height="12" backcolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEDUCCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="12" width="75" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No HONORARIO:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="149" y="21" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="179" y="22" width="1" height="9"/>
+			</line>
+			<staticText>
+				<reportElement x="4" y="32" width="73" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EJERCICIO: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="154" y="32" width="37" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[QUINCENA: ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="189" y="32" width="1" height="9"/>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="4" y="51" width="73" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[CONTRATACION: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="4" y="62" width="73" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[PERIODO PAGO: ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="428" y="22" width="1" height="9"/>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="299" y="23" width="56" height="7" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[NIVEL: ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="486" y="22" width="1" height="9"/>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="131" y="63" width="10" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[AL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="12" width="191" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{receptorNombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="21" width="62" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{receptorRfc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="185" y="21" width="90" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{complNomRecCurp}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="42" width="191" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compNomTipoNomina}.equalsIgnoreCase("O") ? "ORDINARIA" : $F{compNomTipoNomina}.equalsIgnoreCase("E") ? "EXTRAORDINARIA" : $F{compNomTipoNomina}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="62" width="41" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( new SimpleDateFormat( "dd/MMM/yyyy", new Locale("es","MX") ).format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( $F{compNomFechaInicialPago} ) ) ).toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="146" y="62" width="41" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( new SimpleDateFormat( "dd/MMM/yyyy", new Locale("es","MX") ).format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( $F{compNomFechaFinalPago} ) ) ).toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="363" y="32" width="91" height="8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat( "dd/MMM/yyyy", new Locale("es","MX") ).format( new SimpleDateFormat( "yyyy-MM-dd" ).parse( $F{compNomFechaPago} ) ) ).toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="32" width="48" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ciclo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="193" y="32" width="52" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qnaPago}.substring(4)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="363" y="12" width="65" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plaza}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="363" y="42" width="65" height="10"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[HONORARIOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="23" width="65" height="10"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[HONORAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="53" width="65" height="10"/>
+				<textElement textAlignment="Left">
+					<font fontName="SansSerif" size="6" isBold="false"/>
+				</textElement>
+				<text><![CDATA[HONORARIOS]]></text>
+			</staticText>
+		</band>
+		<band height="296" splitType="Stretch">
+			<line>
+				<reportElement x="277" y="0" width="1" height="295"/>
+			</line>
+			<subreport>
+				<reportElement x="0" y="0" width="277" height="295"/>
+				<subreportParameter name="total_exce">
+					<subreportParameterExpression><![CDATA[$F{complNomPercsTotalExento}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total_grav">
+					<subreportParameterExpression><![CDATA[$F{complNomPercsTotalGravado}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{percepciones})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreportePercepcion.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="278" y="0" width="291" height="295"/>
+				<subreportParameter name="total_neto">
+					<subreportParameterExpression><![CDATA[$F{compTotal}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total_exce"/>
+				<subreportParameter name="total_grav">
+					<subreportParameterExpression><![CDATA[$F{compNomTotalDeducciones}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{deducciones})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "subreporteDeduccion.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="278" splitType="Stretch">
+			<staticText>
+				<reportElement x="277" y="21" width="76" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONEDA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="7" y="199" width="96" height="7" forecolor="#000000" backcolor="#999999"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="5" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[FECHA Y HORA DE CERTIFICACION:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="41" width="71" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO. CERTIFICADO: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="31" width="73" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FORMA DE PAGO: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="97" width="566" height="7" backcolor="#999999"/>
+				<textElement>
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CADENA ORIGINAL DEL COMPLEMENTO DE CERTIFICACION DEL SAT:
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="65" width="133" height="7" backcolor="#999999"/>
+				<textElement>
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SELLO DIGITAL DEL CFDI:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="165" width="447" height="9" backcolor="#999999"/>
+				<textElement>
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SELLO DIGITAL DEL SAT:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="206" width="463" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="197" width="463" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="161" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="92" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="60" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="40" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="30" width="572" height="1"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="207" width="462" height="11" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVISOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="218" width="463" height="1"/>
+			</line>
+			<line>
+				<reportElement x="356" y="21" width="1" height="29"/>
+			</line>
+			<line>
+				<reportElement x="0" y="50" width="572" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="277" y="31" width="76" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[METODO DE PAGO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="277" y="41" width="76" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO DE COMPROBANTE:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="78" y="21" width="1" height="40"/>
+			</line>
+			<line>
+				<reportElement x="0" y="10" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="20" width="572" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="362" y="21" width="101" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compMoneda}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="362" y="31" width="178" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compFormaPago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="32" width="101" height="8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compMetodoPago}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="362" y="41" width="101" height="8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compTipoComprobante}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="72" width="559" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compSelloDigital}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="174" width="447" height="23"/>
+				<textElement verticalAlignment="Top">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{timbreFiscalDigitalSelloSAT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="84" y="40" width="79" height="9"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{compNoCertificado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="107" y="198" width="96" height="7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{timbreFiscalDigitalFechaTimbrado}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="7" y="104" width="559" height="49"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cadenaOriginal}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="463" y="162" width="108" height="114"/>
+				<imageExpression><![CDATA[$F{compCodeQr}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement x="462" y="162" width="1" height="116"/>
+			</line>
+			<staticText>
+				<reportElement x="3" y="21" width="73" height="9"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTADORES: ]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="84" y="21" width="191" height="8"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pcp}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="51" width="70" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FOLIO FISCAL:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="84" y="50" width="193" height="9"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{timbreFiscalDigitalUuid}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="7" y="218" width="444" height="9"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomLeyenda}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="7" y="237" width="444" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA["Este documento es una representación impresa de un CFDI"
+
+]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

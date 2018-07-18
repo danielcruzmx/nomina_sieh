@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="200.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gob.shcp.certificados.nominaservice.WebServiceFXMLController">
+  <children>
+    <ImageView fitHeight="97.66248144854723" fitWidth="285.14593505859375" layoutX="157.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@1200px-SHCP_logo_2012.svg.png" />
+      </image>
+    </ImageView>
+    <Label fx:id="mensajes" layoutX="156.0" layoutY="157.0" prefWidth="286.0" text="" />
+  </children>
+  <stylesheets>
+    <URL value="@Styles.css" />
+  </stylesheets>
+</AnchorPane>

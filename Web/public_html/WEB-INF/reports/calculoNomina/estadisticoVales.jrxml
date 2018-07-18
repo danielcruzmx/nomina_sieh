@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="estadisticoVales" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="7" bottomMargin="7">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\sql sireh\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_NOMINA" class="java.lang.String"/>
+	<parameter name="P_TITULO" class="java.lang.String"/>
+	<parameter name="P_IMPORTE" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_IMPORTEs" class="java.lang.Double" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT ORDEN,
+ID_UNIDAD_NOM, DESC_UNIDAD, SUM(CASOS_GRAL) CASOS_GRAL, SUM(SIN_PENSION) S_PENSION,SUM(PENSIONISTA) PENSIONISTA, SUM(PENSIONADA) PENSIONADA, SUM(TOTAL) IMPORTE, DOMICILIO, UNI_OM, UNI_RH
+FROM (
+select
+    case when substr(h.id_unidad_nom,1,1) = '1' then 1
+         when substr(h.id_unidad_nom,1,1) = '2' then 2
+         when substr(h.id_unidad_nom,1,1) = '3' then 3
+         when substr(h.id_unidad_nom,1,1) = '4' then 4
+         when substr(h.id_unidad_nom,1,1) = '5' then 5
+         when substr(h.id_unidad_nom,1,1) = '6' then 6
+         when substr(h.id_unidad_nom,1,1) = '7' then 7 end orden,
+    h.id_unidad_nom,
+    u.desc_unidad,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH,
+    count(h.hp_folio) casos_gral,
+    (select count(h1.hp_rfc) from tn_historico_pago h1
+     where h.hp_qna_pago = h1.hp_qna_pago
+       and h.id_tipo_nomina = h1.id_tipo_nomina
+       and h.hp_num_complem = h1.hp_num_complem
+       and h.hp_rfc = h1.hp_rfc
+       and h.hp_num_pension = 0
+       and h1.hp_rfc not in (select h4.hp_rfc
+                            from tn_historico_pago h4
+                            where h.hp_qna_pago = h4.hp_qna_pago
+                              and h.id_tipo_nomina = h4.id_tipo_nomina
+                              and h.hp_num_complem = h4.hp_num_complem
+                              and h4.hp_num_pension >= 1
+                              and h1.hp_rfc = h4.hp_rfc)) sin_pension,
+    (select count(h2.hp_rfc) from tn_historico_pago h2
+     where h.hp_qna_pago = h2.hp_qna_pago
+       and h.id_tipo_nomina = h2.id_tipo_nomina
+       and h.hp_num_complem = h2.hp_num_complem
+       and h.hp_rfc = h2.hp_rfc
+       and h.hp_num_pension = 0
+       and h2.hp_num_pension >= 1) pensionista,
+    (select count(h3.hp_rfc) from tn_historico_pago h3
+     where h.hp_qna_pago = h3.hp_qna_pago
+       and h.id_tipo_nomina = h3.id_tipo_nomina
+       and h.hp_num_complem = h3.hp_num_complem
+       and h.hp_rfc = h3.hp_rfc
+       and h3.hp_num_pension >= 1) pensionada,
+    sum(h.hp_neto_pago) total
+from tn_historico_pago h, tc_unidad u
+where h.hp_consec_nomina in ($P!{P_NOMINA})
+  and h.id_unidad_nom = u.id_unidad
+  and u.uni_ciclo = substr(h.hp_qna_pago,1,4)
+  and h.hp_num_pension = 0
+group by 1,
+    h.id_unidad_nom,
+    u.desc_unidad,
+    h.hp_qna_pago,
+    h.id_tipo_nomina,
+    h.hp_num_complem,
+    h.hp_rfc,
+    h.hp_num_pension
+order by id_unidad_nom)
+GROUP BY ORDEN, ID_UNIDAD_NOM,DESC_UNIDAD, DOMICILIO, UNI_OM, UNI_RH
+union
+select  8 orden,'711' id_unidad_nom,'Dirección de Pagos' desc_unidad, 10 casos_gral, 0 sin_pension, 0 pensionista, 0 pensionada, cast($P{P_IMPORTE} as int) importe,        PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+from dual
+ORDER BY ORDEN, ID_UNIDAD_NOM, DOMICILIO, UNI_OM, UNI_RH]]>
+	</queryString>
+	<field name="ORDEN" class="java.math.BigDecimal"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="DESC_UNIDAD" class="java.lang.String"/>
+	<field name="CASOS_GRAL" class="java.lang.Double"/>
+	<field name="S_PENSION" class="java.lang.Double"/>
+	<field name="PENSIONISTA" class="java.lang.Double"/>
+	<field name="PENSIONADA" class="java.lang.Double"/>
+	<field name="IMPORTE" class="java.lang.Double"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<variable name="T_SPENSION" class="java.lang.Double" resetType="Group" resetGroup="Orden" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_GRAL}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="T_PENSIONADOS" class="java.lang.Double" incrementType="Group" incrementGroup="UNIDAD" calculation="Sum">
+		<variableExpression><![CDATA[$F{PENSIONISTA}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="T_PENSIONISTAS" class="java.lang.Double" incrementType="Group" incrementGroup="UNIDAD" calculation="Sum">
+		<variableExpression><![CDATA[$F{PENSIONADA}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="T_TOTALSPENSION" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{CASOS_GRAL}]]></variableExpression>
+	</variable>
+	<variable name="T_TOTALIMPORTE" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="V_VALOR" class="java.lang.Double">
+		<variableExpression><![CDATA[$P{P_IMPORTEs}]]></variableExpression>
+	</variable>
+	<group name="Orden">
+		<groupExpression><![CDATA[$F{ORDEN}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="14">
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="386" y="0" width="59" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{T_SPENSION}]]></textFieldExpression>
+				</textField>
+				<frame>
+					<reportElement x="385" y="0" width="63" height="13"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<staticText>
+					<reportElement x="323" y="0" width="62" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+						<font fontName="Arial" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Subtotal:]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<group name="UNIDAD">
+		<groupExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<frame>
+					<reportElement x="37" y="0" width="673" height="13"/>
+					<box>
+						<pen lineWidth="0.5"/>
+						<topPen lineWidth="0.5"/>
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+				</frame>
+				<textField>
+					<reportElement x="95" y="1" width="290" height="12"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="385" y="1" width="60" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CASOS_GRAL}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="509" y="1" width="60" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PENSIONISTA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="571" y="1" width="60" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PENSIONADA}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="447" y="1" width="60" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{S_PENSION}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="37" y="1" width="55" height="12"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="633" y="1" width="72" height="12"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="447" y="0" width="1" height="13"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="385" y="0" width="1" height="13"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="509" y="0" width="1" height="13"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="571" y="0" width="1" height="13"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="633" y="0" width="1" height="13"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="92" y="0" width="1" height="13"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="131" y="15" width="407" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="614" y="0" width="136" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="569" y="20" width="183" height="30"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<rectangle>
+				<reportElement x="37" y="0" width="673" height="24" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="37" y="0" width="55" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Unidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="92" y="0" width="293" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Denominación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="385" y="0" width="62" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="447" y="0" width="62" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sin pensión]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="509" y="12" width="62" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Otorgante(1)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="571" y="12" width="62" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Beneficiarias(2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="634" y="0" width="76" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe(3)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="509" y="0" width="124" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Con pensión]]></text>
+			</staticText>
+			<frame>
+				<reportElement x="37" y="0" width="673" height="24"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<line>
+					<reportElement x="55" y="0" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="348" y="0" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="410" y="0" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="596" y="0" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="472" y="0" width="1" height="24"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="534" y="13" width="1" height="11"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+				<line>
+					<reportElement x="473" y="12" width="123" height="1"/>
+					<graphicElement>
+						<pen lineWidth="0.5"/>
+					</graphicElement>
+				</line>
+			</frame>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="75" y="5" width="559" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="151" splitType="Stretch">
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="386" y="8" width="59" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{T_TOTALSPENSION}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="386" y="7" width="63" height="13"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+			</frame>
+			<staticText>
+				<reportElement x="272" y="8" width="113" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total fajillas requeridas:]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="634" y="7" width="71" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{T_TOTALIMPORTE}]]></textFieldExpression>
+			</textField>
+			<frame>
+				<reportElement x="634" y="7" width="76" height="13"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+			</frame>
+			<staticText>
+				<reportElement x="518" y="7" width="113" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total importe:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="37" y="114" width="650" height="33"/>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Notas:
+1) Las fajillas de los otorgantes se incluyen en los paquetes de las Unidades Administrativas.
+2) Las fajillas de las beneficiarias se entregán al Jefe de Departamento de Distribución e Integración Comprobatoria de la Dirección de Servicios al Personal y Glosa.
+3) El importe total no considera el porcentaje por comisión, ni el IVA sobre comisión.]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

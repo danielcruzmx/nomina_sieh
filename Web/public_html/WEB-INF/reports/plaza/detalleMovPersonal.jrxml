@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="16-Moviientos de personal detalle" pageWidth="936" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="896" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="408"/>
+	<property name="ireport.y" value="14"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select c.MEP_QNA_CAPTURA captura, c.ID_UNIDAD_NOM UR,
+--u.UNI_DESC,
+           c.ID_GRUPO_PAGO grupo,
+--upper(g.DESC_GRUPO_PAGO) DESC_GRUPO_PAGO,
+           c.ID_MOVTO_PERSONA movto, upper(m.DESC_MOVS_PERSONAL) descripcion,
+/* case when c.ID_MOVTO_PERSONA between 100 and 199 then 'ALTA'
+                   when c.ID_MOVTO_PERSONA between 200 and 299 then 'PROMOCION'
+                   when c.ID_MOVTO_PERSONA between 300 and 399 then 'BAJA'
+                   when c.ID_MOVTO_PERSONA = '415' then 'PREVENTIVA'
+else 'NO DEFINIDO' end movtos */
+           c.ID_PLAZA Plaza,
+          -- c.ID_PUESTO_NOM_ANT,
+           substr(f.CODIGO_PUESTO,10,7) Puesto, upper(f.NOMBRE_PUESTO) describe_puesto,
+          --upper(p.DESC_PUESTO),
+           a.ID_NIVEL_PTO nivel,
+           --a.ID_NOMBRAMIENTO ,
+           upper(n.DESC_NOMBRAMIENTO) nombre_puesto,
+          -- a.ID_JERARQUIA,
+       --   case when a.ID_JERARQUIA = '7' and a.ID_NOMBRAMIENTO  = 'B' then 'OPERATIVO DE BASE'
+       --           when a.ID_JERARQUIA = '7' and a.ID_NOMBRAMIENTO = 'C' then 'OPERATIVO DE CONFIANZA'
+       --   else upper(j.DESC_JERARQUIA) end JERARQUIA,
+           f.OBSERVACIONES division_escenario,
+           c.MEP_RFC rfc, c.MEP_NOMBRE nombre , c.MEP_PRIMER_APELLIDO paterno , c.MEP_SEGUNDO_APELLIDO materno,
+           to_char(c.MEP_INI_CONT,'dd/mm/Yyyy') inicio,
+           to_char(c.MEP_FIN_CONT,'dd/mm/Yyyy') fin,
+           c.USUARIO , to_char(c.FEC_MODIFICO,'dd/mm/Yyyy') fec_modifica
+from tn_movtos_emp_pla c, tc_movs_personal m, tc_unidad u, tc_atributo_puesto a, tc_jerarquia j, tc_nombramiento n, tc_puesto p,
+         tc_grupo_pago g, td_escenario f
+where
+c.MEP_QNA_CAPTURA>=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES}) AND
+c.MEP_QNA_CAPTURA<=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES})
+and c.ID_MOVTO_PERSONA = m.ID_MOVS_PERSONAL (+)
+and c.ID_UNIDAD_NOM = u.ID_UNIDAD (+)
+and u.UNI_CICLO = $P{PAR_CICLO}
+and c.ID_GRUPO_PAGO = g.ID_GRUPO_PAGO
+and c.ID_PUESTO_NOM = a.ID_ATRIBUTO_PUESTO (+)
+and a.AP_FIN = TO_DATE('01/01/2099','DD/MM/YYYY')
+and a.ID_JERARQUIA = j.ID_JERARQUIA (+)
+and a.ID_NOMBRAMIENTO = n.ID_NOMBRAMIENTO (+)
+and (c.ID_MOVTO_PERSONA between 100 and 199 or c.ID_MOVTO_PERSONA
+                        between 200 and 299 or c.ID_MOVTO_PERSONA
+                        between 300 and 399 or c.ID_MOVTO_PERSONA = 415)
+--and c. . .QNA_CANCELA is null /*ya no existe la columna en la nueva tabla*/
+and c.ID_PUESTO_NOM = p.ID_PUESTO (+)
+and c.ID_PLAZA = f.PLAZA_ESCENARIO(+)
+and (f.fin_escenario = TO_DATE('31/12/2099','DD/MM/YYYY') OR f.fin_escenario is null)]]>
+	</queryString>
+	<field name="CAPTURA" class="java.math.BigDecimal"/>
+	<field name="UR" class="java.lang.String"/>
+	<field name="GRUPO" class="java.lang.String"/>
+	<field name="MOVTO" class="java.math.BigDecimal"/>
+	<field name="DESCRIPCION" class="java.lang.String"/>
+	<field name="PLAZA" class="java.math.BigDecimal"/>
+	<field name="PUESTO" class="java.lang.String"/>
+	<field name="DESCRIBE_PUESTO" class="java.lang.String"/>
+	<field name="NIVEL" class="java.lang.String"/>
+	<field name="NOMBRE_PUESTO" class="java.lang.String"/>
+	<field name="DIVISION_ESCENARIO" class="java.lang.String"/>
+	<field name="RFC" class="java.lang.String"/>
+	<field name="NOMBRE" class="java.lang.String"/>
+	<field name="PATERNO" class="java.lang.String"/>
+	<field name="MATERNO" class="java.lang.String"/>
+	<field name="INICIO" class="java.lang.String"/>
+	<field name="FIN" class="java.lang.String"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<field name="FEC_MODIFICA" class="java.lang.String"/>
+	<group name="MEP_RFC">
+		<groupExpression><![CDATA[]]></groupExpression>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="251" y="110" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="672" y="25" width="205" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro Bold" size="10" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Dirección General de Recursos Humanos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="752" y="5" width="126" height="20"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro Bold" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Oficialía Mayor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="205" y="14" width="429" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro Bold" size="14" isBold="true" isItalic="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Movimientos de personal detalle]]></text>
+			</staticText>
+			<image isLazy="true">
+				<reportElement x="5" y="5" width="120" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SHCP.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="43" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="896" height="43" forecolor="#FFFFFF" backcolor="#F1F1F1"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="47" y="0" width="51" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Captura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="117" y="0" width="19" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="0" width="32" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Grupo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="0" width="34" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Movto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="0" width="88" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="441" y="0" width="31" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="485" y="0" width="46" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="546" y="0" width="100" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Describe puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="28" y="13" width="36" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nivel]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="0" width="27" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cons]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="76" y="13" width="64" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre pto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="185" y="13" width="152" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[División escenario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="13" width="21" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="544" y="13" width="63" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre (s)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="645" y="13" width="92" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Primer Apellido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="753" y="13" width="101" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Segundo Apellido]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="28" y="27" width="48" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Inicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="119" y="27" width="27" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fin]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="189" y="27" width="48" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="258" y="27" width="57" height="13"/>
+				<textElement>
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Modifica]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="41" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="40" width="893" height="1" forecolor="#F1F1F1"/>
+			</line>
+			<textField>
+				<reportElement x="36" y="0" width="51" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CAPTURA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="99" y="0" width="30" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="154" y="0" width="18" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{GRUPO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="182" y="0" width="34" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{MOVTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="232" y="0" width="202" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="438" y="0" width="31" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PLAZA}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="484" y="0" width="58" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="546" y="0" width="343" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESCRIBE_PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="28" y="13" width="25" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="0" y="0" width="32" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="81" y="13" width="55" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE_PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="179" y="13" width="231" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DIVISION_ESCENARIO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="420" y="13" width="77" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{RFC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="531" y="13" width="100" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{NOMBRE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="637" y="13" width="100" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PATERNO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="747" y="13" width="100" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{MATERNO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="26" width="60" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{INICIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="96" y="26" width="60" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="176" y="26" width="54" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{USUARIO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="246" y="26" width="60" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{FEC_MODIFICA}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="789" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="854" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEE dd/MMM/yyyy HH:mm">
+				<reportElement x="793" y="15" width="89" height="10"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="1" width="893" height="1" forecolor="#999999"/>
+			</line>
+			<staticText>
+				<reportElement x="162" y="5" width="490" height="10" forecolor="#CCCCCC"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<text><![CDATA[Calzada de la Virgen N° 2799, Edificio "B" , planta baja, Col. CTM Culhuacán Del. Coyoacán, CP 04480, México, D.F.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="162" y="15" width="490" height="10" forecolor="#CCCCCC"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<text><![CDATA[Tel. 3688 5399 www.shcp.gob.mx]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

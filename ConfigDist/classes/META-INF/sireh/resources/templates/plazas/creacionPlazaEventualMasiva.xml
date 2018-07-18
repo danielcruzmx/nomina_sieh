@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<workbook>
+    <worksheet idx="0">
+      <section startRow="0" endRow="0">
+			  <mapping cell="A1">encabezadoDTO.a</mapping>
+	      	  <mapping cell="B1">encabezadoDTO.b</mapping>
+	      	  <mapping cell="C1">encabezadoDTO.c</mapping>
+	      	  <mapping cell="D1">encabezadoDTO.d</mapping>
+	      	  <mapping cell="E1">encabezadoDTO.e</mapping>
+	      	  <mapping cell="F1">encabezadoDTO.f</mapping>
+	      	  <mapping cell="G1">encabezadoDTO.g</mapping>
+	      	  <mapping cell="H1">encabezadoDTO.h</mapping>
+			  <mapping cell="I1">encabezadoDTO.i</mapping>
+        </section>
+        <loop startRow="1" endRow="1" items="creacionPlazaMasivaDTO.listModel" var="p" varType="gob.shcp.sireh.model.plaza.estructura.masivos.CreacionPlazaMasivaDTO">
+            <section startRow="1" endRow="1">
+               <mapping row="1" col="0">p.unidad</mapping> 
+                <mapping row="1" col="1">p.codigo</mapping>
+                <mapping row="1" col="2">p.nivel</mapping>
+                <mapping row="1" col="3">p.inicioVigencia</mapping>
+                <mapping row="1" col="4">p.finVigencia</mapping> 
+                <mapping row="1" col="5">p.tipoServidor</mapping> 
+                <mapping row="1" col="6">p.zona</mapping> 
+				<mapping row="1" col="7">p.entidadFederativa</mapping> 
+                <mapping row="1" col="8">p.mensaje</mapping> 
+            </section> 
+             <loopbreakcondition>
+                    <rowcheck offset="0">
+                        <cellcheck offset="0"></cellcheck>
+                    </rowcheck>
+                </loopbreakcondition>
+        </loop>   
+    </worksheet>
+</workbook>

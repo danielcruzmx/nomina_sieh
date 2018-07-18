@@ -1,0 +1,20 @@
+<?xml version = '1.0' encoding = 'windows-1252'?>
+<orion-application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://xmlns.oracle.com/oracleas/schema/orion-application-10_0.xsd">
+
+    <imported-shared-libraries>
+    	<remove-inherited name="apache.commons.logging"/>
+        <!-- SCM:fsnJCR -->
+        <!-- <remove-inherited name="oracle.xml"/> -->
+        <!-- SCM:fsnJCR -->
+        
+        <!-- JAXB-Timbrado -->
+        <remove-inherited name="oracle.xml"/>
+        <!-- JAXB-Timbrado -->
+    </imported-shared-libraries>
+    
+    <library path="."></library>
+    <library path="./APP-INF/lib"></library>
+    
+    <jazn provider="XML" location="jazn-data.xml" default-realm="jazn.com" jaas-mode="doAs"/>
+</orion-application>

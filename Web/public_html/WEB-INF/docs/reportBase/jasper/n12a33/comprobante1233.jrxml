@@ -1,0 +1,827 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.9487171000000014"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<subDataset name="Table Dataset 1"/>
+	<subDataset name="dataset1"/>
+	<parameter name="subreportePercepcion" class="java.lang.String"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="total_grav_p" class="java.lang.String"/>
+	<parameter name="total_exce_p" class="java.lang.String"/>
+	<parameter name="moneda" class="java.lang.String"/>
+	<parameter name="total_monedalocal" class="java.lang.String"/>
+	<parameter name="subreporteDeduccion" class="java.lang.String"/>
+	<parameter name="total_grav_d" class="java.lang.String"/>
+	<parameter name="total_exce_d" class="java.lang.String"/>
+	<parameter name="total_neto_d" class="java.lang.String"/>
+	<parameter name="QRCODE" class="java.io.InputStream"/>
+	<field name="folio" class="java.lang.String"/>
+	<field name="listaPercepciones" class="java.util.Collection"/>
+	<field name="listaDeducciones" class="java.util.Collection"/>
+	<field name="fechaCreacion" class="java.util.Date"/>
+	<field name="nombreEmpleado" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Receptor/@Nombre]]></fieldDescription>
+	</field>
+	<field name="rfc" class="java.lang.String"/>
+	<field name="curp" class="java.lang.String"/>
+	<field name="nomimadescripcion" class="java.lang.String"/>
+	<field name="periodoFecha" class="java.lang.String"/>
+	<field name="numempleado" class="java.lang.Long"/>
+	<field name="numeroSeguridadSocial" class="java.lang.Long"/>
+	<field name="plaza" class="java.lang.Long"/>
+	<field name="cvepuesto" class="java.lang.String"/>
+	<field name="puesto" class="java.lang.String"/>
+	<field name="fechapago" class="java.util.Date"/>
+	<field name="diasPagados" class="java.lang.Double"/>
+	<field name="numerocertificado" class="java.lang.String"/>
+	<field name="sellosre" class="java.lang.String"/>
+	<field name="cadenaoriginal" class="java.lang.String"/>
+	<field name="ubicacion" class="java.lang.String"/>
+	<field name="codigoubicacion" class="java.lang.String"/>
+	<field name="sellosat" class="java.lang.String"/>
+	<field name="fechacertificacion" class="java.lang.String"/>
+	<field name="contadores" class="java.lang.String"/>
+	<field name="metodopago" class="java.lang.String"/>
+	<field name="tipoContratacion" class="java.lang.String"/>
+	<field name="ejercicio" class="java.lang.Long"/>
+	<field name="qnapago" class="java.lang.Long"/>
+	<field name="nivel" class="java.lang.String"/>
+	<field name="aviso1" class="java.lang.String"/>
+	<field name="aviso2" class="java.lang.String"/>
+	<field name="nombreEmisor" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Emisor/@Nombre]]></fieldDescription>
+	</field>
+	<field name="rfcEmisor" class="java.lang.String">
+		<fieldDescription><![CDATA[/cfdi:Comprobante/cfdi:Emisor/@Rfc]]></fieldDescription>
+	</field>
+	<background>
+		<band height="752" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="572" height="752"/>
+			</rectangle>
+			<image isLazy="true">
+				<reportElement x="82" y="150" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<detail>
+		<band height="84" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="52" width="572" height="11" backcolor="#CCCCCC"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="53" width="568" height="10" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL EMISOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="63" width="71" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="72" width="70" height="10"/>
+				<textElement>
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[R.F.C.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="64" width="97" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REGIMEN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="74" width="97" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LUGAR Y FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="146" y="0" width="260" height="24"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[COMPROBANTE DE PAGO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="406" y="0" width="27" height="23"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7"/>
+				</textElement>
+				<text><![CDATA[FOLIO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="148" y="24" width="100" height="14"/>
+				<textElement>
+					<font fontName="SansSerif" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UNIDAD DE ADSCRIPCION:
+
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="433" y="0" width="138" height="23"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{folio}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="78" y="63" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="277" y="63" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="374" y="63" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="0" y="82" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="145" y="0" width="1" height="52"/>
+			</line>
+			<line>
+				<reportElement x="400" y="1" width="1" height="23"/>
+			</line>
+			<line>
+				<reportElement x="146" y="23" width="426" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="72" width="572" height="1"/>
+			</line>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="1" y="0" width="144" height="50"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SHCP.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement mode="Transparent" x="377" y="64" width="100" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[PERSONA MORAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="377" y="74" width="63" height="9" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[CIUDAD DE MEXICO,]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="442" y="74" width="100" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaCreacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="251" y="24" width="100" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoubicacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="148" y="38" width="300" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="84" y="64" width="186" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Adobe Caslon Pro" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreEmisor}.toUpperCase()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="84" y="74" width="121" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Adobe Caslon Pro" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rfcEmisor}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="94" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="-1" width="570" height="12" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATOS DEL EMPLEADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="12" width="77" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="22" width="77" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[R.F.C.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="138" y="21" width="28" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.U.R.P.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="42" width="77" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMINA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="430" y="12" width="58" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO. EMPLEADO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="12" width="80" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO. DE S.S.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="22" width="80" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CLAVE DEL PUESTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="32" width="80" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PUESTO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="52" width="80" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE PAGO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="62" width="80" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REGIMEN:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="72" width="80" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIAS PAGADOS:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="0" y="82" width="572" height="12" backcolor="#999999"/>
+			</rectangle>
+			<line>
+				<reportElement x="0" y="71" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="277" y="12" width="1" height="81"/>
+			</line>
+			<line>
+				<reportElement x="78" y="12" width="1" height="70"/>
+			</line>
+			<line>
+				<reportElement x="357" y="12" width="1" height="70"/>
+			</line>
+			<line>
+				<reportElement x="0" y="11" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="486" y="12" width="1" height="9"/>
+			</line>
+			<line>
+				<reportElement x="428" y="12" width="1" height="9"/>
+			</line>
+			<line>
+				<reportElement x="0" y="61" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="21" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="31" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="41" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="51" width="572" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="82" width="275" height="11" backcolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERCEPCIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="82" width="291" height="12" backcolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEDUCCIONES]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="80" y="13" width="195" height="9" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreEmpleado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="80" y="23" width="56" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rfc}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="168" y="23" width="108" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{curp}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="80" y="63" width="81" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{periodoFecha}]]></textFieldExpression>
+			</textField>
+			<textField pattern="DD/MM/YYYY" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="361" y="23" width="58" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cvepuesto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="360" y="33" width="209" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{puesto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="360" y="53" width="100" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechapago}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="361" y="63" width="100" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[SUELDOS Y SALARIOS]]></text>
+			</staticText>
+			<textField pattern="#" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="361" y="73" width="100" height="9" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{diasPagados}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="80" y="53" width="79" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoContratacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="280" y="42" width="80" height="10"/>
+				<textElement>
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PLAZA:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="80" y="43" width="195" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomimadescripcion}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="136" y="21" width="1" height="20"/>
+			</line>
+			<line>
+				<reportElement x="166" y="22" width="1" height="9"/>
+			</line>
+			<staticText>
+				<reportElement x="1" y="32" width="77" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EJERCICIO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="139" y="32" width="37" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[QUINCENA:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="176" y="32" width="1" height="9"/>
+			</line>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="489" y="13" width="56" height="9" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numempleado}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="361" y="13" width="67" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroSeguridadSocial}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="361" y="43" width="33" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{plaza}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="51" width="62" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[CONTRATACION:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="62" width="74" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[PERIODO PAGO:]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="80" y="33" width="56" height="9" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ejercicio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="178" y="33" width="100" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qnapago}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="428" y="22" width="1" height="9"/>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="430" y="20" width="56" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[NIVEL:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="486" y="22" width="1" height="9"/>
+			</line>
+			<textField pattern="DD/MM/YYYY" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="489" y="23" width="69" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nivel}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="296" splitType="Stretch">
+			<line>
+				<reportElement x="277" y="0" width="1" height="295"/>
+			</line>
+			<subreport>
+				<reportElement x="0" y="0" width="277" height="295"/>
+				<subreportParameter name="total_monedalocal">
+					<subreportParameterExpression><![CDATA[$P{total_monedalocal}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total_exce">
+					<subreportParameterExpression><![CDATA[$P{total_exce_p}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total_grav">
+					<subreportParameterExpression><![CDATA[$P{total_grav_p}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="moneda">
+					<subreportParameterExpression><![CDATA[$P{moneda}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaPercepciones})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{subreportePercepcion}]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="278" y="0" width="294" height="295"/>
+				<subreportParameter name="total_neto">
+					<subreportParameterExpression><![CDATA[$P{total_neto_d}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total_exce">
+					<subreportParameterExpression><![CDATA[$P{total_exce_d}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="total_grav">
+					<subreportParameterExpression><![CDATA[$P{total_grav_d}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaDeducciones})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{subreporteDeduccion}]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="278" splitType="Stretch">
+			<staticText>
+				<reportElement x="279" y="20" width="76" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MONEDA:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="6" y="199" width="457" height="7" forecolor="#000000" backcolor="#999999"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="5" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[FECHA Y HORA DE CERTIFICACION:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="21" width="76" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CONTADORES:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="51" width="79" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NO. CERTIFICADO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="41" width="79" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FORMA DE PAGO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="3" y="81" width="566" height="7" backcolor="#999999"/>
+				<textElement>
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CADENA ORIGINAL DEL COMPLEMENTO DE CERTIFICACION DEL SAT:
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="63" width="133" height="7" backcolor="#999999"/>
+				<textElement>
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SELLO DIGITAL DEL CFDI:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="6" y="172" width="457" height="8" backcolor="#999999"/>
+				<textElement>
+					<font fontName="Arial" size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SELLO DIGITAL DEL SAT:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="206" width="463" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="197" width="463" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="169" width="463" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="78" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="60" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="40" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="30" width="572" height="1"/>
+			</line>
+			<staticText>
+				<reportElement mode="Opaque" x="1" y="207" width="462" height="11" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AVISOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="218" width="463" height="1"/>
+			</line>
+			<line>
+				<reportElement x="356" y="20" width="1" height="30"/>
+			</line>
+			<line>
+				<reportElement x="0" y="50" width="572" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="279" y="31" width="76" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[METODO DE PAGO:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="279" y="41" width="76" height="9"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TIPO DE COMPROBANTE:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="78" y="20" width="1" height="41"/>
+			</line>
+			<line>
+				<reportElement x="0" y="10" width="572" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="20" width="572" height="1"/>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="82" y="43" width="100" height="7" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[PAGO EN UNA SOLA EXHIBICION]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="82" y="52" width="180" height="9" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numerocertificado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="363" y="22" width="100" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[PESOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="363" y="43" width="100" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[EGRESO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="3" y="70" width="566" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sellosre}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="2" y="88" width="567" height="81" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="4" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cadenaoriginal}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="4" y="180" width="454" height="16" isPrintWhenDetailOverflows="true" forecolor="#000000" backcolor="#999999"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="4" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sellosat}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="100" y="199" width="214" height="8" forecolor="#000000" backcolor="#999999"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="5" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechacertificacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="83" y="23" width="192" height="8" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{contadores}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="363" y="33" width="114" height="7" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Arial" size="6" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{metodopago}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="463" y="268" width="25" height="10"/>
+				<textElement verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[VE_1.0]]></text>
+			</staticText>
+			<image>
+				<reportElement x="463" y="169" width="108" height="109"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<imageExpression><![CDATA[$P{QRCODE}]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="6" y="222" width="452" height="8"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aviso1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="6" y="234" width="452" height="8"/>
+				<textElement>
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aviso2}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

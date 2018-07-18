@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="datos personales" printOrder="Horizontal" columnDirection="RTL" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1488"/>
+	<parameter name="IMAGES_URI" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_RFC" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+    substr(td_plaza.plaza_rfc,0,4)||' '||substr(td_plaza.plaza_rfc,5,6)||' '||substr(td_plaza.plaza_rfc,11,3) rfc, substr(td_empleado.curp_empleado,0,4)||'-'||substr(td_empleado.curp_empleado,5,6)||'-'||substr(td_empleado.curp_empleado,11,18) curp,
+    td_empleado.primer_apellido,
+    td_empleado.segundo_apellido,
+    td_empleado.nombre_empleado,
+    td_empleado.e_mail_oficial,
+    to_char(td_empleado.ingreso_gob_fed, 'dd') || ' ' ||
+    trim(to_char(td_empleado.ingreso_gob_fed, 'Month')) || ' ' ||
+    to_char(td_empleado.ingreso_gob_fed, 'yyyy') ingreso_apf,
+    to_char(td_empleado.ingreso_dependencia, 'dd') || ' ' ||
+    trim(to_char(td_empleado.ingreso_dependencia, 'Month')) || ' ' ||
+    to_char(td_empleado.ingreso_dependencia, 'yyyy') ingreso_dep,
+    NVL(td_plaza.plaza_tel_of1,'-') plaza_tel_of1,
+    to_char(td_empleado.fec_ing_spc, 'dd') || ' ' ||
+    trim(to_char(td_empleado.fec_ing_spc, 'Month')) || ' ' ||
+    to_char(td_empleado.fec_ing_spc, 'yyyy') ingreso_spc,
+    NVL(td_plaza.plaza_conmut,'-') plaza_conmut,
+    NVL(td_plaza.plaza_ext1,'-') plaza_ext1,
+    td_empleado.calle_particular,
+    td_empleado.colonia_particular,
+    tc_municipio.DESC_MUNICIPIO,
+    tc_estado.desc_estado,
+    lpad(td_empleado.codpost_particular,5,'0') codigo_postal,
+    td_empleado.tel_particular,
+    td_plaza.id_unidad_nom||' '||unidad1.DESC_UNIDAD unidad,
+    lpad(td_plaza.id_plaza,6,'0') plaza,
+    case when td_escenario.nombre_puesto is not null then td_plaza.id_puesto_nom||' '||td_escenario.nombre_puesto
+         else td_plaza.id_puesto_nom||' '||puesto1.desc_puesto end puesto,
+    case when td_plaza.id_puesto_nom = 'HONORAR' then atributos_puesto1.id_nivel_pto else tc_atributo_puesto.id_nivel_pto end nivel,
+    td_plaza.usuario||'  '|| to_char(td_plaza.fec_modifico, 'dd') || ' ' ||
+    trim(to_char(td_plaza.fec_modifico, 'Month')) || ' ' ||
+    to_char(td_plaza.fec_modifico, 'yyyy') fec_modifico,
+    case when td_empleado.ingreso_dependencia <= td_plaza.plaza_ini_cont and tc_atributo_puesto.id_jerarquia <= '4' then 'SI (X)    NO  ( )'
+         else 'SI ( )    NO  (X)' end servidor,
+    substr(to_char(td_empleado.emp_qna_captura),5,2)||' / '||substr(to_char(td_empleado.emp_qna_captura),1,4) emp_qna_captura,
+    to_char(sysdate, 'YYYY') año,
+    PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+    PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+    PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+    td_plaza,
+    tc_puesto puesto1,
+    td_empleado,
+    tc_unidad unidad1,
+    tc_atributo_puesto,
+    td_escenario,
+    tc_estado,
+    tc_municipio,
+    tc_atributo_puesto atributos_puesto1,
+    tc_tipo_serv_pub
+WHERE
+    td_plaza.plaza_rfc = $P{PAR_RFC} and
+    td_plaza.plaza_rfc = td_empleado.rfc_empleado AND
+    td_plaza.id_puesto_nom = puesto1.id_puesto AND
+    td_plaza.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto and
+    tc_atributo_puesto.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY') and
+    td_plaza.id_puesto_pre =  atributos_puesto1.id_atributo_puesto and
+    atributos_puesto1.ap_fin = TO_DATE('01/01/2099','DD/MM/YYYY') and
+    td_empleado.id_edo_particular = tc_estado.id_edo and
+    td_empleado.id_edo_particular = tc_municipio.id_edo(+) and
+    td_empleado.id_muni_particular = tc_municipio.id_municipio(+) and
+    td_plaza.id_serv_pub = tc_tipo_serv_pub.id_serv_pub and
+    td_plaza.id_plaza = td_escenario.plaza_escenario(+) and
+    td_escenario.fin_escenario(+) = TO_DATE('31/12/2099','DD/MM/YYYY') and
+    td_plaza.id_unidad_nom = unidad1.id_unidad and
+    unidad1.uni_ciclo in (select SUBSTR(RC_QNA_CAPTURA,0,4)
+                          from TN_REG_CONTROL
+                          where TN_REG_CONTROL.RC_VIGENTE   = 'S')
+ORDER BY
+    td_plaza.ID_ZONA_DIST_NOM,
+    td_plaza.id_grupo_pago,
+    td_plaza.id_unidad_nom,
+    tc_atributo_puesto.id_jerarquia,
+    tc_atributo_puesto.id_nivel_pto,
+    td_plaza.plaza_rfc]]>
+	</queryString>
+	<field name="RFC" class="java.lang.String"/>
+	<field name="CURP" class="java.lang.String"/>
+	<field name="PRIMER_APELLIDO" class="java.lang.String"/>
+	<field name="SEGUNDO_APELLIDO" class="java.lang.String"/>
+	<field name="NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<field name="E_MAIL_OFICIAL" class="java.lang.String"/>
+	<field name="INGRESO_APF" class="java.lang.String"/>
+	<field name="INGRESO_DEP" class="java.lang.String"/>
+	<field name="PLAZA_TEL_OF1" class="java.lang.String"/>
+	<field name="INGRESO_SPC" class="java.lang.String"/>
+	<field name="PLAZA_CONMUT" class="java.lang.String"/>
+	<field name="PLAZA_EXT1" class="java.lang.String"/>
+	<field name="CALLE_PARTICULAR" class="java.lang.String"/>
+	<field name="COLONIA_PARTICULAR" class="java.lang.String"/>
+	<field name="DESC_MUNICIPIO" class="java.lang.String"/>
+	<field name="DESC_ESTADO" class="java.lang.String"/>
+	<field name="CODIGO_POSTAL" class="java.lang.String"/>
+	<field name="TEL_PARTICULAR" class="java.lang.String"/>
+	<field name="UNIDAD" class="java.lang.String"/>
+	<field name="PLAZA" class="java.lang.String"/>
+	<field name="PUESTO" class="java.lang.String"/>
+	<field name="NIVEL" class="java.lang.String"/>
+	<field name="FEC_MODIFICO" class="java.lang.String"/>
+	<field name="SERVIDOR" class="java.lang.String"/>
+	<field name="EMP_QNA_CAPTURA" class="java.lang.String"/>
+	<field name="AÑO" class="java.lang.String"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<background>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="81" y="198" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="69" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="78" y="3" width="486" height="62"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="101" y="33" width="450" height="28"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="9" isBold="false" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Cédula de Datos Personales del Servidor Público Registrados en la Dirección General de Recursos Humanos para la Actualización en la Secretaría de la Función Pública]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="8" y="2" width="60" height="65"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/shcp_vertical_byn.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="101" y="2" width="450" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="16" width="450" height="17"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="648" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="128" y="224" width="435" height="29"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CALLE_PARTICULAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="271" width="112" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Delegación o Municipio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="305" y="152" width="145" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Teléfono de Oficina Directo]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="527" y="168" width="37" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZA_EXT1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="175" y="115" width="389" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{E_MAIL_OFICIAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="288" width="112" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Estado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="77" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Segundo Apellido]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="378" y="168" width="86" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZA_CONMUT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="464" y="152" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZA_TEL_OF1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="129" y="304" width="100" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CODIGO_POSTAL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="173" y="152" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO_DEP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="306" y="168" width="72" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Conmutador]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="464" y="168" width="63" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Extensión]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="115" width="159" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Correo Electrónico Institucional]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="129" y="288" width="434" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_ESTADO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="152" width="153" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Ultimo   Ingreso a S.H.C.P.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="168" width="153" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Fecha de Ingreso a S.P.C.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="10" y="131" width="219" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Ingreso a la Administración Pública Federal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="10" width="149" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Datos del Servidor Público]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="96" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Nombres(s)]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="235" y="131" width="100" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO_APF}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="304" width="112" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Código Postal]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="39" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[RFC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="375" y="39" width="39" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[CURP]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="115" y="39" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{RFC}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="115" y="77" width="448" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SEGUNDO_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="128" y="256" width="435" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{COLONIA_PARTICULAR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="115" y="58" width="448" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PRIMER_APELLIDO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="173" y="168" width="100" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="Arial" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INGRESO_SPC}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="58" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Primer Apellido]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="423" y="39" width="141" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CURP}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="128" y="271" width="435" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_MUNICIPIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="256" width="112" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Colonia]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="224" width="112" height="29"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Calle]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="525" y="377" width="38" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NIVEL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="395" width="112" height="46"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Denominación del Puesto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="331" width="369" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Datos de la Plaza (no modificable)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="188" y="586" width="207" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="5" y="463" width="562" height="58"/>
+				<textElement textAlignment="Justified">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[BAJO PROTESTA DE DECIR VERDAD, DECLARO QUE LOS DATOS QUE APARECEN EN EL PRESENTE DOCUMENTO SON VERÍDICOS; ADEMÁS, EN CASO DE MODIFICACIÓN DE LOS MISMOS, ME COMPROMETO A DAR AVISO A LA DIRECCIÓN GENERAL DE RECURSOS HUMANOS, DENTRO DE LOS QUINCE DÍAS POSTERIORES, DE QUE ACONTEZCA TAL EVENTO. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="377" width="40" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Nivel]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="128" y="377" width="55" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLAZA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="377" width="112" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Número de Plaza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="360" width="112" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Unidad de Adscripción]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="128" y="395" width="435" height="46"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PUESTO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="128" y="360" width="435" height="12"/>
+				<textElement>
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNIDAD}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="142" y="590" width="300" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRMA DE CONFORMIDAD DEL SERVIDOR PÚBLICO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="199" width="369" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Domicilio Particular]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="115" y="95" width="448" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE_EMPLEADO}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="4" y="28" width="565" height="1"/>
+			</line>
+			<line>
+				<reportElement x="4" y="186" width="565" height="1"/>
+			</line>
+			<line>
+				<reportElement x="4" y="221" width="565" height="1"/>
+			</line>
+			<line>
+				<reportElement x="4" y="322" width="565" height="1"/>
+			</line>
+			<line>
+				<reportElement x="4" y="443" width="565" height="1"/>
+			</line>
+			<line>
+				<reportElement x="568" y="28" width="1" height="158"/>
+			</line>
+			<line>
+				<reportElement x="4" y="29" width="1" height="158"/>
+			</line>
+			<line>
+				<reportElement x="569" y="221" width="1" height="102"/>
+			</line>
+			<line>
+				<reportElement x="4" y="221" width="1" height="102"/>
+			</line>
+			<line>
+				<reportElement x="568" y="351" width="1" height="93"/>
+			</line>
+			<line>
+				<reportElement x="4" y="351" width="565" height="1"/>
+			</line>
+			<line>
+				<reportElement x="4" y="351" width="1" height="92"/>
+			</line>
+			<textField>
+				<reportElement x="414" y="304" width="149" height="12"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TEL_PARTICULAR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="321" y="304" width="93" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Teléfono Particular]]></text>
+			</staticText>
+		</band>
+		<band height="596">
+			<staticText>
+				<reportElement x="123" y="491" width="319" height="78"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Agradeciendo tu valiosa participación, recibe un cordial saludo.
+
+Atentamente
+
+
+Dirección General de Recursos Humanos.
+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="101" y="373" width="392" height="101"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[	15. Corresponde a los Titulares de las Áreas de Recursos Humanos, salvo disposición en contrario, verificar los Datos de los Sujetos Obligados, así como instar o promover su sanción ante las autoridades o unidades administrativas competentes, cuando con motivo de la integración de la información respectiva, los Sujetos  Obligados falten a la verdad, hagan uso de documentos apócrifos o bien, alteren o modifiquen información para obtener o pretender obtener un beneficio de cualquier índole.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="55" y="37" width="476" height="332"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="10"/>
+				</textElement>
+				<text><![CDATA[Compañero Hacendario:
+
+Para el ejercicio fiscal de       la Secretaría de la Función Pública continuará con el ejercicio de las atribuciones que le confieren los ordenamientos vigentes, orientado su quehacer en función de su contribución al logro de las metas nacionales previstas en el Plan Nacional de Desarrollo 2013-2018 y al cumplimiento de los compromisos presidenciales.
+
+Bajo esta perspectiva, la Secretaría de la Función Pública participa en la ejecución de las estrategias y las líneas de acción para el logro de los objetivos estratégicos del Programa para un Gobierno Cercano y Moderno, así como en las políticas diseñadas para combatir la corrupción, incrementar la rendición de cuentas y transparentar la acción pública para recuperar la confianza ciudadana en la gestión pública.
+
+En ese tenor, el C. Secretario de la Función Pública, con fecha 14 de diciembre de 2010 publicó en el Diario Oficial de la Federación, el acuerdo por el que se establece la "Norma del Padrón de sujetos obligados a presentar declaraciones de situación patrimonial en las instituciones del Gobierno Federal".
+
+Por lo anterior, adjunto al presente comunicado, el formato correspondiente, el cual contiene datos inherentes a tu relación laboral con esta Secretaría, para que lo revises cuidadosamente, y en caso de que dicha información sea verídica, agradeceré suscribir tu firma respectiva; asimismo, en caso de que se tenga que corregir alguna información, te pido nos lo indiques para elaborar un nuevo formato con los datos rectificados.
+
+Conviene destacar que el numeral 15 de la norma emitida por la Secretaría de la Función Pública antes referida, a la letra dice:
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="169" y="81" width="42" height="14"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{AÑO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="32" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="7" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="471" y="8" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEEEEE dd / MMM / yyyy  HH:mm">
+				<reportElement x="442" y="18" width="124" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="533" y="8" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="3" width="572" height="1" forecolor="#999999"/>
+			</line>
+			<textField>
+				<reportElement x="55" y="8" width="387" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

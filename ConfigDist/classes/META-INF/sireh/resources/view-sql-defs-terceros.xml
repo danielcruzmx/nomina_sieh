@@ -1,0 +1,825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+    
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                <prop key="isssteFiliacionEnteros">
+                SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_consec_nomina seleccionconsecnomina, h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                           FROM tn_historico_pago h,
+                                td_empleado e,
+                                tc_atributo_puesto a,
+                                tn_nomina n,
+                                tc_grupo_pago g,
+                                tc_tipo_nomina t
+                          WHERE h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                            AND h.hp_num_pension = 0
+                            AND h.hp_rfc = e.rfc_empleado
+                            AND h.id_puesto_nom = a.id_atributo_puesto
+                            AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                            AND h.hp_consec_nomina = n.id_nomina
+                            AND h.hp_qna_pago = n.nom_qna_captura
+                            AND h.hp_num_complem = n.nom_num_complem
+                            AND h.id_tipo_nomina = n.id_tipo_nomina
+                            AND h.id_grupopago_nom = g.id_grupo_pago
+                            AND h.id_tipo_nomina = t.id_tipo_nomina
+                            AND ##h.hp_qna_pago##
+                            AND ##hp_ini_pago##
+                            GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                <prop key="isssteFiliacionCancelados">
+                SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_consec_nomina seleccionconsecnomina, h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                           FROM tn_captura_pago_canc c,
+                                tn_historico_pago h,
+                                td_empleado e,
+                                tc_atributo_puesto a,
+                                tn_nomina n,
+                                tc_grupo_pago g,
+                                tc_tipo_nomina t
+                          WHERE h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                            AND h.hp_num_pension = 0
+                            AND h.id_sit_pago = 'C'
+                            AND c.cpc_folio = h.hp_folio
+                            AND c.cpc_dif_folio = h.hp_dif_folio
+                            AND h.hp_rfc = e.rfc_empleado
+                            AND h.id_puesto_nom = a.id_atributo_puesto
+                            AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                            AND h.hp_consec_nomina = n.id_nomina
+                            AND h.hp_qna_pago = n.nom_qna_captura
+                            AND h.hp_num_complem = n.nom_num_complem
+                            AND h.id_tipo_nomina = n.id_tipo_nomina
+                            AND h.id_grupopago_nom = g.id_grupo_pago
+                            AND h.id_tipo_nomina = t.id_tipo_nomina
+                            AND ##c.cpc_qna_aplica##
+                            AND ##hp_ini_pago##
+                            GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                <prop key="isssteFiliacionDevoluciones">
+                SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_consec_nomina seleccionconsecnomina, h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                           FROM tn_concepto_pagado c,
+                                tn_historico_pago h,
+                                td_empleado e,
+                                tc_atributo_puesto a,
+                                tn_nomina n,
+                                tc_grupo_pago g,
+                                tc_tipo_nomina t
+                          WHERE h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                            AND c.CP_FOLIO = h.hp_folio
+                            AND c.CP_DIF_FOLIO = h.hp_dif_folio
+                            AND h.hp_num_pension = 0
+                            AND c.ID_TIPO_CPTO = 'P' and c.ID_CPTO_PAGO = '0D'
+                            AND h.hp_rfc = e.rfc_empleado
+                            AND h.id_puesto_nom = a.id_atributo_puesto
+                            AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                            AND h.hp_consec_nomina = n.id_nomina
+                            AND h.hp_qna_pago = n.nom_qna_captura
+                            AND h.hp_num_complem = n.nom_num_complem
+                            AND h.id_tipo_nomina = n.id_tipo_nomina
+                            AND h.id_grupopago_nom = g.id_grupo_pago
+                            AND h.id_tipo_nomina = t.id_tipo_nomina
+                            AND ##h.hp_qna_pago##
+                            AND ##hp_ini_pago##
+                            GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                
+                <prop key="issstePrestacionesEnteros">
+                    SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_consec_nomina seleccionconsecnomina, h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                    from    tn_historico_pago h, td_empleado e, TC_TIPO_NOMINA t, TC_GRUPO_PAGO g
+                    where   h.ID_TIPO_NOMINA = t.ID_TIPO_NOMINA
+                            and h.hp_num_pension = 0
+                            and h.id_sit_pago <![CDATA[<>]]> 'C'
+                            and h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                            and h.hp_rfc = e.rfc_empleado
+                            and h.ID_GRUPOPAGO_NOM = g.ID_GRUPO_PAGO
+                            and ##h.hp_qna_pago##
+                            and ##hp_ini_pago##
+                    GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                <prop key="issstePrestacionesCancelados">
+                    SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_consec_nomina seleccionconsecnomina, h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                    from    tn_captura_pago_canc c, tn_historico_pago h, td_empleado e, TC_TIPO_NOMINA t, TC_GRUPO_PAGO g
+                    where   h.ID_TIPO_NOMINA = t.ID_TIPO_NOMINA
+                            and c.cpc_folio = h.hp_folio
+                            and c.cpc_dif_folio = h.hp_dif_folio 
+                            and h.hp_num_pension = 0
+                            and h.id_sit_pago = 'C'
+                            and h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                            and h.hp_rfc = e.rfc_empleado
+                            and h.ID_GRUPOPAGO_NOM = g.ID_GRUPO_PAGO
+                            AND ##c.cpc_qna_aplica##
+                            and ##hp_ini_pago##
+                    GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                <prop key="sericaGrid">
+                        SELECT  h.id_grupopago_nom,
+                                h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                                h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                                h.hp_consec_nomina consecnomina,
+                                t.desc_tipo_nomina tiponomina,
+                                h.hp_consec_nomina seleccionConsecNomina, h.hp_qna_pago,
+                                h.id_tipo_nomina,
+                                MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                           FROM tn_historico_pago h,
+                                tn_concepto_pagado c,
+                                td_empleado e,
+                                tc_atributo_puesto a,
+                                tc_tipo_nomina t,
+                                tc_grupo_pago g
+                          WHERE h.hp_num_pension = 0
+                            AND h.hp_folio = c.cp_folio
+                            AND h.hp_dif_folio = c.cp_dif_folio
+                            AND h.id_puesto_nom = a.id_atributo_puesto
+                            AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                            AND h.hp_rfc = e.rfc_empleado
+                            AND h.id_tipo_nomina = t.id_tipo_nomina
+                            AND h.id_grupopago_nom = g.id_grupo_pago
+                            and (h.ID_GRUPOPAGO_NOM <![CDATA[<>]]> 'H' or e.compat_empleo = 'N')
+                            and ##h.hp_qna_pago##
+                            and ##hp_ini_pago##
+                       GROUP BY h.id_grupopago_nom,
+                                h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                                h.hp_qna_pago, h.hp_num_complem,
+                                h.hp_consec_nomina,
+                                t.desc_tipo_nomina,
+                                h.hp_consec_nomina, h.hp_qna_pago,
+                                h.id_tipo_nomina
+                </prop>
+                <prop key="cifrasControlIsssteEnteros">
+                    SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago,
+                         h.id_tipo_nomina || h.hp_num_complem seleccionconsecnomina
+                           FROM tn_historico_pago h,
+                                td_empleado e,
+                                tc_atributo_puesto a,
+                                tn_nomina n,
+                                tc_grupo_pago g,
+                                tc_tipo_nomina t
+                          WHERE h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                            AND h.hp_num_pension = 0
+                            AND h.hp_rfc = e.rfc_empleado
+                            AND h.id_puesto_nom = a.id_atributo_puesto
+                            AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                            AND h.hp_consec_nomina = n.id_nomina
+                            AND h.hp_qna_pago = n.nom_qna_captura
+                            AND h.hp_num_complem = n.nom_num_complem
+                            AND h.id_tipo_nomina = n.id_tipo_nomina
+                            AND h.id_grupopago_nom = g.id_grupo_pago
+                            AND h.id_tipo_nomina = t.id_tipo_nomina
+                            AND ##h.hp_qna_pago##
+                            AND ##hp_ini_pago##
+                            GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                <prop key="cifrasControlIsssteCancelados">
+                    SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago,
+                         h.id_tipo_nomina || h.hp_num_complem seleccionconsecnomina
+                           FROM tn_captura_pago_canc c,
+                                tn_historico_pago h,
+                                td_empleado e,
+                                tc_atributo_puesto a,
+                                tn_nomina n,
+                                tc_grupo_pago g,
+                                tc_tipo_nomina t
+                          WHERE h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                            AND h.hp_num_pension = 0
+                            AND h.id_sit_pago = 'C'
+                            AND c.cpc_folio = h.hp_folio
+                            AND c.cpc_dif_folio = h.hp_dif_folio
+                            AND h.hp_rfc = e.rfc_empleado
+                            AND h.id_puesto_nom = a.id_atributo_puesto
+                            AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                            AND h.hp_consec_nomina = n.id_nomina
+                            AND h.hp_qna_pago = n.nom_qna_captura
+                            AND h.hp_num_complem = n.nom_num_complem
+                            AND h.id_tipo_nomina = n.id_tipo_nomina
+                            AND h.id_grupopago_nom = g.id_grupo_pago
+                            AND h.id_tipo_nomina = t.id_tipo_nomina
+                            AND ##c.cpc_qna_aplica##
+                            AND ##hp_ini_pago##
+                            GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                <prop key="cifrasControlIsssteDevoluciones">
+                    SELECT   h.id_grupopago_nom,
+                         h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                         h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                         h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                         h.hp_consec_nomina seleccionconsecnomina, h.hp_qna_pago,
+                         h.id_tipo_nomina,
+                         MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                           FROM tn_concepto_pagado c,
+                                tn_historico_pago h,
+                                td_empleado e,
+                                tc_atributo_puesto a,
+                                tn_nomina n,
+                                tc_grupo_pago g,
+                                tc_tipo_nomina t
+                          WHERE h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago in ('0D','03','08'))
+                            AND c.CP_FOLIO = h.hp_folio
+                            AND c.CP_DIF_FOLIO = h.hp_dif_folio
+                            AND h.hp_num_pension = 0
+                            AND c.ID_TIPO_CPTO = 'P' and c.ID_CPTO_PAGO = '0D'
+                            AND h.hp_rfc = e.rfc_empleado
+                            AND h.id_puesto_nom = a.id_atributo_puesto
+                            AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                            AND h.hp_consec_nomina = n.id_nomina
+                            AND h.hp_qna_pago = n.nom_qna_captura
+                            AND h.hp_num_complem = n.nom_num_complem
+                            AND h.id_tipo_nomina = n.id_tipo_nomina
+                            AND h.id_grupopago_nom = g.id_grupo_pago
+                            AND h.id_tipo_nomina = t.id_tipo_nomina
+                            AND ##h.hp_qna_pago##
+                            AND ##hp_ini_pago##
+                            GROUP BY h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                             h.hp_qna_pago,
+                             h.hp_num_complem,
+                             h.hp_consec_nomina,
+                             t.desc_tipo_nomina,
+                             h.hp_consec_nomina,
+                             h.hp_qna_pago,
+                             h.id_tipo_nomina
+                       ORDER BY h.id_grupopago_nom, h.hp_num_complem
+                </prop>
+                
+                <!--TERCEROS - SAR-FOVISSSTE-->
+                <prop key="cicloUnidadSAR-FOV">
+                    SELECT * FROM (
+                        SELECT
+                            TN_HISTORICO_PAGO.HP_CICLO_UNIDAD, TN_HISTORICO_PAGO.HP_CICLO_UNIDAD AS CICLO
+                        FROM 
+                            TN_HISTORICO_PAGO 
+                        GROUP BY TN_HISTORICO_PAGO.HP_CICLO_UNIDAD
+                        ORDER BY TN_HISTORICO_PAGO.HP_CICLO_UNIDAD DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tipoNominaSAR-FOV">
+                   SELECT ID_TIPO_NOMINA ID, ID_TIPO_NOMINA || ' - ' || DESC_TIPO_NOMINA DESCRIPCION
+                     FROM TC_TIPO_NOMINA
+                    WHERE 
+                        --ID_TIPO_NOMINA NOT IN ('SA', 'FO', 'IN', 'OD', 'BD', 'VA', 'VE')
+                        ID_TIPO_NOMINA NOT IN ('SO', 'SA', 'RV')
+                    ORDER BY DESCRIPCION
+                </prop>
+                <prop key="consultaPeriodoSAR-FOV">
+                    SELECT TN_NOMINA.ID_NOMINA AS idGrupo,
+                           TN_NOMINA.ID_NOMINA AS idQna,
+                           TN_NOMINA.NOM_QNA_CAPTURA AS qnaCaptura,
+                           TN_NOMINA.NOM_NUM_COMPLEM AS numComplem,
+                           TN_NOMINA.DESC_NOMINA AS descripcion,
+                           TC_TIPO_NOMINA.DESC_TIPO_NOMINA AS tipoNomina,
+                           TC_GRUPO_PAGO.DESC_GRUPO_PAGO AS grupoPago,
+                           TC_ESTADO_NOMINA.DESCRIBE_EDO_NOM AS descEstadoNom,
+                           TN_NOMINA.ID_EDO_NOM AS estadoNomina
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND TN_NOMINA.ID_TIPO_NOMINA NOT IN ('SO', 'SA', 'RV', 'IN', 'AG', 'VE')
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM  NOT IN ('S')
+                       AND TN_NOMINA.NOM_NUM_COMPLEM NOT IN (98, 99)
+                       AND TN_NOMINA.ID_EDO_NOM = 'C'
+                    ORDER BY qnaCaptura DESC, numComplem DESC
+                </prop>
+                <prop key="comprobanteFiscalQuincenas">
+                    SELECT
+                        H.HP_QNA_PAGO AS QNA_CAPTURA, H.HP_QNA_PAGO AS DESCRIPCION
+                    FROM 
+                        TN_HISTORICO_PAGO H
+                    GROUP BY H.HP_QNA_PAGO
+                    ORDER BY H.HP_QNA_PAGO DESC
+                </prop>
+                <prop key="searchComprobanteFiscalUnidadV32">
+                    SELECT  HP.HP_RFC || '-' || C.ID_COMPROBANTE || '-' || C.ID_PAQUETE AS IDGRUPO,
+                            HP.HP_RFC AS RFC,
+                            EM.NOMBRE_EMPLEADO || ' ' || EM.PRIMER_APELLIDO || ' ' || EM.SEGUNDO_APELLIDO AS NOMBRE,
+                            HP.ID_NIVEL_PTO AS NIVEL
+                    FROM    TN_HISTORICO_PAGO HP, TN_NOMINA N, TN_COMPROBANTE C, TD_EMPLEADO EM
+                    WHERE   HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                            AND N.ID_EDO_NOM in ('C')
+                            AND HP.HP_RFC = EM.RFC_EMPLEADO
+                            AND HP.HP_RFC = C.COMP_RFC
+                            AND to_number(trim(replace(replace(C.comp_folio_recibo,'-C', ' '), '-D', ' '))) = HP.HP_FOLIO
+                            AND ##HP.HP_QNA_PAGO##
+                            AND ##HP.ID_TIPO_NOMINA##
+                            AND ##HP.HP_NUM_COMPLEM##
+                            AND ##HP.ID_UNIDAD_NOM##
+                            ORDER BY NOMBRE
+                </prop>
+                <prop key="searchComprobanteFiscalUnidad">
+                    SELECT  HP.HP_RFC || '-' || C.CN_FOLIO || '-' || C.CN_DIF_FOLIO AS IDGRUPO,
+                            HP.HP_RFC AS RFC,
+                            EM.NOMBRE_EMPLEADO || ' ' || EM.PRIMER_APELLIDO || ' ' || EM.SEGUNDO_APELLIDO AS NOMBRE,
+                            HP.ID_NIVEL_PTO AS NIVEL,
+                            HP.ID_UNIDAD_NOM AS UNIDAD
+                    FROM    TN_HISTORICO_PAGO HP, TN_NOMINA N, TN_COMPROBANTE_DIG C, TD_EMPLEADO EM
+                    WHERE   HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                            AND N.ID_EDO_NOM in ('C', 'P')
+                            AND HP.HP_RFC = EM.RFC_EMPLEADO
+                            AND HP.HP_RFC = C.CN_RFC
+                            AND HP.HP_FOLIO = c.CN_FOLIO
+                            AND HP.HP_DIF_FOLIO = c.CN_DIF_FOLIO
+                            AND ##HP.HP_QNA_PAGO##
+                            AND ##HP.ID_TIPO_NOMINA##
+                            AND ##HP.HP_NUM_COMPLEM##
+                            AND ##HP.ID_UNIDAD_NOM##
+                            ORDER BY NOMBRE
+                </prop>
+                <prop key="searchComprobanteFiscalUnidadOrderByUnidad">
+                    SELECT  HP.HP_RFC || '-' || C.CN_FOLIO || '-' || C.CN_DIF_FOLIO AS IDGRUPO,
+                            HP.HP_RFC AS RFC,
+                            EM.NOMBRE_EMPLEADO || ' ' || EM.PRIMER_APELLIDO || ' ' || EM.SEGUNDO_APELLIDO AS NOMBRE,
+                            HP.ID_NIVEL_PTO AS NIVEL,
+                            HP.ID_UNIDAD_NOM AS UNIDAD
+                    FROM    TN_HISTORICO_PAGO HP, TN_NOMINA N, TN_COMPROBANTE_DIG C, TD_EMPLEADO EM
+                    WHERE   HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                            AND N.ID_EDO_NOM in ('C', 'P')
+                            AND HP.HP_RFC = EM.RFC_EMPLEADO
+                            AND HP.HP_RFC = C.CN_RFC
+                            AND HP.HP_FOLIO = c.CN_FOLIO
+                            AND HP.HP_DIF_FOLIO = c.CN_DIF_FOLIO
+                            AND ##HP.HP_QNA_PAGO##
+                            AND ##HP.ID_TIPO_NOMINA##
+                            AND ##HP.HP_NUM_COMPLEM##
+                            AND ##HP.ID_UNUNIDADIDAD_NOM##
+                            ORDER BY UNIDAD, NOMBRE
+                </prop>
+                <prop key="searchComprobanteFiscalEmpleadoV32">
+                    SELECT  H.HP_RFC || '-' || C.ID_COMPROBANTE || '-' || C.ID_PAQUETE AS IDGRUPO,
+                            H.HP_QNA_PAGO ,
+                            H.ID_TIPO_NOMINA,
+                            H.HP_NUM_COMPLEM,
+                            H.HP_CONSEC_NOMINA,
+                            S.DESC_SIT_PAGO,
+                            C.ID_COMPROBANTE,
+                            C.ID_PAQUETE,
+                            C.ID_PAQUETE_CANCELADO,
+                            trim( replace( C.COMP_FOLIO_RECIBO, '-C', ' ' ) ) as COMP_FOLIO_RECIBO,
+                            H.HP_FOLIO,
+                            H.HP_DIF_FOLIO,
+                            C.COMP_FOLIO_FISCAL,
+                            H.HP_NETO_PAGO,
+                            C.COMP_FECHA_EMISION
+                    FROM    TN_COMPROBANTE C, PRUEBA_FH.TN_HISTORICO_PAGO H, TD_EMPLEADO E, TC_UNIDAD U, TC_SIT_PAGO S
+                    WHERE   ##C.COMP_RFC##
+                            AND C.XML_TIMBRADO IS NOT NULL
+                            AND C.COMP_FOLIO_RECIBO LIKE '%C%'
+                            AND to_number( trim( replace( C.COMP_FOLIO_RECIBO, '-C', ' ' ) ) ) = H.HP_FOLIO
+                            AND H.ID_UNIDAD_NOM = U.ID_UNIDAD
+                            AND H.ID_SIT_PAGO = S.ID_SIT_PAGO
+                            AND substr(H.HP_QNA_PAGO, 1 , 4) = U.UNI_CICLO
+                            AND H.HP_RFC = E.RFC_EMPLEADO
+                            AND ##H.HP_QNA_PAGO##
+                            AND ##H.HP_QNA_PAGO##
+                            ORDER BY H.HP_QNA_PAGO, H.ID_TIPO_NOMINA
+                </prop>
+                <prop key="searchComprobanteFiscalEmpleado">
+                    SELECT  C.CN_RFC || '-' || C.CN_FOLIO || '-' || C.CN_DIF_FOLIO AS IDGRUPO,
+                            U.ID_UNIDAD || ' - ' || U.DESC_UNIDAD as ID_DESC_UNIDAD,
+                            C.CN_RFC,
+                            C.CN_RFC || ' - ' || E.NOMBRE_EMPLEADO || ' ' || E.PRIMER_APELLIDO || ' ' || E.SEGUNDO_APELLIDO as NOMBRES_EMPLEADO,
+                            H.HP_QNA_PAGO,
+                            H.HP_NUM_COMPLEM,
+                            H.ID_TIPO_NOMINA,
+                            C.CN_FOLIO,
+                            C.CN_DIF_FOLIO,
+                            C.CN_PAQUETE,
+                            C.CN_CONSEC_NOMINA,
+                            H.HP_NETO_PAGO,
+                            S.DESC_SIT_PAGO
+                    FROM    TN_COMPROBANTE_DIG C, TN_HISTORICO_PAGO H, TD_EMPLEADO E, TC_UNIDAD U, TC_SIT_PAGO S
+                    where   ##C.CN_RFC##
+                            AND  ##H.HP_QNA_PAGO##
+                            AND  ##H.HP_QNA_PAGO##
+                            AND  C.CN_FOLIO = H.HP_FOLIO
+                            AND  C.CN_DIF_FOLIO = H.HP_DIF_FOLIO
+                            AND  C.CN_RFC = E.RFC_EMPLEADO
+                            AND  H.ID_UNIDAD_NOM = U.ID_UNIDAD
+                            AND  H.HP_CICLO_UNIDAD = U.UNI_CICLO
+                            AND  H.ID_SIT_PAGO = S.ID_SIT_PAGO
+                            ORDER BY U.ID_UNIDAD
+                </prop>
+                <prop key="listaTiposNominaCFDI">
+                    SELECT   hp.id_tipo_nomina AS ID, tn.desc_tipo_nomina
+                    FROM    tn_historico_pago hp, td_empleado e, tn_nomina n, tc_tipo_nomina tn
+                    WHERE   hp.hp_consec_nomina = n.id_nomina
+                            AND tn.id_tipo_nomina = hp.id_tipo_nomina
+                            AND hp.hp_qna_pago = ?
+                            AND hp.hp_num_complem = ?
+                            AND hp.hp_num_pension = 0
+                            AND n.ID_EDO_NOM IN ('C','S')
+                            AND hp.hp_rfc = e.rfc_empleado
+                            GROUP BY hp.id_tipo_nomina, tn.desc_tipo_nomina
+                </prop>
+                <prop key="tiposNominaPdfCFDI">
+                    SELECT   hp.id_tipo_nomina AS ID, tn.desc_tipo_nomina
+                    FROM TN_HISTORICO_PAGO HP,
+                        TN_NOMINA N,
+                        TC_TIPO_NOMINA TN,
+                        TN_COMPROBANTE_PDF C
+                    WHERE HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                     AND TN.ID_TIPO_NOMINA = HP.ID_TIPO_NOMINA
+                     AND HP.HP_QNA_PAGO = ?
+                     AND C.CN_CONSEC_NOMINA = N.ID_NOMINA
+                     AND C.CN_FOLIO = HP.HP_FOLIO
+                GROUP BY HP.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                </prop>
+                <prop key="consecNominaPdfCFDI">
+                    SELECT   HP.HP_CONSEC_NOMINA, TN.DESC_TIPO_NOMINA || ' Consecutivo: ' || NVL (HP.HP_CONSEC_NOMINA, 0) || ' Complemento: ' || HP.HP_NUM_COMPLEM
+                             || ' Grupo de pago: '|| HP.ID_GRUPOPAGO_NOM || '-' || B.DESC_GRUPO_PAGO AS TIPO_NOMINA
+                        FROM TN_HISTORICO_PAGO HP,
+                             TN_NOMINA N,
+                             TC_TIPO_NOMINA TN,
+                             TC_GRUPO_PAGO B,
+                             TN_COMPROBANTE_PDF C
+                       WHERE HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                         AND TN.ID_TIPO_NOMINA = HP.ID_TIPO_NOMINA
+                         AND HP.HP_QNA_PAGO = ?
+                         AND HP.ID_TIPO_NOMINA = ?
+                         AND C.CN_CONSEC_NOMINA = N.ID_NOMINA
+                         AND C.CN_FOLIO = HP.HP_FOLIO
+                         AND HP.ID_GRUPOPAGO_NOM = B.ID_GRUPO_PAGO(+)
+                    GROUP BY HP.HP_QNA_PAGO,
+                             TN.DESC_TIPO_NOMINA,
+                             HP.HP_CONSEC_NOMINA,
+                             HP.HP_NUM_COMPLEM,
+                             HP.ID_GRUPOPAGO_NOM,
+                             B.DESC_GRUPO_PAGO
+                    ORDER BY HP.HP_CONSEC_NOMINA
+                </prop>
+                <prop key="qnaCapturaCFDI">
+                    SELECT  DISTINCT hp.hp_qna_pago AS ID, hp.hp_qna_pago AS descripcion
+                    FROM    tn_historico_pago hp
+                    WHERE   ##hp.hp_qna_pago##
+                            ORDER BY hp.hp_qna_pago DESC
+                </prop>
+                <prop key="qnaCapturaCFDIParent">
+                    SELECT  DISTINCT hp.hp_qna_pago AS ID, hp.hp_qna_pago AS descripcion
+                    FROM    tn_historico_pago hp
+                    WHERE   hp.hp_qna_pago <![CDATA[>]]>= ?
+                            ORDER BY hp.hp_qna_pago DESC
+                </prop>
+                <prop key="complementoCFDI">
+                    SELECT  hp.hp_num_complem AS ID, hp.hp_num_complem AS descripcion
+                    FROM    tn_historico_pago hp, td_empleado e, tn_nomina n
+                    WHERE   hp.hp_consec_nomina = n.id_nomina
+                            AND     hp_qna_pago = ?
+                            AND     hp.hp_num_pension = 0
+                            AND     n.ID_EDO_NOM IN ('C','S')
+                            AND     hp.hp_rfc = e.rfc_empleado
+                            GROUP BY hp.hp_num_complem, hp.hp_num_complem
+                            ORDER BY TO_NUMBER (hp.hp_num_complem)
+                </prop>
+                <prop key="impresionCFDIQnaPago">
+                    SELECT DISTINCT N.NOM_QNA_CAPTURA AS ID, N.NOM_QNA_CAPTURA AS DESCRIPCION
+                               FROM TN_NOMINA N, TN_COMPROBANTE_DIG C, TN_HISTORICO_PAGO HP
+                              WHERE ##N.NOM_QNA_CAPTURA##
+                                    AND N.ID_EDO_NOM IN ('C')
+                                    AND C.CN_CONSEC_NOMINA = N.ID_NOMINA
+                                    AND C.CN_FOLIO = HP.HP_FOLIO
+                              ORDER BY N.NOM_QNA_CAPTURA DESC
+                </prop>
+                <prop key="impresionCFDITipoNomina">
+                    SELECT   N.ID_TIPO_NOMINA AS ID, TN.DESC_TIPO_NOMINA AS DESCRIPCION
+                        FROM TN_NOMINA N, TN_COMPROBANTE_DIG C, TC_TIPO_NOMINA TN, TN_HISTORICO_PAGO HP
+                       WHERE N.ID_EDO_NOM IN ('C')
+                         AND C.CN_FOLIO = HP.HP_FOLIO
+                         AND C.CN_CONSEC_NOMINA = N.ID_NOMINA
+                         AND TN.ID_TIPO_NOMINA = N.ID_TIPO_NOMINA
+                         AND N.NOM_QNA_CAPTURA = ?
+                    GROUP BY N.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA                
+                </prop>                
+                <prop key="impresionCFDIConsecutivo">
+                    SELECT   N.ID_NOMINA, TN.DESC_TIPO_NOMINA || ' Consecutivo: ' || NVL (N.ID_NOMINA, 0)
+                             || ' Complemento: ' || N.NOM_NUM_COMPLEM || ' Grupo de pago: ' || N.ID_GRUPO_PAGO_NOM
+                             || '-' || B.DESC_GRUPO_PAGO AS TIPO_NOMINA
+                        FROM TN_NOMINA N, TN_COMPROBANTE_DIG C, TC_TIPO_NOMINA TN, TN_HISTORICO_PAGO HP,
+                             TC_GRUPO_PAGO B
+                       WHERE N.ID_EDO_NOM IN ('C')
+                         AND C.CN_CONSEC_NOMINA = N.ID_NOMINA
+                         AND N.ID_GRUPO_PAGO_NOM = B.ID_GRUPO_PAGO(+)
+                         AND TN.ID_TIPO_NOMINA = N.ID_TIPO_NOMINA
+                         AND C.CN_FOLIO = HP.HP_FOLIO
+                         AND N.NOM_QNA_CAPTURA = ?
+                         AND N.ID_TIPO_NOMINA = ?
+                    GROUP BY N.ID_NOMINA,
+                             TN.DESC_TIPO_NOMINA,
+                             N.ID_NOMINA,
+                             N.NOM_NUM_COMPLEM,
+                             N.ID_GRUPO_PAGO_NOM,
+                             B.DESC_GRUPO_PAGO
+                    ORDER BY N.ID_NOMINA DESC                
+                </prop>
+                <prop key="impresionCFDIConsultaFolios">
+                    SELECT  HP.HP_RFC || '-' || C.CN_FOLIO || '-' || C.CN_DIF_FOLIO || '-' || N.CN_PAQUETE AS IDGRUPO,
+                            HP.HP_RFC AS RFC,
+                            EM.NOMBRE_EMPLEADO || ' ' || EM.PRIMER_APELLIDO || ' ' || EM.SEGUNDO_APELLIDO AS NOMBRE,
+                            HP.ID_NIVEL_PTO AS NIVEL,
+                            HP.ID_UNIDAD_NOM, HP.HP_CONSEC_NOMINA
+                    FROM    TN_NOMINA N, TN_COMPROBANTE_DIG C, TD_EMPLEADO EM, TN_HISTORICO_PAGO HP
+                    WHERE   HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                            AND HP.HP_RFC = EM.RFC_EMPLEADO
+                            AND HP.HP_RFC = C.CN_RFC
+                            AND HP.HP_FOLIO = C.CN_FOLIO
+                            AND HP.HP_DIF_FOLIO = C.CN_DIF_FOLIO
+                            AND N.ID_EDO_NOM = 'C'
+                            AND C.CN_SITUACION = 'T'
+                            AND C.CN_FOLIO_FISCAL IS NOT NULL
+                            AND ##HP.HP_CONSEC_NOMINA##
+                            AND ##HP.ID_UNIDAD_NOM##
+                            AND ##HP.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                            ORDER BY HP.HP_FOLIO ASC 
+                </prop>
+                <prop key="searchComprobanteFiscalUnidad">
+                  SELECT  HP.HP_RFC || '-' || C.CN_FOLIO || '-' || C.CN_DIF_FOLIO AS IDGRUPO,
+                            HP.HP_RFC AS RFC,
+                            EM.NOMBRE_EMPLEADO || ' ' || EM.PRIMER_APELLIDO || ' ' || EM.SEGUNDO_APELLIDO AS NOMBRE,
+                            HP.ID_NIVEL_PTO AS NIVEL,
+                            HP.ID_UNIDAD_NOM, HP.HP_CONSEC_NOMINA
+                    FROM    TN_NOMINA N, TN_COMPROBANTE_DIG C, TD_EMPLEADO EM, TN_HISTORICO_PAGO HP
+                    WHERE   HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                            AND HP.HP_RFC = EM.RFC_EMPLEADO
+                            AND HP.HP_RFC = C.CN_RFC
+                            AND HP.HP_FOLIO = C.CN_FOLIO
+                            AND HP.HP_DIF_FOLIO = C.CN_DIF_FOLIO
+                            AND ##HP.HP_CONSEC_NOMINA##
+                            AND ##HP.ID_UNIDAD_NOM##
+                            AND ##HP.HP_CICLO_UNIDAD#=#OPERATIONAL_YEAR##
+                            AND ##HP.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                            ORDER BY HP.HP_FOLIO ASC                
+                </prop>
+                <prop key="busquedaCfdiArchivoUnidad">
+                  SELECT  HP.HP_RFC || '-' || C.CN_FOLIO || '-' || C.CN_DIF_FOLIO AS IDGRUPO,
+                            HP.HP_RFC AS RFC,
+                            EM.NOMBRE_EMPLEADO || ' ' || EM.PRIMER_APELLIDO || ' ' || EM.SEGUNDO_APELLIDO AS NOMBRE,
+                            HP.ID_NIVEL_PTO AS NIVEL,
+                            HP.ID_UNIDAD_NOM, HP.HP_CONSEC_NOMINA
+                    FROM    TN_HISTORICO_PAGO HP, TN_NOMINA N, TN_COMPROBANTE_PDF C, TD_EMPLEADO EM
+                    WHERE   HP.HP_CONSEC_NOMINA = N.ID_NOMINA
+                            AND HP.HP_RFC = EM.RFC_EMPLEADO
+                            AND HP.HP_RFC = C.CN_RFC
+                            AND HP.HP_FOLIO = c.CN_FOLIO
+                            AND HP.HP_DIF_FOLIO = c.CN_DIF_FOLIO
+                            AND ##HP.HP_CONSEC_NOMINA##
+                            AND ##HP.ID_UNIDAD_NOM##
+                            AND ##HP.ID_UNIDAD_NOM#SIREHUNIDAD#PRIMARY##
+                            ORDER BY HP.HP_FOLIO ASC
+                </prop>          
+                <prop key="listarNominasCarga">
+                    SELECT TN_NOMINA.ID_NOMINA AS idGrupo,
+                           TN_NOMINA.ID_NOMINA AS idQna,
+                           TN_NOMINA.NOM_QNA_CAPTURA AS qnaCaptura,
+                           TN_NOMINA.NOM_NUM_COMPLEM AS numComplem,
+                           TN_NOMINA.DESC_NOMINA AS descripcion,
+                           TC_TIPO_NOMINA.DESC_TIPO_NOMINA AS tipoNomina,
+                           TC_GRUPO_PAGO.DESC_GRUPO_PAGO AS grupoPago,
+                           TC_ESTADO_NOMINA.DESCRIBE_EDO_NOM AS descEstadoNom,
+                           TN_NOMINA.ID_EDO_NOM AS estadoNomina
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                       AND ##TN_NOMINA.ID_EDO_NOM##
+                    ORDER BY TN_NOMINA.NOM_QNA_CAPTURA DESC, TN_NOMINA.NOM_NUM_COMPLEM DESC                
+                </prop>
+                <prop key="SAT_timbradoGrid">
+                    SELECT TN_NOMINA.ID_NOMINA AS idGrupo,
+                           TN_NOMINA.ID_NOMINA AS idQna,
+                           TN_NOMINA.NOM_QNA_CAPTURA AS qnaCaptura,
+                           TN_NOMINA.NOM_NUM_COMPLEM AS numComplem,
+                           TN_NOMINA.DESC_NOMINA AS descripcion,
+                           TN_NOMINA.NOM_ARCH_ANEXO20,
+                           TN_NOMINA.NOM_ARCH_CREACION,
+                           TN_NOMINA.NOM_ARCH_TIMBRADO,
+                           TN_NOMINA.NOM_ARCH_CANC,
+                           TC_TIPO_NOMINA.DESC_TIPO_NOMINA AS tipoNomina,
+                           TC_GRUPO_PAGO.ID_GRUPO_PAGO || ' - ' || TC_GRUPO_PAGO.DESC_GRUPO_PAGO AS grupoPago,
+                           TC_ESTADO_NOMINA.DESCRIBE_EDO_NOM AS descEstadoNom,
+                           TN_NOMINA.ID_EDO_NOM AS estadoNomina,
+                           T.ID_ESTATUS AS NOM_REF_TIMBRADO,
+                           TN_NOMINA.CN_PAQUETE AS cnPaquete,
+                           T.ID_ESTATUS || ' - ' || T.DESC_ESTATUS AS DESC_NOM_REF_TIMBRADO
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA, TC_ESTATUS_TIMBRADO T
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND TN_NOMINA.ID_EDO_NOM = 'C'
+                       AND T.ID_ESTATUS(+) = TN_NOMINA.NOM_REF_TIMBRADO
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                    ORDER BY qnaCaptura DESC, ID_NOMINA desc
+                </prop>
+                <prop key="listaNominasEstatus">
+                    SELECT TN_NOMINA.ID_NOMINA AS idNomina,
+                           TN_NOMINA.NOM_QNA_CAPTURA AS qnaCaptura,
+                           TN_NOMINA.NOM_NUM_COMPLEM AS numComplem,
+                           TN_NOMINA.DESC_NOMINA AS descripcion,
+                           TC_TIPO_NOMINA.DESC_TIPO_NOMINA AS tipoNomina,
+                           TC_GRUPO_PAGO.DESC_GRUPO_PAGO AS grupoPago,
+                           TC_ESTADO_NOMINA.DESCRIBE_EDO_NOM AS descEstadoNom,
+                           TN_NOMINA.NOM_REF_TIMBRADO || ' - ' || TC_ESTATUS_TIMBRADO.DESC_ESTATUS AS nomRefTimbrado
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA, TC_ESTATUS_TIMBRADO
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND TN_NOMINA.ID_EDO_NOM = 'C'
+                       AND TN_NOMINA.NOM_REF_TIMBRADO IN ('D', 'E', 'H', 'F', 'X', 'V', 'S', 'Q')
+                       AND TC_ESTATUS_TIMBRADO.ID_ESTATUS = TN_NOMINA.NOM_REF_TIMBRADO
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                       AND ##TN_NOMINA.ID_EDO_NOM## 
+                    ORDER BY qnaCaptura DESC, numComplem DESC
+                </prop>
+                <prop key="tcEstatusTimbrado">
+                    SELECT 
+                        ID_ESTATUS AS IDESTATUS, ID_ESTATUS || ' - ' || DESC_ESTATUS AS DESCESTATUS
+                    FROM TC_ESTATUS_TIMBRADO
+                    WHERE ID_ESTATUS IN ('E', 'F', 'V', 'R', 'P', 'T')
+                    ORDER BY ID_ESTATUS
+                </prop>
+                <prop key="tnComprobanteRechazo">
+                    SELECT T.CN_FOLIO, T.CN_DIF_FOLIO, T.CN_CONSEC_NOMINA, T.CN_EJERCICIO,
+                       T.CN_PAQUETE, T.CN_RFC, T.CN_SITUACION, T.CN_XML_GENERADO,
+                       T.CN_FECHA_GENERADO, T.CN_XML_TIMBRADO, T.CN_FEC_ENVIO,
+                       T.CN_FEC_RESPUESTA, T.CN_FOLIO_RECIBO, T.CN_FOLIO_FISCAL,
+                       T.CN_FEC_ENV_CANC, T.CN_FEC_CANC, T.CN_FEC_FIRMA_REC,
+                       T.CN_CADENA_ORIGINAL, T.CN_CADENA_SELLO, T.CN_ARCH_CREACION,
+                       T.CN_ARCH_ANEXO20, T.CN_ARCH_TIMBRADO, T.CN_ARCH_A_CANCELAR,
+                       T.CN_XML_CANCELADO, T.CN_INCIDENCIA, T.CN_REF_TIMBRADO, T.CN_REF_TIMBRADO || ' - ' || R.DESC_ESTATUS DESC_REF_TIMBRADO,
+                       T.CN_PAQUETE_RV, T.CN_ID_PAQUETE_SAT, T.CN_URIBLOB_TIMB,
+                       T.CN_URIBLOB_CANC, T.CN_ENVIADO_INST, T.CN_ENVIADO_PERS, T.USUARIO,
+                       T.FEC_MODIFICO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO,
+                       E.NOMBRE_EMPLEADO, TO_CHAR(H.HP_INI_PAGO, 'dd/MM/yyyy') HP_INI_PAGO, TO_CHAR(H.HP_FIN_PAGO, 'dd/MM/YYYY') HP_FIN_PAGO, H.HP_NETO_PAGO,
+                       P.ID_PUESTO_NOM, P.ID_GRUPO_PAGO, P.ID_PLAZA, P.ID_UNIDAD_NOM,
+                       S.ID_ESTATUS || ' - ' || S.DESC_ESTATUS DESC_ESTATUS, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS DESC_TIPO_NOMINA,
+                       N.NOM_NUM_COMPLEM, N.NOM_QNA_CAPTURA, N.ID_NOMINA
+                  FROM TN_COMPROBANTE_DIG T,
+                       TD_EMPLEADO E,
+                       TN_HISTORICO_PAGO H,
+                       TD_PLAZA P,
+                       TC_ESTATUS_TIMBRADO S,
+                       TC_ESTATUS_TIMBRADO R,
+                       TN_NOMINA N,
+                       TC_TIPO_NOMINA TN
+                 WHERE E.RFC_EMPLEADO = T.CN_RFC
+                   AND T.CN_SITUACION IN ('L', 'Z')
+                   AND T.CN_FOLIO = H.HP_FOLIO
+                   AND E.RFC_EMPLEADO = P.PLAZA_RFC
+                   AND T.CN_SITUACION = S.ID_ESTATUS
+                   AND T.CN_REF_TIMBRADO = R.ID_ESTATUS (+)
+                   AND T.CN_CONSEC_NOMINA = N.ID_NOMINA
+                   AND N.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                   AND ##N.NOM_QNA_CAPTURA##
+                   AND ##N.NOM_QNA_CAPTURA##
+                   ORDER BY N.NOM_QNA_CAPTURA ASC, N.ID_NOMINA ASC, T.CN_RFC ASC
+                </prop>
+                <prop key="quincenaInicialReenvio">
+                     select distinct RC_QNA_CAPTURA as id, RC_QNA_CAPTURA as qnaInicial
+                     from   tn_reg_control
+                     where  SUBSTR(RC_QNA_CAPTURA,0,4) >= 2018
+                            order by RC_QNA_CAPTURA asc
+                </prop>
+                <prop key="quincenaFinalReenvio">
+                    select distinct RC_QNA_CAPTURA as id, RC_QNA_CAPTURA as qnaFinal
+                     from   tn_reg_control
+                     where  RC_QNA_CAPTURA >= ?
+                            order by RC_QNA_CAPTURA asc 
+                </prop>
+                <prop key="ListaCiclosCorreoElectronicoCFDI">
+                    select  SUBSTR(RC_QNA_CAPTURA,0,4) id, SUBSTR(RC_QNA_CAPTURA,0,4) ciclo
+                    from    tn_reg_control 
+                    where   SUBSTR(RC_QNA_CAPTURA,0,4) > 2017
+                            group by SUBSTR(RC_QNA_CAPTURA,0,4)
+                </prop>
+                <prop key="listaQuincenasIniCorreoElctronicoCFDI">
+                     select distinct RC_QNA_CAPTURA as id, RC_QNA_CAPTURA as qnaInicial
+                     from   tn_reg_control
+                     where  SUBSTR(RC_QNA_CAPTURA,0,4) = ?
+                            order by RC_QNA_CAPTURA asc
+                </prop>
+                <prop key="listQnasFinCFDIemail">
+                    select distinct RC_QNA_CAPTURA as id, RC_QNA_CAPTURA as qnaFinal
+                     from   tn_reg_control
+                     where  SUBSTR(RC_QNA_CAPTURA,0,4) = ?
+                            AND RC_QNA_CAPTURA >= ?
+                            order by RC_QNA_CAPTURA asc 
+                </prop>
+            </props>
+        </property>   
+    </bean>
+</beans>

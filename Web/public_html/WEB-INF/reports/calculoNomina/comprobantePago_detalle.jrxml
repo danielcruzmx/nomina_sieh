@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="comprobantePago_detalle" columnCount="2" printOrder="Horizontal" pageWidth="572" pageHeight="752" columnWidth="286" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="HP_FOLIO" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="HP_DIF_FOLIO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT tn_concepto_pagado.id_tipo_cpto tipo,
+    case when tn_concepto_pagado.id_cpto_pago = '0A' then '42A  '||tc_concepto_pago.desc_con_pag
+    when tn_concepto_pagado.id_cpto_pago = '0B' then '42B  '||tc_concepto_pago.desc_con_pag when tn_concepto_pagado.id_cpto_pago = '0C' then
+    '199  '||tc_concepto_pago.desc_con_pag when tn_concepto_pagado.id_cpto_pago = '0D' then '102  '||tc_concepto_pago.desc_con_pag when tn_concepto_pagado.id_cpto_pago = '0E' then '140  '||tc_concepto_pago.desc_con_pag else tn_concepto_pagado.id_cpto_pago||'  '||tc_concepto_pago.desc_con_pag end concepto_pago,
+    case when tn_concepto_pagado.id_tipo_cpto = 'D' then tn_concepto_pagado.cp_monto * -1 else tn_concepto_pagado.cp_monto end importe,
+    tn_concepto_pagado.CP_MONTO, tn_concepto_pagado.cp_num_concepto
+FROM
+    tn_concepto_pagado,
+    tc_concepto_pago
+WHERE
+    tn_concepto_pagado.cp_folio = $P{HP_FOLIO} and
+    tn_concepto_pagado.cp_dif_folio = $P{HP_DIF_FOLIO} and
+    tn_concepto_pagado.id_tipo_cpto <> 'C' and
+    tn_concepto_pagado.id_tipo_cpto = tc_concepto_pago.id_tipo_cpto(+) and
+    tn_concepto_pagado.id_cpto_pago = tc_concepto_pago.id_concepto(+) and
+    tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago not in ('PD1','D01','D0I')
+union
+SELECT 'D'tipo,
+    '01  Impuesto Sobre la Renta' concepto_pago,
+    ((nvl(sum(case when tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago = 'PD1' then tn_concepto_pagado.cp_monto end),0)) -
+     (nvl(sum(case when tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago = 'D01' or tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago = 'D0I' then tn_concepto_pagado.cp_monto * -1 end),0) * -1)) importe,
+     ((nvl(sum(case when tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago = 'PD1' then tn_concepto_pagado.cp_monto end),0)) -
+     (nvl(sum(case when tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago = 'D01' or tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago = 'D0I' then tn_concepto_pagado.cp_monto end),0)))*-1      CP_MONTO, 10000 cp_num_concepto
+from
+    tn_concepto_pagado,
+    tc_concepto_pago
+WHERE
+    tn_concepto_pagado.cp_folio = $P{HP_FOLIO} and
+    tn_concepto_pagado.cp_dif_folio = $P{HP_DIF_FOLIO} and
+    tn_concepto_pagado.id_tipo_cpto <> 'C' and
+    tc_concepto_pago.id_tipo_cpto = 'D' and
+    tc_concepto_pago.id_concepto = '01' and
+    tn_concepto_pagado.id_tipo_cpto||tn_concepto_pagado.id_cpto_pago in ('PD1','D01','D0I')
+group by 1,2
+ORDER BY 1 DESC, 4 desc]]>
+	</queryString>
+	<field name="TIPO" class="java.lang.String"/>
+	<field name="CONCEPTO_PAGO" class="java.lang.String"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="CP_MONTO" class="java.math.BigDecimal"/>
+	<field name="CP_NUM_CONCEPTO" class="java.math.BigDecimal"/>
+	<group name="comprobante">
+		<groupExpression><![CDATA[$P{HP_FOLIO}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band splitType="Prevent"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="186" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="572" height="157"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="288" y="0" width="1" height="157"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="512" y="0" width="1" height="157"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<rectangle radius="10">
+				<reportElement x="0" y="157" width="572" height="18"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="228" y="0" width="1" height="157"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="8" splitType="Prevent">
+			<textField>
+				<reportElement x="12" y="1" width="217" height="7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CONCEPTO_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="222" y="1" width="53" height="7"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

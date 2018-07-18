@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="FONACQNA" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="7" bottomMargin="7">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\sql sireh\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="P_CONSEC" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select 'Deducciones de FONAC Aportación del Trabajador de la Nómina Ordinaria de la Qna. '||substr(h.hp_qna_pago,5,2)||' del '||substr(h.hp_qna_pago,1,4)||'.' titulo,
+       h.id_unidad_nom, u.desc_unidad,
+       case when a.id_nombramiento = 'B'
+            then 1 else 0 end base,
+       case when a.id_nombramiento = 'B'
+            then c.cp_monto else 0 end importe_base,
+       case when a.id_nombramiento = 'C' and h.hp_folio in (select c1.cp_folio from tn_concepto_pagado c1
+                                                            where h.hp_dif_folio = c1.cp_dif_folio
+                                                              and c1.id_tipo_cpto = 'D'
+                                                              and c1.id_cpto_pago in ('S8','L8'))
+            then 1 else 0 end basificado,
+       case when a.id_nombramiento = 'C' and h.hp_folio in (select c1.cp_folio from tn_concepto_pagado c1
+                                                            where h.hp_dif_folio = c1.cp_dif_folio
+                                                              and c1.id_tipo_cpto = 'D'
+                                                              and c1.id_cpto_pago in ('S8','L8'))
+            then c.cp_monto else 0 end importe_basificado,
+       case when a.id_nombramiento = 'C' and h.hp_folio not in (select c1.cp_folio from tn_concepto_pagado c1
+                                                                where h.hp_dif_folio = c1.cp_dif_folio
+                                                                  and c1.id_tipo_cpto = 'D'
+                                                                  and c1.id_cpto_pago in ('S8','L8'))
+            then 1 else 0 end confianza,
+       case when a.id_nombramiento = 'C' and h.hp_folio not in (select c1.cp_folio from tn_concepto_pagado c1
+                                                                where h.hp_dif_folio = c1.cp_dif_folio
+                                                                  and c1.id_tipo_cpto = 'D'
+                                                                  and c1.id_cpto_pago in ('S8','L8'))
+            then c.cp_monto else 0 end importe_confianza,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+
+from tn_historico_pago h,
+     tn_concepto_pagado c,
+     tc_unidad u,
+     tc_atributo_puesto a
+where h.hp_consec_nomina in ($P!{P_CONSEC})
+--  and h.id_sit_pago <> 'C'
+  and h.hp_num_pension = 0
+  and h.hp_folio = c.cp_folio
+  and h.hp_dif_folio = c.cp_dif_folio
+  and c.id_tipo_cpto = 'D'
+  and c.id_cpto_pago in ('21','FE')
+  and h.id_unidad_nom = u.id_unidad
+  and u.uni_ciclo = substr(h.hp_qna_pago,1,4)
+  and h.id_puesto_nom = a.id_atributo_puesto
+  and a.ap_fin = to_date('01/01/2099','dd/mm/yyyy')
+order by h.id_unidad_nom]]>
+	</queryString>
+	<field name="TITULO" class="java.lang.String"/>
+	<field name="ID_UNIDAD_NOM" class="java.lang.String"/>
+	<field name="DESC_UNIDAD" class="java.lang.String"/>
+	<field name="BASE" class="java.lang.Double"/>
+	<field name="IMPORTE_BASE" class="java.lang.Double"/>
+	<field name="BASIFICADO" class="java.lang.Double"/>
+	<field name="IMPORTE_BASIFICADO" class="java.lang.Double"/>
+	<field name="CONFIANZA" class="java.lang.Double"/>
+	<field name="IMPORTE_CONFIANZA" class="java.lang.Double"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<variable name="BASE_1" class="java.lang.Double" resetType="Group" resetGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$F{BASE}]]></variableExpression>
+	</variable>
+	<variable name="BASIFICADO_1" class="java.lang.Double" resetType="Group" resetGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$F{BASIFICADO}]]></variableExpression>
+	</variable>
+	<variable name="CONFIANZA_1" class="java.lang.Double" resetType="Group" resetGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONFIANZA}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_BASE_1" class="java.lang.Double" resetType="Group" resetGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_BASE}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_BASIFICADO_1" class="java.lang.Double" resetType="Group" resetGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_BASIFICADO}]]></variableExpression>
+	</variable>
+	<variable name="IMPORTE_CONFIANZA_1" class="java.lang.Double" resetType="Group" resetGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_CONFIANZA}]]></variableExpression>
+	</variable>
+	<variable name="TCASOS" class="java.lang.Double" resetType="Group" resetGroup="Unidad">
+		<variableExpression><![CDATA[$V{BASE_1}.doubleValue()+$V{BASIFICADO_1}.doubleValue()+
+$V{CONFIANZA_1}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="TIMPORTE" class="java.lang.Double" resetType="Group" resetGroup="Unidad">
+		<variableExpression><![CDATA[$V{IMPORTE_BASE_1}.doubleValue()+$V{IMPORTE_BASIFICADO_1}.doubleValue()+
+$V{IMPORTE_CONFIANZA_1}.doubleValue()]]></variableExpression>
+	</variable>
+	<variable name="TCPERBASE" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{BASE}]]></variableExpression>
+	</variable>
+	<variable name="TIPERBASE" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_BASE}]]></variableExpression>
+	</variable>
+	<variable name="TCPERBASIFICADO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{BASIFICADO}]]></variableExpression>
+	</variable>
+	<variable name="TIPERBASIFICADO" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_BASIFICADO}]]></variableExpression>
+	</variable>
+	<variable name="TCPERCONFIANZA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{CONFIANZA}]]></variableExpression>
+	</variable>
+	<variable name="TIPERCONFIANZA" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE_CONFIANZA}]]></variableExpression>
+	</variable>
+	<variable name="TTOTCASOS" class="java.lang.Double" incrementType="Group" incrementGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$V{TCASOS}]]></variableExpression>
+	</variable>
+	<variable name="TTOTIMPORTE" class="java.lang.Double" incrementType="Group" incrementGroup="Unidad" calculation="Sum">
+		<variableExpression><![CDATA[$V{TIMPORTE}]]></variableExpression>
+	</variable>
+	<group name="Unidad">
+		<groupExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="15">
+				<rectangle>
+					<reportElement x="0" y="1" width="752" height="14"/>
+					<graphicElement>
+						<pen lineColor="#CCCCCC"/>
+					</graphicElement>
+				</rectangle>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="413" y="1" width="30" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BASE_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="498" y="1" width="30" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{BASIFICADO_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="583" y="1" width="30" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{CONFIANZA_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="448" y="1" width="45" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_BASE_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="535" y="1" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_BASIFICADO_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="618" y="1" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{IMPORTE_CONFIANZA_1}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0" isBlankWhenNull="true">
+					<reportElement x="667" y="1" width="30" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TCASOS}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement x="702" y="1" width="46" height="14"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TIMPORTE}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="0" y="1" width="30" height="14"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_UNIDAD_NOM}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="35" y="1" width="378" height="14"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial" size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="702" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="667" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="32" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="618" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="582" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="533" y="0" width="1" height="15" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="497" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="449" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+				<line>
+					<reportElement x="413" y="1" width="1" height="14" forecolor="#CCCCCC"/>
+				</line>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="48" splitType="Stretch">
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="159" y="4" width="334" height="35"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TITULO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="582" y="0" width="169" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="562" y="20" width="186" height="28"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="30" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="30" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+				<graphicElement>
+					<pen lineColor="#CCCCCC"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="533" y="15" width="49" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="498" y="15" width="35" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="618" y="15" width="49" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="583" y="15" width="35" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="667" y="0" width="84" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="702" y="15" width="49" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="667" y="15" width="35" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="35" y="0" width="378" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="35" height="30" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="413" y="0" width="84" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personal de Base]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="413" y="15" width="35" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Casos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="448" y="15" width="49" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Importe]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="583" y="0" width="84" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personal Confianza]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="498" y="0" width="84" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Personal Basificado]]></text>
+			</staticText>
+			<line>
+				<reportElement x="497" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="582" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="702" y="15" width="1" height="15" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="618" y="15" width="1" height="15" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="667" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="449" y="15" width="1" height="15" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="413" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="32" y="0" width="1" height="30" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="533" y="15" width="1" height="15" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="497" y="14" width="85" height="1"/>
+				<graphicElement>
+					<pen lineColor="#CCCCCC"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="413" y="14" width="84" height="1"/>
+				<graphicElement>
+					<pen lineColor="#CCCCCC"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="668" y="14" width="84" height="1"/>
+				<graphicElement>
+					<pen lineColor="#CCCCCC"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="582" y="14" width="85" height="1"/>
+				<graphicElement>
+					<pen lineColor="#CCCCCC"/>
+				</graphicElement>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Arial" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="55" y="2" width="585" height="25" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="14" splitType="Stretch">
+			<rectangle>
+				<reportElement x="285" y="0" width="467" height="14" backcolor="#F0EFEF"/>
+				<graphicElement>
+					<pen lineColor="#999999"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="448" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TIPERBASE}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="499" y="0" width="30" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TCPERBASIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="533" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TIPERBASIFICADO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="618" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TIPERCONFIANZA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="667" y="0" width="30" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TTOTCASOS}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="583" y="0" width="30" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TCPERCONFIANZA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="702" y="0" width="46" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TTOTIMPORTE}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="618" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="702" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="533" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="667" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="413" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="449" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<textField pattern="#,##0" isBlankWhenNull="true">
+				<reportElement x="413" y="0" width="30" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TCPERBASE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="286" y="0" width="95" height="14"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total :]]></text>
+			</staticText>
+			<line>
+				<reportElement x="582" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+			<line>
+				<reportElement x="497" y="0" width="1" height="14" forecolor="#CCCCCC"/>
+			</line>
+		</band>
+	</summary>
+</jasperReport>

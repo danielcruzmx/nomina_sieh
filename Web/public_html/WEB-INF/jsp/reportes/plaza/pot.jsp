@@ -1,0 +1,59 @@
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="html"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="fsn"%>
+
+
+<html:form name="checkBoxTest" modelAttribute="reportePlazaDTO">
+    
+    <h1><strong>
+            <spring:message code="sireh.label.plaza.reportes.titulo.link"/> &#45;
+            <spring:message code="sireh.label.plaza.reportes.seccion.plazas.titulo.link"/> &#45; 
+            <spring:message code="sireh.label.plaza.reportes.pot.titulo.link"/>
+    </strong></h1>
+
+    <table width="100%" align="center" border="0">
+    
+        <tr>
+            <td>
+                <fieldset>
+                    <legend style="font-size:1.1em"><strong>&nbsp;&nbsp;Parametros de consulta&nbsp;&nbsp; </strong></legend>
+                    <table width="90%" align="center">
+                        <tr> <td>&nbsp;</td> </tr>
+                        <tr> 
+                            <td align="right" class="label" width="20%">* Quincena inicial</td>
+                            <td align="left" colspan="2">
+                                <fsn:option key="0" value="selectList.nonValue"/>
+                                <fsn:selectList beanName="listaQuincenasAnteriores"  path="qnaCaptura" progress="true"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" class="label" width="20%">* Opciones de busqueda</td>
+                            <td align="left">
+                                <html:radiobutton value="e" path="origen" label=" Escenario" /> &nbsp; &nbsp; &nbsp;
+                                <html:radiobutton value="i" path="origen" label=" Inmueble"/> &nbsp; &nbsp; &nbsp;
+                                <html:radiobutton value="a" path="origen" label=" Altas"/> &nbsp; &nbsp; &nbsp;
+                                <html:radiobutton value="b" path="origen" label=" Bajas"/> &nbsp; &nbsp; &nbsp;
+                                <html:radiobutton value="d" path="origen" label=" Directorio"/> &nbsp; &nbsp; &nbsp;
+                                <html:radiobutton value="r" path="origen" label=" Remuneraciones"/> &nbsp; &nbsp; &nbsp;
+                                <html:radiobutton value="f" path="origen" label=" Funciones"/> &nbsp; &nbsp; &nbsp;
+                                <html:radiobutton value="s" path="origen" label=" Estadistico"/> &nbsp; &nbsp; &nbsp;
+                             </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" align="left" height="20px" valign="middle"><strong><spring:message code="sireh.form.required.fields"/></strong></td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </td>
+        </tr>
+        <tr align="center">
+            <td align="center" colspan="8">
+                <fsn:submit value="submit.accept" path="muestraReporte" action="reportePlaza/pot.do" progressIcon="false"/>
+                
+            </td>
+        </tr>
+    </table>
+    
+ </html:form>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<workbook>
+    <worksheet idx="0">
+      <section startRow="0" endRow="0">
+		      	  <mapping cell="A1">encabezadoDTO.a</mapping>
+		      	  <mapping cell="B1">encabezadoDTO.b</mapping>
+		      	  <mapping cell="C1">encabezadoDTO.c</mapping>
+		      	  <mapping cell="D1">encabezadoDTO.d</mapping>
+		      	  <mapping cell="E1">encabezadoDTO.e</mapping>
+      	  		  <mapping cell="F1">encabezadoDTO.f</mapping>
+      	  		  <mapping cell="G1">encabezadoDTO.g</mapping>
+      	  		  <mapping cell="H1">encabezadoDTO.h</mapping>
+      	  		  <mapping cell="I1">encabezadoDTO.i</mapping>
+      	  		  <mapping cell="J1">encabezadoDTO.j</mapping>
+      	  		  <mapping cell="K1">encabezadoDTO.k</mapping>
+      	  		  <mapping cell="L1">encabezadoDTO.l</mapping>
+        </section>
+        <loop startRow="1" endRow="1" items="notaDeMeritoDTO.listModel" var="p" varType="gob.shcp.sireh.model.merito.NotaDeMeritoDTO">
+            <section startRow="1" endRow="1">
+                <mapping row="1" col="0">p.curso</mapping>
+                <mapping row="1" col="1">p.nombreCurso</mapping>
+                <mapping row="1" col="2">p.inicioCurso</mapping>
+                <mapping row="1" col="3">p.finCurso</mapping>
+                <mapping row="1" col="4">p.duracion</mapping>
+                <mapping row="1" col="5">p.tdNmhRfcUnico</mapping> 
+                <mapping row="1" col="6">p.nombreEmpleado</mapping> 
+                <mapping row="1" col="7">p.nivelOp</mapping> 
+                <mapping row="1" col="8">p.idUnidad</mapping> 
+                <mapping row="1" col="9">p.genero</mapping> 
+                <mapping row="1" col="10">p.estatus</mapping> 
+                <mapping row="1" col="11">p.mes</mapping> 
+            </section> 
+             <loopbreakcondition>
+                    <rowcheck offset="0">
+                        <cellcheck offset="0"></cellcheck>
+                    </rowcheck>
+                </loopbreakcondition>
+        </loop>   
+    </worksheet>
+</workbook>

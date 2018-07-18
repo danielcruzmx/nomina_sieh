@@ -1,0 +1,133 @@
+<definitions
+     name="MyWebService1"
+     targetNamespace="http://gob.shcp.sireh.ws/"
+     xmlns="http://schemas.xmlsoap.org/wsdl/"
+     xmlns:tns="http://gob.shcp.sireh.ws/"
+     xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+     xmlns:tns0="http://www.oracle.com/webservices/internal/literal"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    >
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.oracle.com/webservices/internal/literal"
+             elementFormDefault="qualified" xmlns:tns="http://www.oracle.com/webservices/internal/literal"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/">
+            <import namespace="http://gob.shcp.sireh.ws/"/>
+            <complexType name="collection">
+                <sequence>
+                    <element name="item" type="anyType" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </complexType>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://gob.shcp.sireh.ws/"
+             elementFormDefault="qualified" xmlns:tns="http://gob.shcp.sireh.ws/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/"
+             xmlns:ns1="http://www.oracle.com/webservices/internal/literal">
+            <import namespace="http://www.oracle.com/webservices/internal/literal"/>
+            <complexType name="CustomParticipantesInscritosDTO">
+                <sequence>
+                    <element name="segundoApellido" type="string" nillable="true"/>
+                    <element name="rfcEmpleado" type="string" nillable="true"/>
+                    <element name="idUnidad" type="string" nillable="true"/>
+                    <element name="idNivelPto" type="string" nillable="true"/>
+                    <element name="primerApellido" type="string" nillable="true"/>
+                    <element name="nombreEmpleado" type="string" nillable="true"/>
+                    <element name="participanteNotificacion" type="dateTime" nillable="true"/>
+                    <element name="participanteEmail" type="string" nillable="true"/>
+                    <element name="descUnidad" type="string" nillable="true"/>
+                    <element name="participanteObservaciones" type="string" nillable="true"/>
+                </sequence>
+            </complexType>
+            <complexType name="Emp">
+                <sequence>
+                    <element name="name" type="string" nillable="true"/>
+                    <element name="id" type="int"/>
+                    <element name="salary" type="float"/>
+                </sequence>
+            </complexType>
+            <element name="getDeptInfo" type="int"/>
+            <element name="getDeptInfoResponse" type="tns:Dept" nillable="true"/>
+            <complexType name="Dept">
+                <sequence>
+                    <element name="employees" type="ns1:collection" nillable="true"/>
+                    <element name="location" type="string" nillable="true"/>
+                    <element name="name" type="string" nillable="true"/>
+                    <element name="id" type="int"/>
+                </sequence>
+            </complexType>
+            <element name="getDeptInfoString" type="int"/>
+            <element name="getDeptInfoStringResponse" type="string" nillable="true"/>
+            <element name="getParticipantesInscritos" type="int"/>
+            <element name="getParticipantesInscritosResponse" type="ns1:collection" nillable="true"/>
+        </schema>
+    </types>
+    <message name="MyWebService1_getDeptInfo">
+        <part name="parameters" element="tns:getDeptInfo"/>
+    </message>
+    <message name="MyWebService1_getDeptInfoResponse">
+        <part name="return" element="tns:getDeptInfoResponse"/>
+    </message>
+    <message name="MyWebService1_getDeptInfoString">
+        <part name="parameters" element="tns:getDeptInfoString"/>
+    </message>
+    <message name="MyWebService1_getDeptInfoStringResponse">
+        <part name="return" element="tns:getDeptInfoStringResponse"/>
+    </message>
+    <message name="MyWebService1_getParticipantesInscritos">
+        <part name="parameters" element="tns:getParticipantesInscritos"/>
+    </message>
+    <message name="MyWebService1_getParticipantesInscritosResponse">
+        <part name="return" element="tns:getParticipantesInscritosResponse"/>
+    </message>
+    <portType name="MyWebService1">
+        <operation name="getDeptInfo">
+            <input message="tns:MyWebService1_getDeptInfo"/>
+            <output message="tns:MyWebService1_getDeptInfoResponse"/>
+        </operation>
+        <operation name="getDeptInfoString">
+            <input message="tns:MyWebService1_getDeptInfoString"/>
+            <output message="tns:MyWebService1_getDeptInfoStringResponse"/>
+        </operation>
+        <operation name="getParticipantesInscritos">
+            <input message="tns:MyWebService1_getParticipantesInscritos"/>
+            <output message="tns:MyWebService1_getParticipantesInscritosResponse"/>
+        </operation>
+    </portType>
+    <binding name="MyWebService1SoapHttp" type="tns:MyWebService1">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="getDeptInfo">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal" parts="return"/>
+            </output>
+        </operation>
+        <operation name="getDeptInfoString">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal" parts="return"/>
+            </output>
+        </operation>
+        <operation name="getParticipantesInscritos">
+            <soap:operation soapAction=""/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal" parts="return"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="MyWebService1">
+        <port name="MyWebService1SoapHttpPort" binding="tns:MyWebService1SoapHttp">
+            <soap:address location="http://172.18.3.57:8888/sirehWS/MyWebService1SoapHttpPort"/>
+        </port>
+    </service>
+</definitions>

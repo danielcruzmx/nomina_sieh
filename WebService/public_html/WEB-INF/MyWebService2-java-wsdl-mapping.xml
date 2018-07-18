@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java-wsdl-mapping xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+  http://www.ibm.com/webservices/xsd/j2ee_jaxrpc_mapping_1_1.xsd"
+  version="1.1">
+
+    <package-mapping>
+        <package-type>gob.shcp.sireh.ws</package-type>
+        <namespaceURI>http://gob.shcp.sireh.ws/types/</namespaceURI>
+    </package-mapping>
+    <package-mapping>
+        <package-type>ws.sireh.shcp.gob</package-type>
+        <namespaceURI>http://gob.shcp.sireh.ws/</namespaceURI>
+    </package-mapping>
+    <package-mapping>
+        <package-type>gob.shcp.sireh.ws</package-type>
+        <namespaceURI>http://gob.shcp.sireh.ws/</namespaceURI>
+    </package-mapping>
+    <java-xml-type-mapping>
+        <java-type>gob.shcp.sireh.ws.Dept</java-type>
+        <anonymous-type-qname>{http://gob.shcp.sireh.ws/types/}Dept</anonymous-type-qname>
+        <qname-scope>complexType</qname-scope>
+        <variable-mapping>
+            <java-variable-name>employees</java-variable-name>
+            <xml-element-name>employees</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>location</java-variable-name>
+            <xml-element-name>location</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>name</java-variable-name>
+            <xml-element-name>name</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>id</java-variable-name>
+            <xml-element-name>id</xml-element-name>
+        </variable-mapping>
+    </java-xml-type-mapping>
+    <java-xml-type-mapping>
+        <java-type>gob.shcp.sireh.ws.Dept</java-type>
+        <root-type-qname xmlns:typeNS="http://gob.shcp.sireh.ws/">typeNS:Dept</root-type-qname>
+        <qname-scope>complexType</qname-scope>
+        <variable-mapping>
+            <java-variable-name>employees</java-variable-name>
+            <xml-element-name>employees</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>location</java-variable-name>
+            <xml-element-name>location</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>name</java-variable-name>
+            <xml-element-name>name</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>id</java-variable-name>
+            <xml-element-name>id</xml-element-name>
+        </variable-mapping>
+    </java-xml-type-mapping>
+
+    <java-xml-type-mapping>
+        <java-type>gob.shcp.sireh.ws.Emp</java-type>
+        <root-type-qname xmlns:typeNS="http://gob.shcp.sireh.ws/">typeNS:Emp</root-type-qname>
+        <qname-scope>complexType</qname-scope>
+        <variable-mapping>
+            <java-variable-name>name</java-variable-name>
+            <xml-element-name>name</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>id</java-variable-name>
+            <xml-element-name>id</xml-element-name>
+        </variable-mapping>
+        <variable-mapping>
+            <java-variable-name>salary</java-variable-name>
+            <xml-element-name>salary</xml-element-name>
+        </variable-mapping>
+    </java-xml-type-mapping>
+
+    <service-interface-mapping>
+        <service-interface>gob.shcp.sireh.ws.TestWSService</service-interface>
+        <wsdl-service-name xmlns:serviceNS="http://gob.shcp.sireh.ws/">serviceNS:MyWebService2</wsdl-service-name>
+        <port-mapping>
+            <port-name>MyWebService2SoapHttpPort</port-name>
+            <java-port-name>MyWebService2SoapHttpPort</java-port-name>
+        </port-mapping>
+    </service-interface-mapping>
+    <service-endpoint-interface-mapping>
+        <service-endpoint-interface>gob.shcp.sireh.ws.MyWebService2</service-endpoint-interface>
+        <wsdl-port-type xmlns:portTypeNS="http://gob.shcp.sireh.ws/">portTypeNS:MyWebService2</wsdl-port-type>
+        <wsdl-binding xmlns:bindingNS="http://gob.shcp.sireh.ws/">bindingNS:MyWebService2SoapHttp</wsdl-binding>
+        <service-endpoint-method-mapping>
+            <java-method-name>getDeptInfo</java-method-name>
+            <wsdl-operation>getDeptInfo</wsdl-operation>
+            <method-param-parts-mapping>
+                <param-position>0</param-position>
+                <param-type>int</param-type>
+                <wsdl-message-mapping>
+                    <wsdl-message xmlns:wsdlMsgNS="http://gob.shcp.sireh.ws/">wsdlMsgNS:MyWebService2_getDeptInfo</wsdl-message>
+                    <wsdl-message-part-name>parameters</wsdl-message-part-name>
+                    <parameter-mode>IN</parameter-mode>
+                </wsdl-message-mapping>
+            </method-param-parts-mapping>
+            <wsdl-return-value-mapping>
+                <method-return-value>gob.shcp.sireh.ws.Dept</method-return-value>
+                <wsdl-message xmlns:wsdlMsgNS="http://gob.shcp.sireh.ws/">wsdlMsgNS:MyWebService2_getDeptInfoResponse</wsdl-message>
+                <wsdl-message-part-name>return</wsdl-message-part-name>
+            </wsdl-return-value-mapping>
+        </service-endpoint-method-mapping>
+        <service-endpoint-method-mapping>
+            <java-method-name>getDeptInfoString</java-method-name>
+            <wsdl-operation>getDeptInfoString</wsdl-operation>
+            <method-param-parts-mapping>
+                <param-position>0</param-position>
+                <param-type>int</param-type>
+                <wsdl-message-mapping>
+                    <wsdl-message xmlns:wsdlMsgNS="http://gob.shcp.sireh.ws/">wsdlMsgNS:MyWebService2_getDeptInfoString</wsdl-message>
+                    <wsdl-message-part-name>parameters</wsdl-message-part-name>
+                    <parameter-mode>IN</parameter-mode>
+                </wsdl-message-mapping>
+            </method-param-parts-mapping>
+            <wsdl-return-value-mapping>
+                <method-return-value>java.lang.String</method-return-value>
+                <wsdl-message xmlns:wsdlMsgNS="http://gob.shcp.sireh.ws/">wsdlMsgNS:MyWebService2_getDeptInfoStringResponse</wsdl-message>
+                <wsdl-message-part-name>return</wsdl-message-part-name>
+            </wsdl-return-value-mapping>
+        </service-endpoint-method-mapping>
+    </service-endpoint-interface-mapping>
+</java-wsdl-mapping>
+

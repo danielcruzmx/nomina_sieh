@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteEvaluaciones" printOrder="Horizontal" columnDirection="RTL" pageWidth="936" pageHeight="612" orientation="Landscape" columnWidth="880" leftMargin="36" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_CURSO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+       CU.CURSO_CLAVE,
+       CP.DESC_CURSO_PRINCIPAL,
+       PR.DESC_PROVEEDOR,
+       INS.NOMBRE_INSTRUCTOR || ' ' || INS.PRIMER_APELLIDO || ' ' || INS.SEGUNDO_APELLIDO AS INSTRUCTOR,
+       EC.EVALUACION_CURSO_P1,
+       EC.EVALUACION_CURSO_P2,
+       EC.EVALUACION_CURSO_P3,
+       EC.EVALUACION_CURSO_P4,
+       EC.EVALUACION_CURSO_P5,
+       EC.EVALUACION_CURSO_P6,
+       EC.EVALUACION_CURSO_P7,
+       EC.EVALUACION_CURSO_P8,
+       EC.EVALUACION_CURSO_P9,
+       EC.EVALUACION_CURSO_P10,
+       (EC.EVALUACION_CURSO_P1+
+       EC.EVALUACION_CURSO_P2+
+       EC.EVALUACION_CURSO_P3+
+       EC.EVALUACION_CURSO_P4+
+       EC.EVALUACION_CURSO_P5+
+       EC.EVALUACION_CURSO_P6+
+       EC.EVALUACION_CURSO_P7+
+       EC.EVALUACION_CURSO_P8+
+       EC.EVALUACION_CURSO_P9+
+       EC.EVALUACION_CURSO_P10) / 10 calificacion_final,
+       PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+       PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM TN_CAP_CURSO CU,
+     TC_CAP_CURSO_PRINCP CP,
+     TC_CAP_PROVEEDOR PR,
+     TC_CAP_INSTRUCTOR INS,
+     TN_CAP_EVALUA_CURSO EC
+WHERE CU.CICLO_EJE_TEMATICO = $P{PAR_CICLO}
+  AND CU.ID_CURSO = $P{PAR_CURSO}
+  AND CU.ID_CONTROL_CURSO IN ('CON', 'CUR')
+  AND CU.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+  AND CU.ID_PROVEEDOR = PR.ID_PROVEEDOR(+)
+  AND CU.ID_INSTRUCTOR_TITULAR = INS.ID_INSTRUCTOR(+)
+  AND CU.ID_CURSO = EC.ID_CURSO]]>
+	</queryString>
+	<field name="CURSO_CLAVE" class="java.lang.String"/>
+	<field name="DESC_CURSO_PRINCIPAL" class="java.lang.String"/>
+	<field name="DESC_PROVEEDOR" class="java.lang.String"/>
+	<field name="INSTRUCTOR" class="java.lang.String"/>
+	<field name="EVALUACION_CURSO_P1" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P2" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P3" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P4" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P5" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P6" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P7" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P8" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P9" class="java.math.BigDecimal"/>
+	<field name="EVALUACION_CURSO_P10" class="java.math.BigDecimal"/>
+	<field name="CALIFICACION_FINAL" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="261" y="118" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="362" y="10" width="210" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="333" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="261" y="9" width="343" height="34"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font fontName="Adobe Caslon Pro" size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["REPORTE DE EVALUACIÓN DE REACCIÓN PAC  /  " + $P{PAR_CICLO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="128" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="2" width="880" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="1" y="29" width="113" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Clave:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="1" y="51" width="113" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Curso:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="73" width="114" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Institución Educativa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="94" width="114" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre del Instructor(a):]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="114" y="94" width="349" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{INSTRUCTOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="51" width="349" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESC_CURSO_PRINCIPAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="29" width="349" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CURSO_CLAVE}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="114" y="73" width="349" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{DESC_PROVEEDOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="315" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="580" y="231" width="287" height="19" backcolor="#F0F0F0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="696" y="291" width="171" height="15" backcolor="#FF6600"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[PÉSIMO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="525" y="291" width="171" height="15" backcolor="#FF0000"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[MALO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="354" y="291" width="171" height="15" backcolor="#FFFF33"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[REGULAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="183" y="291" width="171" height="15" backcolor="#99FF99"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[BUENO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="12" y="291" width="171" height="15" backcolor="#999900"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true" isUnderline="false" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[EXCELENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="275" width="171" height="16"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[5]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="275" width="171" height="16"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[4]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="354" y="275" width="171" height="16"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="525" y="275" width="171" height="16"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="696" y="275" width="171" height="16"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="260" width="855" height="16"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESCALA DE EVALUACIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="12" y="0" width="568" height="41" backcolor="#F0F0F0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[REACTIVOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="41" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  1.      ¿Se especificaron los objetos del curso, así como los criterios de evaluación al inicio de la sesión?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="60" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  2.      ¿El/la instructor(a) asistió con puntualidad a las seciones?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="79" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0" lineColor="#FFFFFF"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  3.      ¿El/la instuctor(a) se apegó al temario establecido y desarrolló todos los temas programados?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="98" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  4.      ¿En qué nivel considera el dominio de los temas expuestos por el/la instructor(a)?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="174" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  8.      ¿Los conocimientos adquiridos servirán en su desempeño laboral?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="155" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  7.      ¿Cómo calificaría el manual impreso que se le proporcionó?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="117" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  5.      ¿Las prácticas realizadas (dinámicas de grupo, ejercicios), fueron adecuadas y suficientes?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="136" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  6.      ¿El material didáctico (diapositivas, videos, etc.) utilizado ayudó a la explicación del curso?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="212" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  10.    ¿Cómo califica las instalaciones en que se impartió el curso (limpieza, mobiliario, equipo, etc.)?]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="193" width="568" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[  9.      ¿En qué medida el curso cubrió sus expectativas de aprendizaje?]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="580" y="41" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="60" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="79" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="98" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P4}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="117" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P5}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="136" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P6}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="155" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P7}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="174" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P8}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="193" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P9}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="212" width="287" height="19"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{EVALUACION_CURSO_P10}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="580" y="231" width="287" height="19" forecolor="#000000" backcolor="#CCCCCC"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CALIFICACION_FINAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="580" y="0" width="287" height="41" backcolor="#F0F0F0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CALIFICACIÓN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="12" y="231" width="568" height="19" backcolor="#F0F0F0"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Adobe Caslon Pro" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Calificación Final:    ]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="1" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="774" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="300" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="784" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="844" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

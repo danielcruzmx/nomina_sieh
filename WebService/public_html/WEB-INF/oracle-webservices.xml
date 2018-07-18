@@ -1,0 +1,19 @@
+<oracle-webservices xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://xmlns.oracle.com/oracleas/schema/oracle-webservices-10_0.xsd">
+    <webservice-description name="MyWebService2">
+        <port-component name="MyWebService2SoapHttpPort">
+            <operations>
+                <operation name="getDeptInfo" input="{http://gob.shcp.sireh.ws/types/}getDeptInfoElement"/>
+                <operation name="getDeptInfoString" input="{http://gob.shcp.sireh.ws/types/}getDeptInfoStringElement"/>
+            </operations>
+        </port-component>
+    </webservice-description>
+    <webservice-description name="MyWebService1">
+        <port-component name="MyWebService1SoapHttpPort">
+            <operations>
+                <operation name="getDeptInfo" input="{http://gob.shcp.sireh.ws/}getDeptInfo"/>
+                <operation name="getDeptInfoString" input="{http://gob.shcp.sireh.ws/}getDeptInfoString"/>
+                <operation name="getParticipantesInscritos" input="{http://gob.shcp.sireh.ws/}getParticipantesInscritos"/>
+            </operations>
+        </port-component>
+    </webservice-description>
+</oracle-webservices>

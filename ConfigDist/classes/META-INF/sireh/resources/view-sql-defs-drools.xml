@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+<!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+                <!-- GESTION DE NOMINAS -->
+                <prop key="cierreQnaPago">
+                    SELECT
+                        TN_HISTORICO_PAGO.HP_QNA_PAGO, TN_HISTORICO_PAGO.HP_QNA_PAGO AS DESCRIPCION
+                    FROM 
+                        TN_HISTORICO_PAGO
+                    WHERE 
+                        TN_HISTORICO_PAGO.HP_CICLO_UNIDAD = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    GROUP BY TN_HISTORICO_PAGO.HP_QNA_PAGO
+                    ORDER BY TN_HISTORICO_PAGO.HP_QNA_PAGO DESC
+                </prop>
+                
+                <!-- Cálculo de nómina - Gestión de nóminas -->
+                <prop key="listaNominasCierre">
+                    SELECT ID_NOMINA idQna,
+                           NOM_QNA_CAPTURA qnaCaptura,
+                           NOM_NUM_COMPLEM numComplem,
+                           DESC_NOMINA descripcion,
+                           DESC_TIPO_NOMINA tipoNomina,
+                           DESC_GRUPO_PAGO grupoPago,
+                           DESCRIBE_EDO_NOM descEstadoNom
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                    ORDER BY qnaCaptura DESC,numComplem DESC
+                </prop>
+                
+                <prop key="tnNominaQuincena">
+                    SELECT
+                        N.NOM_QNA_CAPTURA, N.NOM_QNA_CAPTURA AS DESCRIPCION
+                    FROM 
+                        TN_NOMINA N
+                    GROUP BY N.NOM_QNA_CAPTURA
+                    ORDER BY N.NOM_QNA_CAPTURA DESC
+                </prop>
+                <prop key="listaNominas">
+                    SELECT TN_NOMINA.ID_NOMINA AS idGrupo,
+                           TN_NOMINA.ID_NOMINA AS idQna,
+                           TN_NOMINA.NOM_QNA_CAPTURA AS qnaCaptura,
+                           TN_NOMINA.NOM_NUM_COMPLEM AS numComplem,
+                           TN_NOMINA.DESC_NOMINA AS descripcion,
+                           TC_TIPO_NOMINA.DESC_TIPO_NOMINA AS tipoNomina,
+                           TC_GRUPO_PAGO.DESC_GRUPO_PAGO AS grupoPago,
+                           TC_ESTADO_NOMINA.DESCRIBE_EDO_NOM AS descEstadoNom,
+                           TN_NOMINA.ID_EDO_NOM AS estadoNomina
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                       AND ##TN_NOMINA.ID_EDO_NOM## 
+                    ORDER BY qnaCaptura DESC, numComplem DESC
+                </prop>
+                
+                <!-- Cálculo de nómina - Aguinaldo - Busqueda de nóminas -->
+                <prop key="tnNominaQuincenaAguinaldo">
+                    SELECT
+                        N.NOM_QNA_CAPTURA, N.NOM_QNA_CAPTURA AS DESCRIPCION
+                    FROM 
+                        TN_NOMINA N
+                    WHERE N.ID_TIPO_NOMINA = 'AG'
+                    GROUP BY N.NOM_QNA_CAPTURA
+                    ORDER BY N.NOM_QNA_CAPTURA DESC
+                </prop>
+                
+                <!--Terceros - Aplicación en nómina y generación de enteros - SAT - Nóminas--> 
+                <prop key="satListadoNominas">
+                    SELECT TN_NOMINA.ID_NOMINA AS idGrupo,
+                           TN_NOMINA.ID_NOMINA AS idQna,
+                           TN_NOMINA.NOM_QNA_CAPTURA AS qnaCaptura,
+                           TN_NOMINA.NOM_NUM_COMPLEM AS numComplem,
+                           TN_NOMINA.DESC_NOMINA AS descripcion,
+                           TC_TIPO_NOMINA.DESC_TIPO_NOMINA AS tipoNomina,
+                           TC_GRUPO_PAGO.DESC_GRUPO_PAGO AS grupoPago,
+                           TC_ESTADO_NOMINA.DESCRIBE_EDO_NOM AS descEstadoNom,
+                           TN_NOMINA.ID_EDO_NOM AS estadoNomina,
+                           TN_NOMINA.NOM_ARCH_TIMBRADO AS nomArchTimbrado,
+                           TN_NOMINA.NOM_ARCH_CREACION AS nomArchCreacion,
+                           TN_NOMINA.NOM_ARCH_ANEXO20 AS nomArchAnexo20,
+                           TN_NOMINA.NOM_ARCH_CANC AS nomArchCanc
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                       AND ##TN_NOMINA.ID_EDO_NOM##
+                    ORDER BY TN_NOMINA.NOM_QNA_CAPTURA DESC, TN_NOMINA.NOM_NUM_COMPLEM DESC
+                </prop>
+                
+                <!-- Cálculo de nómina - Ordinaria de personal -Personal -->
+                <prop key="listaNominasQnaPorGrupo">
+                    SELECT ID_NOMINA idNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           TN_NOMINA.ID_EDO_NOM idEdoNom,
+                           DESCRIBE_EDO_NOM descEstadoNom,
+                           NOM_FUENTE_DATOS nomFuenteDatos,
+                           TO_CHAR(NOM_INI_PAGO, 'DD-MM-YYYY') fecIni,
+                           TO_CHAR(NOM_FIN_PAGO, 'DD-MM-YYYY') fecFin,
+                           NOM_INI_PAGO || ' - ' || NOM_FIN_PAGO periodoPago
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TN_REG_CONTROL, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.NOM_QNA_CAPTURA   <![CDATA[>=]]> TN_REG_CONTROL.RC_QNA_CAPTURA
+                       AND TN_REG_CONTROL.RC_VIGENTE   = 'S'
+                       AND TN_NOMINA.NOM_CERRADA      != 'S'
+                       AND TN_NOMINA.ID_EDO_NOM       != 'C'
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                  ORDER BY 2,3
+                </prop>
+                
+                <!-- Cálculo de nómina - Ordinaria de personal - Incremento -->
+                <prop key="listaNominasQnaPorGrupoIncremento">
+                    SELECT ID_NOMINA idNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           TN_NOMINA.ID_EDO_NOM idEdoNom,
+                           DESCRIBE_EDO_NOM descEstadoNom,
+                           TO_CHAR(NOM_INI_PAGO, 'DD-MM-YYYY') fecIni,
+                           TO_CHAR(NOM_FIN_PAGO, 'DD-MM-YYYY') fecFin,
+                           NOM_INI_PAGO || ' - ' || NOM_FIN_PAGO periodoPago
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TN_REG_CONTROL, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.NOM_QNA_CAPTURA   <![CDATA[>=]]> TN_REG_CONTROL.RC_QNA_CAPTURA
+                       AND TN_REG_CONTROL.RC_VIGENTE   = 'S'
+                       AND TN_NOMINA.NOM_CERRADA      != 'S'
+                       AND TN_NOMINA.ID_EDO_NOM       != 'C'
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                  ORDER BY 2,3
+                </prop>
+                
+                <!-- Cálculo de nómina - Extraordinaria - Incentivo -->
+                <prop key="listaNominasQnaIncentivo">
+                    SELECT ID_NOMINA idNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           TN_NOMINA.ID_EDO_NOM idEdoNom,
+                           DESCRIBE_EDO_NOM descEstadoNom,
+                           TO_CHAR(NOM_INI_PAGO, 'DD-MM-YYYY') fecIni,
+                           TO_CHAR(NOM_FIN_PAGO, 'DD-MM-YYYY') fecFin,
+                           NOM_INI_PAGO || ' - ' || NOM_FIN_PAGO periodoPago
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                       AND TN_NOMINA.NOM_CERRADA      != 'S'
+                       AND TN_NOMINA.ID_EDO_NOM       != 'C'
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                    ORDER BY 2 DESC,3 DESC
+                </prop>
+                
+                <prop key="listaNominasQnaPorQna">
+                    SELECT ID_NOMINA idNomina,
+                           NOM_QNA_CAPTURA nomQnaCaptura,
+                           NOM_NUM_COMPLEM nomNumComplem,
+                           DESC_NOMINA nomDescripcion,
+                           DESC_TIPO_NOMINA nomDescTipoNomina,
+                           DESC_GRUPO_PAGO nomDescGrupoPago,
+                           DESCRIBE_EDO_NOM status
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TN_REG_CONTROL, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.NOM_QNA_CAPTURA   = TN_REG_CONTROL.RC_QNA_CAPTURA
+                       AND TN_REG_CONTROL.RC_VIGENTE   = 'S'
+                       AND TN_NOMINA.NOM_CERRADA      != 'S'
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.ID_NOMINA##
+                  ORDER BY 2,3
+                </prop>
+                <prop key="listaPagosPorGrupo">
+                    SELECT td_empleado.RFC_EMPLEADO casosMuestra,
+                           td_empleado.NOMBRE_EMPLEADO nombreEmpleado,
+                           td_empleado.PRIMER_APELLIDO primerApellido,
+                           td_empleado.SEGUNDO_APELLIDO segundoApellido,
+                           p.ID_PUESTO_NOM idPuestoNom,
+                           tc_atributo_puesto.ID_NIVEL_PTO idNivelPto,
+                           tc_jerarquia.DESC_JERARQUIA descJerarquia,
+                           tc_nombramiento.DESC_NOMBRAMIENTO descNombramiento,
+                           NVL(td_empleado.CASO_MUESTRA,'') casoMuestra,
+                           p.ID_PLAZA idPlaza
+                    FROM   tn_historico_pago p,
+                           td_empleado,
+                           tc_atributo_puesto,
+                           tc_nombramiento,
+                           tc_jerarquia,
+                           tc_grupo_pago
+                    WHERE  p.HP_RFC                             = td_empleado.RFC_EMPLEADO
+                    AND    p.ID_PUESTO_NOM                      = tc_atributo_puesto.ID_ATRIBUTO_PUESTO
+                    AND    tc_atributo_puesto.AP_FIN            = to_date('01/01/2099')
+                    AND    tc_atributo_puesto.ID_JERARQUIA      = tc_jerarquia.ID_JERARQUIA
+                    AND    tc_atributo_puesto.ID_NOMBRAMIENTO   = tc_nombramiento.ID_NOMBRAMIENTO
+                    AND    p.ID_GRUPOPAGO_NOM                   = tc_grupo_pago.ID_GRUPO_PAGO
+                    AND    ##p.HP_CONSEC_NOMINA##
+                    AND    ##td_empleado.RFC_EMPLEADO##
+                    AND    ##td_empleado.NOMBRE_EMPLEADO##
+                    AND    ##td_empleado.PRIMER_APELLIDO##
+                    AND    ##td_empleado.SEGUNDO_APELLIDO##
+                    AND    ##tc_jerarquia.ID_JERARQUIA##
+                    AND    ##tc_nombramiento.ID_NOMBRAMIENTO##
+                    AND    ##TRIM(tc_atributo_puesto.ID_NIVEL_PTO)##
+                    AND    ##td_empleado.CASO_MUESTRA##
+                    AND    ##p.ID_GRUPOPAGO_NOM##
+                    ORDER BY casoMuestra DESC, casosMuestra
+                </prop>
+                
+                <!-- Cálculo de nómina - Ordinaria de personal - Personal - Conceptos pagados -->
+                <prop key="conceptosPagadosPorRFC">
+                    SELECT td_empleado.RFC_EMPLEADO,
+                           tn_historico_pago.ID_PLAZA, 
+                           td_empleado.NOMBRE_EMPLEADO,
+                           td_empleado.PRIMER_APELLIDO,
+                           td_empleado.SEGUNDO_APELLIDO,
+                           tn_historico_pago.ID_PUESTO_NOM,
+                           tc_atributo_puesto.ID_NIVEL_PTO,
+                           tc_jerarquia.DESC_JERARQUIA,
+                           tc_nombramiento.DESC_NOMBRAMIENTO,
+                           tc_grupo_pago.DESC_GRUPO_PAGO,
+                           case when tn_historico_pago.HP_DEPOSITO_S_N='S' then 'SI' else 'NO' end as DEPOSITO,
+                           tn_historico_pago.ID_ZONA_DIST_NOM,
+                           tn_concepto_pagado.ID_TIPO_CPTO,
+                           tn_concepto_pagado.ID_CPTO_PAGO,
+                           tn_concepto_pagado.CP_MONTO,
+                           tc_concepto_pago.DESC_CON_PAG,
+                           tn_historico_pago.HP_NETO_PAGO liquido
+                    FROM   tn_historico_pago,
+                           tn_concepto_pagado, 
+                           tc_concepto_pago,
+                           td_empleado,
+                           tc_atributo_puesto,
+                           tc_nombramiento,
+                           tc_jerarquia,
+                           tc_grupo_pago
+                    WHERE  tn_historico_pago.HP_FOLIO           = tn_concepto_pagado.CP_FOLIO
+                    and    tn_historico_pago.HP_DIF_FOLIO       = tn_concepto_pagado.CP_DIF_FOLIO
+                    and    tn_concepto_pagado.ID_TIPO_CPTO      = tc_concepto_pago.ID_TIPO_CPTO
+                    and    tn_concepto_pagado.ID_TIPO_CPTO      NOT IN ('C')
+                    and    tn_concepto_pagado.ID_CPTO_PAGO      = tc_concepto_pago.ID_CONCEPTO
+                    and    tn_historico_pago.HP_RFC             = td_empleado.RFC_EMPLEADO
+                    AND    tn_historico_pago.ID_PUESTO_NOM      = tc_atributo_puesto.ID_ATRIBUTO_PUESTO
+                    AND    tc_atributo_puesto.AP_FIN            = to_date('01/01/2099')
+                    AND    tc_atributo_puesto.ID_JERARQUIA      = tc_jerarquia.ID_JERARQUIA
+                    AND    tc_atributo_puesto.ID_NOMBRAMIENTO   = tc_nombramiento.ID_NOMBRAMIENTO
+                    AND    tn_historico_pago.ID_GRUPOPAGO_NOM   = tc_grupo_pago.ID_GRUPO_PAGO
+                    AND    ##tn_historico_pago.HP_CONSEC_NOMINA##
+                    AND    ##tn_historico_pago.HP_RFC##
+                    
+                    ORDER BY ID_TIPO_CPTO DESC, CP_MONTO DESC 
+                </prop>
+                
+                <!-- Cálculo de nómina - Ordinaria de personal - Personal - Conceptos pagados - TAG -->
+                <prop key="conceptosPagadosPorRFCTag">
+                    SELECT td_empleado.RFC_EMPLEADO,
+                           tn_historico_pago.ID_PLAZA, 
+                           td_empleado.NOMBRE_EMPLEADO,
+                           td_empleado.PRIMER_APELLIDO,
+                           td_empleado.SEGUNDO_APELLIDO,
+                           tn_historico_pago.ID_PUESTO_NOM,
+                           tc_atributo_puesto.ID_NIVEL_PTO,
+                           tc_jerarquia.DESC_JERARQUIA,
+                           tc_nombramiento.DESC_NOMBRAMIENTO,
+                           tc_grupo_pago.DESC_GRUPO_PAGO,
+                           case when tn_historico_pago.HP_DEPOSITO_S_N='S' then 'SI' else 'NO' end as DEPOSITO,
+                           tn_historico_pago.ID_ZONA_DIST_NOM,
+                           tn_concepto_pagado.ID_TIPO_CPTO,
+                           tn_concepto_pagado.ID_CPTO_PAGO,
+                           tn_concepto_pagado.CP_MONTO,
+                           tc_concepto_pago.DESC_CON_PAG,
+                           tn_historico_pago.HP_NETO_PAGO liquido
+                    FROM   tn_historico_pago,
+                           tn_concepto_pagado, 
+                           tc_concepto_pago,
+                           td_empleado,
+                           tc_atributo_puesto,
+                           tc_nombramiento,
+                           tc_jerarquia,
+                           tc_grupo_pago
+                    WHERE  tn_historico_pago.HP_FOLIO           = tn_concepto_pagado.CP_FOLIO
+                    and    tn_historico_pago.HP_DIF_FOLIO       = tn_concepto_pagado.CP_DIF_FOLIO
+                    and    tn_concepto_pagado.ID_TIPO_CPTO      = tc_concepto_pago.ID_TIPO_CPTO
+                    and    tn_concepto_pagado.ID_TIPO_CPTO      NOT IN ('C')
+                    and    tn_concepto_pagado.ID_CPTO_PAGO      = tc_concepto_pago.ID_CONCEPTO
+                    and    tn_historico_pago.HP_RFC             = td_empleado.RFC_EMPLEADO
+                    AND    tn_historico_pago.ID_PUESTO_NOM      = tc_atributo_puesto.ID_ATRIBUTO_PUESTO
+                    AND    tc_atributo_puesto.AP_FIN            = to_date('01/01/2099')
+                    AND    tc_atributo_puesto.ID_JERARQUIA      = tc_jerarquia.ID_JERARQUIA
+                    AND    tc_atributo_puesto.ID_NOMBRAMIENTO   = tc_nombramiento.ID_NOMBRAMIENTO
+                    AND    tn_historico_pago.ID_GRUPOPAGO_NOM   = tc_grupo_pago.ID_GRUPO_PAGO
+                    AND    ##tn_historico_pago.HP_CONSEC_NOMINA##
+                    AND    ##tn_historico_pago.HP_RFC##
+                    
+                    ORDER BY ID_TIPO_CPTO DESC, CP_MONTO DESC 
+                </prop>
+                
+                <!-- NOMINA EXTRAORDINARIA INICIO -->
+                <prop key="listaNominasPorTipoNomina">
+                    SELECT ID_NOMINA IDNOMINA,
+                           NOM_QNA_CAPTURA NOMQNACAPTURA,
+                           NOM_NUM_COMPLEM NOMNUMCOMPLEM,
+                           DESC_NOMINA NOMDESCRIPCION,
+                           DESC_TIPO_NOMINA NOMDESCTIPONOMINA,
+                           DESC_GRUPO_PAGO NOMDESCGRUPOPAGO,
+                           TN_NOMINA.ID_EDO_NOM IDEDONOM,
+                           TN_NOMINA.ID_TIPO_NOMINA IDTIPONOMINA,
+                           DESCRIBE_EDO_NOM DESCESTADONOM,
+                           ID_GRUPO_PAGO_NOM IDGRUPOPAGONOM,
+                           TO_CHAR(NOM_INI_PAGO, 'DD-MM-YYYY') fecIni,
+                           TO_CHAR(NOM_FIN_PAGO, 'DD-MM-YYYY') fecFin,
+                           NOM_INI_PAGO || ' - ' || NOM_FIN_PAGO periodoPago,
+                           TN_NOMINA.NOM_DIAS_PAGAR NOMDIASPAGAR, 
+                           TN_NOMINA.NOM_APLICAR_EXENTOS NOMAPLICAREXENTOS,
+                           TN_NOMINA.NOM_VIGENTE NOMVIGENTE,
+                           TN_NOMINA.NOM_GRATIF_AGUI NOMGRATIFAGUI,
+                           TN_NOMINA.NOM_COMPLETAR_PERIODO NOMCOMPLETARPERIODO,
+                           TN_NOMINA.NOM_FUENTE_DATOS NOM_FUENTE_DATOS
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##  
+                       AND TN_NOMINA.ID_EDO_NOM       != 'C'
+                       AND TN_NOMINA.NOM_CERRADA      != 'S'
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.ID_TIPO_NOMINA##
+                       AND ##TN_NOMINA.ID_GRUPO_PAGO_NOM##
+                       AND ##TN_NOMINA.NOM_VIGENTE##
+                       AND ##TN_NOMINA.DESC_NOMINA##
+                       AND ##TN_NOMINA.NOM_DIAS_PAGAR##
+                       AND ##TN_NOMINA.NOM_APLICAR_EXENTOS##
+                       AND ##TN_NOMINA.NOM_GRATIF_AGUI##
+                       AND ##TN_NOMINA.NOM_COMPLETAR_PERIODO##
+                       AND ##TN_NOMINA.ID_EDO_NOM##
+                       AND ##TN_NOMINA.NOM_REGLA_CALCULO##
+                    ORDER BY NOMQNACAPTURA DESC, NOMDESCTIPONOMINA DESC
+                </prop>
+                <prop key="plazaPopUpGpoE">
+                    SELECT td_plaza.id_plaza, td_plaza.id_puesto_nom, tc_puesto.desc_puesto,
+                           td_plaza.id_rango_nom, td_plaza.id_unidad_nom, 
+                           tc_atributo_puesto.id_jerarquia,
+                           tc_atributo_puesto.id_nombramiento AS id_nombramiento,
+                           tc_atributo_puesto.id_nivel_pto, td_plaza.id_zona_eco_nom,
+                           tc_estado.id_edo, tc_estado.desc_estado, tc_municipio.id_municipio,
+                           tc_municipio.desc_municipio, td_plaza.id_grupo_pago,
+                           tc_grupo_pago.desc_grupo_pago, td_plaza.plaza_imp_hono,
+                           td_plaza.id_zona_dist_nom, td_plaza.plaza_referencia,
+                           TO_CHAR (td_plaza.plaza_ini_cont, 'DD/MM/YYYY') AS plaza_ini_cont,
+                           TO_CHAR (td_plaza.plaza_fin_cont, 'DD/MM/YYYY') AS plaza_fin_cont
+                      FROM td_plaza,
+                           tc_atributo_puesto,
+                           tc_estado,
+                           tc_municipio,
+                           tc_puesto,
+                           tc_grupo_pago,
+                           tc_sit_plaza,
+                           tc_jerarquia,
+                           tc_nombramiento,
+                           tc_unidad
+                     WHERE td_plaza.id_puesto_nom = tc_puesto.id_puesto
+                       AND tc_unidad.id_unidad = td_plaza.id_unidad_nom
+                       AND td_plaza.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto
+                       AND td_plaza.id_edo_nom = tc_estado.id_edo
+                       AND td_plaza.id_edo_nom = tc_municipio.id_edo
+                       AND td_plaza.id_muni_nom = tc_municipio.id_municipio
+                       AND td_plaza.id_grupo_pago = 'E'
+                       AND tc_atributo_puesto.ap_fin = TO_DATE ('01/01/2099')
+                       AND td_plaza.id_grupo_pago = tc_grupo_pago.id_grupo_pago
+                       AND td_plaza.id_sit_plaza = tc_sit_plaza.id_sit_plaza
+                       AND tc_atributo_puesto.id_jerarquia = tc_jerarquia.id_jerarquia
+                       AND tc_atributo_puesto.id_nombramiento = tc_nombramiento.id_nombramiento
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="plazaPopUpGpoEFO">
+                    SELECT td_plaza.id_plaza, td_plaza.id_puesto_nom, tc_puesto.desc_puesto,
+                           td_plaza.id_rango_nom, td_plaza.id_unidad_nom, 
+                           tc_atributo_puesto.id_jerarquia,
+                           tc_atributo_puesto.id_nombramiento AS id_nombramiento,
+                           tc_atributo_puesto.id_nivel_pto, td_plaza.id_zona_eco_nom,
+                           tc_estado.id_edo, tc_estado.desc_estado, tc_municipio.id_municipio,
+                           tc_municipio.desc_municipio, td_plaza.id_grupo_pago,
+                           tc_grupo_pago.desc_grupo_pago, td_plaza.plaza_imp_hono,
+                           td_plaza.id_zona_dist_nom, td_plaza.plaza_referencia,
+                           TO_CHAR (td_plaza.plaza_ini_cont, 'DD/MM/YYYY') AS plaza_ini_cont,
+                           TO_CHAR (td_plaza.plaza_fin_cont, 'DD/MM/YYYY') AS plaza_fin_cont
+                      FROM td_plaza,
+                           tc_atributo_puesto,
+                           tc_estado,
+                           tc_municipio,
+                           tc_puesto,
+                           tc_grupo_pago,
+                           tc_sit_plaza,
+                           tc_jerarquia,
+                           tc_nombramiento,
+                           tc_unidad
+                     WHERE td_plaza.id_puesto_nom = tc_puesto.id_puesto
+                       AND tc_unidad.id_unidad = td_plaza.id_unidad_nom
+                       AND td_plaza.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto
+                       AND td_plaza.id_edo_nom = tc_estado.id_edo
+                       AND td_plaza.id_edo_nom = tc_municipio.id_edo
+                       AND td_plaza.id_muni_nom = tc_municipio.id_municipio
+                       AND td_plaza.id_grupo_pago = 'E'
+                       AND tc_atributo_puesto.id_jerarquia IN ('5','7')
+                       AND tc_atributo_puesto.ap_fin = TO_DATE ('01/01/2099')
+                       AND td_plaza.id_grupo_pago = tc_grupo_pago.id_grupo_pago
+                       AND td_plaza.id_sit_plaza = tc_sit_plaza.id_sit_plaza
+                       AND tc_atributo_puesto.id_jerarquia = tc_jerarquia.id_jerarquia
+                       AND tc_atributo_puesto.id_nombramiento = tc_nombramiento.id_nombramiento
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="plazaPopUpGpoVFO">
+                    SELECT td_plaza.id_plaza, td_plaza.id_puesto_nom, tc_puesto.desc_puesto,
+                           td_plaza.id_rango_nom, td_plaza.id_unidad_nom, 
+                           tc_atributo_puesto.id_jerarquia,
+                           tc_atributo_puesto.id_nombramiento AS id_nombramiento,
+                           tc_atributo_puesto.id_nivel_pto, td_plaza.id_zona_eco_nom,
+                           tc_estado.id_edo, tc_estado.desc_estado, tc_municipio.id_municipio,
+                           tc_municipio.desc_municipio, td_plaza.id_grupo_pago,
+                           tc_grupo_pago.desc_grupo_pago, td_plaza.plaza_imp_hono,
+                           td_plaza.id_zona_dist_nom, td_plaza.plaza_referencia,
+                           TO_CHAR (td_plaza.plaza_ini_cont, 'DD/MM/YYYY') AS plaza_ini_cont,
+                           TO_CHAR (td_plaza.plaza_fin_cont, 'DD/MM/YYYY') AS plaza_fin_cont
+                      FROM td_plaza,
+                           tc_atributo_puesto,
+                           tc_estado,
+                           tc_municipio,
+                           tc_puesto,
+                           tc_grupo_pago,
+                           tc_sit_plaza,
+                           tc_jerarquia,
+                           tc_nombramiento,
+                           tc_unidad
+                     WHERE td_plaza.id_puesto_nom = tc_puesto.id_puesto
+                       AND tc_unidad.id_unidad = td_plaza.id_unidad_nom
+                       AND td_plaza.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto
+                       AND td_plaza.id_edo_nom = tc_estado.id_edo
+                       AND td_plaza.id_edo_nom = tc_municipio.id_edo
+                       AND td_plaza.id_muni_nom = tc_municipio.id_municipio
+                       AND td_plaza.id_grupo_pago = 'V'
+                       AND tc_atributo_puesto.id_jerarquia IN ('5','7')
+                       AND tc_atributo_puesto.ap_fin = TO_DATE ('01/01/2099')
+                       AND td_plaza.id_grupo_pago = tc_grupo_pago.id_grupo_pago
+                       AND td_plaza.id_sit_plaza = tc_sit_plaza.id_sit_plaza
+                       AND tc_atributo_puesto.id_jerarquia = tc_jerarquia.id_jerarquia
+                       AND tc_atributo_puesto.id_nombramiento = tc_nombramiento.id_nombramiento
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="plazaPopUpGpoV">
+                    SELECT td_plaza.id_plaza, td_plaza.id_puesto_nom, tc_puesto.desc_puesto,
+                           td_plaza.id_rango_nom, td_plaza.id_unidad_nom, 
+                           tc_atributo_puesto.id_jerarquia,
+                           tc_atributo_puesto.id_nombramiento AS id_nombramiento,
+                           tc_atributo_puesto.id_nivel_pto, td_plaza.id_zona_eco_nom,
+                           tc_estado.id_edo, tc_estado.desc_estado, tc_municipio.id_municipio,
+                           tc_municipio.desc_municipio, td_plaza.id_grupo_pago,
+                           tc_grupo_pago.desc_grupo_pago, td_plaza.plaza_imp_hono,
+                           td_plaza.id_zona_dist_nom, td_plaza.plaza_referencia,
+                           TO_CHAR (td_plaza.plaza_ini_cont, 'DD/MM/YYYY') AS plaza_ini_cont,
+                           TO_CHAR (td_plaza.plaza_fin_cont, 'DD/MM/YYYY') AS plaza_fin_cont
+                      FROM td_plaza,
+                           tc_atributo_puesto,
+                           tc_estado,
+                           tc_municipio,
+                           tc_puesto,
+                           tc_grupo_pago,
+                           tc_sit_plaza,
+                           tc_jerarquia,
+                           tc_nombramiento,
+                           tc_unidad
+                     WHERE td_plaza.id_puesto_nom = tc_puesto.id_puesto
+                       AND tc_unidad.id_unidad = td_plaza.id_unidad_nom
+                       AND td_plaza.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto
+                       AND td_plaza.id_edo_nom = tc_estado.id_edo
+                       AND td_plaza.id_edo_nom = tc_municipio.id_edo
+                       AND td_plaza.id_muni_nom = tc_municipio.id_municipio
+                       AND td_plaza.id_grupo_pago = 'V'
+                       AND tc_atributo_puesto.ap_fin = TO_DATE ('01/01/2099')
+                       AND td_plaza.id_grupo_pago = tc_grupo_pago.id_grupo_pago
+                       AND td_plaza.id_sit_plaza = tc_sit_plaza.id_sit_plaza
+                       AND tc_atributo_puesto.id_jerarquia = tc_jerarquia.id_jerarquia
+                       AND tc_atributo_puesto.id_nombramiento = tc_nombramiento.id_nombramiento
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="plazaPopUpGpoH">
+                    SELECT td_plaza.id_plaza, td_plaza.id_puesto_nom, tc_puesto.desc_puesto,
+                           td_plaza.id_rango_nom, td_plaza.id_unidad_nom, 
+                           tc_atributo_puesto.id_jerarquia,
+                           tc_atributo_puesto.id_nombramiento AS id_nombramiento,
+                           tc_atributo_puesto.id_nivel_pto, td_plaza.id_zona_eco_nom,
+                           tc_estado.id_edo, tc_estado.desc_estado, tc_municipio.id_municipio,
+                           tc_municipio.desc_municipio, td_plaza.id_grupo_pago,
+                           tc_grupo_pago.desc_grupo_pago, td_plaza.plaza_imp_hono,
+                           td_plaza.id_zona_dist_nom, td_plaza.plaza_referencia,
+                           TO_CHAR (td_plaza.plaza_ini_cont, 'DD/MM/YYYY') AS plaza_ini_cont,
+                           TO_CHAR (td_plaza.plaza_fin_cont, 'DD/MM/YYYY') AS plaza_fin_cont
+                      FROM td_plaza,
+                           tc_atributo_puesto,
+                           tc_estado,
+                           tc_municipio,
+                           tc_puesto,
+                           tc_grupo_pago,
+                           tc_sit_plaza,
+                           tc_jerarquia,
+                           tc_nombramiento,
+                           tc_unidad
+                     WHERE td_plaza.id_puesto_nom = tc_puesto.id_puesto
+                       AND tc_unidad.id_unidad = td_plaza.id_unidad_nom
+                       AND td_plaza.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto
+                       AND td_plaza.id_edo_nom = tc_estado.id_edo
+                       AND td_plaza.id_edo_nom = tc_municipio.id_edo
+                       AND td_plaza.id_muni_nom = tc_municipio.id_municipio
+                       AND td_plaza.id_grupo_pago = 'H'
+                       AND tc_atributo_puesto.ap_fin = TO_DATE ('01/01/2099')
+                       AND td_plaza.id_grupo_pago = tc_grupo_pago.id_grupo_pago
+                       AND td_plaza.id_sit_plaza = tc_sit_plaza.id_sit_plaza
+                       AND tc_atributo_puesto.id_jerarquia = tc_jerarquia.id_jerarquia
+                       AND tc_atributo_puesto.id_nombramiento = tc_nombramiento.id_nombramiento
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="plazaPopUpGpoJ">
+                    SELECT td_plaza.id_plaza, td_plaza.id_puesto_nom, tc_puesto.desc_puesto,
+                           td_plaza.id_rango_nom, td_plaza.id_unidad_nom, 
+                           tc_atributo_puesto.id_jerarquia,
+                           tc_atributo_puesto.id_nombramiento AS id_nombramiento,
+                           tc_atributo_puesto.id_nivel_pto, td_plaza.id_zona_eco_nom,
+                           tc_estado.id_edo, tc_estado.desc_estado, tc_municipio.id_municipio,
+                           tc_municipio.desc_municipio, td_plaza.id_grupo_pago,
+                           tc_grupo_pago.desc_grupo_pago, td_plaza.plaza_imp_hono,
+                           td_plaza.id_zona_dist_nom, td_plaza.plaza_referencia,
+                           TO_CHAR (td_plaza.plaza_ini_cont, 'DD/MM/YYYY') AS plaza_ini_cont,
+                           TO_CHAR (td_plaza.plaza_fin_cont, 'DD/MM/YYYY') AS plaza_fin_cont
+                      FROM td_plaza,
+                           tc_atributo_puesto,
+                           tc_estado,
+                           tc_municipio,
+                           tc_puesto,
+                           tc_grupo_pago,
+                           tc_sit_plaza,
+                           tc_jerarquia,
+                           tc_nombramiento,
+                           tc_unidad
+                     WHERE td_plaza.id_puesto_nom = tc_puesto.id_puesto
+                       AND tc_unidad.id_unidad = td_plaza.id_unidad_nom
+                       AND td_plaza.id_puesto_nom = tc_atributo_puesto.id_atributo_puesto
+                       AND td_plaza.id_edo_nom = tc_estado.id_edo
+                       AND td_plaza.id_edo_nom = tc_municipio.id_edo
+                       AND td_plaza.id_muni_nom = tc_municipio.id_municipio
+                       AND td_plaza.id_grupo_pago = 'J'
+                       AND tc_atributo_puesto.ap_fin = TO_DATE ('01/01/2099')
+                       AND td_plaza.id_grupo_pago = tc_grupo_pago.id_grupo_pago
+                       AND td_plaza.id_sit_plaza = tc_sit_plaza.id_sit_plaza
+                       AND tc_atributo_puesto.id_jerarquia = tc_jerarquia.id_jerarquia
+                       AND tc_atributo_puesto.id_nombramiento = tc_nombramiento.id_nombramiento
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                </prop>
+                <prop key="empleadoPopUp">
+                    SELECT t.rfc_empleado, t.id_tipo_pago, t.imss_issste, t.curp_empleado,
+                           t.nombre_empleado, t.primer_apellido, t.segundo_apellido,
+                           t.clabe_empleado,
+                           TO_CHAR (t.ingreso_gob_fed, 'dd/mm/yyyy') AS ingreso_gob_fed,
+                           TO_CHAR (t.ingreso_dependencia, 'dd/mm/yyyy') AS ingreso_dependencia,
+                           t.calle_particular, t.colonia_particular, t.id_muni_particular as codigo_municipio,
+                           t.id_edo_particular, t.codpost_particular, t.tel_particular
+                      FROM td_empleado t
+                     WHERE LENGTH (t.rfc_empleado) = 13
+                </prop>
+                <prop key="listaRfcsCalculoNominaQna">
+                    SELECT e.rfc_empleado rfcempleado, e.rfc_empleado || '|' || p.id_plaza || '|' || TO_CHAR(t.cnq_ini_pago, 'dd/MM/yyyy') casosMuestra,
+                           e.nombre_empleado nombreempleado,
+                           e.primer_apellido primerapellido, e.segundo_apellido segundoapellido,
+                           p.id_puesto_nom idpuestonom, ap.id_nivel_pto idnivelpto,
+                           j.desc_jerarquia descjerarquia, n.desc_nombramiento descnombramiento,
+                           p.id_plaza idplaza, TO_CHAR(t.cnq_ini_pago, 'dd-MM-yyyy') cnqinipago
+                      FROM tn_calculo_nomina_qna t,
+                           td_plaza p,
+                           td_empleado e,
+                           tc_atributo_puesto ap,
+                           tc_unidad u,
+                           tc_jerarquia j,
+                           tc_nombramiento n
+                     WHERE p.id_plaza = t.id_plaza
+                       AND t.cnq_rfc = e.rfc_empleado
+                       AND ap.id_atributo_puesto = p.id_puesto_nom
+                       AND ap.ap_fin = TO_DATE ('01/01/2099')
+                       AND u.id_unidad = p.id_unidad_nom
+                       AND j.id_jerarquia = ap.id_jerarquia
+                       AND ap.id_nombramiento = n.id_nombramiento
+                       AND ##t.id_nomina##
+                       AND ##e.RFC_EMPLEADO##
+                       AND ##e.NOMBRE_EMPLEADO##
+                       AND ##e.PRIMER_APELLIDO##
+                       AND ##e.SEGUNDO_APELLIDO##
+                       AND ##j.ID_JERARQUIA##
+                       AND ##n.ID_NOMBRAMIENTO##
+                       AND ##TRIM(ap.ID_NIVEL_PTO)##
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                  ORDER BY t.fec_modifico DESC
+                </prop>
+                <prop key="listaRfcsCalculoNominaQnaAG">
+                    SELECT   e.rfc_empleado rfcempleado, e.rfc_empleado || '|' || p.id_plaza || '|' || TO_CHAR (t.cnq_ini_pago, 'dd/MM/yyyy') casosmuestra,
+                             e.nombre_empleado nombreempleado, e.primer_apellido primerapellido,
+                             e.segundo_apellido segundoapellido, p.id_puesto_nom idpuestonom,
+                             ap.id_nivel_pto idnivelpto, j.desc_jerarquia descjerarquia,
+                             n.desc_nombramiento descnombramiento, p.id_plaza idplaza,
+                             TO_CHAR (t.cnq_ini_pago, 'dd-MM-yyyy') cnqinipago
+                        FROM tn_calculo_nomina_qna t,
+                             tn_historico_pago p,
+                             td_empleado e,
+                             tc_atributo_puesto ap,
+                             tc_unidad u,
+                             tc_jerarquia j,
+                             tc_nombramiento n
+                       WHERE p.id_plaza = t.id_plaza
+                         AND p.hp_folio = t.cnq_folio
+                         AND t.cnq_rfc = e.rfc_empleado
+                         AND ap.id_atributo_puesto = p.id_puesto_nom
+                         AND ap.ap_fin = TO_DATE ('01/01/2099')
+                         AND u.id_unidad = p.id_unidad_nom
+                         AND j.id_jerarquia = ap.id_jerarquia
+                         AND ap.id_nombramiento = n.id_nombramiento
+                         AND ##t.id_nomina##
+                         AND ##e.RFC_EMPLEADO##
+                         AND ##e.NOMBRE_EMPLEADO##
+                         AND ##e.PRIMER_APELLIDO##
+                         AND ##e.SEGUNDO_APELLIDO##
+                         AND ##j.ID_JERARQUIA##
+                         AND ##n.ID_NOMBRAMIENTO##
+                         AND ##TRIM(ap.ID_NIVEL_PTO)##
+                         AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                         AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                    ORDER BY t.fec_modifico DESC
+                </prop>
+                <!--Terceros - SAR-FOVISSSTE-->
+                <prop key="listaRfcsCalculoNominaQnaSAR-FOV">
+                    SELECT e.rfc_empleado rfcempleado, e.rfc_empleado || '|' || p.id_plaza || '|' || TO_CHAR(t.cnq_ini_pago, 'dd/MM/yyyy') casosMuestra,
+                           e.nombre_empleado nombreempleado,
+                           e.primer_apellido primerapellido, e.segundo_apellido segundoapellido,
+                           p.id_puesto_nom idpuestonom, ap.id_nivel_pto idnivelpto,
+                           j.desc_jerarquia descjerarquia, n.desc_nombramiento descnombramiento,
+                           p.id_plaza idplaza, TO_CHAR(t.cnq_ini_pago, 'dd-MM-yyyy') cnqinipago
+                      FROM tn_calculo_nomina_qna t,
+                           td_plaza p,
+                           td_empleado e,
+                           tc_atributo_puesto ap,
+                           tc_unidad u,
+                           tc_jerarquia j,
+                           tc_nombramiento n
+                     WHERE p.id_plaza = t.id_plaza
+                       AND t.cnq_rfc = e.rfc_empleado
+                       AND ap.id_atributo_puesto = p.id_puesto_nom
+                       AND ap.ap_fin = TO_DATE ('01/01/2099')
+                       AND u.id_unidad = p.id_unidad_nom
+                       AND j.id_jerarquia = ap.id_jerarquia
+                       AND ap.id_nombramiento = n.id_nombramiento
+                       AND ##t.id_nomina##
+                       AND ##e.RFC_EMPLEADO##
+                       AND ##e.NOMBRE_EMPLEADO##
+                       AND ##e.PRIMER_APELLIDO##
+                       AND ##e.SEGUNDO_APELLIDO##
+                       AND ##j.ID_JERARQUIA##
+                       AND ##n.ID_NOMBRAMIENTO##
+                       AND ##TRIM(ap.ID_NIVEL_PTO)##
+                       AND ##uni_ciclo#=#OPERATIONAL_YEAR##
+                       AND ##id_unidad#SIREHUNIDAD#PRIMARY##
+                  ORDER BY t.fec_modifico DESC
+                </prop>
+                <prop key="listaNominasACPD">
+                    SELECT TN_NOMINA.ID_NOMINA AS idGrupo,
+                           TN_NOMINA.ID_NOMINA AS idQna,
+                           TN_NOMINA.NOM_QNA_CAPTURA AS qnaCaptura,
+                           TN_NOMINA.NOM_NUM_COMPLEM AS numComplem,
+                           TN_NOMINA.DESC_NOMINA AS descripcion,
+                           TC_TIPO_NOMINA.DESC_TIPO_NOMINA AS tipoNomina,
+                           TC_GRUPO_PAGO.DESC_GRUPO_PAGO AS grupoPago,
+                           TC_ESTADO_NOMINA.DESCRIBE_EDO_NOM AS descEstadoNom,
+                           TN_NOMINA.ID_EDO_NOM AS estadoNomina
+                      FROM TN_NOMINA, TC_TIPO_NOMINA, TC_GRUPO_PAGO, TC_ESTADO_NOMINA
+                     WHERE TN_NOMINA.ID_TIPO_NOMINA    = TC_TIPO_NOMINA.ID_TIPO_NOMINA
+                       AND TN_NOMINA.ID_GRUPO_PAGO_NOM = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                       AND TN_NOMINA.ID_EDO_NOM        = TC_ESTADO_NOMINA.ID_EDO_NOM
+                       AND ##TN_NOMINA.NOM_QNA_CAPTURA##
+                  ORDER BY qnaCaptura DESC, numComplem DESC
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

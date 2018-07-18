@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<layout>
+	<encabezado>
+	</encabezado>
+	<record>
+		<campo desc="curp"	type="char"	ini="0" fin="17" size="18" value="" complemento="" align="" />
+		<campo desc="rfc"	type="char"	ini="18" fin="30" size="13" value="" complemento=" " align="D" />
+		<campo desc="idPlaza"	type="char"	ini="31" fin="44" size="14" value="" complemento="0" align="I"/>
+		<campo desc="nombreCompleto"	type="char"	ini="45" fin="104" size="60" value="" complemento=" " align="D"/>
+		<campo desc="tipoReg"	type="char"	ini="105" fin="105" size="1" value="1" complemento="" align=""/>
+		<campo desc="tipoTrans"	type="char"	ini="106" fin="106" size="1" value="P" complemento="" align=""/>
+		<campo desc="retenedor"	type="char"	ini="107" fin="107" size="4" value="006" complemento="" align=""/>
+		<campo desc="idUnidad"	type="decimal"	ini="111" fin="113" size="3" value="" complemento="" align=""/>
+		<campo desc="concepto"	type="char"	ini="114" fin="116" size="3" value="DML" complemento="" align=""/>
+		<campo desc="importe"	type="virtual"	ini="117" fin="129" size="13" value="" complemento="0" align="I"/>
+		<campo desc="qnaPago"	type="decimal"	ini="130" fin="135" size="6" value="" complemento="" align=""/>
+		<campo desc="numeroPrestamo"	type="decimal"	ini="136" fin="145" size="10" value="" complemento="0" align="I"/>
+	</record>
+	<control>
+		<campo desc="filler"	type="char"	ini="0"   fin="104" size="105" value="" complemento=" " align="D"/>
+		<campo desc="tipoReg"	type="decimal"	ini="105" fin="105" size="1" value="2" complemento="" align=""/>
+		<campo desc="tipoTrans"	type="char"	ini="106" fin="106" size="1" value="P" complemento="" align=""/>
+		<campo desc="casos"		type="decimal"	ini="107" fin="117" size="10" value="" complemento="0" align="I"/>
+		<campo desc="importe"	type="decimal"	ini="117" fin="130" size="13" value="" complemento="0" align="I"/>
+	</control>
+</layout>	

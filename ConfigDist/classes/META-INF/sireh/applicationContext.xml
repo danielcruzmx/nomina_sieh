@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:util="http://www.springframework.org/schema/util" 
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:aop="http://www.springframework.org/schema/aop" 
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd                            
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+    <import resource="resources/business-service-config.xml"/>
+    <import resource="resources/integration-service-config.xml"/>
+    <import resource="resources/constant-value-defs.xml"/>
+    <import resource="resources/data-service-config.xml"/>
+    <import resource="resources/jdbc-sql-defs.xml"/>
+    <import resource="resources/view-sql-defs.xml"/>
+    <import resource="resources/dimension-sql-defs.xml"/>
+    <import resource="resources/drools-event-listeners.xml"/>
+    
+    <!-- SCM:batchMgr -->
+    <!-- <import resource="resources/batch-service-config.xml"/> -->
+    <!-- SCM:batchMgr -->
+    
+    <!-- SCM:fsnjBPM -->
+    <!-- <import resource="resources/bpm-service-config.xml"/> -->
+    <!-- SCM:fsnjBPM -->
+    
+    <!-- SCM:intWeb -->
+    <!-- <import resource="resources/integration-webflow-config.xml"/> -->
+    <!-- SCM:intWeb -->
+    
+    <bean id="mockUserDimensionService" class="gob.shcp.sireh.test.security.MockUserDimensionService" lazy-init="true"/>
+    <bean id="jasperJndiDataSource" class="org.springframework.jndi.JndiObjectFactoryBean" lazy-init="true">
+        <property name="jndiName" value="${jasper.datasource.jndi}"/>
+    </bean>
+    
+    <!-- RESOURCE BUNDLE DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ApplicationResourcesHolder"
+          p:applicationResources="META-INF/sireh/resources/bundles/message,META-INF/sireh/resources/bundles/audit,META-INF/sireh/resources/bundles/pattern,META-INF/resources/bundles/menu"/>
+    
+    <!-- AOP SERVICE DEFINITION (logging, throwing, auditing, profiling interceptors) -->
+    <aop:config>
+        <aop:aspect ref="loggingMethodInterceptor">
+            <aop:before pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS) and target(object)" method="beforeInvoking"/>
+            <aop:after-returning pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS) and target(object)"
+                                 method="afterReturning" returning="returnValue"/>
+            <aop:after-throwing pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS) and target(object)"
+                                method="afterThrowing" throwing="exception"/>
+        </aop:aspect>
+        <aop:aspect ref="throwableMethodInterceptor">
+            <aop:after-throwing pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and target(object)" 
+                                method="afterThrowing" throwing="exception"/>
+        </aop:aspect>
+        
+        <!-- SCM:auditing -->
+        <aop:aspect ref="auditableMethodInterceptor">
+        <aop:before          pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS) and target(object)" method="beforeInvoking"/>
+        <aop:after-returning pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS) and target(object)" method="afterReturning" returning="returnValue"/>
+        <aop:after-throwing  pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS) and target(object)" method="afterThrowing"  throwing="exception"/>
+        </aop:aspect>
+        
+        <!-- SCM:auditing -->
+        
+        <!-- SCM:profiling -->
+        <aop:aspect ref="profilingMethodInterceptor">
+        <aop:around          pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS) and target(object)" method="aroundExecuting"/>
+        </aop:aspect>
+        
+        <!-- SCM:profiling -->
+    </aop:config>
+    
+    <!-- TRANSFORMATION SERVICE MAPPING DEFINITION -->
+    <bean class="gob.shcp.fsn.service.factory.holder.DozerMappingResourcesHolder" p:dozerMappingResources="META-INF/sireh/resources/transformation-defs.xml"/>
+    
+    <!-- SERVICE TRANSACTION DEFINITION -->
+    <aop:config>
+        <!-- Supports only one layer at time, configure service or dao but not both. Therefore comment: execution(public * gob.shcp.sireh.data..*DAO.*(..)) -->
+        <aop:advisor advice-ref="txsirehAdvice" pointcut="execution(public * gob.shcp.sireh.service..*Service.*(..)) and within(gob.shcp.sireh.service..*BS)"/>
+    </aop:config>
+    <tx:advice id="txsirehAdvice" transaction-manager="gob.shcp.fsn.TransactionManager">
+        <tx:attributes>
+            <!-- Configure timeout and isolation attributes as nedded -->
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true"/>
+            <tx:method name="add*" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            <tx:method name="save*" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            <tx:method name="create*" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            <tx:method name="update*" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            <tx:method name="delete*" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            <tx:method name="updateNM*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="processPM*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="300"/>
+            <tx:method name="processSat*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="5400000"/>
+            <tx:method name="process" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            <tx:method name="onSuccess" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            <tx:method name="onFailure" propagation="REQUIRED" rollback-for="RuntimeException"/>
+            
+            <!-- Expediente personal -->
+            <tx:method name="deleteExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="deleteFileExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="getExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="getTotalExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="saveAutorizaRechazaExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="saveExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="saveFileExp*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="saveModDescripcionMasiva*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="updateActivosToHistoricoExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="updateHistoricoToActivoExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="updateRegistroToInactivoExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="verificaCambioEstatus*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            <tx:method name="verificaParentescoExpediente*" propagation="REQUIRED" rollback-for="RuntimeException" timeout="10000"/>
+            
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+    
+    <!-- AOP PERSISTENCE SERVICE DEFINITION (jdbc, ibatis or hibernate implementation injection) -->
+    <aop:config>
+        <!-- SCM:jdbc -->
+        <aop:aspect ref="dataAccessingMethodInterceptor">
+            <aop:declare-parents implement-interface="gob.shcp.fsn.data.DAO" delegate-ref="jdbcDAO" types-matching="gob.shcp.fsn.service.data.orm.JdbcDataService+"/>
+            <aop:around pointcut="execution(public * gob.shcp.sireh.data.jdbc..*DAO.*(..)) and this(object)" method="aroundExecuting"/>
+        </aop:aspect>
+        <!-- SCM:jdbc -->
+        <!-- SCM:ibatis -->
+        <!-- <aop:aspect ref="dataAccessingMethodInterceptor">
+        <aop:declare-parents implement-interface="gob.shcp.fsn.data.DAO" delegate-ref="iBatisDAO" 
+                             types-matching="gob.shcp.fsn.service.data.orm.IBatisDataService+"/>
+        <aop:around          pointcut="execution(public * gob.shcp.sireh.data.ibatis..*DAO.*(..)) and this(object)" method="aroundExecuting"/>
+      </aop:aspect> -->
+        <!-- SCM:ibatis -->
+        <!-- SCM:hibernate -->
+        <!-- <aop:aspect ref="dataAccessingMethodInterceptor">
+        <aop:declare-parents implement-interface="gob.shcp.fsn.data.DAO" delegate-ref="hibernateDAO" 
+                             types-matching="gob.shcp.fsn.service.data.orm.HibernateDataService+"/>
+        <aop:around          pointcut="execution(public * gob.shcp.sireh.data.hibernate..*DAO.*(..)) and this(object)" method="aroundExecuting"/>
+      </aop:aspect> -->
+        <!-- SCM:hibernate -->
+    </aop:config>
+    
+    <!-- HIBERNATE MAPPING DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.HibernateMappingResourcesHolder" p:hibernateMappingResources=""/>
+    
+    <!-- IBATIS CONFIGURATION -->
+    <bean class="gob.shcp.fsn.service.factory.holder.IBatisMappingResourcesHolder" p:sqlMappingResources=""/>
+</beans>

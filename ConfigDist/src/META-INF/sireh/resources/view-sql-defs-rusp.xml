@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+                <!--RUSP - Herramientas - Consulta de empleados-->
+                <prop key="tdPlaza-consultaEmpleadoRusp">
+                    SELECT P.ID_PLAZA AS ID_PLAZAS,P.ID_GRUPO_PAGO, G.DESC_GRUPO_PAGO, P.ID_PLAZA, P.PLAZA_RFC,
+                           E.NOMBRE_EMPLEADO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO,
+                           ES.CODIGO_PUESTO, ES.NOMBRE_PUESTO, P.ID_UNIDAD_NOM, U.DESC_UNIDAD,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN P.ID_PUESTO_PRE ELSE P.ID_PUESTO_NOM END ID_PUESTO,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN PH.DESC_PUESTO ELSE PU.DESC_PUESTO END DESC_PUESTO,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN AH.ID_NIVEL_PTO ELSE A.ID_NIVEL_PTO END ID_NIVEL_PTO,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN AH.ID_JERARQUIA ELSE A.ID_JERARQUIA END ID_JERARQUIA,
+                           CASE WHEN P.ID_GRUPO_PAGO = 'H' THEN JH.DESC_JERARQUIA ELSE J.DESC_JERARQUIA END DESC_JERARQUIA,
+                           A.ID_NOMBRAMIENTO, N.DESC_NOMBRAMIENTO, P.ID_OBLIGADO,
+                           P.ID_MOTIVO_OBLIGADO, M.DESC_MOTIVO_OBLIGADO
+                      FROM TD_PLAZA P, TD_EMPLEADO E, TD_ESCENARIO ES, TC_UNIDAD U, TC_PUESTO PU, TC_ATRIBUTO_PUESTO A, TC_JERARQUIA J, TC_NOMBRAMIENTO N, TC_PUESTO PH, 
+                           TC_ATRIBUTO_PUESTO AH, TC_JERARQUIA JH, TC_MOTIVO_OBLIGADO M, TC_GRUPO_PAGO G
+                     WHERE P.ID_SIT_PLAZA LIKE 'O%'
+                       AND ##P.ID_PLAZA##
+                       AND ##P.PLAZA_RFC##
+                       AND ##E.NOMBRE_EMPLEADO##
+                       AND ##E.PRIMER_APELLIDO##
+                       AND ##E.SEGUNDO_APELLIDO##
+                       AND P.PLAZA_RFC = E.RFC_EMPLEADO
+                       AND P.ID_PLAZA = ES.PLAZA_ESCENARIO(+)
+                       AND ES.FIN_ESCENARIO(+) = '31/12/2099'
+                       AND P.ID_PUESTO_NOM = PU.ID_PUESTO
+                       AND P.ID_PUESTO_NOM = A.ID_ATRIBUTO_PUESTO
+                       AND A.AP_FIN = '01/01/2099'
+                       AND A.ID_JERARQUIA = J.ID_JERARQUIA
+                       AND A.ID_NOMBRAMIENTO = N.ID_NOMBRAMIENTO
+                       AND P.ID_UNIDAD_NOM = U.ID_UNIDAD
+                       AND ##P.PLAZA_CICLO#=#OPERATIONAL_YEAR##
+                       AND ##U.UNI_CICLO#=#OPERATIONAL_YEAR##
+                       AND P.ID_MOTIVO_OBLIGADO = M.ID_MOTIVO_OBLIGADO(+)
+                       AND P.ID_GRUPO_PAGO = G.ID_GRUPO_PAGO
+                       AND P.ID_PUESTO_PRE = PH.ID_PUESTO
+                       AND P.ID_PUESTO_PRE = AH.ID_ATRIBUTO_PUESTO
+                       AND AH.AP_FIN = '01/01/2099'
+                       AND AH.ID_JERARQUIA = JH.ID_JERARQUIA
+                       AND ROWNUM <![CDATA[<]]> 200
+                  ORDER BY 1, 4
+                </prop>
+                
+                <!--RUSP - Herramientas - Padron de obligados-->
+                <prop key="tcRuspMotivoBaja-padronObligados">
+                    SELECT ID_MOTIVO_BAJA, ID_MOTIVO_BAJA || ' - ' || DESC_MOTIVO_BAJA
+                    FROM TC_RUSP_MOTIVO_BAJA
+                    ORDER BY ID_MOTIVO_BAJA ASC
+                </prop>
+                
+                <!--RUSP - Herramientas - Tipo de discapacidad-->
+                <prop key="tcTipoDiscapacidad-tipoDiscapacidad">
+                    SELECT ID_DISCAPACIDAD, ID_DISCAPACIDAD || ' - ' || DESC_DISCAPACIDAD AS DESCRIPCION
+                    FROM TC_TIPO_DISCAPACIDAD
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_DISCAPACIDAD ASC
+                </prop>
+
+                <!--RUSP - Interaz - Ciclos -->
+                <prop key="tdCiclos-Rusp">
+                    SELECT RB_CICLO, RB_CICLO AS CICLO
+                      FROM TD_RUSP_BAJAS
+                  GROUP BY RB_CICLO
+                  ORDER BY RB_CICLO DESC
+                </prop>
+                <!--RUSP - Interaz - Quincenas -->
+                <prop key="tdQuincenas-Rusp">
+                    SELECT RB_QNA_PAGO, RB_QNA_PAGO AS QNA
+                      FROM TD_RUSP_BAJAS
+                     WHERE RB_QNA_PAGO LIKE (? || '%')
+                  GROUP BY RB_QNA_PAGO
+                  ORDER BY RB_QNA_PAGO DESC
+                </prop>
+
+                <!--RUSP - Interaz - Ciclos - Datos Personales -->
+                <prop key="tdCiclos-Datos-Rusp">
+                    SELECT SUBSTR(RD_QNA_PAGO,1,4), SUBSTR(RD_QNA_PAGO,1,4) AS CICLO
+                      FROM TD_RUSP_DATOSPERS
+                  GROUP BY SUBSTR(RD_QNA_PAGO,1,4)
+                  ORDER BY SUBSTR(RD_QNA_PAGO,1,4) DESC
+                </prop>
+                <!--RUSP - Interaz - Quincenas - Datos Personales -->
+                <prop key="tdQuincenas-Datos-Rusp">
+                    SELECT RD_QNA_PAGO, RD_QNA_PAGO AS QNA
+                      FROM TD_RUSP_DATOSPERS
+                     WHERE RD_QNA_PAGO LIKE (? || '%')
+                  GROUP BY RD_QNA_PAGO
+                  ORDER BY RD_QNA_PAGO DESC
+                </prop>
+                <!--RUSP - Interaz - Ciclos - Informacicón Básica -->
+                <prop key="tdCiclos-Basica-Rusp">
+                    SELECT SUBSTR(RIB_QNA_PAGO,1,4), SUBSTR(RIB_QNA_PAGO,1,4) AS CICLO
+                      FROM TD_RUSP_INFO_BASICA
+                  GROUP BY SUBSTR(RIB_QNA_PAGO,1,4)
+                  ORDER BY SUBSTR(RIB_QNA_PAGO,1,4) DESC
+                </prop>
+                <!--RUSP - Interaz - Quincenas - Información Básica -->
+                <prop key="tdQuincenas-Basica-Rusp">
+                    SELECT RIB_QNA_PAGO, RIB_QNA_PAGO AS QNA
+                      FROM TD_RUSP_INFO_BASICA
+                     WHERE RIB_QNA_PAGO LIKE (? || '%')
+                  GROUP BY RIB_QNA_PAGO
+                  ORDER BY RIB_QNA_PAGO DESC
+                </prop>
+
+                <!--RUSP - Herramientas - Nivel de responsabilidad-->
+                <prop key="tcRuspResponsabilidad-nivelesResp">
+                    SELECT ID_COORDINACION, ID_COORDINACION || ' - ' || DESC_COORDINACION
+                    FROM TC_RUSP_RESPONSABILIDAD
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_COORDINACION ASC
+                </prop>
+                
+                <!-- RUSP - Proceso - Informacion basica RUSP Ciclo -->
+                <prop key="ruspInformacionBasica-ciclo">
+                    SELECT  SUBSTR(RC_QNA_CAPTURA,0,4) clave, SUBSTR(RC_QNA_CAPTURA,0,4) valor
+                    FROM    tn_reg_control
+                            GROUP BY SUBSTR(RC_QNA_CAPTURA,0,4)
+                            ORDER BY clave desc
+                </prop>
+                
+                <!-- RUSP - Proceso - Informacion basica RUSP Quincena -->
+                <prop key="ruspInformacionBasica-quincena">
+                    SELECT  distinct SUBSTR(RC_QNA_CAPTURA,5,7) clave, SUBSTR(RC_QNA_CAPTURA,5,7) valor
+                    FROM    tn_reg_control
+                    WHERE   SUBSTR(RC_QNA_CAPTURA,0,4) = SUBSTR(?,0,4)
+                            order by clave desc 
+                </prop>
+                <prop key="ruspInformacionBasica-escenario">
+                    SELECT ID_ESCENARIO clave, ID_ESCENARIO valor
+                    FROM TD_ESCENARIO
+                    GROUP BY ID_ESCENARIO
+                    ORDER BY 1 DESC 
+                </prop> 
+                <prop key="ruspInformacionBasica-nominas">
+                    SELECT   h.id_grupopago_nom,
+                             h.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                             h.hp_qna_pago qnapago, h.hp_num_complem numcomplem,
+                             h.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                             h.hp_consec_nomina seleccionconsecnomina, h.hp_qna_pago,
+                             h.id_tipo_nomina,
+                             MAX (TO_CHAR (h.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                               FROM tn_historico_pago h,
+                                    td_empleado e,
+                                    tc_atributo_puesto a,
+                                    tn_nomina n,
+                                    tc_grupo_pago g,
+                                    tc_tipo_nomina t
+                              WHERE h.hp_folio in (select cp_folio from tn_concepto_pagado where h.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                                AND h.hp_num_pension = 0
+                                and h.id_tipo_nomina = 'OR'
+                                AND h.hp_rfc = e.rfc_empleado
+                                AND h.id_puesto_nom = a.id_atributo_puesto
+                                AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                                AND h.hp_consec_nomina = n.id_nomina
+                                AND h.hp_qna_pago = n.nom_qna_captura
+                                AND h.hp_num_complem = n.nom_num_complem
+                                AND h.id_tipo_nomina = n.id_tipo_nomina
+                                AND h.id_grupopago_nom = g.id_grupo_pago
+                                AND h.id_tipo_nomina = t.id_tipo_nomina
+                                AND ##h.hp_qna_pago##
+                                GROUP BY h.id_grupopago_nom,
+                                 h.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                                 h.hp_qna_pago,
+                                 h.hp_num_complem,
+                                 h.hp_consec_nomina,
+                                 t.desc_tipo_nomina,
+                                 h.hp_consec_nomina,
+                                 h.hp_qna_pago,
+                                 h.id_tipo_nomina
+                           union
+                           SELECT   h1.id_grupopago_nom,
+                             h1.id_grupopago_nom || ' - ' || g.desc_grupo_pago gpopago,
+                             h1.hp_qna_pago qnapago, h1.hp_num_complem numcomplem,
+                             h1.hp_consec_nomina consecnomina, t.desc_tipo_nomina tiponomina,
+                             h1.hp_consec_nomina seleccionconsecnomina, h1.hp_qna_pago,
+                             h1.id_tipo_nomina,
+                             MAX (TO_CHAR (h1.hp_ini_pago, 'dd/MM/yyyy')) hp_ini_pago
+                               FROM tn_historico_pago h1,
+                                    td_empleado e,
+                                    tc_atributo_puesto a,
+                                    tn_nomina n,
+                                    tc_grupo_pago g,
+                                    tc_tipo_nomina t
+                              WHERE h1.hp_folio in (select cp_folio from tn_concepto_pagado where h1.hp_dif_folio = cp_dif_folio and id_tipo_cpto = 'D' and id_cpto_pago IN ('0D','03','08'))
+                                AND h1.hp_num_pension = 0
+                                and h1.id_tipo_nomina = 'CJ'
+                                AND h1.hp_rfc = e.rfc_empleado
+                                AND h1.id_puesto_nom = a.id_atributo_puesto
+                                AND TO_CHAR (a.ap_fin, 'dd/mm/yyyy') = '01/01/2099'
+                                AND h1.hp_consec_nomina = n.id_nomina
+                                AND h1.hp_qna_pago = n.nom_qna_captura
+                                AND h1.hp_num_complem = n.nom_num_complem
+                                AND h1.id_tipo_nomina = n.id_tipo_nomina
+                                AND h1.id_grupopago_nom = g.id_grupo_pago
+                                AND h1.id_tipo_nomina = t.id_tipo_nomina
+                                AND ##h1.hp_qna_pago##
+                                GROUP BY h1.id_grupopago_nom,
+                                 h1.id_grupopago_nom || ' - ' || g.desc_grupo_pago,
+                                 h1.hp_qna_pago,
+                                 h1.hp_num_complem,
+                                 h1.hp_consec_nomina,
+                                 t.desc_tipo_nomina,
+                                 h1.hp_consec_nomina,
+                                 h1.hp_qna_pago,
+                                 h1.id_tipo_nomina
+                           ORDER BY 1,4
+                </prop>
+                <prop key="ruspDatosPersonales-nominas">
+                    select rd_qna_pago clave, rd_qna_pago valor 
+                    FROM TD_RUSP_DATOSPERS
+                    group by rd_qna_pago 
+                    order by rd_qna_pago desc
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

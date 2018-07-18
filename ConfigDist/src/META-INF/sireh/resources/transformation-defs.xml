@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mappings PUBLIC "-//DOZER//DTD MAPPINGS//EN" "http://dozer.sourceforge.net/dtd/dozerbeanmapping.dtd">
+
+<mappings>
+  <configuration>
+    <stop-on-errors>true</stop-on-errors>
+    <date-format>dd/MM/yyyy HH:mm:ss</date-format>
+    <wildcard>false</wildcard>
+    <trim-strings>false</trim-strings>
+    <!--copy-by-references>
+        java.util.Collection
+    </copy-by-references-->
+    <!--custom-converters>
+      <converter type="gob.shcp.fsn.service.transform.support.converter.DomainModelConverter">
+        <class-a>gob.shcp.fsn.data.Domain</class-a>
+        <class-b>gob.shcp.fsn.model.Model</class-b>
+      </converter>
+     </custom-converters-->
+  </configuration>
+
+<!--mapping>
+      <class-a>test.gob.shcp.fsn.domain.Country</class-a>
+      <class-b>test.gob.shcp.fsn.domain.Country</class-b>    
+      <field-exclude> 
+        <a>locations</a> 
+        <b>locations</b> 
+      </field-exclude>           
+      <field-exclude> 
+        <a>region</a> 
+        <b>region</b> 
+      </field-exclude>           
+    </mapping-->
+</mappings>

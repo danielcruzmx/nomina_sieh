@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MenuConfig>
+    <Displayers>
+        <Displayer name="CSSIFrameMenu" type="gob.shcp.fsn.control.view.menu.CSSIFrameMenuDisplayer"/>
+    </Displayers>
+    <Menus>
+       <!--Oficina Virtual *************************************************************************************************************************************************** -->
+        <Menu title="expediente.menu" name="expediente" roles="AUTH_USERS">
+            <Item name="consulta" title="expediente.consulta.activos" location="/sireh/expediente/consultaBusca.do"/>
+            <Item name="consutla" title="expediente.consulta" location="/sireh/expediente/expedienteBusca.do"/>
+            <Item name="consutla" title="expediente.consulta.usuario" location="/sireh/expediente/expedienteRfc.do"/>
+            <Item name="consutla" title="expediente.consulta.curriculum" location="/sireh/expediente/curriculumPublico.do"/>
+            <Item name="gestionexp" title="expediente.gestionexp">
+                <Item name="gestionbuscausu" title="expediente.gestion.gestionbuscarusu" location="/sireh/gestionExpediente/buscarUsuarios.do"/>
+                <Item name="gestionmanttousu" title="expediente.gestion.gestionmanttousu" location="/sireh/gestionExpediente/editarUsuarios.do"/>
+                <Item name="gestionbuscaexp" title="expediente.gestion.gestionbuscarexp" location="/sireh/gestionExpediente/busquedaExpedientes.do"/>
+                <Item name="gestiondatosexp" title="expediente.gestion.gestiondatosexp" location="/sireh/gestionExpediente/controlExpedientes.do"/>
+            </Item>
+            <Item name="gestiondocs" title="expediente.gestiondocs">
+                <Item name="gestionregistro" title="expediente.gestiondocs.gestionregistro" location="/sireh/gestionDocumentos/busquedaDocEmpleado.do"/>
+                <Item name="gestionfaltaob" title="expediente.gestiondocs.gestionfaltaob" location="/sireh/gestionDocumentos/faltantesObligatorios.do"/>
+                <Item name="gestionfaltalab" title="expediente.gestiondocs.gestionfaltalab" location="/sireh/gestionDocumentos/faltantesLaborales.do"/>
+                <Item name="modificacionDescripcion" title="expediente.gestiondocs.modificacionDescripcion" location="/sireh/gestionDocumentos/busquedaModDescripcion.do"/>
+                <!--<Item name="modificacionEstatus" title="expediente.gestiondocs.modificacionEstatus" location="/sireh/gestionDocumentos/busquedaModEstatus.do"/>-->
+                <Item name="modDescripcionMasiva" title="expediente.gestiondocs.modDescripcionMasiva" location="/sireh/gestionDocumentos/modDescripcionMasiva.do"/>
+                <Item name="eliminaDocumentos" title="expediente.gestiondocs.eliminaDocumentos" location="/sireh/gestionDocumentos/buscaDocumentosExpediente.do"/>
+            </Item>
+              <!-- <Item name="notificaciones" title="oficinaVirtual.notificaciones" location="/sireh/notificacion/consultaNotificaciones.do"/-->
+        </Menu>
+            <!--<Item name="jcr_a" title="jcr.menu.a" roles="AUTH_USERS">
+                <Item name="jcra1" title="jcr.menu.search"    location="/sireh/jcr/initSearchFiles.do"/>
+                <Item name="jcra2" title="jcr.menu.add"    location="/sireh/jcr/initSaveFile.do"/>
+                <Item name="jcra3" title="jcr.menu.add.multiple"    location="/sireh/jcr/initSaveMultipleFiles.do"/>
+            </Item>
+            <Item name="jcr_b" title="jcr.menu.b" roles="AUTH_USERS">
+                <Item name="jcrb1" title="jcr.menu.search"    location="/sireh/jcr/initSearch2Files.do"/>
+                <Item name="jcrb2" title="jcr.menu.add"    location="/sireh/jcr/initSave2File.do"/>
+            </Item>-->
+        
+        
+        <!-- Trámites ******************************************************************************************************************************************************** -->
+        <Menu name="tramites" title="expediente.tramites" roles="AUTH_USERS" >
+            <Item name="autorizaVacaciones" title="expediente.tramites.autorizaVacaciones" location="/sireh/tramites/autIndivVacs.do"/>
+            <Item name="solicitaVacaciones" title="expediente.tramites.solicitaVacaciones" location="/sireh/tramites/solIndivVacs.do"/>
+            <Item name="hojasunicas" title="expediente.tramites.hojasunicas"> 
+                <Item name="hojasunicas" title="expediente.tramites.hojasunicas.caratula" location="/sireh/gestionExpediente/husCaratula.do"/>
+                <Item name="hojasunicas" title="expediente.tramites.hojasunicas.detalle" location="/sireh/gestionExpediente/husDetalle.do"/>
+            </Item>
+        </Menu>
+        
+        <!--Servicios ******************************************************************************************************************************************************** -->
+        <Menu name="servicios" title="expediente.servicios" roles="AUTH_USERS" >
+                <Item name="constanciaSueldos" title="expediente.servicios.constanciaSueldos" location="/sireh/servicios/constanciaSueldos.do"/>
+                <Item name="curriculumVitae" title="expediente.servicios.curriculumVitae" location="/sireh/servicios/expLabCV.do"/>
+                <Item name="tablas" title="expediente.servicios.actualizarRegPorTabla">
+                    <Item name="tdPlaza" title="expediente.servicios.actualizarRegPorTabla.tdPlaza" location="/sireh/servicios/updateTdPlaza.do"/>
+                    <Item name="tdPlaza" title="expediente.servicios.actualizarRegPorTabla.tnMovtosEmplPlaza" location="/sireh/servicios/updateTnMovtosEmplPlaza.do"/>
+                    <Item name="tdPlaza" title="expediente.servicios.actualizarRegPorTabla.tdEmpleado" location="/sireh/servicios/updateTdEmpleado.do"/>
+                </Item>
+        </Menu>
+        
+        <!--Consultas ******************************************************************************************************************************************************** -->
+         <Menu name="consultas" title="expediente.consultas" roles="AUTH_USERS" >
+                <Item name="datosPersonales" title="expediente.consultas.datosPersonales" location="/sireh/consultas/datosPersonales.do"/>
+                <Item name="familiaresDependientes" title="expediente.consultas.familiaresDependientes" location="/sireh/consultas/familiaresDependientes.do"/>
+                <Item name="comprobantesPago" title="expediente.consultas.comprobantesPago" location="/sireh/consultas/comprobantesPago.do"/>   
+                <Item name="incidenciasLaborales" title="expediente.consultas.incidenciasLaborales" location="/sireh/consultas/incidenciasLaborales.do"/>
+                <Item name="notasMerito" title="expediente.consultas.notasMerito" location="/sireh/consultas/notasMerito.do"/>
+                <Item name="capacitacionCursos" title="expediente.consultas.capacitacionCursos" location="/sireh/consultas/capacitacionCursos.do"/>
+                <Item name="servicioProfesional" title="expediente.consultas.servicioProfesional" location="/sireh/consultas/servicioProfesional.do"/>
+        </Menu>
+
+        <!--SPC ************************************************************************************************************************************************************** -->
+        <Menu name="spc" title="spc.menu" roles="AUTH_USERS">
+            <Item name="capcer" title="spc.capcer">
+                <Item name="cursos" title="spc.capcer.consultas">
+                    <Item name="secuencia" title="spc.capcer.consultas.secuencia" location="/sireh/consultaCursoSPC/consultaCursoSPCBuscaEmpl.do"/>
+                    <Item name="secuencia" title="spc.capcer.consultas.secuencia.cursos.instructor" location="/sireh/consultaCursoSPC/consultaCursoSPCBuscaInstr.do"/>
+                    <Item name="calendario" title="spc.capcer.consultas.calendario" location="/sireh/consultaCursoSPC/consultaCalendario.do"/>
+                    <Item name="pacSHCP" title="spc.capcer.consultas.pacSHCP" location="/sireh/consultaCursoSPC/consultaPACSHCP.do"/>
+                    <Item name="reporteRHNet" title="spc.capcer.consultas.reporteRHNet" location="/sireh/consultaCursoSPC/consultaReporteRHNet.do"/>
+                    <Item name="layoutRHNet" title="spc.capcer.consultas.layoutRHNet" location="/sireh/consultaCursoSPC/consultaLayoutRHNet.do"/>
+                    <Item name="presupuesto" title="spc.capcer.consultas.presupuesto" location="/sireh/consultaCursoSPC/consultaPresupuesto.do"/>
+                    <Item name="avancePAC" title="spc.capcer.consultas.avancePAC" location="/sireh/consultaCursoSPC/consultaAvancePAC.do"/>
+                    <Item name="consultaAvanceCertificacion" title="spc.capcer.consultas.consultaAvanceCertificacion" location="/sireh/consultaCursoSPC/consultaAvanceCertificacion.do"/>
+                </Item>
+                <Item name="cursos" title="spc.capcer.registro">
+                    <Item name="registro" title="spc.capcer.registro.registrarCurso" location="/sireh/registroCursoSPC/consultaCurso.do"/>
+                    <Item name="asignarCalendario" title="spc.capcer.registro.asignarCalendario" location="/sireh/registroCursoSPC/consultaAsignarCalendario.do"/>
+                    <Item name="asignarParticipante" title="spc.capcer.registro.asignarParticipante" location="/sireh/registroCursoSPC/consultaAsignarParticipante.do"/>
+                    <Item name="asignarInstructor" title="spc.capcer.registro.asignarInstructor" location="/sireh/registroCursoSPC/consultaAsignarInstructor.do"/>
+                    <Item name="contratos" title="spc.capcer.registro.asignarContrato" location="/sireh/registroCursoSPC/consultaContrato.do"/>
+                </Item>
+                <Item name="cursos" title="spc.capcer.seguimiento">
+                    <Item name="calificaciones" title="spc.capcer.seguimiento.calificaciones" location="/sireh/seguimientoCursoSPC/consultaEvaluarParticipante.do"/>
+                    <Item name="evaluacionesReaccion" title="spc.capcer.seguimiento.evaluacionesReaccion" location="/sireh/seguimientoCursoSPC/consultaEvaluacionReaccion.do"/>
+                    <Item name="constancias" title="spc.capcer.seguimiento.constancias" location="/sireh/seguimientoCursoSPC/consultaCargarConstancia.do"/>
+                    <Item name="bitacora" title="spc.capcer.seguimiento.bitacora" location="/sireh/seguimientoCursoSPC/consultaBitacora.do"/>
+            </Item>
+            <Item name="cursos" title="spc.capcer.cierre">
+            </Item>
+            </Item>
+            <!--RUSP -->
+            <!--<Menu title="rusp.menu" name="rusp.menu" roles="AUTH_USERS">-->
+            <Item name="rusp.menu" title="rusp.menu">
+                <Item name="rusp.proceso" title="rusp.proceso">
+                    <Item name="rusp.proceso.informacionBasica" title="rusp.proceso.informacionBasica" location="/sireh/gestionRusp/pInformacionBasica.do"/>
+                    <Item name="rusp.proceso.bajas" title="rusp.proceso.bajas" location="/sireh/gestionRusp/pBajas.do"/>
+                    <Item name="rusp.proceso.datosPersonales" title="rusp.proceso.datosPersonales" location="/sireh/gestionRusp/pDatosPersonales.do"/>
+                </Item>
+                <Item name="rusp.interfaz" title="rusp.interfaz">
+                    <Item name="rusp.interfaz.informacionBasica" title="rusp.interfaz.informacionBasica" location="/sireh/gestionRusp/interfazInfoBasica.do"/>
+                    <Item name="rusp.interfaz.bajas" title="rusp.interfaz.bajas" location="/sireh/gestionRusp/interfazBajas.do"/>
+                    <Item name="rusp.interfaz.datosPersonales" title="rusp.interfaz.datosPersonales" location="/sireh/gestionRusp/interfazDatosPersonales.do"/>
+                </Item>
+                <Item name="rusp.herramientas" title="rusp.herramientas">
+                    <Item name="rusp.herramientas.padronObligados" title="rusp.herramientas.padronObligados" location="/sireh/herramientasRusp/consultaPadronObligados.do"/>
+                    <Item name="rusp.herramientas.tipoDiscapacidad" title="rusp.herramientas.tipoDiscapacidad" location="/sireh/herramientasRusp/consultaTipoDiscapacidad.do"/>
+                    <Item name="rusp.herramientas.nivelesResponsabilidad" title="rusp.herramientas.nivelesResponsabilidad" location="/sireh/herramientasRusp/consultaNivelesResp.do"/>  
+                </Item>
+                    <Item name="rusp.informacion" title="rusp.informacion" location="/sireh/gestionRusp/gestionDatos.do"/>
+                    </Item>
+
+        </Menu>
+         
+        <!--Gestion de plazas *************************************************************************************************************************************************-->
+        <Menu title="gestionplazas.menu" name="gestionplazas" roles="AUTH_USERS">
+            <Item name="cargainicio" title="cargainicio.gestionplazas" location="/sireh/plazaGestion/cargaInicio.do"/>
+            <Item name="consultaplazas" title="consultaplaza.gestionplazas">
+                <Item name="consultalinea" title="consultalinea.consultaplazas.gestionplaza" pkg="plaza" location="/sireh/plazaGestion/consultaGeneral.do"/>
+                <Item name="consultaplazasoporte" title="consultaplazasoporte.consultaplazas.gestionplaza" pkg="plaza" location="/sireh/plazaGestion/consultaPlazaSoporte.do"/>
+                <Item name="consultaplazasxadecuacion" title="consultaplazaxadecuacion.consultaplazas.gestionplaza" pkg="plaza" location="/sireh/plazaGestion/consultaPlazaAdecuacion.do"/>
+                <Item name="consultamovtospersonal" title="consultamovtospersonal.consultaplazas.gestionplaza" pkg="plaza" location="/sireh/plazaGestion/consultaMovtosPersonal.do"/>
+                <Item name="consultadinamico" title="consultadinamico.consultaplazas.gestionplaza" pkg="plaza" location="/sireh/plazaGestion/consultaVigentesDinamico.do"/>
+                <Item name="consultaspc" title="consultaspc.consultaplazas.gestionplaza" pkg="plaza" location="/sireh/plazaGestion/consultaPlazaSpc.do"/>
+            </Item>
+            <Item name="plazaestructura" title="plazaEstructura.gestionplazas">
+                <Item name="MovtosDatosPtalesPlaza" title="MovtosDatosPtalesPlaza.plazaestructura.gestionplaza">
+                    <Item name="creacion" title="creacion.MovtosDatosPtalesPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructuraMasiva/initCreacion.do"/>
+                    <Item name="conversion" title="conversion.MovtosDatosPtalesPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructuraMasiva/initConversion.do"/>
+                    <Item name="reubicacion" title="reubicacion.MovtosDatosPtalesPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructuraMasiva/initReubicacion.do"/>
+                    <Item name="cancelacion" title="cancelacion.MovtosDatosPtalesPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructuraMasiva/initCancelacion.do"/>
+                    <Item name="transferencia" title="transferencia.MovtosDatosPtalesPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructuraMasiva/initTransferencia.do"/>
+                </Item>
+                <Item name="MovtosDatosFisPlaza" title="MovtosDatosFisPlaza.plazaestructura.gestionplaza">
+                    <Item name="liberaPlaza" title="liberaPlaza.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaLiberaPlaza.do"/>
+                    <Item name="cambioSitPlaza" title="cambioSitPlaza.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaCambioSitPlaza.do"/>
+                    <Item name="cambioPtoFisico" title="cambioPtoFisico.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consCambioPtoFisicoPlaza.do"/>
+                    <Item name="cambioURFisica" title="cambioURFisica.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaCambioURFisicaPlaza.do"/>
+                    <Item name="modDenominacionFuncional" title="modDenominacionFuncional.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consMoDenominacionFuncional.do"/>
+                    <Item name="modTipoSP" title="modTipoSP.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaModificaTipoSP.do"/>
+                    <Item name="asignaSoporte" title="asignaSoporte.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaAsignaPlazaSoporte.do"/>
+                    <Item name="eliminaSoporte" title="eliminaSoporte.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaEliminaPlazaSoporte.do"/>
+                    <Item name="prorrogaArt34" title="prorrogaArt34.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaProrrogaArt.do"/>
+                    <Item name="observacionesPlaza" title="observacionesPlaza.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/consultaObservacionesPlaza.do"/>
+                    <Item name="modDatosPtalesDosPlazas" title="modDatosPtalesDosPlazas.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/intercamDatosPresupuestales.do"/>
+                    <Item name="promocionPermuta" title="promocionPermuta.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/promocionPermuta.do"/>
+                    <Item name="plazaConcurso" title="plazaConcurso.MovtosDatosFisPlaza.plazaestructura.gestionplaza" pkg="plaza.estructura" location="/sireh/plazaEstructura/plazaConcurso.do"/>
+                </Item>
+            </Item>
+            <Item name="plazasEventuales" title="plazasEventuales.gestionplazas">
+                <Item name="MovtosMasivos" title="MovtosMasivos.plazasEventuales.gestionplaza">
+                    <Item name="creacion" title="creacion.MovtosMasivos.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventualMasiva/initCreacion.do"/>
+                    <Item name="altas" title="altas.MovtosMasivos.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventualMasiva/processAlta.do"/>
+                    <Item name="bajas" title="bajas.MovtosMasivos.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventualMasiva/processBaja.do"/>
+                    <Item name="promociones" title="promociones.MovtosMasivos.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventualMasiva/initPromocion.do"/>
+                    <Item name="cambiosAdscripcion" title="cambiosAdscripcion.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventualMasiva/processCambioAdscripcion.do"/>
+                    <Item name="prorrogasContrato" title="prorrogaContrato.MovtosMasivos.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventualMasiva/processProrroga.do"/>
+                    <Item name="reduccionContrato" title="reduccionContrato.MovtosMasivos.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventualMasiva/processReduccion.do"/>
+                </Item>
+                <Item name="MovtosPlaza" title="MovtosPlaza.plazasEventuales.gestionplaza">
+                    <Item name="creacion" title="creacion.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/creacionPlaza.do"/>
+                    <Item name="libera" title="libera.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/consultaLiberaPlaza.do"/>
+                    <Item name="cambioPtoFis" title="cambioPtoFis.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/consCambioPtoFisicoPlaza.do"/>
+                    <Item name="cambioSitPlaz" title="cambioSitPlaz.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/consultaCambioSitPlaza.do"/>
+                    <Item name="cambioAdscripcionFisica" title="cambioAdscripcionFisica.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/consultaCambioURFisicaPlaza.do"/>
+                    <Item name="modificasTipoSP" title="modificasTipoSP.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/consultaModificaTipoSP.do"/>
+                    <Item name="prorrogaContrato" title="prorrogaContrato.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/consultaProrrogaContrato.do"/>
+                    <Item name="depuraPlazas" title="depuraPlazas.MovtosPlaza.plazasEventuales.gestionplaza" pkg="plaza.eventual" location="/sireh/plazaEventual/consultaDepuraPlazas.do"/>
+                </Item>
+            </Item>
+            <Item name="plazasHonorarios" title="plazasHonorarios.gestionplazas">
+                <Item name="MovtosMasivos" title="MovtosMasivos.plazasHonorarios.gestionplaza">
+                    <Item name="creacion" title="creacion.MovtosMasivos.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarioMasiva/initCreacion.do"/>
+                    <Item name="altas" title="altas.MovtosMasivos.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarioMasiva/processAlta.do"/>
+                    <Item name="bajas" title="bajas.MovtosMasivos.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarioMasiva/processBaja.do"/>
+                    <Item name="cambiosAdscripcion" title="cambiosAdscripcion.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarioMasiva/processCambioAdscripcion.do"/>
+                    <Item name="prorrogasContrato" title="prorrogaContrato.MovtosMasivos.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarioMasiva/processProrroga.do"/>
+                </Item>
+                <Item name="MovtosPlaza" title="MovtosPlaza.plazasHonorarios.gestionplaza">
+                    <Item name="creacion" title="creacion.MovtosPlaza.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarios/creacionPlaza.do"/>
+                    <Item name="libera" title="libera.MovtosPlaza.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarios/consultaLiberaPlaza.do"/>
+                    <Item name="prorrogaContrato" title="prorrogaContrato.MovtosPlaza.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarios/consultaProrrogaContrato.do"/>
+                    <Item name="cambioSitPlaz" title="cambioSitPlaz.MovtosPlaza.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarios/consultaCambioSitPlaza.do"/>
+                    <Item name="modificaImporte" title="modificaImporte.MovtosPlaza.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarios/consultaModificaImporte.do"/>
+                    <Item name="depuraPlazas" title="depuraPlazas.MovtosPlaza.plazasHonorarios.gestionplaza" pkg="plaza.honorarios" location="/sireh/plazaHonorarios/consultaDepuraPlazas.do"/>
+                </Item>
+            </Item>
+        </Menu>
+        
+        <!--Movimientos Nomina *********************************************************************************************************************************************** -->
+        <Menu title="movimientos.menu" name="movimientosnomina" roles="AUTH_USERS">
+            <Item title="movimientos.personal" name="admonper">
+                <Item name="gestionper" title="movimientos.personal.altas" pkg="nomina.movimientos" location="/sireh/movimientoNomina/altas.do"/>
+                <Item name="gestionper" title="movimientos.personal.bajas" pkg="nomina.movimientos" location="/sireh/movimientoNomina/bajas.do"/>
+                <Item name="gestionper" title="movimientos.personal.promociones" pkg="nomina.movimientos" location="/sireh/movimientoNomina/promociones.do"/>
+                <Item name="gestionper" title="movimientos.personal.licencias" pkg="nomina.movimientos" location="/sireh/movimientoNomina/licencias.do"/>
+                <Item name="gestionper" title="movimientos.personal.prorrogas" pkg="nomina.movimientos" location="/sireh/movimientoNomina/prorrogas.do"/>
+            </Item>
+            <Item title="movimientos.datos" name="admondatos">
+                <Item name="gestioncamrfc" title="gestioncamrfc.gestion.camrfc" pkg="nomina.movimientos" location="/sireh/cambioNomina/consultarRfc.do"/>
+                <Item name="gestioncamdatper" title="gestioncamdatper.gestion.camdatper" pkg="nomina.movimientos" location="/sireh/cambioNomina/consultarCurp.do"/>
+                <Item name="gestioncamdatdom" title="gestioncamdatdom.gestion.camdatdom" pkg="nomina.movimientos" location="/sireh/cambioNomina/consultarDomicilio.do"/>
+                <Item name="gestioncamctazp" title="gestioncamctazp.gestion.camctazp" pkg="nomina.movimientos" location="/sireh/cambioNomina/consultarBancarios.do"/>
+                <Item name="gestioncamctazp" title="gestioncamctazp.gestion.adicionales" pkg="nomina.movimientos" location="/sireh/cambioNomina/consultarComplementarios.do"/>
+            </Item>
+            <Item title="movimientos.cptos" name="admoncptos">
+                <Item name="gestioncptogral" title="gestioncptogral.gestion.cptogral" pkg="nomina.movimientos" location="/sireh/actualizacionNomina/listarEmpleadosConConceGen.do"/>
+                <Item name="gestioncptoterins" title="gestioncptoterins.gestion.cptoterins" pkg="nomina.movimientos" location="/sireh/actualizacionNomina/listarEmpleadosConConTercer.do"/>
+                <Item name="gestioncptodev" title="gestioncptodev.gestion.cptodev" pkg="nomina.movimientos" location="/sireh/actualizacionNomina/listarEmpleadosConConDeDevo.do"/>
+                <Item name="gestioncptorein" title="gestioncptorein.gestion.cptorein" pkg="nomina.movimientos" location="/sireh/actualizacionNomina/listarEmpleadosConConDeRein.do"/>
+                <Item name="gestioncptofonac" title="gestioncptofonac.gestion.cptofonac" pkg="nomina.movimientos" location="/sireh/actualizacionNomina/gestionFonac.do"/>
+                <Item name="gestioncptoerafed" title="gestioncptoerafed.gestion.cptoerafed" pkg="nomina.movimientos" location="/sireh/actualizacionNomina/gestionErarioFed.do"/>
+                <Item title="cargaarchivos.genera" name="admoncarga">
+                    <Item name="cargaarchp" title="cargaarchivos.genera.cargaarchp" pkg="nomina.terceros" location="/sireh/tercerosNomina/cargarArchPercep.do"/>
+                    <Item name="actualizaconceptoscontrol" title="actualizacion.conceptos.control" pkg="nomina.movimientos" location="/sireh/tercerosNomina/cargarArchCptosCtrl.do"/>
+                    <Item name="actualizaconceptosreferencias" title="actualizacion.conceptos.referencias" pkg="nomina.movimientos" location="/sireh/tercerosNomina/cargarArchCptosRefCalc.do"/>
+                </Item>
+            </Item>
+            <Item title="movimientos.inci" name="admoninci">
+                <Item name="gestionincifaldev" title="gestionincifaldev.gestion.incifaldev" pkg="nomina.movimientos" location="/sireh/incidenciasNomina/gestionFaltas.do"/>
+                <Item name="gestionincilic" title="gestionincilic.gestion.incilic" pkg="nomina.movimientos" location="/sireh/incidenciasNomina/gestionLicenciasMedicas.do"/>
+                <Item name="gestionincidiaeco" title="gestionincidiaeco.gestion.incidiaeco" pkg="nomina.movimientos" location="/sireh/incidenciasNomina/gestionDiasEconomicos.do"/>
+            </Item>
+            <!--<Item title="gestionbene.gestion.bene" name="gestionbene" pkg="nomina.movimientos" location="/sireh/movimientoNomina/gestionBeneficiario.do"/-->
+            <Item title="gestionpen.gestion.pen" name="gestionpen" pkg="nomina.movimientos" location="/sireh/movimientoNomina/gestionPension.do"/>
+            <Item title="movimientos.capcan" name="admoncapcan" pkg="nomina.movimientos" location="/sireh/movimientoNomina/cancelaPago.do"/>
+            <Item title="movimientos.bloqueo" name="admoncapcan" pkg="nomina.movimientos" location="/sireh/movimientoNomina/bloqueoDeposito.do"/>
+        </Menu>
+        
+        <!--Calculo Nomina *************************************************************************************************************************************************** -->
+        <Menu title="calculo.menu" name="calculonomina" roles="AUTH_USERS">
+            <Item title="calculo.admonnomina" name="admonnomina" pkg="nomina.calculo" location="/sireh/gestionNomina/consultaNominas.do"/>
+            <Item title="calculo.cierre" name="cierre">
+                <Item title="calculo.admonnomina.cierre" name="admonnomina" pkg="nomina.calculo" location="/sireh/gestionNomina/consultaNominasCierre.do"/>
+                <Item title="calculo.admonnomina.acumulado.cpd" name="admonnomina" pkg="nomina.calculo" location="/sireh/gestionNomina/acumConcentPercepDeduc.do"/>
+            </Item>
+            <Item title="calculo.admonqna" name="admonqna">
+                <Item name="gestioncalperest" title="gestioncalperest.gestion.calperest" pkg="nomina.calculo" location="/sireh/calculoNomina/consultaNominasEstructura.do"/>
+                <Item name="gestioncalpereve" title="gestioncalpereve.gestion.calpereve" pkg="nomina.calculo" location="/sireh/calculoNomina/consultaNominasEventual.do"/>
+                <Item name="gestioncalperhon" title="gestioncalperhon.gestion.calperhon" pkg="nomina.calculo" location="/sireh/calculoNomina/consultaNominasHonorarios.do"/>               <!-- <Item name="gestioncalperhon" title="gestioncalperext.gestion.calperext" pkg="nomina.calculo" location="/sireh/calculoNomina/consultaNominasExtranjero.do"/>-->
+            </Item>
+            <Item title="calculo.admonext" name="admonext">
+                <Item title="calculo.incentivo" name="incentivo">
+                    <Item name="gestionextincmen" title="gestionextincmen.gestion.extincmenEst" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaNominasIncentivoEst.do"/>
+                    <Item name="gestionextincmen" title="gestionextincmen.gestion.extincmenEve" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaNominasIncentivoEve.do"/>
+                </Item>
+                <Item title="calculo.admonvales" name="admonvales">
+                    <Item name="valesobtencion" title="gestionextvales.gestion.valesobtencion" pkg="nomina.calculo" location="/sireh/calculoNominaExt/getCandidatos.do"/>    
+                    <Item name="valesnomina" title="gestionextvales.gestion.valesnomina" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaVales.do"/>    
+                </Item>
+                <Item name="gestionextdiaeco" title="gestionextdiaeco.gestion.extdiaeco" pkg="nomina.calculo" location="/sireh/calculoNominaExt/diasEcoNoDisfrutados.do"/>
+                <Item name="gestionextperlea" title="gestionextperlea.gestion.extPerLea">
+                    <Item name="valesobtencion" title="gestionextperlea.gestion.extPerLeaOtencion" pkg="nomina.calculo" location="/sireh/calculoNominaExt/getPersevCandidatos.do"/>    
+                    <Item name="valesnomina" title="gestionextperlea.gestion.extPerLeaNomina" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaPerseverancia.do"/> 
+                </Item>
+                <Item name="gestionextbonsex" title="gestionextbonsex.gestion.extbonsex" pkg="nomina.calculo" location="/sireh/calculoNominaExt/bonoSexenal.do"/>
+                <Item name="gestionextsueldo" title="gestionextsueldo.gestion.extsueldo" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaSueldos.do"/>
+                <Item name="gestionextlaudo" title="gestionextsueldo.gestion.extlaudo" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaLaudos.do"/>
+                <Item name="gestionexbajas" title="gestionextsueldo.gestion.extbaja" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaPersonalBaja.do"/>
+                <Item title="calculo.extranjero" name="extranjero">
+                    <Item name="gestionexextranjero" title="gestionextsueldo.gestion.vivienda" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaVivienda.do"/>
+                    <Item name="gestionexextranjero" title="gestionextsueldo.gestion.diferencias" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaDiferencias.do"/>
+                    <Item name="gestionexextranjero" title="gestionextsueldo.gestion.devoluciones" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaDevoluciones.do"/>
+                    <Item name="gestionexextranjero" title="gestionextsueldo.gestion.aguinaldo" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaAguinaldo.do"/>
+                </Item>
+                <Item name="gestionextconreglas" title="gestionextconreglas.gestion.conreglas" pkg="nomina.calculo" location="/sireh/calculoNominaExt/conReglas.do"/>
+            </Item>
+            <Item title="calculo.admonanual" name="admonanual">
+                <Item name="gestionanunomeje" title="gestionanunomeje.gestion.anunomeje" pkg="nomina.calculo" location="/sireh/impuestoAnual/definicionNominas.do"/>
+                <Item name="gestionanuacuper" title="gestionanuacuper.gestion.anuacuper" pkg="nomina.calculo" location="/sireh/impuestoAnual/acPerDeduc.do"/>
+                <Item name="gestionanucalaju" title="gestionanucalaju.gestion.anucalaju" pkg="nomina.calculo" location="/sireh/impuestoAnual/impuestoAnual.do"/>
+                <Item name="gestionanugenarc" title="gestionanugenarc.gestion.anugenarc" pkg="nomina.calculo" location="/sireh/impuestoAnual/generaArchivoDIM.do"/>
+            </Item>
+            <Item title="calculo.admonagui" name="admonagui">
+                <Item title="gestionaguicalnom.gestion.aguicalnom" name="genAguinaldos">
+                    <Item name="gestionAgVigentes" title="gestionaguicalnom.gestion.incnomvigentes" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaAgVigentes.do"/>
+                    <Item name="gestionAgBajas" title="gestionaguicalnom.gestion.incnombajas" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaAgBajas.do"/>
+                </Item>
+            </Item>
+            <Item title="calculo.admonincsal" name="admonincsal">
+              <Item name="gestionincperlab" title="gestionincperlab.gestionsueldos">
+                <Item name="gestionincperlab" title="gestionincperlab.gestion.incperlab.sueldos" pkg="nomina.calculo" location="/sireh/calculoNominaExt/sueldos.do"/>
+                <Item name="gestionincperlab" title="gestionincperlab.gestion.incperlab.mandosueldos" pkg="nomina.calculo" location="/sireh/calculoNominaExt/sueldosMandos.do"/>
+                 </Item>
+                 
+                <Item title="gestionincnomsal.gestion.incnomsal" name="gensaldos">
+                    <Item name="gestionincperlab" title="gestionincperlab.gestion.incnomvigentes" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaDifVigentes.do"/>
+                    <Item name="gestionincperlab" title="gestionincperlab.gestion.incnombajas" pkg="nomina.calculo" location="/sireh/calculoNominaExt/consultaDifBajas.do"/>
+                </Item>
+            </Item>
+            <Item title="calculo.admonfonac" name="admonfonac">
+                <Item name="gestionfonacliquida" title="gestionfonacliquida.gestion.anticipada" pkg="nomina.calculo" location="/sireh/calculoNominaExt/liquidacionAnticipada.do"/>
+                <Item name="gestionfonacliquida" title="gestionfonacliquida.gestion.finciclo" pkg="nomina.calculo" location="/sireh/calculoNominaExt/finCiclo.do"/>
+            </Item>
+            <Item title="calculo.admonpronom" name="admonpronom">
+                <Item name="gestionproconhis" title="gestioproreparch.gestion.reparchdep" pkg="nomina.calculo" location="/sireh/calculoNomina/generacionCecoban.do"/>
+            </Item>
+            <Item title="calculo.admoncicon" name="admoncicon">
+                <Item name="gestionab" title="gestioab.gestion.ab" pkg="nomina.calculo" location="/sireh/calculoNomina/altasYbajas.do"/>
+                <Item name="gestioncom" title="gestiocom.gestion.com" pkg="nomina.calculo" location="/sireh/calculoNomina/comparaCon.do"/>
+                <Item name="gestioncomg" title="gestiocomg.gestion.comg" pkg="nomina.calculo" location="/sireh/calculoNomina/comparaGral.do"/>
+                <Item name="gestionlin" title="gestiocomg.gestion.lin" pkg="nomina.calculo" location="/sireh/calculoNomina/listaNegativos.do"/>
+                <Item name="cifrasPagoPorQnas" title="cifras.pago.por.qnas" location="/sireh/calculoNomina/cifrasPagoPorQnas.do"/>
+                <Item name="finContrato" title="fin.contrato" location="/sireh/calculoNomina/finContrato.do"/>
+            </Item>
+            <Item title="conceptos.control" name="cptosCtlCalc" pkg= "nomina.calculo" location="/sireh/calculoNomina/listEmplConceptosControl.do"/>
+        </Menu>
+        
+        <!-- Terceros ******************************************************************************************************************************************************** -->
+        <Menu title="terceros.menu" name="tercerosnomina" roles="AUTH_USERS">
+            <Item title="terceros.aporta" name="admonaporta">
+                <Item title="gestiontersar.gestion.tersar" name="gestiontersar">
+                    <Item name="gestiontersar" title="gestiontersar.gestion.periodo" pkg="nomina.terceros" location="/sireh/sarFovissste/consultaPeriodoSAR.do"/>
+                    <Item name="gestiontersar" title="gestiontersar.gestion.nomina" pkg="nomina.terceros" location="/sireh/calculoNominaExt/consultaSarFovissste.do"/>
+                    <Item name="gestiontersar" title="gestiontersar.gestion.carga" pkg="nomina.terceros" location="/sireh/sarFovissste/cargaPlantilla.do"/>
+                    <Item name="gestiontersar" title="gestiontersar.gestion.archivo" pkg="nomina.terceros" location="/sireh/sarFovissste/consultaArchivoInt.do"/>
+                </Item>
+                <Item name="gestiontergmm" title="gestiontergmm.gestion.tergmm" location="/sireh/tercerosNomina/aportacionesGMM.do"/>
+            </Item>
+            <Item title="terceros.genera" name="admongenera">
+                <Item name="gestiontercargaarch" title="gestiontercargaarch.gestion.tercargaarch" pkg="nomina.terceros" location="/sireh/tercerosNomina/cargarArchDeducc.do"/>
+                <Item name="gestiontergenentc" title="gestiontergenentc.gestion.tergenenArchivo" pkg="nomina.terceros" location="/sireh/tercerosNomina/initGeneraArchivoTerceros.do"/>
+                <Item name="gestiontergenentc" title="gestiontergenentc.gestion.serica" pkg="nomina.terceros" location="/sireh/tercerosNomina/serica.do"/> 
+                <Item name="gestiontergenentc" title="gestiontergenentc.gestion.sericaC" pkg="nomina.terceros" location="/sireh/tercerosNomina/sericaC.do"/>
+                <Item name="gestiontergenentc" title="gestiontergenentc.gestion.issste" pkg="nomina.terceros" location="/sireh/tercerosNomina/isssterep.do"/> 
+                <Item name="gestiontergenentc" title="gestiontergenentc.gestion.issstefiliacion" pkg="nomina.terceros" location="/sireh/tercerosNomina/isssteFiliacion.do"/>
+                <Item name="gestiontergenentc" title="gestiontergenentc.gestion.tergenenArchivoPrestIssste" pkg="nomina.terceros" location="/sireh/tercerosNomina/initGeneraArchivoTercerosPrestIssste.do"/>
+                <Item name="gestiontergenentc" title="gestiontergenentc.gestion.isssteSIPE" pkg="nomina.terceros" location="/sireh/tercerosNomina/isssteSIPE.do"/>
+                
+                <Item title="terceros.fonacot" name="admonfonacot">
+                <Item name="admonfonacot" title="admonfonacot.gestion.fonacot" pkg="nomina.terceros" location="/sireh/tercerosNomina/fonacot.do"/>
+                 <Item name="admonfonacot" title="admonfonacot.gestion.padronFonacot" pkg="nomina.terceros" location="/sireh/tercerosNomina/padronFonacot.do"/>
+                 </Item>
+                <Item title="terceros.sat" name="admonsat">
+                    <Item name="gestiontsat" title="gestionsat.gestion.satqna" pkg="nomina.terceros" location="/sireh/tercerosNomina/satTimbrado.do"/>
+                    <Item name="gestiontsat" title="gestionsat.gestion.satcancela" pkg="nomina.terceros" location="/sireh/tercerosNomina/satcancela.do"/>
+                    <Item name="gestiontsat" title="gestionsat.gestion.satListadoNominas" pkg="nomina.terceros" location="/sireh/tercerosNomina/satListadoNominas.do"/>
+                    <Item name="admonsat" title="gestionsat.gestion.satImpresionCFDI.unidad" pkg="nomina.terceros" location="/sireh/tercerosNomina/comprobanteFiscalUnidad.do" />
+                    <Item name="admonsat" title="gestionsat.gestion.satImpresionCFDI.empleado" pkg="nomina.terceros" location="/sireh/tercerosNomina/comprobanteFiscalEmpleado.do" />
+                    <Item name="admonsat" title="gestionsat.gestion.satImpresionCFDI.archivos.unidad" pkg="nomina.terceros" location="/sireh/tercerosNomina/cfdiArchivoUnidad.do" />
+                    <Item name="admonsat" title="gestionsat.gestion.satImpresionCFDI.archivos.carga" pkg="nomina.terceros" location="/sireh/tercerosNomina/listarNominasCarga.do" />
+               
+                 </Item>
+            </Item>
+            <Item title="terceros.fonac" name="admonfonac">
+                <Item name="gestionterfonpadron" title="gestionterfonpadron.gestion.terfonpadronparliqcarga" pkg="nomina.terceros" location="/sireh/fonacNomina/cargaPadronFonac.do"/>
+                <Item title="terceros.fonac.padronpart.liquidacion" name="fonacpadronpartliq">
+                    <!--<Item name="gestionterfonpadroncarga" title="gestionterfonpadronpartliqcarga.gestion.terfonpadronparliqcarga" pkg="nomina.terceros" location="/sireh/fonacNomina/cargaRemesaFonac.do"/>-->
+                    <Item name="gestionterfonpadroncheques" title="gestionterfonpadroncheques.gestion.terfonpadronparliqcarga" pkg="nomina.terceros" location="/sireh/fonacNomina/chequesFonac.do"/>
+                    <Item name="gestionterfonpadroncifras" title="gestionterfonpadroncifras.gestion.terfonpadronparliqcarga" pkg="nomina.terceros" location="/sireh/fonacNomina/cifrasFonac.do"/>  
+                </Item>
+                <Item title="terceros.fonac.liquidacionanual" name="fonacliquidacion">           
+                    <!--<Item name="gestionterfonliquida" title="gestionterfonliquida.gestion.terfonliquida" pkg="nomina.terceros" location="/sireh/fonacNomina/liquidacionFonac.do"/>-->
+                    <Item name="gestionterfonliquidacheques" title="gestionterfonliquidacheques.gestion.terfoncheques" pkg="nomina.terceros" location="/sireh/fonacNomina/emisionChequesFonac.do"/>
+                    <Item name="gestionterfonliquidacifras" title="gestionterfonliquidacifras.gestion.terfoncheques" pkg="nomina.terceros" location="/sireh/fonacNomina/liquidaCifrasFonac.do"/>
+                </Item>
+                <Item title="terceros.fonac.consultas" name="consultas">           
+                    <Item name="gestionterfonconsultas" title="gestionterfonconsultas.gestion.terfonconsultas" pkg="nomina.terceros" location="/sireh/fonacNomina/aportacionesFonac.do"/>
+                </Item>
+            </Item>
+            <Item title="terceros.timbradoSat" name="timbradoSat">
+                <Item name="porNomina" title="terceros.timbradoSat.porNomina" pkg="nomina.terceros" location="/sireh/timbradoSat/satTimbrado.do"/>
+                <Item name="cancelacionPagosCancelados" title="terceros.timbradoSat.cancelacionPagosCancelados" pkg="nomina.terceros" location="/sireh/timbradoSat/cancelPagosCan.do"/>
+                <Item name="cancelacionPagosNoCancelados" title="terceros.timbradoSat.cancelacionPagosNoCancelados" pkg="nomina.terceros" location="/sireh/timbradoSat/cancelPagosNo.do"/>
+                <Item name="reenvioDePagos" title="terceros.timbradoSat.reenvioDePagos" pkg="nomina.terceros" location="/sireh/timbradoSat/reenviarPago.do"/>
+                <Item name="impresionCfdiPorQuincena" title="terceros.timbradoSat.impresionCfdiPorQuincena" pkg="nomina.terceros" location="/sireh/timbradoSat/impresionCfdiPorQna.do"/>
+                <Item name="impresionCfdiPorQuincena" title="terceros.timbradoSat.impresionCfdiPorEmpleado" pkg="nomina.terceros" location="/sireh/timbradoSat/correoElectronico.do"/>
+                <Item name="impresionCfdiPorQuincena" title="terceros.timbradoSat.previsualizaPlantillaCFDI" pkg="nomina.terceros" location="/sireh/timbradoSat/previsualizaCorreoCFDIByRfc.do"/>
+                <Item name="actualizarEstatus" title="terceros.timbradoSat.actualizarEstatus" pkg="nomina.terceros" location="/sireh/timbradoSat/consultarEstatus.do"/>
+            </Item>
+        </Menu>
+        
+        <!-- Notas Merito **************************************************************************************************************************************************** -->
+        <Menu title="NotasMerito.menu" name="NotasMerito" roles="AUTH_USERS">
+            <Item title="cargainicio.NotasMerito" name="cargainicio">
+                <Item name="Archivo de puntualidad" title="ArchivoPuntualidad.NotasMerito" location="/sireh/notaDeMerito/ingresarArchivoPuntualidad.do"/>
+                <Item name=" Archivo de Capacitacion" title="ArchivoCapacitacion.NotasMerito" location="/sireh/notaDeMerito/ingresarArchivoCapacitacion.do"/>
+                <!--Item name="Archivo de Evaluacion Desempeño" title="ArchivoEval.NotasMerito" location="/sireh/notaDeMerito/ingresarArchivoEvaluacion.do"/-->
+                <Item name="Archivo Manualmente" title="ArchivoManual.NotasMerito" location="/sireh/notaDeMerito/ingresarManualNotaDeMerito.do"/>
+            </Item>
+            <Item name="Procesar NM" title="ProcesarNM.NotasMerito" location="/sireh/notaDeMerito/initProcesaNm.do"/>
+            <Item title="ExportarArchi.NotasMerito" name="Exportación Archivos">
+                <Item name="Generar Archivos Pago" title="GeneArchiPag.NotasMerito" location="/sireh/notaDeMerito/iniciaArchivoPago.do"/>
+            </Item>
+            <Item title="Herramienta.NotasMerito" name="Herramientas">
+                <Item name="Actualiza Importes Depositos" title="ActImporDepo.NotasMerito" location="/sireh/notaDeMerito/actImporDepo.do"/>
+            </Item>
+            <Item title="Consultas.NotasMerito" name="Consultas">
+                <Item name="Resumen NM" title="ResumenNM.NotasMerito" location="/sireh/notaDeMerito/initResumenMerito.do"/>
+                <Item name="Detalle Historico" title="DetaHisto.NotasMerito" location="/sireh/notaDeMerito/initHistoricoMerito.do"/>
+            </Item>
+        </Menu>
+        
+        <!--C L C ************************************************************************************************************************************************************ -->
+        <Menu title="clc.menu" name="clc" roles="AUTH_USERS">
+            <Item name="proceso" title="proceso.clc">
+                <Item name="ordinaria" title="ordinaria.proceso.clc" location="/sireh/clcProceso/clcOrdinaria.do"/>
+                <Item name="terceros" title="terceros.proceso.clc">
+                    <Item name="tercerosCancelados" title="terceros.proceso.clc.cancelados" location="/sireh/clcProceso/clcTercerosCancelados.do"/>
+                    <Item name="tercerosAjustes" title="terceros.proceso.clc.ajustes" location="/sireh/clcProceso/clcTercerosAjustes.do"/>
+                </Item>
+                <Item name="patronales" title="patronales.proceso.clc">
+                    <Item name="patronalesGenera" title="patronales.proceso.clc.genera" location="/sireh/clcProcesoPatronales/clcPatronalesGenera.do"/>
+                    <Item name="patronalesCancelados" title="patronales.proceso.clc.cancelados" location="/sireh/clcProcesoPatronales/clcPatronalesCancelados.do"/>
+                    <Item name="patronalesAjustes" title="patronales.proceso.clc.ajustes" location="/sireh/clcProcesoPatronales/clcPatronalesAjustes.do"/>
+                </Item>
+                <Item name="manuales" title="manuales.proceso.clc">
+                    <Item name="manualesCaptura" title="manuales.proceso.clc.captura" location="/sireh/clcProceso/clcManualesCaptura.do"/>
+                    <Item name="manualesArchivo" title="manuales.proceso.clc.archivo" location="/sireh/clcProceso/clcManualesArchivo.do"/>
+                </Item>
+            </Item>
+            <Item name="interfazSicop" title="interfazSicop.clc">
+                <Item name="gestionben" title="gestionben.interfazSicop.clc" location="/sireh/clcInterfazSICOP/gestionBeneficiarios.do"/>
+                <Item name="solicitudCompromiso" title="solicitudCompromiso.interfazSicop.clc" location="/sireh/clcInterfazSICOP/solicitudCompromiso.do"/>
+                <Item name="solicitudPago" title="solicitudPago.interfazSicop.clc" location="/sireh/clcInterfazSICOP/solicitudPago.do"/>
+                <Item name="solicitudCLC" title="solicitudCLC.interfazSicop.clc" location="/sireh/clcInterfazSICOP/solicitudCLC.do"/>
+            </Item>
+            <Item name="herramientas" title="herramientas.clc">
+                <Item name="registraCompromiso" title="registraCompromiso.herramientas.clc" location="/sireh/clcHerramientas/consultaClcRegComp.do"/>
+                <Item name="registraSolPago" title="registraSolPago.herramientas.clc" location="/sireh/clcHerramientas/consultaClcRegSolPago.do"/>
+                <Item name="registraCLC" title="registraCLC.herramientas.clc" location="/sireh/clcHerramientas/registraCLC.do"/>
+                <Item name="conciliaCLC" title="conciliaCLC.herramientas.clc" location="/sireh/clcHerramientas/consultaConciliaCLC.do"/>
+                <Item name="borraCLC" title="borraCLC.herramientas.clc" location="/sireh/clcHerramientas/borraCLC.do"/>
+                <Item name="busquedaErrores" title="busquedaErrores.herramientas.clc" location="/sireh/clcHerramientas/busquedaErrores.do"/>
+            </Item>
+            <Item name="consultas" title="consultas.clc">
+                <Item name="registroCLC" title="registroCLC.consultas.clc" location="/sireh/clcConsultas/consultaRegistroClc.do"/>
+                <Item name="ejercidoCptoPago" title="altasejercidoCptoPago.consultas.clc" location="/sireh/clcConsultas/altasEjercidoCptoPago.do"/>
+                <Item name="clcProcesadas" title="clcProcesadas.consultas.clc" location="/sireh/clcConsultas/clcProcesada.do"/>
+                <Item name="fonacFstseSindi" title="FonacFstseSindi.consultas.clc" location="/sireh/clcConsultas/clcFonacFstseSindi.do"/>
+                <Item name="casosImpuestoNominas" title="casosImpuestoNominas.consultas.clc" location="/sireh/clcConsultas/consultaCasosImpNom.do"/>
+            </Item>
+        </Menu>
+        
+        <!--Reportes **********************************************************************************************************************************************************-->
+        <Menu title="reportes.menu" name="reportes" roles="AUTH_USERS">
+            <Item name="" title="reporte.plaza">
+                <Item name="" title="plaza.reportes.d10" pkg="plaza.reporte" location="/sireh/reportePlaza/dDiez.do"/>
+                <Item name="" title="plaza.reportes.d10.detalle" pkg="plaza.reporte" location="/sireh/reportePlaza/dDiezDetalle.do"/>
+                <Item name="" title="plaza.reportes.d10.agrupado" pkg="plaza.reporte" location="/sireh/reportePlaza/dDiezAgrupado.do"/>
+                <Item name="" title="plaza.reportes.inegi" pkg="plaza.reporte" location="/sireh/reportePlaza/inegi.do"/>
+                <Item name="" title="plaza.reportes.plantilla.estructura" pkg="plaza.reporte" location="/sireh/reportePlaza/plantillaEstructura.do"/>
+                <Item name="" title="plaza.reportes.plantilla.eventuales" pkg="plaza.reporte" location="/sireh/reportePlaza/plantillaEventual.do"/>
+                <Item name="" title="plaza.reportes.plantilla.eventualesesp" pkg="plaza.reporte" location="/sireh/reportePlaza/plantillaEventualEsp.do"/>
+                <Item name="" title="plaza.reportes.plantilla.honorarios" pkg="plaza.reporte" location="/sireh/reportePlaza/plantillaHonorarios.do"/>
+                <Item name="" title="plaza.reportes.plazas.vigentes" pkg="plaza.reporte" location="/sireh/reportePlaza/plazasVigentes.do"/>
+                <Item name="" title="plaza.reportes.plazas.vigentesE" pkg="plaza.reporte" location="/sireh/reportePlaza/plazasVigentesEve.do"/>
+                <Item name="" title="plaza.reportes.plazas.vigentesH" pkg="plaza.reporte" location="/sireh/reportePlaza/plazasVigentesHon.do"/>
+                <Item name="" title="plaza.reportes.ac02.jerarquia" pkg="plaza.reporte" location="/sireh/reportePlaza/acJerarquia.do"/>
+                <Item name="" title="plaza.reportes.ac02.nivel" pkg="plaza.reporte" location="/sireh/reportePlaza/acNivel.do"/>
+                <Item name="" title="plaza.reportes.ocupacion.plazas" pkg="plaza.reporte" location="/sireh/reportePlaza/ocupacionPlazas.do"/>
+                <Item name="" title="plaza.reportes.ocupacion.plazas.reserva" pkg="plaza.reporte" location="/sireh/reportePlaza/ocupacionPlazasReserva.do"/>
+                <Item name="" title="plaza.reportes.escenario" pkg="plaza.reporte" location="/sireh/reportePlaza/escenario.do"/>
+                <Item name="" title="plaza.reportes.escenario.situacion" pkg="plaza.reporte" location="/sireh/reportePlaza/escenarioSituacion.do"/>
+                <Item name="" title="plaza.reportes.vacancia.nivel" pkg="plaza.reporte" location="/sireh/reportePlaza/vacanciaNivel.do"/>
+                <Item name="" title="plaza.reportes.reserva.ur.nivel" pkg="plaza.reporte" location="/sireh/reportePlaza/reservaUrNivel.do"/>
+                <Item name="" title="plaza.reportes.movtos.personal.resumen" pkg="plaza.reporte" location="/sireh/reportePlaza/resumenMovPersonal.do"/>
+                <Item name="" title="plaza.reportes.movtos.personal.detalle" pkg="plaza.reporte" location="/sireh/reportePlaza/detalleMovPersonal.do"/>
+                <Item name="" title="plaza.reportes.formato542" pkg="plaza.reporte" location="/sireh/reportePlaza/formato.do"/>
+                <Item name="" title="reporte.plaza.pnt">
+                    <Item name="" title="reporte.plaza.pnt.estructura" pkg="plaza.reporte" location="/sireh/reportePlaza/pntestructura.do"/>
+                    <Item name="" title="reporte.plaza.pnt.facultades" pkg="plaza.reporte" location="/sireh/reportePlaza/pntfacultadesarea.do"/>
+                    <Item name="" title="reporte.plaza.pnt.directorio" pkg="plaza.reporte" location="/sireh/reportePlaza/pntdirectorio.do"/>
+                    <Item name="" title="reporte.plaza.pnt.remuneracion" pkg="plaza.reporte" location="/sireh/reportePlaza/pntremuneracion.do"/>
+                    <Item name="" title="reporte.plaza.pnt.plazas" pkg="plaza.reporte" location="/sireh/reportePlaza/pnttotalplazas.do"/>
+                    <Item name="" title="reporte.plaza.pnt.contratacion" pkg="plaza.reporte" location="/sireh/reportePlaza/pntcontratacionhonorarios.do"/>
+                    <Item name="" title="reporte.plaza.pnt.pagos" pkg="plaza.reporte" location="/sireh/reportePlaza/pntjubiladospensionados.do"/>
+                    <Item name="" title="reporte.plaza.pnt.sindicatos" pkg="plaza.reporte" location="/sireh/reportePlaza/pntrecursospublicos.do"/>
+                    <Item name="" title="reporte.plaza.pnt.concursos" pkg="plaza.reporte" location="/sireh/reportePlaza/pntconcursos.do"/>
+                    <Item name="" title="reporte.plaza.pnt.datos" pkg="plaza.reporte" location="/sireh/reportePlaza/pntdatoscurriculares.do"/>
+                    <Item name="" title="reporte.plaza.pnt.curriculumVitae" pkg="plaza.reporte" location="/sireh/reportePlaza/expLabCV.do"/>
+                    <Item name="" title="reporte.plaza.pnt.soporte">
+                        <Item name="" title="reporte.plaza.pnt.soporte.escenario" pkg="plaza.reporte" location="/sireh/reportePlaza/pntestructura.do"/>
+                        <Item name="" title="reporte.plaza.pnt.soporte.inmueble" pkg="plaza.reporte" location="/sireh/reportePlaza/pntinmueble.do"/>
+                        <Item name="" title="reporte.plaza.pnt.soporte.altas" pkg="plaza.reporte" location="/sireh/reportePlaza/pntaltas.do"/>
+                        <Item name="" title="reporte.plaza.pnt.soporte.bajas" pkg="plaza.reporte" location="/sireh/reportePlaza/pntbajas.do"/>
+                        <Item name="" title="reporte.plaza.pnt.soporte.estadistico" pkg="plaza.reporte" location="/sireh/reportePlaza/pnttotalplazas.do"/>
+                    </Item>
+                </Item>
+                <Item name="" title="plaza.reportes.pot" pkg="plaza.reporte" location="/sireh/reportePlaza/pot.do"/>
+                <Item name="" title="plaza.reportes.potEventual" pkg="plaza.reporte" location="/sireh/reportePlaza/potEventual.do"/>
+                <Item name="" title="plaza.reportes.potHonorarios" pkg="plaza.reporte" location="/sireh/reportePlaza/potHonorarios.do"/>
+                <Item name="" title="plaza.reportes.potOcupada" pkg="plaza.reporte" location="/sireh/reportePlaza/potOcupada.do"/>
+                <Item name="" title="plaza.reportes.potVacante" pkg="plaza.reporte" location="/sireh/reportePlaza/potVacante.do"/>
+                <Item name="" title="plaza.reportes.meg" pkg="plaza.reporte" location="/sireh/reportePlaza/meg.do"/>
+            </Item>
+            <Item title="reporte.movimientos.nomina" name="admonper">
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.situacion.plazas" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/situacionPlazas.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.situacion.plazas.rfc" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/situacionPlazasRFC.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.situacion.empleado" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/situacionEmpleados.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.constancia.nombramiento">
+                    <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.nombramiento" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/constanciaNombramiento.do"/>
+                    <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.aviso.cambio" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/avisoCambio.do"/>
+                </Item>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.contrato.honorarios" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/contratoHonorarios.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.datos.personales" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/datosPersonales.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.plantilla.personal" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/plantillaPersonal.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.plantilla.personalx" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/plantillaPersonalx.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.conceptos.pago" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/conceptosPago.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.movimientos.empleados" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/movimientosEmpleado.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.movimientos.empleadosq" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/movimientosEmpleadoq.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.movimientos.excel" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/movimientosEmpleadoqE.do"/>   
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.movimientos.abc" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/movimientosABC.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.movimientos.sfp" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/altasbajasSFP.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.movimientos.plantillavigente" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/plantillaVigente.do"/> 
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.prima.vacacional" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/primaVacacional.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.prima.vacacionalNoCon" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/primaVacacionalNoCon.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.dias.economicos" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/diasEconomicos.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.beneficiarios" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/beneficiarios.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.pension.alimenticia" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/pensionAlimenticia.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.terminoscontrato" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/terminosContrato.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.pagoscancelados" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/pagosCancelados.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.pagoscanceladosa" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/pagosCanceladosA.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.movimientos.nomina.credencializacion" pkg="nomina.reporte" location="/sireh/reporteMoviminentos/credencializacion.do"/>
+            </Item>
+            <Item title="reporte.calculo.nomina" name="reportecn">
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.historico" pkg="nomina.reporte" location="/sireh/reporteCalculo/historico.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.historicotipo" pkg="nomina.reporte" location="/sireh/reporteCalculo/historicoTipo.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.impresion" pkg="nomina.reporte" location="/sireh/reporteCalculo/impresion.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.impresionuni" pkg="nomina.reporte" location="/sireh/reporteCalculo/impresionuni.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.impresiongoo" pkg="nomina.reporte" location="/sireh/reporteCalculo/impresionGoo.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.firmas" pkg="nomina.reporte" location="/sireh/reporteCalculo/firmas.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.firmasuni" pkg="nomina.reporte" location="/sireh/reporteCalculo/firmasuni.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.firmasgoo" pkg="nomina.reporte" location="/sireh/reporteCalculo/firmasGoo.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.concentrado" pkg="nomina.reporte" location="/sireh/reporteCalculo/concentrado.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.concentradoef" pkg="nomina.reporte" location="/sireh/reporteCalculo/concentradoef.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.seguro" pkg="nomina.reporte" location="/sireh/reporteCalculo/seguro.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.segurop" pkg="nomina.reporte" location="/sireh/reporteCalculo/seguroP.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.detalle" pkg="nomina.reporte" location="/sireh/reporteCalculo/detalle.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.conceptopago" pkg="nomina.reporte" location="/sireh/reporteCalculo/conceptoPago.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.acumulado" pkg="nomina.reporte" location="/sireh/reporteCalculo/acumulado.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.historicopza" pkg="nomina.reporte" location="/sireh/reporteCalculo/historicoPlaza.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.casos" pkg="nomina.reporte" location="/sireh/reporteCalculo/comparaCasos.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.montos" pkg="nomina.reporte" location="/sireh/reporteCalculo/comparaMontos.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.concentradovales" pkg="nomina.reporte" location="/sireh/reporteCalculo/concentradoVales.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.pensionadasvales" pkg="nomina.reporte" location="/sireh/reporteCalculo/pensionadasVales.do"/>
+            </Item>
+            <Item title="incidencias.menu" name="repincidencias">
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.faltas" pkg="nomina.reporte" location="/sireh/reporteCalculo/archivofaltas.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.incidencias" pkg="nomina.reporte" location="/sireh/reporteCalculo/movsInternosIncidencias.do"/>
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.incidenciasq" pkg="nomina.reporte" location="/sireh/reporteCalculo/incidenciasQ.do"/>
+            </Item>
+            <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.sueldos" pkg="nomina.reporte" location="/sireh/reporteCalculo/constanciaSueldos.do"/>
+            <Item title="reporte.calculo.nomina.ejercicio" name="mominasejercicio"> 
+                <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.definicion" pkg="nomina.reporte" location="/sireh/reporteCalculo/defNomEjercicio.do"/>
+            </Item>
+            <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.trabajador" pkg="nomina.reporte" location="/sireh/calculoNomina/acumuladoTrabajador.do"/>
+            <Item name="gestioncrmovtoper" title="reporte.calculo.nomina.laborados" pkg="nomina.reporte" location="/sireh/reporteCalculo/validaPeriodoLaborado.do"/>
+            <Item title="terceros.menu" name="repterceros">
+                <Item name="gestionterrepsvi" title="gestionterrepsvi.gestion.terrepsvi.menu">
+                <Item name="gestionterrepsvi" title="gestionterrepsvi.gestion.terrepsvi" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/seguroVidaInstitucional.do"/>
+                <Item name="gestionterrepsvi" title="gestionterrepsvi.gestion.terrepsvi.pago" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/seguroVidaPago.do"/>
+                <Item name="gestionterrepsvi" title="gestionterrepsvi.gestion.terrepsvi.anticipado" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/seguroVidaAnticipado.do"/>
+                </Item>
+                <Item name="gestionterrepscr" title="segurocolectivo.menu">
+                    <Item name="gestionterrepscr" title="gestionterrepscr.gestion.terrepscr" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/seguroColectivoRetiro.do"/>
+                    <Item name="gestionterrepscr" title="gestionterrepscr.gestion.terrepscrgnpimportes" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/importesGnp.do"/>
+                    <Item name="gestionterrepscr" title="gestionterrepscr.gestion.terrepscrgnpmovs" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/movimientosGnp.do"/>
+                </Item>
+                <Item name="gestionterreppta" title="gestionterreppta.gestion.terreppta" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/pagoTrimestralAnticipado.do"/>
+                <Item name="gestionterrepptp" title="gestionterrepptp.gestion.terrepptp" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/pagoTrimestralAntiEs.do"/>
+                <Item name="gestionterreprech" title="gestionterreprech.gestion.terreprech" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/rechazos.do"/>
+                <Item name="gestionterrepcifra" title="gestionterrepcifra.gestion.terrepcifra" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/cifrasDeControl.do"/>
+                <Item name="gestionterrepcifra" title="gestionterrepcifra.gestion.terrepcifrai" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/cifrasDeControlI.do"/>
+                <Item name="gestionterrepcifra" title="gestionterrepcifra.gestion.terrepcifraf" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/cifrasDeControlF.do"/>
+                <Item name="gestionterrepcifra" title="gestionterrepcifra.gestion.terrepcifraa" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/cifrasDeControlA.do"/>
+                <Item name="gestionterrepcifra" title="gestionterrepcifra.gestion.terrepcifrac" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/cifrasDeControlC.do"/>
+                <Item name="gestionterfonrepcif" title="sireh.label.terceros.reportes.terfonrepcif" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/aportacionesFonac.do"/>
+                <Item name="gestionterfonrepapqna" title="sireh.label.terceros.reportes.terfonaportqna" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/aportacionesFonacQna.do"/>
+                <Item title="terceros.menu.sar" name="reptercerossar">
+                    <Item name="gestionsarresumen" title="gestionsarresumen.gestion.sarresumen" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/terSarFovResumen.do"/> 
+                    <Item name="gestionsartotaln" title="gestionsartotaln.gestion.sartotaln" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/terSarFovTotalNom.do"/>
+                    <Item name="gestionsartotalp" title="gestionsartotalp.gestion.sartotalp" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/terSarFovTotalPagos.do"/>
+                    <Item name="gestionsarrechazos" title="gestionsarrechazos.gestion.sarrechazos" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/terSarFovRechazos.do"/>
+                </Item>
+                <Item name="gestionterfon" title="gestionterfon.gestion.terfon" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/constanciasF.do"/>
+                <Item name="gestionseguros" title="gestionseguros.terceros.seguros" pkg="nomina.reporte" location="/sireh/reporteTercerosNomina/padronSeguros.do"/>
+                
+                <Item name="comprobanteFiscal" title="terceros.sat">
+                    <Item name="repComprobanteFiscal" title="reporte.terceros.sat.cfdi.cancelados" pkg="nomina.reporte.comprobante" location="/sireh/reporteTercerosNomina/repComprobanteFiscalCanc.do"/>
+                </Item>
+                
+            </Item>
+            <Item title="Reportes.NotasMerito" name="Reportes">
+                <Item name="Historico NM" title="RepHistoNM.NotasMerito" pkg="merito.reporte" location="/sireh/reporteNotasMerito/repHistoNM.do"/>
+                <Item name="NM Personal Activo" title="RepNMPersonalAct.NotasMerito" pkg="merito.reporte" location="/sireh/reporteNotasMerito/repNMPersonalAct.do"/>
+                <Item name="NM x Empleado" title="RepNMEmpleado.NotasMerito" pkg="merito.reporte" location="/sireh/reporteNotasMerito/repNMEmpleado.do"/>
+                <Item name="NM x Genéro" title="RepNMGenero.NotasMerito" pkg="merito.reporte" location="/sireh/reporteNotasMerito/repNMGenero.do"/>
+                <Item name="NM x Mes" title="RepNMMensual.NotasMerito" pkg="merito.reporte" location="/sireh/reporteNotasMerito/repNMMensual.do"/>
+                <Item name="Pagos Solicitados x Remesa" title="RepPagosSoliRemesa.NotasMerito" pkg="merito.reporte" location="/sireh/reporteNotasMerito/repPagosSoliRemesa.do"/>
+                <Item name="Imprimir NM" title="RepImprimirNM.NotasMerito" pkg="merito.reporte" location="/sireh/reporteNotasMerito/repImprimirNM.do"/>
+            </Item>
+            <Item title="Reportes.Cxlc" name="Reportes">
+                <Item name="Solicitud Recursos" title="SolRecu.Cxlc" location="/sireh/reporteCxlc/SolRecu.do"/>
+                <Item title="SolSufi.Cxlc" name="Solicitud Suficiencia">
+                    <Item name="Ordinaria" title="SolOrdi.Cxlc" location="/sireh/reporteCxlc/SolOrdi.do"/>
+                    <Item name="ISSSTE" title="SolIssste.Cxlc" location="/sireh/reporteCxlc/SolIssste.do"/>
+                </Item>
+                <Item name="Terceros" title="Terceros.Cxlc" location="/sireh/reporteCxlc/repTerceros.do"/>
+                <Item name="Terceros" title="fonac.Cxlc" location="/sireh/reporteCxlc/fonacFSTSE.do"/>
+                <Item name="Terceros" title="trimestral.Cxlc" location="/sireh/reporteCxlc/prestacionesT.do"/>
+            </Item>
+            <Item title="Reportes.OficinaVirtual" name="Reportes">
+                <Item name="GestionDocumentos" title="oficinaVirtual.gestion.documentos" location="/sireh/oficinaVirtual/gestionDoctosExpediente.do"/>
+            </Item>
+            <Item title="Reportes.spc" name="Reportes">
+                <Item title="Capacitación y Certificación" name="capacita">
+                    <Item name="listaAsistencia" title="spc.capcer.reportes.listaAsistencia" location="/sireh/reportesCursoSPC/listaAsistencia.do"/>
+                    <Item name="cartaCompromiso" title="spc.capcer.reportes.cartaCompromiso" location="/sireh/reportesCursoSPC/cartaCompromiso.do"/>
+                    <Item name="evaluacionReaccion" title="spc.capcer.reportes.evaluacionReaccion" location="/sireh/reportesCursoSPC/evaluacionReaccion.do"/>
+                    <Item name="informeCurso" title="spc.capcer.reportes.informeCurso" location="/sireh/reportesCursoSPC/informeCurso.do"/>
+                    <Item name="reporteEvaluaciones" title="spc.capcer.reportes.reporteEvaluaciones" location="/sireh/reportesCursoSPC/reporteEvaluaciones.do"/>
+                    <Item name="acuerdos" title="spc.capcer.reportes.acuerdos" location="/sireh/reportesCursoSPC/acuerdos.do"/>                
+                    <Item name="cartaNotificacion" title="spc.capcer.reportes.cartaNotificacion" location="/sireh/reportesCursoSPC/cartaNotificacion.do"/>
+                    <Item name="relacionFirmas" title="spc.capcer.reportes.relacionFirmas" location="/sireh/reportesCursoSPC/relacionFirmas.do"/>
+                    <Item name="entregaConstancias" title="spc.capcer.reportes.entregaConstancias" location="/sireh/reportesCursoSPC/entregaConstancias.do"/>
+                    <Item name="verificacionServicio" title="spc.capcer.reportes.verificacionServicio" location="/sireh/reportesCursoSPC/verificacionServicio.do"/>
+                </Item>
+                <Item title="separacion.spc" name="Separacion">
+                    <Item name="movimientosSpc" title="spc.capcer.reportes.movtosSpc" location="/sireh/reportesCursoSPC/movtosSpc.do"/>
+                </Item>
+            </Item>
+        </Menu>
+        
+        <!--Configuracion **************************************************************************************************************************************************** -->
+        <Menu title="configuracion.menu" name="configuracion" roles="AUTH_USERS">
+            <Item name="AdmonCat" title="admon.cat.menu" roles="AUTH_USERS">
+                <Item name="admonCatList" title="show.catalogs.list" location="/sireh/admonCat/administracion/RegListaCatalogos.do"/>
+            </Item>
+            <Item title="configuracion.movimientos" name="admonconfpara">
+                <Item name="gestionconfparacpto" title="configuracion.movimientos.personal" location="/sireh/movimientoPersonal/consultaMovimiento.do"/>
+                <Item name="gestionconfparafir" title="configuracion.movimientos.concepto" location="/sireh/movimientoConceptosPago/consultaConceptosPago.do"/>
+            </Item>
+            <Item title="configuracion.nomina" name="admonparaconf">
+                <Item name="gestionparatabimp" title="configuracion.nomina.concepto" location="/sireh/movimientos/paragestiontabimp.do"/>
+                <Item name="gestionparatabula" title="configuracion.nomina.reglas" location="/sireh/reglasNomina/mantenimientoReglasCalculo.do"/>
+            </Item>
+            <Item title="configuracion.mantenimiento" name="gestionplantilla">
+                <Item name="gestionparatabimp" title="configuracion.mantoPlantillas.terceros.titulo" location="/sireh/mantenimientoPlantillas/mantoPlantillas.do"/>
+                <Item name="gestionmmtonm" title="configuracion.mantoPlantillas.merito.titulo" location="/sireh/mantenimientoPlantillaMerito/initListaPlantillaMerito.do"/>
+                <Item name="gestionmmtopl" title="configuracion.mantoPlantillas.plazas.titulo" location="/sireh/mantenimientoPlantillaPlazas/initListaPlantillaPlazas.do"/>
+                <Item name="gestionmmtocorreo" title="configuracion.mantoPlantillas.correo.titulo" location="/sireh/mantenimientoPlantillaCorreo/initListaPlantillaCorreo.do"/>
+                <Item name="gestionmmtoclc" title="configuracion.mantoPlantillas.clc.titulo" location="/sireh/mantenimientoPlantillaClc/initListaPlantillaClc.do"/>
+                <Item name="gestionmmcliente" title="configuracion.mantoPlantillas.cliente.titulo" location="/sireh/mantenimientoPlantillaTimbrar/initListaPlantillaCliente.do"/>
+                <Item name="gestionmmtimbrado" title="configuracion.mantoPlantillas.timbrado.titulo" location="/sireh/mantenimientoPlantillaTimbrar/initListaPlantillaTimbrar.do"/>
+            </Item>
+        </Menu>
+    </Menus>
+</MenuConfig>

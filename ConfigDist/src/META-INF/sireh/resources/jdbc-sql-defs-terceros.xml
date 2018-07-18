@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                <prop key="queryTnComprobantePdfById">
+                SELECT 
+                    CN_FOLIO, CN_DIF_FOLIO, CN_CONSEC_NOMINA, 
+                       CN_EJERCICIO, CN_RFC, CN_ARCHIVO_PDF, 
+                       USUARIO, FEC_MODIFICO
+                    FROM TN_COMPROBANTE_PDF 
+                      WHERE CN_FOLIO IN (:listFolios) AND CN_DIF_FOLIO = :cnDifFolio
+                      ORDER BY CN_FOLIO ASC
+                </prop>
+                <prop key="generar-folios-porquincena">
+                    SELECT '<![CDATA[<]]>Folios<![CDATA[><]]>UUID>' || CN_FOLIO_FISCAL || '<![CDATA[</]]>UUID><![CDATA[</]]>Folios>' AS REGISTRO
+                        FROM TN_COMPROBANTE_DIG D
+                    WHERE D.CN_CONSEC_NOMINA = ? AND D.CN_PAQUETE = ?
+                </prop>
+                <prop key="getNominaById">
+                    SELECT 
+                    T.ID_NOMINA, T.ID_EDO_NOM, T.NOM_QNA_CAPTURA, 
+                       T.NOM_NUM_COMPLEM, T.ID_TIPO_NOMINA, T.DESC_NOMINA, 
+                       T.NOM_LEYENDA, T.NOM_REGLA_CALCULO, T.NOM_FUENTE_DATOS, 
+                       T.NOM_INI_PAGO, T.NOM_FIN_PAGO, T.NOM_FEC_PAGO, 
+                       T.NOM_FEC_DEPOSITO, T.ID_GRUPO_PAGO_NOM, T.NOM_FEC_APERTURA, 
+                       T.NOM_FEC_CIERRE, T.NOM_CERRADA, T.NOM_DIAS_PAGAR, 
+                       T.NOM_APLICAR_EXENTOS, T.NOM_VIGENTE, T.NOM_GRATIF_AGUI, 
+                       T.NOM_COMPLETAR_PERIODO, T.NOM_FEC_CREACION, T.NOM_ARCH_CREACION, 
+                       T.NOM_FEC_ANEXO20, T.NOM_ARCH_ANEXO20, T.NOM_FEC_TIMBRADO, 
+                       T.NOM_ARCH_TIMBRADO, T.NOM_REF_TIMBRADO, T.NOM_FEC_CANC_SIREH, 
+                       T.NOM_ARCH_CANC, T.NOM_FEC_CANC_SAT, T.NOM_REF_SAT, 
+                       T.NOM_FEC_CANC_A20, T.NOM_GOB_FED1, T.NOM_GOB_FED2, 
+                       T.NOM_GOB_FED3, T.NOM_GOB_FED4, T.NOM_FAC_REN1, 
+                       T.NOM_FAC_REN2, T.NOM_IMP_SIN1, T.NOM_IMP_SIN2, 
+                       T.NOM_CICLO_FON, T.NOM_REMESA, T.NOM_ID_PAQUETE_SAT, CN_PAQUETE,
+                       T.NOM_URIBLOB_TIMB, NOM_URIBLOB_CANC,
+                       T.USUARIO, T.FEC_MODIFICO
+                    FROM TN_NOMINA T
+                    WHERE T.id_nomina = ?
+                </prop>
+                <prop key="findHistoricoPagoAnexo20ByIdNomina">
+                    SELECT  HP_RFC as rfcEmpleado, PRIMER_APELLIDO as primerApellido, SEGUNDO_APELLIDO as segundoApellido, NOMBRE_EMPLEADO as nombreEmpleado, 
+                            HP_FOLIO as folio, SERIE_RECIBO as serieRecibo, CODICION_PAGO as condicionPago, TIPO_CAMBIO as tipoCambio, MONEDA as moneda, 
+                            METODO_PAGO as metodoPago, LUGAR as lugar, NUM_CTA as numCta, REG_PATRONAL as regPatronal, RFC as rfcEmpleado, CURP_EMPLEADO as curpEmpleado, 
+                            TIPO_REG as tipoReg, NSS as nssEmpleado, FECHA_PAGO as fecPago, INICIO_PAGO as fecIniPago, FINAL_PAGO as fecFinPago, DIAS_PAGADOS as diasPagados, 
+                            DEPTO as depto, CLABE as clabe, BANCO as banco, FECHA_ING as fecIngreso, ANTIGUEDAD as antiguedad, PUESTO1 as puesto1, PUESTO as puesto, TIPO_CONTRATA as tipoContrata, 
+                            JORNADA as jornada, TIPO_NOMINA as tipoNomina, PERIODICIDAD as periodicidad, SDO_BASE as sdoBase, RIESGO as riesgo, SAL_DIA as sdoDia, 
+                            DIAS_INCAPACIDAD as diasIncapacidad, TIPO_INCAPACIDAD as tipoIncapacidad, DESCUENTO as descuento, DIAS_HORAS_EXTRA as diasHorasExtra, 
+                            TIPO_HORAS_EXT as tipoHorasExtra, HORAS_EXTRA as horasExtra, IMPORTE_PAG as importePag, HP_DIF_FOLIO as hpDifFolio, HP_CONSEC_NOMINA as idNomina, HP_NOMBRAMIENTO as hpNombramiento
+                    FROM    (       SELECT  H.HP_RFC,
+                                            NVL(E.PRIMER_APELLIDO,' ') AS PRIMER_APELLIDO, NVL(E.SEGUNDO_APELLIDO,' ') AS SEGUNDO_APELLIDO, NVL(E.NOMBRE_EMPLEADO,' ') AS NOMBRE_EMPLEADO,
+                                            H.HP_FOLIO, '' SERIE_RECIBO, 
+                                            'Contado' CODICION_PAGO, 
+                                            '1.00' TIPO_CAMBIO,'MXN' MONEDA,  
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN 'Cheque' ELSE 'Transferencia' END METODO_PAGO,  
+                                            'México D.F.' LUGAR, 
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) <![CDATA[<>]]> '000' THEN '6719' ELSE '6784' END NUM_CTA,  
+                                            '0000699900' REG_PATRONAL, H.HP_RFC RFC, E.CURP_EMPLEADO, 
+                                            '02' TIPO_REG,  
+                                            TRIM(nvl(E.IMSS_ISSSTE,'00000000000')) NSS, TO_CHAR(R.NOM_FEC_DEPOSITO, 'YYYY-MM-DD') FECHA_PAGO,
+                                            TO_CHAR(H.HP_INI_PAGO, 'YYYY-MM-DD') INICIO_PAGO,
+                                            TO_CHAR(H.HP_FIN_PAGO, 'YYYY-MM-DD') FINAL_PAGO,
+                                           (H.HP_FIN_PAGO - H.HP_INI_PAGO) + 1 DIAS_PAGADOS, H.ID_UNIDAD_NOM||' '||U.DESC_UNIDAD DEPTO,
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN '0' ELSE LPAD(H.HP_CLABE,18,'0') END CLABE,
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN '000' ELSE SUBSTR(H.HP_CLABE,1,3) END BANCO,
+                                            TO_CHAR(E.INGRESO_DEPENDENCIA, 'YYYY-MM-DD') FECHA_ING,
+                                            LTRIM((TO_CHAR(ROUND(ABS((((H.HP_FIN_PAGO - E.INGRESO_DEPENDENCIA) + 1)/365)*52)),'99999'))) ANTIGUEDAD,
+                                            H.ID_TIPO_NOMINA||'-'||SUBSTR(H.HP_QNA_PAGO,1,4)||'-'||SUBSTR(H.HP_QNA_PAGO,5,2)||'-'||LPAD(TRIM(H.HP_NUM_COMPLEM),2,'0')||
+                                            LPAD(H.ID_PLAZA, 6,'0')||RPAD(TRIM(A.ID_NIVEL_PTO),4,' ')||H.ID_UNIDAD_NOM||'-'||
+                                            SUBSTR(LPAD(H.ID_ZONA_DIST_NOM ,5,'0'),1,2)||'-'||SUBSTR(LPAD(H.ID_ZONA_DIST_NOM,5,'0'),3,3)|| LPAD(H.HP_NUM_PENSION,2,'0')||
+                                            LPAD(H.HP_PCP_PAGADOS,3,'0')||' de '||LPAD(H.HP_PCP_POR_PAGAR,3,'0')||H.ID_PUESTO_NOM||SUBSTR(TRIM(P.DESC_PUESTO),1,45) PUESTO,
+                                            CASE WHEN substr(E.CURP_EMPLEADO,11,1) = 'M' THEN P.DESC_PUESTOMU ELSE P.DESC_PUESTOHO END PUESTO1,
+                                            CASE WHEN H.ID_GRUPOPAGO_NOM = 'E' THEN '01'
+                                            WHEN H.ID_GRUPOPAGO_NOM = 'J' THEN '01' ELSE '03' END TIPO_CONTRATA,
+                                            CASE WHEN A.ID_JERARQUIA >= '7' THEN '01' ELSE '03' END JORNADA,
+                                            CASE WHEN H.ID_TIPO_NOMINA = 'AC' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'AG' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'CJ' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'DB' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'DE' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'DJ' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'EX' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'IN' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'LA' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OB' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OD' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OR' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'VE' THEN 'O' ELSE 'E' END TIPO_NOMINA,
+                                            CASE WHEN H.ID_TIPO_NOMINA = 'AC' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'AG' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'CJ' THEN '05'
+                                            WHEN H.ID_TIPO_NOMINA = 'DB' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'DE' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'DJ' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'EX' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'IN' THEN '05'
+                                            WHEN H.ID_TIPO_NOMINA = 'LA' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OB' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OD' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OR' THEN '04'
+                                            WHEN H.ID_TIPO_NOMINA = 'VE' THEN '05' ELSE '99' END PERIODICIDAD,
+                                            0 SDO_BASE, 1 RIESGO, 0 SAL_DIA,
+                                            0 DIAS_INCAPACIDAD, '' TIPO_INCAPACIDAD,
+                                            '' DESCUENTO, '' DIAS_HORAS_EXTRA, '' TIPO_HORAS_EXT, '' HORAS_EXTRA, '' IMPORTE_PAG,
+                                            H.HP_DIF_FOLIO, H.HP_CONSEC_NOMINA, H.HP_NOMBRAMIENTO 
+                                    FROM    TN_HISTORICO_PAGO H, TD_EMPLEADO E, TC_UNIDAD U, TC_PUESTO P, TC_ATRIBUTO_PUESTO A,
+                                            TC_NOMBRAMIENTO N,  TN_NOMINA R
+                                    WHERE   H.HP_CONSEC_NOMINA = ? AND
+                                            H.HP_NUM_PENSION = 0 AND
+                                            H.HP_RFC = E.RFC_EMPLEADO AND
+                                            H.ID_UNIDAD_NOM = U.ID_UNIDAD AND
+                                            U.UNI_CICLO = H.HP_CICLO_UNIDAD AND
+                                            H.ID_PUESTO_NOM = P.ID_PUESTO AND
+                                            H.ID_PUESTO_NOM = A.ID_ATRIBUTO_PUESTO AND
+                                            TO_CHAR(A.AP_FIN, 'DD/MM/YYYY') = '01/01/2099' AND
+                                            A.ID_NOMBRAMIENTO = N.ID_NOMBRAMIENTO(+) AND
+                                            H.HP_QNA_PAGO = R.NOM_QNA_CAPTURA(+) AND
+                                            H.ID_TIPO_NOMINA = R.ID_TIPO_NOMINA(+) AND
+                                            H.HP_NUM_COMPLEM = R.NOM_NUM_COMPLEM(+)
+                                            GROUP BY E.RFC_UNICO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO, E.NOMBRE_EMPLEADO, H.HP_FOLIO,
+                                            H.HP_DIF_FOLIO, H.HP_CLABE, H.HP_RFC, E.CURP_EMPLEADO, H.ID_GRUPOPAGO_NOM, E.IMSS_ISSSTE,
+                                            R.NOM_FEC_DEPOSITO, H.HP_INI_PAGO, H.HP_FIN_PAGO, H.ID_UNIDAD_NOM, U.DESC_UNIDAD,
+                                            E.INGRESO_DEPENDENCIA, H.ID_TIPO_NOMINA, H.HP_QNA_PAGO, H.HP_NUM_COMPLEM, H.ID_PLAZA, A.ID_NIVEL_PTO,
+                                            H.ID_ZONA_DIST_NOM, H.HP_NUM_PENSION, H.HP_PCP_PAGADOS, H.HP_PCP_POR_PAGAR, H.ID_PUESTO_NOM,
+                                            P.DESC_PUESTO, P.DESC_PUESTOMU, P.DESC_PUESTOHO, N.DESC_NOMBRAMIENTO, A.ID_JERARQUIA, HP_CONSEC_NOMINA, HP_NOMBRAMIENTO
+                                            ORDER BY H.HP_FOLIO, E.RFC_UNICO DESC)
+                        GROUP BY HP_RFC, PRIMER_APELLIDO, SEGUNDO_APELLIDO, NOMBRE_EMPLEADO, HP_FOLIO, SERIE_RECIBO, CODICION_PAGO, TIPO_CAMBIO,
+                        MONEDA, METODO_PAGO, LUGAR, NUM_CTA, REG_PATRONAL, RFC, CURP_EMPLEADO, TIPO_REG, NSS, FECHA_PAGO, INICIO_PAGO,
+                        FINAL_PAGO, DIAS_PAGADOS, DEPTO, CLABE, BANCO, FECHA_ING, ANTIGUEDAD, PUESTO, PUESTO1, TIPO_CONTRATA, JORNADA, TIPO_NOMINA, PERIODICIDAD,
+                        SDO_BASE, RIESGO, SAL_DIA,  DIAS_INCAPACIDAD, TIPO_INCAPACIDAD,
+                        DESCUENTO, DIAS_HORAS_EXTRA, TIPO_HORAS_EXT, HORAS_EXTRA, IMPORTE_PAG, HP_DIF_FOLIO, HP_CONSEC_NOMINA, HP_NOMBRAMIENTO
+                        ORDER BY HP_FOLIO, RFC  
+                </prop>
+                <prop key="getHistoricoAnexo20ByIdNominaAndFolio">
+                    SELECT  HP_RFC as rfcEmpleado, PRIMER_APELLIDO as primerApellido, SEGUNDO_APELLIDO as segundoApellido, NOMBRE_EMPLEADO as nombreEmpleado, 
+                            HP_FOLIO as folio, SERIE_RECIBO as serieRecibo, CODICION_PAGO as condicionPago, TIPO_CAMBIO as tipoCambio, MONEDA as moneda, 
+                            METODO_PAGO as metodoPago, LUGAR as lugar, NUM_CTA as numCta, REG_PATRONAL as regPatronal, RFC as rfcEmpleado, CURP_EMPLEADO as curpEmpleado, 
+                            TIPO_REG as tipoReg, NSS as nssEmpleado, FECHA_PAGO as fecPago, INICIO_PAGO as fecIniPago, FINAL_PAGO as fecFinPago, DIAS_PAGADOS as diasPagados, 
+                            DEPTO as depto, CLABE as clabe, BANCO as banco, FECHA_ING as fecIngreso, ANTIGUEDAD as antiguedad, PUESTO1 as puesto1, PUESTO as puesto, TIPO_CONTRATA as tipoContrata, 
+                            JORNADA as jornada, TIPO_NOMINA as tipoNomina, PERIODICIDAD as periodicidad, SDO_BASE as sdoBase, RIESGO as riesgo, SAL_DIA as sdoDia, 
+                            DIAS_INCAPACIDAD as diasIncapacidad, TIPO_INCAPACIDAD as tipoIncapacidad, DESCUENTO as descuento, DIAS_HORAS_EXTRA as diasHorasExtra, 
+                            TIPO_HORAS_EXT as tipoHorasExtra, HORAS_EXTRA as horasExtra, IMPORTE_PAG as importePag, HP_DIF_FOLIO as hpDifFolio, HP_CONSEC_NOMINA as idNomina, HP_NOMBRAMIENTO as hpNombramiento
+                    FROM    (       SELECT  H.HP_RFC,
+                                            NVL(E.PRIMER_APELLIDO,' ') AS PRIMER_APELLIDO, NVL(E.SEGUNDO_APELLIDO,' ') AS SEGUNDO_APELLIDO, NVL(E.NOMBRE_EMPLEADO,' ') AS NOMBRE_EMPLEADO,
+                                            H.HP_FOLIO, '' SERIE_RECIBO, 
+                                            'Contado' CODICION_PAGO, 
+                                            '1.00' TIPO_CAMBIO,'MXN' MONEDA,  
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN 'Cheque' ELSE 'Transferencia' END METODO_PAGO,  
+                                            'México D.F.' LUGAR, 
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) <![CDATA[<>]]> '000' THEN '6719' ELSE '6784' END NUM_CTA,  
+                                            '0000699900' REG_PATRONAL, H.HP_RFC RFC, E.CURP_EMPLEADO, 
+                                            '02' TIPO_REG,  
+                                            TRIM(nvl(E.IMSS_ISSSTE,'00000000000')) NSS, TO_CHAR(R.NOM_FEC_DEPOSITO, 'YYYY-MM-DD') FECHA_PAGO,
+                                            TO_CHAR(H.HP_INI_PAGO, 'YYYY-MM-DD') INICIO_PAGO,
+                                            TO_CHAR(H.HP_FIN_PAGO, 'YYYY-MM-DD') FINAL_PAGO,
+                                           (H.HP_FIN_PAGO - H.HP_INI_PAGO) + 1 DIAS_PAGADOS, H.ID_UNIDAD_NOM||' '||U.DESC_UNIDAD DEPTO,
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN '0' ELSE LPAD(H.HP_CLABE,18,'0') END CLABE,
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN '000' ELSE SUBSTR(H.HP_CLABE,1,3) END BANCO,
+                                            TO_CHAR(E.INGRESO_DEPENDENCIA, 'YYYY-MM-DD') FECHA_ING,
+                                            LTRIM((TO_CHAR(ROUND(ABS((((H.HP_FIN_PAGO - E.INGRESO_DEPENDENCIA) + 1)/365)*52)),'99999'))) ANTIGUEDAD,
+                                            H.ID_TIPO_NOMINA||'-'||SUBSTR(H.HP_QNA_PAGO,1,4)||'-'||SUBSTR(H.HP_QNA_PAGO,5,2)||'-'||LPAD(TRIM(H.HP_NUM_COMPLEM),2,'0')||
+                                            LPAD(H.ID_PLAZA, 6,'0')||RPAD(TRIM(A.ID_NIVEL_PTO),4,' ')||H.ID_UNIDAD_NOM||'-'||
+                                            SUBSTR(LPAD(H.ID_ZONA_DIST_NOM ,5,'0'),1,2)||'-'||SUBSTR(LPAD(H.ID_ZONA_DIST_NOM,5,'0'),3,3)|| LPAD(H.HP_NUM_PENSION,2,'0')||
+                                            LPAD(H.HP_PCP_PAGADOS,3,'0')||' de '||LPAD(H.HP_PCP_POR_PAGAR,3,'0')||H.ID_PUESTO_NOM||SUBSTR(TRIM(P.DESC_PUESTO),1,45) PUESTO,
+                                            CASE WHEN substr(E.CURP_EMPLEADO,11,1) = 'M' THEN P.DESC_PUESTOMU ELSE P.DESC_PUESTOHO END PUESTO1,
+                                            CASE WHEN H.ID_GRUPOPAGO_NOM = 'E' THEN '01'
+                                            WHEN H.ID_GRUPOPAGO_NOM = 'J' THEN '01' ELSE '03' END TIPO_CONTRATA,
+                                            CASE WHEN A.ID_JERARQUIA >= '7' THEN '01' ELSE '03' END JORNADA,
+                                            CASE WHEN H.ID_TIPO_NOMINA = 'AC' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'AG' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'CJ' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'DB' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'DE' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'DJ' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'EX' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'IN' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'LA' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OB' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OD' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OR' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'VE' THEN 'O' ELSE 'E' END TIPO_NOMINA,
+                                            CASE WHEN H.ID_TIPO_NOMINA = 'AC' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'AG' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'CJ' THEN '05'
+                                            WHEN H.ID_TIPO_NOMINA = 'DB' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'DE' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'DJ' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'EX' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'IN' THEN '05'
+                                            WHEN H.ID_TIPO_NOMINA = 'LA' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OB' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OD' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OR' THEN '04'
+                                            WHEN H.ID_TIPO_NOMINA = 'VE' THEN '05' ELSE '99' END PERIODICIDAD,
+                                            0 SDO_BASE, 1 RIESGO, 0 SAL_DIA,
+                                            0 DIAS_INCAPACIDAD, '' TIPO_INCAPACIDAD,
+                                            '' DESCUENTO, '' DIAS_HORAS_EXTRA, '' TIPO_HORAS_EXT, '' HORAS_EXTRA, '' IMPORTE_PAG,
+                                            H.HP_DIF_FOLIO, H.HP_CONSEC_NOMINA, H.HP_NOMBRAMIENTO 
+                                    FROM    TN_HISTORICO_PAGO H, TD_EMPLEADO E, TC_UNIDAD U, TC_PUESTO P, TC_ATRIBUTO_PUESTO A,
+                                            TC_NOMBRAMIENTO N,  TN_NOMINA R
+                                    WHERE   H.HP_CONSEC_NOMINA = ? AND
+                                            H.HP_FOLIO = ? AND
+                                            H.HP_NUM_PENSION = 0 AND
+                                            H.HP_RFC = E.RFC_EMPLEADO AND
+                                            H.ID_UNIDAD_NOM = U.ID_UNIDAD AND
+                                            U.UNI_CICLO = H.HP_CICLO_UNIDAD AND
+                                            H.ID_PUESTO_NOM = P.ID_PUESTO AND
+                                            H.ID_PUESTO_NOM = A.ID_ATRIBUTO_PUESTO AND
+                                            TO_CHAR(A.AP_FIN, 'DD/MM/YYYY') = '01/01/2099' AND
+                                            A.ID_NOMBRAMIENTO = N.ID_NOMBRAMIENTO(+) AND
+                                            H.HP_QNA_PAGO = R.NOM_QNA_CAPTURA(+) AND
+                                            H.ID_TIPO_NOMINA = R.ID_TIPO_NOMINA(+) AND
+                                            H.HP_NUM_COMPLEM = R.NOM_NUM_COMPLEM(+)
+                                            GROUP BY E.RFC_UNICO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO, E.NOMBRE_EMPLEADO, H.HP_FOLIO,
+                                            H.HP_DIF_FOLIO, H.HP_CLABE, H.HP_RFC, E.CURP_EMPLEADO, H.ID_GRUPOPAGO_NOM, E.IMSS_ISSSTE,
+                                            R.NOM_FEC_DEPOSITO, H.HP_INI_PAGO, H.HP_FIN_PAGO, H.ID_UNIDAD_NOM, U.DESC_UNIDAD,
+                                            E.INGRESO_DEPENDENCIA, H.ID_TIPO_NOMINA, H.HP_QNA_PAGO, H.HP_NUM_COMPLEM, H.ID_PLAZA, A.ID_NIVEL_PTO,
+                                            H.ID_ZONA_DIST_NOM, H.HP_NUM_PENSION, H.HP_PCP_PAGADOS, H.HP_PCP_POR_PAGAR, H.ID_PUESTO_NOM,
+                                            P.DESC_PUESTO, P.DESC_PUESTOMU, P.DESC_PUESTOHO, N.DESC_NOMBRAMIENTO, A.ID_JERARQUIA, HP_CONSEC_NOMINA, HP_NOMBRAMIENTO
+                                            ORDER BY H.HP_FOLIO, E.RFC_UNICO DESC)
+                        GROUP BY HP_RFC, PRIMER_APELLIDO, SEGUNDO_APELLIDO, NOMBRE_EMPLEADO, HP_FOLIO, SERIE_RECIBO, CODICION_PAGO, TIPO_CAMBIO,
+                        MONEDA, METODO_PAGO, LUGAR, NUM_CTA, REG_PATRONAL, RFC, CURP_EMPLEADO, TIPO_REG, NSS, FECHA_PAGO, INICIO_PAGO,
+                        FINAL_PAGO, DIAS_PAGADOS, DEPTO, CLABE, BANCO, FECHA_ING, ANTIGUEDAD, PUESTO, PUESTO1, TIPO_CONTRATA, JORNADA, TIPO_NOMINA, PERIODICIDAD,
+                        SDO_BASE, RIESGO, SAL_DIA,  DIAS_INCAPACIDAD, TIPO_INCAPACIDAD,
+                        DESCUENTO, DIAS_HORAS_EXTRA, TIPO_HORAS_EXT, HORAS_EXTRA, IMPORTE_PAG, HP_DIF_FOLIO, HP_CONSEC_NOMINA, HP_NOMBRAMIENTO
+                        ORDER BY HP_FOLIO, RFC  
+                </prop>
+                <prop key="num_pagos_por_nomina">
+                    select TO_CHAR(count(*), '99G999') as cptoPago from (
+                            SELECT  HP_RFC as rfcEmpleado, PRIMER_APELLIDO as primerApellido, SEGUNDO_APELLIDO as segundoApellido, NOMBRE_EMPLEADO as nombreEmpleado, 
+                                HP_FOLIO as folio, SERIE_RECIBO as serieRecibo, CODICION_PAGO as condicionPago, TIPO_CAMBIO as tipoCambio, MONEDA as moneda, 
+                                METODO_PAGO as metodoPago, LUGAR as lugar, NUM_CTA as numCta, REG_PATRONAL as regPatronal, RFC as rfcEmpleado, CURP_EMPLEADO as curpEmpleado, 
+                                TIPO_REG as tipoReg, NSS as nssEmpleado, FECHA_PAGO as fecPago, INICIO_PAGO as fecIniPago, FINAL_PAGO as fecFinPago, DIAS_PAGADOS as diasPagados, 
+                                DEPTO as depto, CLABE as clabe, BANCO as banco, FECHA_ING as fecIngreso, ANTIGUEDAD as antiguedad, PUESTO as puesto, TIPO_CONTRATA as tipoContrata, 
+                                JORNADA as jornada, TIPO_NOMINA as tipoNomina, PERIODICIDAD as periodicidad, SDO_BASE as sdoBase, RIESGO as riesgo, SAL_DIA as sdoDia, 
+                                DIAS_INCAPACIDAD as diasIncapacidad, TIPO_INCAPACIDAD as tipoIncapacidad, DESCUENTO as descuento, DIAS_HORAS_EXTRA as diasHorasExtra, 
+                                TIPO_HORAS_EXT as tipoHorasExtra, HORAS_EXTRA as horasExtra, IMPORTE_PAG as importePag, HP_DIF_FOLIO as hpDifFolio, HP_CONSEC_NOMINA as idNomina
+                            FROM    (       SELECT  H.HP_RFC,
+                                            NVL(E.PRIMER_APELLIDO,' ') AS PRIMER_APELLIDO, NVL(E.SEGUNDO_APELLIDO,' ') AS SEGUNDO_APELLIDO, NVL(E.NOMBRE_EMPLEADO,' ') AS NOMBRE_EMPLEADO,
+                                            --CASE WHEN E.PRIMER_APELLIDO IS NULL THEN ' ' ELSE E.PRIMER_APELLIDO END PRIMER_APELLIDO, 
+                                            --CASE WHEN E.SEGUNDO_APELLIDO IS NULL THEN ' ' ELSE E.SEGUNDO_APELLIDO END SEGUNDO_APELLIDO, 
+                                            --E.NOMBRE_EMPLEADO, 
+                                            H.HP_FOLIO, '' SERIE_RECIBO, 
+                                            'Contado' CODICION_PAGO, 
+                                            '1.00' TIPO_CAMBIO,'MXN' MONEDA,  
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN 'Cheque' ELSE 'Transferencia' END METODO_PAGO,  
+                                            'México D.F.' LUGAR, 
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) <![CDATA[<>]]> '000' THEN '6719' ELSE '6784' END NUM_CTA,  
+                                            '0000699900' REG_PATRONAL, H.HP_RFC RFC, E.CURP_EMPLEADO, 
+                                            CASE WHEN H.ID_GRUPOPAGO_NOM IN ('E','V','J') THEN '02' 
+                                            WHEN H.ID_GRUPOPAGO_NOM = 'H' THEN '09' END TIPO_REG,  
+                                            TRIM(nvl(E.IMSS_ISSSTE,'00000000000')) NSS, TO_CHAR(R.NOM_FEC_DEPOSITO, 'YYYY-MM-DD') FECHA_PAGO,
+                                            TO_CHAR(H.HP_INI_PAGO, 'YYYY-MM-DD') INICIO_PAGO,
+                                            TO_CHAR(H.HP_FIN_PAGO, 'YYYY-MM-DD') FINAL_PAGO,
+                                           (H.HP_FIN_PAGO - H.HP_INI_PAGO) + 1 DIAS_PAGADOS, H.ID_UNIDAD_NOM||' '||U.DESC_UNIDAD DEPTO,
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN '0' ELSE LPAD(H.HP_CLABE,18,'0') END CLABE,
+                                            CASE WHEN SUBSTR(H.HP_CLABE,1,3) = '000' THEN '000' ELSE SUBSTR(H.HP_CLABE,1,3) END BANCO,
+                                            TO_CHAR(E.INGRESO_DEPENDENCIA, 'YYYY-MM-DD') FECHA_ING,
+                                            LTRIM((TO_CHAR(ROUND(ABS((((H.HP_FIN_PAGO - E.INGRESO_DEPENDENCIA) + 1)/365)*52)),'99999'))) ANTIGUEDAD,
+                                            H.ID_TIPO_NOMINA||'-'||SUBSTR(H.HP_QNA_PAGO,1,4)||'-'||SUBSTR(H.HP_QNA_PAGO,5,2)||'-'||LPAD(TRIM(H.HP_NUM_COMPLEM),2,'0')||
+                                            LPAD(H.ID_PLAZA, 6,'0')||RPAD(TRIM(A.ID_NIVEL_PTO),4,' ')||H.ID_UNIDAD_NOM||'-'||
+                                            SUBSTR(LPAD(H.ID_ZONA_DIST_NOM ,5,'0'),1,2)||'-'||SUBSTR(LPAD(H.ID_ZONA_DIST_NOM,5,'0'),3,3)|| LPAD(H.HP_NUM_PENSION,2,'0')||
+                                            LPAD(H.HP_PCP_PAGADOS,3,'0')||' de '||LPAD(H.HP_PCP_POR_PAGAR,3,'0')||H.ID_PUESTO_NOM||SUBSTR(TRIM(P.DESC_PUESTO),1,45) PUESTO,
+                                            CASE WHEN H.ID_GRUPOPAGO_NOM = 'E' THEN '01'
+                                            WHEN H.ID_GRUPOPAGO_NOM = 'J' THEN '01' ELSE '03' END TIPO_CONTRATA,
+                                            CASE WHEN A.ID_JERARQUIA >= '7' THEN '01' ELSE '03' END JORNADA,
+                                            CASE WHEN H.ID_TIPO_NOMINA = 'AC' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'AG' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'CJ' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'DB' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'DE' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'DJ' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'EX' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'IN' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'LA' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OB' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OD' THEN 'E'
+                                            WHEN H.ID_TIPO_NOMINA = 'OR' THEN 'O'
+                                            WHEN H.ID_TIPO_NOMINA = 'VE' THEN 'O' ELSE 'E' END TIPO_NOMINA,
+                                            CASE WHEN H.ID_TIPO_NOMINA = 'AC' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'AG' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'CJ' THEN '05'
+                                            WHEN H.ID_TIPO_NOMINA = 'DB' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'DE' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'DJ' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'EX' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'IN' THEN '05'
+                                            WHEN H.ID_TIPO_NOMINA = 'LA' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OB' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OD' THEN '99'
+                                            WHEN H.ID_TIPO_NOMINA = 'OR' THEN '04'
+                                            WHEN H.ID_TIPO_NOMINA = 'VE' THEN '05' ELSE '99' END PERIODICIDAD,
+                                            0 SDO_BASE, 1 RIESGO, 0 SAL_DIA,
+                                            0 DIAS_INCAPACIDAD, '' TIPO_INCAPACIDAD,
+                                            '' DESCUENTO, '' DIAS_HORAS_EXTRA, '' TIPO_HORAS_EXT, '' HORAS_EXTRA, '' IMPORTE_PAG,
+                                            H.HP_DIF_FOLIO, H.HP_CONSEC_NOMINA 
+                                    FROM    TN_HISTORICO_PAGO H, TD_EMPLEADO E, TC_UNIDAD U, TC_PUESTO P, TC_ATRIBUTO_PUESTO A,
+                                            TC_NOMBRAMIENTO N,  TN_NOMINA R
+                                    WHERE   H.HP_CONSEC_NOMINA = ? AND
+                                            H.HP_NUM_PENSION = 0 AND
+                                            H.HP_RFC = E.RFC_EMPLEADO AND
+                                            H.ID_UNIDAD_NOM = U.ID_UNIDAD AND
+                                            U.UNI_CICLO = H.HP_CICLO_UNIDAD AND
+                                            H.ID_PUESTO_NOM = P.ID_PUESTO AND
+                                            H.ID_PUESTO_NOM = A.ID_ATRIBUTO_PUESTO AND
+                                            TO_CHAR(A.AP_FIN, 'DD/MM/YYYY') = '01/01/2099' AND
+                                            A.ID_NOMBRAMIENTO = N.ID_NOMBRAMIENTO(+) AND
+                                            H.HP_QNA_PAGO = R.NOM_QNA_CAPTURA(+) AND
+                                            H.ID_TIPO_NOMINA = R.ID_TIPO_NOMINA(+) AND
+                                            H.HP_NUM_COMPLEM = R.NOM_NUM_COMPLEM(+)
+                                            GROUP BY E.RFC_UNICO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO, E.NOMBRE_EMPLEADO, H.HP_FOLIO,
+                                            H.HP_DIF_FOLIO, H.HP_CLABE, H.HP_RFC, E.CURP_EMPLEADO, H.ID_GRUPOPAGO_NOM, E.IMSS_ISSSTE,
+                                            R.NOM_FEC_DEPOSITO, H.HP_INI_PAGO, H.HP_FIN_PAGO, H.ID_UNIDAD_NOM, U.DESC_UNIDAD,
+                                            E.INGRESO_DEPENDENCIA, H.ID_TIPO_NOMINA, H.HP_QNA_PAGO, H.HP_NUM_COMPLEM, H.ID_PLAZA, A.ID_NIVEL_PTO,
+                                            H.ID_ZONA_DIST_NOM, H.HP_NUM_PENSION, H.HP_PCP_PAGADOS, H.HP_PCP_POR_PAGAR, H.ID_PUESTO_NOM,
+                                            P.DESC_PUESTO, N.DESC_NOMBRAMIENTO, A.ID_JERARQUIA, HP_CONSEC_NOMINA
+                                            ORDER BY H.HP_FOLIO, E.RFC_UNICO DESC)
+                        GROUP BY HP_RFC, PRIMER_APELLIDO, SEGUNDO_APELLIDO, NOMBRE_EMPLEADO, HP_FOLIO, SERIE_RECIBO, CODICION_PAGO, TIPO_CAMBIO,
+                        MONEDA, METODO_PAGO, LUGAR, NUM_CTA, REG_PATRONAL, RFC, CURP_EMPLEADO, TIPO_REG, NSS, FECHA_PAGO, INICIO_PAGO,
+                        FINAL_PAGO, DIAS_PAGADOS, DEPTO, CLABE, BANCO, FECHA_ING, ANTIGUEDAD, PUESTO, TIPO_CONTRATA, JORNADA, TIPO_NOMINA, PERIODICIDAD,
+                        SDO_BASE, RIESGO, SAL_DIA,  DIAS_INCAPACIDAD, TIPO_INCAPACIDAD,
+                        DESCUENTO, DIAS_HORAS_EXTRA, TIPO_HORAS_EXT, HORAS_EXTRA, IMPORTE_PAG, HP_DIF_FOLIO, HP_CONSEC_NOMINA
+                        ORDER BY HP_FOLIO, RFC)
+                </prop>
+                <prop key="findConceptosPagadosAnexo20ByIdNomina">
+                    SELECT   RFC, FOLIO, DIFFOLIO, MAX (NUMCONCEPTO) AS NUMCONCEPTO, TIPOCPTO,
+                             ID_CPTO_PAGO, SUM (MONTO) AS MONTO, DESCRIPCION, CVESAT, TIENEISR
+                        FROM TABLE (PKG_CPTOS_TIMBRADO.OBT_CPTOS (?))
+                    GROUP BY RFC, FOLIO, DIFFOLIO, ID_CPTO_PAGO, DESCRIPCION, CVESAT, TIENEISR, TIPOCPTO
+                      HAVING SUM (MONTO) > 0
+                    ORDER BY FOLIO, RFC,CASE WHEN REGEXP_LIKE (ID_CPTO_PAGO, '^([0-9]+)$') THEN LPAD (ID_CPTO_PAGO, 20) ELSE ID_CPTO_PAGO END
+                </prop>
+                <prop key="getConceptosAnexo20ByIdNominaAndFolio">
+                    SELECT   RFC, FOLIO, DIFFOLIO, MAX (NUMCONCEPTO) AS NUMCONCEPTO, TIPOCPTO,
+                             ID_CPTO_PAGO, SUM (MONTO) AS MONTO, DESCRIPCION, CVESAT, TIENEISR
+                        FROM TABLE (PKG_CPTOS_TIMBRADO.OBT_CPTOS (?))
+                        WHERE FOLIO = ?
+                    GROUP BY RFC, FOLIO, DIFFOLIO, ID_CPTO_PAGO, DESCRIPCION, CVESAT, TIENEISR, TIPOCPTO
+                      HAVING SUM (MONTO) > 0
+                    ORDER BY FOLIO, RFC,CASE WHEN REGEXP_LIKE (ID_CPTO_PAGO, '^([0-9]+)$') THEN LPAD (ID_CPTO_PAGO, 20) ELSE ID_CPTO_PAGO END
+                </prop>
+                <prop key="queryGetTnComprobanteDigByUuid">
+                    SELECT 
+                       CN_FOLIO, CN_DIF_FOLIO, CN_CONSEC_NOMINA,  
+                       CN_EJERCICIO, CN_PAQUETE, CN_RFC, 
+                       CN_SITUACION, CN_XML_GENERADO, CN_FECHA_GENERADO, 
+                       CN_XML_TIMBRADO, CN_FEC_ENVIO, CN_FEC_RESPUESTA, 
+                       CN_FOLIO_RECIBO, CN_FOLIO_FISCAL, CN_XML_CANCELADO, 
+                       CN_FEC_ENV_CANC, CN_FEC_CANC, CN_FEC_FIRMA_REC, 
+                       CN_CADENA_ORIGINAL, USUARIO, FEC_MODIFICO " 
+                    FROM TN_COMPROBANTE_DIG WHERE CN_FOLIO_FISCAL = :cnFolioFiscal
+                        AND CN_PAQUETE = :cnPaquete
+                </prop>
+                <prop key="insertTnComprobanteDig">
+                    INSERT INTO TN_COMPROBANTE_DIG
+                            (CN_FOLIO, CN_DIF_FOLIO, CN_CONSEC_NOMINA, CN_EJERCICIO,
+                             CN_PAQUETE, CN_RFC, CN_SITUACION, CN_XML_GENERADO,
+                             CN_FECHA_GENERADO, CN_FEC_ENVIO,
+                             CN_FEC_RESPUESTA, CN_FOLIO_RECIBO, CN_FOLIO_FISCAL,
+                             CN_FEC_ENV_CANC, CN_FEC_CANC,
+                             CN_FEC_FIRMA_REC, CN_CADENA_ORIGINAL, USUARIO, FEC_MODIFICO
+                            )
+                     VALUES (?, ?, ?, ?,
+                             ?, ?, ?, ?,
+                             ?, ?, ?,
+                             ?, ?, ?,
+                             ?, ?, ?,
+                             ?, ?
+                            )
+                </prop>
+                <prop key="updateTnComprobanteDig">
+                    UPDATE TN_COMPROBANTE_DIG
+                       SET CN_CONSEC_NOMINA = ?,
+                           CN_ARCH_CREACION = ?,
+                           CN_FECHA_GENERADO = ?,
+                           CN_INCIDENCIA = ?,
+                           CN_XML_CANCELADO = ?,
+                           CN_FEC_ENVIO = ?,
+                           CN_ID_PAQUETE_SAT = ?,
+                           CN_FEC_RESPUESTA = ?,
+                           USUARIO = ?,
+                           CN_CADENA_ORIGINAL = ?,
+                           CN_EJERCICIO = ?,
+                           CN_ARCH_A_CANCELAR = ?,
+                           FEC_MODIFICO = ?,
+                           CN_ARCH_TIMBRADO = ?,
+                           CN_URIBLOB_CANC = ?,
+                           CN_XML_GENERADO = ?,
+                           CN_ENVIADO_INST = ?,
+                           CN_FEC_ENV_CANC = ?,
+                           CN_RFC = ?,
+                           CN_PAQUETE = ?,
+                           CN_REF_TIMBRADO = ?,
+                           CN_PAQUETE_RV = ?,
+                           CN_XML_TIMBRADO = ?,
+                           CN_ENVIADO_PERS = ?,
+                           CN_URIBLOB_TIMB = ?,
+                           CN_SITUACION = ?,
+                           CN_CADENA_SELLO = ?,
+                           CN_FEC_CANC = ?,
+                           CN_ARCH_ANEXO20 = ?,
+                           CN_FOLIO_FISCAL = ?,
+                           CN_DIF_FOLIO = ?,
+                           CN_FEC_FIRMA_REC = ?,
+                           CN_FOLIO_RECIBO = ?,
+                           CN_FOLIO = ?
+                     WHERE CN_DIF_FOLIO = ? AND CN_FOLIO = ? AND CN_PAQUETE = ?
+                </prop>
+                <prop key="updateTimbradoTnComprobanteDig">
+                    UPDATE TN_COMPROBANTE_DIG
+                       SET CN_SITUACION = ?,
+                           CN_XML_TIMBRADO = ?,
+                           CN_FOLIO_RECIBO = ?,
+                           CN_FOLIO_FISCAL = ?,
+                           CN_FEC_RESPUESTA = ?,
+                           USUARIO = ?,
+                           FEC_MODIFICO = ?
+                     WHERE CN_FOLIO = ? AND CN_DIF_FOLIO = ? AND CN_PAQUETE = ?
+                </prop>
+                <prop key="updateXmlGeneradoTnComprobanteDig">
+                    UPDATE TN_COMPROBANTE_DIG
+                       SET CN_SITUACION = ?,
+                           CN_XML_GENERADO = ?,
+                           USUARIO = ?,
+                           FEC_MODIFICO = ?
+                     WHERE CN_FOLIO = ? AND CN_DIF_FOLIO = ? AND CN_SITUACION = 'F'
+                </prop>
+                <prop key="updateSituacionTnComprobanteDig">
+                UPDATE TN_COMPROBANTE_DIG
+                       SET CN_SITUACION = ?,
+                           USUARIO = ?,
+                           FEC_MODIFICO = ?,
+                           CN_REF_TIMBRADO = ?,
+                           CN_INCIDENCIA = ?
+                     WHERE CN_FOLIO = ? AND CN_DIF_FOLIO = ? AND CN_PAQUETE = ?
+                </prop>
+                <prop key="updateSituacionAndPaqueteRv">
+                    UPDATE TN_COMPROBANTE_DIG
+                       SET CN_SITUACION = ?,
+                           USUARIO = ?,
+                           FEC_MODIFICO = ?,
+                           CN_REF_TIMBRADO = ?,
+                           CN_PAQUETE_RV = ?,
+                           CN_INCIDENCIA = ?
+                     WHERE CN_FOLIO = ? AND CN_DIF_FOLIO = ? AND CN_PAQUETE = ?
+                </prop>
+                <prop key="updateEnviadoTnComprobanteDig">
+                    UPDATE TN_COMPROBANTE_DIG D
+                       SET D.CN_ENVIADO_INST = ?, D.CN_ENVIADO_PERS = ?
+                     WHERE D.CN_FOLIO = ? AND D.CN_DIF_FOLIO = ? AND D.CN_PAQUETE = ?                
+                </prop>
+                <prop key="getNexValOfSecuenciaTnComprobanteDig">
+                    select SEQ_tn_comprobante_dig.nextval as registro from dual
+                </prop>
+                <prop key="findDatos_cfdi">
+                    SELECT  SUBSTR(A.ID_TIPO_NOMINA,1,2) || SUBSTR(A.HP_QNA_PAGO,5,6) || SUBSTR(A.HP_EJER_FISCAL,3,4) || 'C' || A.HP_NUM_COMPLEM as nominaPdf,
+                            ID_UNIDAD_NOM as unidad, 
+                            DESC_UNIDAD as descUnidad ,
+                            case when a.hp_qna_pago <![CDATA[>=]]> 201616 then
+                                case when ap.id_jerarquia <![CDATA[<=]]> '5' and a.id_puesto_nom not in (' P05377',' P05395',' P05380') 
+                                    then substr(a.id_puesto_nom,1,4)||substr(a.id_puesto_nom,7,1) ||'00'||substr(a.id_puesto_nom,5,3)
+                                when ap.id_jerarquia <![CDATA[<=]]> '5' and a.id_puesto_nom in (' P05377',' P05395',' P05380') 
+                                    then substr(a.id_puesto_nom,2,1)||'L'||ap.id_nivel_pto||substr(a.id_puesto_nom,3,5)
+                                    else a.id_puesto_nom
+                                end
+                            end 
+                            as puesto, 
+                            case when substr(e.curp_empleado,11,1) = 'M' then c.desc_puestomu else c.desc_puestoho end as descPuesto, 
+                            HP_CICLO_UNIDAD as ciclo, 
+                            HP_QNA_PAGO as qnaPago, 
+                            ID_PLAZA as plaza, 
+                            AP.ID_NIVEL_PTO as nivel,
+                            CN_CADENA_ORIGINAL as cadenaOriginal,
+                            D.CN_CONSEC_NOMINA as cnConsecNomina,
+                            case when a.hp_pcp_por_pagar != 0 then a.hp_pcp_pagados || ' de ' || a.hp_pcp_por_pagar else '' end pcp,
+                            N.NOM_LEYENDA as nomLeyenda, A.HP_NOMBRAMIENTO, UPPER(NB.DESC_NOMBRAMIENTO) AS DESC_NOMBRAMIENTO
+                    FROM    TN_COMPROBANTE_DIG D, TN_HISTORICO_PAGO A, tc_unidad b, tc_puesto c, td_empleado e, TN_NOMINA N, TC_NOMBRAMIENTO NB, tc_atributo_puesto AP, TC_TABULADOR T
+                    WHERE   D.CN_RFC = ?
+                            AND D.CN_FOLIO = ?
+                            AND D.CN_DIF_FOLIO = ?
+                            AND A.ID_PUESTO_NOM = AP.ID_ATRIBUTO_PUESTO
+                            AND AP.ID_NIVEL_PTO = T.ID_NIVEL_PTO
+                            AND A.ID_ZONA_ECO_NOM = T.ID_ZONA_ECON
+                            AND A.ID_RANGO_NOM = T.ID_RANGO
+                            AND AP.AP_FIN = TO_DATE('01/01/2099','dd/mm/yyyy')
+                            AND T.TAB_FIN = TO_DATE('01/01/2099','dd/mm/yyyy')
+                            AND A.HP_CONSEC_NOMINA = N.ID_NOMINA
+                            AND D.CN_FOLIO = A.HP_FOLIO
+                            AND D.CN_DIF_FOLIO = A.HP_DIF_FOLIO
+                            AND D.CN_RFC = A.HP_RFC
+                            AND b.uni_ciclo = a.HP_CICLO_UNIDAD
+                            and b.id_unidad = a.ID_UNIDAD_NOM
+                            and c.ID_PUESTO = a.ID_PUESTO_NOM
+                            and e.rfc_empleado = a.hp_rfc
+                            AND A.HP_NOMBRAMIENTO = NB.ID_NOMBRAMIENTO
+                            ORDER BY a.hp_qna_pago, a.hp_folio, a.hp_ciclo_unidad
+                </prop>
+                <prop key="queryComprobantesById">
+                    SELECT 
+                        CN_FOLIO, CN_DIF_FOLIO, CN_CONSEC_NOMINA, 
+                    FROM TN_COMPROBANTE_DIG
+                </prop>
+                <prop key="queryGetComprobantesByIdNomina">
+                    SELECT D.CN_FOLIO, D.CN_DIF_FOLIO, D.CN_PAQUETE, D.CN_RFC, D.CN_XML_TIMBRADO, D.CN_ENVIADO_INST,
+                           D.CN_ENVIADO_PERS, E.E_MAIL_OFICIAL, E.E_MAIL_PERSONAL
+                      FROM TN_COMPROBANTE_DIG D, TN_NOMINA N, TD_EMPLEADO E
+                     WHERE D.CN_CONSEC_NOMINA = :idNomina
+                       AND D.CN_SITUACION = 'T'
+                       AND D.CN_FOLIO_FISCAL IS NOT NULL
+                       AND N.CN_PAQUETE = D.CN_PAQUETE
+                       AND D.CN_CONSEC_NOMINA = N.ID_NOMINA
+                       AND D.CN_RFC = E.RFC_EMPLEADO
+                       AND (D.CN_ENVIADO_inst is null or d.CN_ENVIADO_inst = 0)
+                       AND  E.E_MAIL_OFICIAL is not null
+                       ORDER BY D.CN_FOLIO
+                </prop>
+                <prop key="getTnComprobanteDigById">
+                    SELECT T.CN_FOLIO, T.CN_DIF_FOLIO, T.CN_CONSEC_NOMINA, T.CN_EJERCICIO,
+                           T.CN_PAQUETE, T.CN_RFC, T.CN_SITUACION, T.CN_XML_GENERADO,
+                           T.CN_FECHA_GENERADO, T.CN_XML_TIMBRADO, T.CN_FEC_ENVIO,
+                           T.CN_FEC_RESPUESTA, T.CN_FOLIO_RECIBO, T.CN_FOLIO_FISCAL,
+                           T.CN_FEC_ENV_CANC, T.CN_FEC_CANC, T.CN_FEC_FIRMA_REC,
+                           T.CN_CADENA_ORIGINAL, T.CN_CADENA_SELLO, T.CN_ARCH_CREACION,
+                           T.CN_ARCH_ANEXO20, T.CN_ARCH_TIMBRADO, T.CN_ARCH_A_CANCELAR,
+                           T.CN_XML_CANCELADO, T.CN_INCIDENCIA, T.CN_REF_TIMBRADO,
+                           T.CN_PAQUETE_RV, T.CN_ID_PAQUETE_SAT, T.CN_URIBLOB_TIMB,
+                           T.CN_URIBLOB_CANC, T.CN_ENVIADO_INST, T.CN_ENVIADO_PERS, T.USUARIO,
+                           T.FEC_MODIFICO
+                      FROM SIREH.TN_COMPROBANTE_DIG T
+                     WHERE T.CN_FOLIO = ? AND T.CN_DIF_FOLIO = ? AND T.CN_PAQUETE = ?                
+                </prop>
+                <prop key="foliosByRfcAndQnaDesdeHastaFromTnComprobanteFiscal">
+                    SELECT  CD.CN_FOLIO || '-' || CD.CN_DIF_FOLIO || '-' || CD.CN_PAQUETE || '-' || CD.CN_CONSEC_NOMINA AS IDGRUPO,
+                            HP.HP_QNA_PAGO AS QUINCENA, CD.CN_CONSEC_NOMINA AS CSC_NOMINA, CD.CN_FOLIO AS FOLIO,
+                            HP.HP_NUM_COMPLEM AS COMPLEMENTO, TN.DESC_TIPO_NOMINA AS TIPO_NOMINA, HP.ID_GRUPOPAGO_NOM AS GRUPO_PAGO
+                    FROM    TN_COMPROBANTE_DIG CD, TN_HISTORICO_PAGO HP, TN_NOMINA N, TC_TIPO_NOMINA TN
+                    WHERE   CD.CN_RFC = ?
+                            AND CD.CN_SITUACION = 'T'
+                            AND HP.HP_QNA_PAGO >= ?
+                            AND HP.HP_QNA_PAGO <![CDATA[<]]>= ?
+                            AND CD.CN_FOLIO = HP.HP_FOLIO
+                            AND CD.CN_DIF_FOLIO = HP.HP_DIF_FOLIO
+                            AND CD.CN_CONSEC_NOMINA = HP.HP_CONSEC_NOMINA
+                            AND HP.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                            AND CD.CN_PAQUETE = N.CN_PAQUETE
+                            AND CD.CN_CONSEC_NOMINA = N.ID_NOMINA
+                            AND HP.ID_SIT_PAGO <![CDATA[<>]]> 'C'
+                </prop>
+                <prop key="foliosByRfcAndQnaDeadeHastaFromTnConceptoPagado_p37">
+                    select  cp.cp_folio as folio
+                    from    tn_concepto_pagado cp
+                    where   cp.id_tipo_cpto = 'P'
+                            and cp.id_cpto_pago = '37'
+                            and cp.CP_FOLIO = ?
+                </prop>
+                <prop key="foliosByRfcAndQnaDeadeHastaFromTnConceptoPagado_d0a">
+                    select  cp.cp_folio as folio
+                    from    tn_concepto_pagado cp
+                    where   cp.id_tipo_cpto = 'D'
+                            and cp.id_cpto_pago = '0A'
+                            and cp.CP_FOLIO = ?
+                </prop>
+                <prop key="getImagenTag">
+                    SELECT  IMAGEN_AVISO AS imgTag, REDIRECCION AS ANCLA
+                    FROM    TC_IMAGEN_AVISO_CFDI
+                    WHERE   ACTIVO = 'v'
+                            AND ID_IMAGEN = (SELECT MAX(ID_IMAGEN) FROM TC_IMAGEN_AVISO_CFDI)
+                </prop>
+                <prop key="queryGetCadenaOriginalByIdNomina">
+                    SELECT D.CN_FOLIO, D.CN_CADENA_ORIGINAL
+                      FROM TN_COMPROBANTE_DIG D, TN_NOMINA N
+                     WHERE D.CN_CONSEC_NOMINA = :idNomina
+                       AND N.CN_PAQUETE = D.CN_PAQUETE
+                       AND D.CN_CONSEC_NOMINA = N.ID_NOMINA
+                </prop>
+                <prop key = "queryGetXmlSelloByIdNomina">
+                    SELECT D.CN_FOLIO, D.CN_XML_GENERADO, D.CN_CADENA_SELLO
+                      FROM TN_COMPROBANTE_DIG D, TN_NOMINA N
+                     WHERE D.CN_CONSEC_NOMINA = :idNomina
+                       AND N.CN_PAQUETE = D.CN_PAQUETE
+                       AND D.CN_CONSEC_NOMINA = N.ID_NOMINA
+                </prop>
+                <prop key="queryFoliosByIdNomina">
+                    SELECT D.CN_FOLIO, D.CN_DIF_FOLIO FROM TN_COMPROBANTE_DIG D, TN_NOMINA N
+                     WHERE D.CN_CONSEC_NOMINA = :idNomina
+                       AND N.CN_PAQUETE = D.CN_PAQUETE
+                       AND D.CN_CONSEC_NOMINA = N.ID_NOMINA
+                </prop>
+                <prop key="updateSelloTnComprobanteDig">
+                UPDATE TN_COMPROBANTE_DIG D
+                       SET D.CN_CADENA_SELLO = ?
+                     WHERE D.CN_FOLIO = ? AND D.CN_DIF_FOLIO = ? 
+                     AND D.CN_CONSEC_NOMINA = ?
+                </prop>
+                <prop key="deleteByCnConsecNomina">
+                    DELETE FROM TN_COMPROBANTE_DIG D WHERE D.CN_CONSEC_NOMINA = ?
+                    AND D.CN_PAQUETE = ?
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

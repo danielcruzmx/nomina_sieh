@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Solicitud de Suficiencia Presupuestaria Ordinaria" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="495"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select substr(to_char(c.cxlc_qna_pago),1,4) axo, c.cxlc as AÑO, c.cxlc_qna_pago as QNA_PAGO, c.id_tipo_nomina as TIPO_NOMINA, c.cxlc_complemento as COMPLEMENTO, c.cxlc as CXLC,
+        '06' as RA, s.id_unidad as UR, substr(s.id_funcion,0,1) as G, substr(s.id_funcion,1,1) as F, substr(s.id_funcion,2,2) as SF, s.id_programa as PR,
+        s.id_act_insti as AIN, s.id_act_priorita as CACP, s.id_partida as PTDA, s.id_tipo_gasto as T, s.id_fuente_finan as F, s.id_edo as CG,
+        '0000000000' as PPI,
+        case when s.id_unidad like '6%' then '6000'
+            else '0000'
+        end as CAU,
+        '10' as CO,
+        case when s.id_partida = '14406' then '010'
+            else '000'
+        end as PA,
+        '000' as O_F, '00000' as A1, '00000' as A2, '00000' as A3, s.monto as monto
+from td_cxlc c, td_sec_cxlc s
+-- Valor que se recibe por parametro de pantalla de dialogo
+Where c.cxlc_ciclo =2013
+and c.cxlc_ciclo = s.ciclo
+and c.cxlc = s.cxlc
+and s.guia_contable_ejer <> '2489'
+and s.id_partida <> '0000'
+--Valor que se recibe por parametro de pantalla de dialogo
+and s.cxlc =1]]>
+	</queryString>
+	<field name="AXO" class="java.lang.String"/>
+	<field name="AÑO" class="java.math.BigDecimal"/>
+	<field name="QNA_PAGO" class="java.math.BigDecimal"/>
+	<field name="TIPO_NOMINA" class="java.lang.String"/>
+	<field name="COMPLEMENTO" class="java.math.BigDecimal"/>
+	<field name="CXLC" class="java.math.BigDecimal"/>
+	<field name="RA" class="java.lang.String"/>
+	<field name="UR" class="java.lang.String"/>
+	<field name="G" class="java.lang.String"/>
+	<field name="F" class="java.lang.String"/>
+	<field name="SF" class="java.lang.String"/>
+	<field name="PR" class="java.lang.String"/>
+	<field name="AIN" class="java.lang.String"/>
+	<field name="CACP" class="java.lang.String"/>
+	<field name="PTDA" class="java.lang.String"/>
+	<field name="T" class="java.math.BigDecimal"/>
+	<field name="CG" class="java.math.BigDecimal"/>
+	<field name="PPI" class="java.lang.String"/>
+	<field name="CAU" class="java.lang.String"/>
+	<field name="CO" class="java.lang.String"/>
+	<field name="PA" class="java.lang.String"/>
+	<field name="O_F" class="java.lang.String"/>
+	<field name="A1" class="java.lang.String"/>
+	<field name="A2" class="java.lang.String"/>
+	<field name="A3" class="java.lang.String"/>
+	<field name="MONTO" class="java.math.BigDecimal"/>
+	<variable name="TOTAL_IR" class="java.math.BigDecimal" resetType="Group" resetGroup="Gpo_unidad" calculation="Sum">
+		<variableExpression><![CDATA[$F{MONTO}]]></variableExpression>
+	</variable>
+	<variable name="TOT_GRAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$V{TOTAL_IR}]]></variableExpression>
+	</variable>
+	<group name="Gpo_unidad">
+		<groupExpression><![CDATA[$F{UR}]]></groupExpression>
+		<groupFooter>
+			<band height="22">
+				<staticText>
+					<reportElement x="24" y="6" width="30" height="12"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Total ]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="56" y="6" width="20" height="12"/>
+					<textElement>
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$F{UR}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00">
+					<reportElement x="661" y="6" width="73" height="12"/>
+					<textElement textAlignment="Right">
+						<font fontName="Courier New" size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{TOTAL_IR}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="650" y="15" width="100" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="10"/>
+				</textElement>
+				<text><![CDATA[Oficialía Mayor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="550" y="30" width="200" height="13"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="10"/>
+				</textElement>
+				<text><![CDATA[Dirección General de Recursos Humanos]]></text>
+			</staticText>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SHCP.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="231" y="25" width="291" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="12" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Solicitud de Suficiencia Presupuestaria]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="22" y="5" width="27" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[AÑO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="5" width="20" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[RA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="73" y="5" width="27" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[UR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="5" width="14" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[F]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="102" y="5" width="10" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[G]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="131" y="5" width="14" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[SF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="156" y="5" width="14" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[PR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="179" y="5" width="23" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[AIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="238" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[PTDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CACP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="267" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[I]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[F]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="313" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CG]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="344" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[PPI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CAU]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="432" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="490" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[OF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="524" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[A1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="559" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[A2]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="603" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[A3]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="457" y="5" width="21" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[PA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="661" y="5" width="71" height="10"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="19" width="752" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField>
+				<reportElement x="19" y="4" width="30" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{AXO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="54" y="4" width="16" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{RA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="4" width="11" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{AÑO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="119" y="4" width="8" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{F}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="132" y="4" width="16" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{SF}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="153" y="4" width="22" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="4" width="22" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{AIN}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="207" y="4" width="22" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CACP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="234" y="4" width="28" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PTDA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="268" y="4" width="19" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{T}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="292" y="4" width="17" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{F}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="316" y="4" width="14" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{CG}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="4" width="39" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PPI}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="404" y="4" width="23" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CAU}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="432" y="4" width="20" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{CO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="457" y="4" width="20" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{PA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="483" y="4" width="37" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{O_F}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="523" y="4" width="24" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{A1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="552" y="4" width="34" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{A2}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="590" y="4" width="49" height="12"/>
+				<textElement textAlignment="Center">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{A3}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="659" y="4" width="73" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{MONTO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="76" y="4" width="22" height="12"/>
+				<textElement>
+					<font fontName="Courier New" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{UR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="131" y="3" width="490" height="10" forecolor="#999999"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<text><![CDATA[Calzada de la Virgen N° 2799, Edificio "B", planta baja, Col. CTM Culhuacán, Del. Coyoacán, CP 04480, México, D.F.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="131" y="15" width="490" height="10" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<text><![CDATA[Tel. 3688 5399 www.shcp.gob.mx]]></text>
+			</staticText>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="279" splitType="Prevent">
+			<staticText>
+				<reportElement x="170" y="24" width="154" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NÓMINA ORDINARIA QUINCENA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="57" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOCUMENTO NO.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="106" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE PAGO AL PERSONAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="41" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SOLICITUD DE SUFICIENCIA PRESUPUESTARIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="73" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="89" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA DE DEPÓSITO EN BANCO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="123" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PAGO EFECTUADO CON CARGO A LA UNIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="140" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERIODO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="170" y="157" width="189" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ARCHIVO DE CORREO ELECTRÓNICO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="198" width="189" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ELABORÓ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="244" width="189" height="12"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[C.P. RAUL GONZALEZ ENRIQUEZ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="255" width="189" height="23"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[JEFE DE DEPARTAMENTO DE CUENTAS POR LIQUIDAR]]></text>
+			</staticText>
+			<line>
+				<reportElement x="232" y="239" width="187" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="367" y="24" width="100" height="12"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{QNA_PAGO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement x="632" y="9" width="100" height="12"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$V{TOT_GRAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

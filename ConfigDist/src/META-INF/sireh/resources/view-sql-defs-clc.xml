@@ -1,0 +1,2548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+                <!-- Proceso - Ordinaria -->
+                <!--<prop key="clcCiclo">
+                    SELECT * FROM (
+                        SELECT
+                            TN_HISTORICO_PAGO.HP_CICLO_UNIDAD, TN_HISTORICO_PAGO.HP_CICLO_UNIDAD AS CICLO
+                        FROM 
+                            TN_HISTORICO_PAGO
+                        WHERE 
+                            TN_HISTORICO_PAGO.HP_CICLO_UNIDAD = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                        GROUP BY TN_HISTORICO_PAGO.HP_CICLO_UNIDAD
+                        ORDER BY TN_HISTORICO_PAGO.HP_CICLO_UNIDAD DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>-->
+                <prop key="clcCiclo">
+                    SELECT 
+                        (CICLO - LEVEL) +1 , (CICLO - LEVEL) +1 AS CICLO
+                    FROM (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) CICLO FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S') 
+                    CONNECT BY LEVEL <![CDATA[<]]> 3
+                </prop>
+                <prop key="clcQnaPago">
+                    SELECT
+                        TN_HISTORICO_PAGO.HP_QNA_PAGO, TN_HISTORICO_PAGO.HP_QNA_PAGO AS DESCRIPCION
+                    FROM 
+                        TN_HISTORICO_PAGO
+                    WHERE 
+                        TN_HISTORICO_PAGO.HP_CICLO_UNIDAD = ?
+                    GROUP BY TN_HISTORICO_PAGO.HP_QNA_PAGO
+                    ORDER BY TN_HISTORICO_PAGO.HP_QNA_PAGO DESC
+                </prop>
+                <prop key="clcTipoNomina">
+                    SELECT
+                        TN_HISTORICO_PAGO.ID_TIPO_NOMINA, TN_HISTORICO_PAGO.ID_TIPO_NOMINA AS DESCRIPCION
+                    FROM 
+                        TN_HISTORICO_PAGO
+                    WHERE 
+                        TN_HISTORICO_PAGO.HP_QNA_PAGO = ?
+                    GROUP BY TN_HISTORICO_PAGO.ID_TIPO_NOMINA
+                    ORDER BY TN_HISTORICO_PAGO.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="clcComplemento">
+                    SELECT 
+                        H.HP_NUM_COMPLEM, H.HP_NUM_COMPLEM AS DESCRIPCION
+                    FROM 
+                        TN_HISTORICO_PAGO H
+                    WHERE 
+                        H.ID_TIPO_NOMINA = ?
+                    AND H.HP_QNA_PAGO = ?
+                    GROUP BY H.HP_NUM_COMPLEM
+                    ORDER BY H.HP_NUM_COMPLEM ASC
+                </prop>
+                <prop key="clcLiquido">
+                    SELECT 
+                        NVL(SUM (H.HP_NETO_PAGO),0), NVL(TRIM(to_char(SUM (H.HP_NETO_PAGO),'$999,999,999,999,999.99')),0) AS LIQUIDO
+                    FROM 
+                        TN_HISTORICO_PAGO H
+                    WHERE 
+                        H.HP_NUM_COMPLEM = ?
+                    AND H.HP_QNA_PAGO = ?
+                    AND H.ID_TIPO_NOMINA = ?
+                    AND H.HP_NUM_PENSION = 0
+                </prop>
+                <prop key="clcDeducciones">
+                    SELECT 
+                        NVL(SUM (C.CP_MONTO),0), NVL(TRIM(to_char(SUM(C.CP_MONTO),'$999,999,999,999,999.99')),0) AS DEDUCCIONES
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TC_CONCEPTO_PAGO P
+                    WHERE 
+                        H.HP_NUM_COMPLEM = ?
+                    AND H.HP_QNA_PAGO = ?
+                    AND H.ID_TIPO_NOMINA = ?
+                    AND H.HP_NUM_PENSION = 0
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND C.ID_TIPO_CPTO IN ('D', 'C')
+                    AND C.ID_TIPO_CPTO = P.ID_TIPO_CPTO
+                    AND C.ID_CPTO_PAGO = P.ID_CONCEPTO
+                    AND P.CP_ACTIVO = 1
+                </prop>
+                <prop key="clcDevoluciones">
+                    SELECT 
+                        NVL(SUM (C.CP_MONTO),0), NVL(TRIM(to_char(SUM(C.CP_MONTO),'$999,999,999,999,999.99')),0) AS DEVOLUCIONES
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TC_CONCEPTO_PAGO P
+                    WHERE 
+                        H.HP_NUM_COMPLEM = ?
+                    AND H.HP_QNA_PAGO = ?
+                    AND H.ID_TIPO_NOMINA = ?
+                    AND H.HP_NUM_PENSION = 0
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO 
+                    AND C.ID_TIPO_CPTO = P.ID_TIPO_CPTO
+                    AND C.ID_CPTO_PAGO = P.ID_CONCEPTO
+                    AND P.CP_ACTIVO = 2
+                </prop>
+                <!--Genera CLC quincenal - Errores-->
+                <prop key="clcQuincenalErrores">
+                    SELECT 
+                        E.CE_SECUENCIA,
+                        E.CE_CICLO,
+                        E.CE_QNA_PAGO,
+                        E.ID_TIPO_NOMINA,
+                        E.CE_COMPLEMENTO,
+                        E.ID_CXLC_ERROR ||' - ' || CE.DESCRIBE_ERROR AS DESC_ERROR,
+                        E.ID_FOLIO,
+                        E.ID_TIPO_CPTO,
+                        E.ID_CPTO_PAGO,
+                        E.ID_UNIDAD_NOM,
+                        E.ID_EDO,
+                        NVL(E.CE_MONTO,0) AS ceMonto,
+                        E.CE_REVISADO,
+                        DECODE(E.CE_REVISADO, '0', 'NO REVISADO', 'REVISADO') AS REVISADO,
+                        E.USUARIO,
+                        E.FEC_MODIFICO
+                    FROM 
+                        TD_CXLC_ERROR E, TC_CXLC_ERROR CE
+                    WHERE
+                        E.ID_CXLC_ERROR = CE.ID_CXLC_ERROR
+                    AND E.CE_REVISADO = 0
+                    AND ##E.CE_CICLO##
+                    AND ##E.CE_QNA_PAGO##
+                    AND ##E.ID_TIPO_NOMINA##
+                    AND ##E.CE_COMPLEMENTO##
+                    ORDER BY E.FEC_MODIFICO DESC
+                </prop>
+                
+                
+                <!-- Proceso - Terceros - Filtros -->
+                <prop key="tdCxlcCicloProcesaTerceros">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                        TD_CXLC C          
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdCxlcQnaPagoProcesaTerceros">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tdCxlcTipoNominaProcesaTerceros_MENSUAL">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE
+                        TN.TIPO_CLC = 'TERCEROS'
+                    AND TN.PERIODO_CLC = 'MENSUAL'
+                    GROUP BY TN.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcTipoNominaProcesaTerceros_QUINCENAL">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE
+                        TN.TIPO_CLC = 'TERCEROS'
+                    AND TN.PERIODO_CLC = 'QUINCENAL'
+                    GROUP BY TN.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                
+                <!-- Proceso - Terceros - Busqueda-->
+                <prop key="busquedaClcProcesaTerceros_FONAC">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2218 AND S.ID_SINDICATO = 1) OR 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2278 AND S.ID_SINDICATO = 0) 
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2278,2218) 
+                        AND S.ID_SINDICATO IN (0,1) 
+                        AND C.CXLC = S.CXLC 
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTerceros_SINDICATO">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2218 AND S.ID_SINDICATO = 3)
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB')
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2218) 
+                        AND S.ID_SINDICATO IN (3) 
+                        AND C.CXLC = S.CXLC 
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTerceros_CAJA_DE_AHORRO_SINDICAL">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2261 AND S.ID_SINDICATO = 0)
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2261) 
+                        AND S.ID_SINDICATO IN (0)
+                        AND C.CXLC = S.CXLC 
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTerceros_FSTSE">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2218 AND S.ID_SINDICATO = 2) OR (S.ID_SINDICATO = 0) 
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2218) 
+                        AND S.ID_SINDICATO IN (0,2) 
+                        AND C.CXLC = S.CXLC 
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTerceros_PENSION_ALIMENTICIA">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                        SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND C.ID_TIPO_NOMINA IN ('GG')
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2219) 
+                        AND C.CXLC = S.CXLC 
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTerceros_IMPUESTOS">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                        SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND C.ID_TIPO_NOMINA IN ('GG')
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2202, 2226) 
+                        AND C.CXLC = S.CXLC 
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTerceros_OTROS">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, 
+                            S.SEC_CXLC_TERCEROS, S.SEC_CXLC_TERCEROS AS TERCEROS_GRUPO, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                        SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND ##S.SEC_GUIA_CONTABLE_EJER## 
+                        AND C.CXLC = S.CXLC 
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                
+                <!-- Proceso - Terceros - Errores-->
+                <prop key="clcTercerosErrores">
+                    SELECT 
+                        E.CE_SECUENCIA,
+                        E.CE_CICLO,
+                        E.CE_QNA_PAGO,
+                        E.ID_TIPO_NOMINA,
+                        E.CE_COMPLEMENTO,
+                        E.ID_CXLC_ERROR ||' - ' || CE.DESCRIBE_ERROR AS DESC_ERROR,
+                        E.ID_FOLIO,
+                        E.ID_TIPO_CPTO,
+                        E.ID_CPTO_PAGO,
+                        E.ID_UNIDAD_NOM,
+                        E.ID_EDO,
+                        NVL(E.CE_MONTO,0) AS ceMonto,
+                        E.CE_REVISADO,
+                        DECODE(E.CE_REVISADO, '0', 'NO REVISADO', 'REVISADO') AS REVISADO,
+                        E.USUARIO,
+                        E.FEC_MODIFICO
+                    FROM 
+                        TD_CXLC_ERROR E, TC_CXLC_ERROR CE
+                    WHERE
+                        E.ID_CXLC_ERROR = CE.ID_CXLC_ERROR
+                    AND E.CE_REVISADO = 0
+                    AND ##E.CE_CICLO##
+                    AND ##E.CE_QNA_PAGO##
+                    AND ##E.ID_TIPO_NOMINA##
+                    AND ##E.CE_COMPLEMENTO##
+                    ORDER BY E.FEC_MODIFICO DESC
+                </prop>
+                
+                
+                
+                <!-- Proceso - Patronales - Filtros -->
+                <prop key="tdCxlcCicloProcesaPatronales">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                        TD_CXLC C          
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdCxlcQnaPagoProcesaPatronales">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tcEstadoProcesaPatronales">
+                    SELECT DISTINCT 
+                        H.ID_EDO_NOM, H.ID_EDO_NOM || ' - ' || E.DESC_ESTADO AS ESTADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TC_ESTADO E
+                    WHERE
+                        H.HP_QNA_PAGO IN (201401, 201424)
+                    AND H.ID_TIPO_NOMINA IN (SELECT ID_TIPO_NOMINA FROM TN_CXLC_DIVIDE D WHERE D.CXLC_DIV_CTA_CLABE = 0)
+                    AND H.HP_NUM_PENSION = 0
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO 
+                    AND C.ID_TIPO_CPTO = 'C' 
+                    AND C.ID_CPTO_PAGO IN ('2N','EN') 
+                    AND H.ID_EDO_NOM = E.ID_EDO
+                    GROUP BY H.ID_EDO_NOM, H.ID_EDO_NOM, E.DESC_ESTADO
+                    ORDER BY H.ID_EDO_NOM
+                </prop>
+                <prop key="tdCxlcTipoNominaProcesaPatronales_BIMESTRAL">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE
+                        (TN.TIPO_CLC = 'PATRONAL' OR TN.TIPO_CLC = 'PATROARCHI')
+                    AND TN.PERIODO_CLC = 'BIMESTRAL'
+                    GROUP BY TN.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcTipoNominaProcesaPatronales_MENSUAL">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE
+                        (TN.TIPO_CLC = 'PATRONAL' OR TN.TIPO_CLC = 'PATROARCHI')
+                    AND TN.PERIODO_CLC = 'MENSUAL'
+                    GROUP BY TN.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcTipoNominaProcesaPatronales_QUINCENAL">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE
+                        (TN.TIPO_CLC = 'PATRONAL' OR TN.TIPO_CLC = 'PATROARCHI')
+                    AND TN.PERIODO_CLC = 'QUINCENAL'
+                    GROUP BY TN.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                
+                <!-- Proceso - Patronales - Busqueda-->
+                <prop key="busquedaClcProcesaPatronales">
+                    SELECT * FROM (
+                        SELECT 
+                            T.ID_NOMINA AS NOMINA_GRUPO, T.ID_NOMINA, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, SUM(C.CP_MONTO) MONTO
+                        FROM 
+                            TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_NOMINA T
+                        WHERE 
+                            H.ID_TIPO_NOMINA IN (SELECT ID_TIPO_NOMINA FROM TN_CXLC_DIVIDE D WHERE D.CXLC_DIV_CTA_CLABE = 0)
+                        AND ##H.HP_QNA_PAGO## 
+                        AND H.HP_NUM_PENSION = 0
+                        AND H.HP_FOLIO = C.CP_FOLIO
+                        AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO 
+                        AND C.ID_TIPO_CPTO = 'C' 
+                        AND ##C.ID_CPTO_PAGO##
+                        AND ##H.ID_EDO_NOM##
+                        AND H.HP_QNA_PAGO = T.NOM_QNA_CAPTURA
+                        AND H.ID_TIPO_NOMINA = T.ID_TIPO_NOMINA
+                        AND H.HP_NUM_COMPLEM = T.NOM_NUM_COMPLEM
+                        AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99
+                        GROUP BY 
+                            T.ID_NOMINA ,H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM
+                        ORDER BY 3,4,5
+                    )
+                </prop>
+                
+                <!-- Proceso - Patronales - Busqueda Bimestral-->
+                <prop key="busquedaClcProcesaPatronalesBimestral">
+                    SELECT * FROM (
+                        SELECT 
+                            T.ID_NOMINA AS NOMINA_GRUPO, T.ID_NOMINA, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, SUM(C.CP_MONTO) MONTO
+                        FROM 
+                            TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_NOMINA T
+                        WHERE 
+                            1=1
+                        AND ##H.HP_QNA_PAGO## 
+                        AND H.HP_NUM_PENSION = 0
+                        AND H.HP_FOLIO = C.CP_FOLIO
+                        AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO 
+                        AND C.ID_TIPO_CPTO = 'C' 
+                        AND ##C.ID_CPTO_PAGO##
+                        AND H.HP_QNA_PAGO = T.NOM_QNA_CAPTURA
+                        AND H.ID_TIPO_NOMINA = T.ID_TIPO_NOMINA
+                        AND H.ID_TIPO_NOMINA = 'SA'
+                        AND H.HP_NUM_COMPLEM = T.NOM_NUM_COMPLEM
+                        AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99
+                        GROUP BY 
+                            T.ID_NOMINA ,H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM
+                        ORDER BY 3,4,5
+                    )
+                </prop>
+                
+                <!-- Proceso - Patronales - Errores-->
+                <prop key="clcPatronalesErrores">
+                    SELECT 
+                        E.CE_SECUENCIA,
+                        E.CE_CICLO,
+                        E.CE_QNA_PAGO,
+                        E.ID_TIPO_NOMINA,
+                        E.CE_COMPLEMENTO,
+                        E.ID_CXLC_ERROR ||' - ' || CE.DESCRIBE_ERROR AS DESC_ERROR,
+                        E.ID_FOLIO,
+                        E.ID_TIPO_CPTO,
+                        E.ID_CPTO_PAGO,
+                        E.ID_UNIDAD_NOM,
+                        E.ID_EDO,
+                        NVL(E.CE_MONTO,0) AS ceMonto,
+                        E.CE_REVISADO,
+                        DECODE(E.CE_REVISADO, '0', 'NO REVISADO', 'REVISADO') AS REVISADO,
+                        E.USUARIO,
+                        E.FEC_MODIFICO
+                    FROM 
+                        TD_CXLC_ERROR E, TC_CXLC_ERROR CE
+                    WHERE
+                        E.ID_CXLC_ERROR = CE.ID_CXLC_ERROR
+                    AND E.CE_REVISADO = 0
+                    AND ##E.CE_CICLO##
+                    AND ##E.CE_QNA_PAGO##
+                    AND ##E.ID_TIPO_NOMINA##
+                    AND ##E.CE_COMPLEMENTO##
+                    ORDER BY E.FEC_MODIFICO DESC
+                </prop>
+                
+                
+                
+                
+                <!-- Proceso - Terceros Cancelados - Filtros-->
+                <prop key="tdCxlcCicloProcesaTercerosCancelados">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                            TD_CXLC C
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdCxlcQnaPagoProcesaTercerosCancelados">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                
+                <!-- Proceso - Terceros Cancelados - Busqueda-->
+                <prop key="tdCxlcDivideBusquedaCancelados">
+                    SELECT 
+                        D.ID_TIPO_NOMINA, D.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS NOMINA_ORIGEN
+                    FROM 
+                        TN_CXLC_DIVIDE D, TC_TIPO_NOMINA TN
+                    WHERE
+                        D.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    GROUP BY D.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY D.ID_TIPO_NOMINA
+                </prop>
+                
+                <prop key="tdCxlcCicloBusquedaCancelados">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                        TD_CXLC C          
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdSecCxlcCicloBusquedaCancelados">
+                    SELECT 
+                        SEC.SEC_CXLC_CICLO, SEC.SEC_CXLC_CICLO AS CICLO
+                    FROM 
+                        TD_SEC_CXLC SEC
+                    GROUP BY SEC.SEC_CXLC_CICLO
+                    ORDER BY SEC.SEC_CXLC_CICLO DESC
+                </prop>
+                <prop key="tdCxlcQnaPagoBusquedaCancelados">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tdCxlcTipoNominaBusquedaCancelados">
+                    SELECT 
+                        C.ID_TIPO_NOMINA, C.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC C, TC_TIPO_NOMINA TN
+                    WHERE 
+                        C.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND C.CXLC_QNA_PAGO = ?
+                    AND TN.TIPO_CLC = 'TERCEROS'
+                    AND TN.PERIODO_CLC = 'QUINCENAL'
+                    GROUP BY C.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcTipoNominaByNominaOrigenBusquedaCancelados">
+                    SELECT 
+                        T.ID_TIPO_NOMINA, T.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC T, TC_TIPO_NOMINA TN
+                    WHERE 
+                        T.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND T.CXLC_COMPLEMENTO = ?
+                    AND T.CXLC_CICLO = ?
+                    AND T.CXLC_QNA_PAGO = ?
+                    AND T.NOMINA_ORIGEN = ?
+                    --AND T.ID_TIPO_NOMINA NOT IN (SELECT TIPO_CXLC FROM TN_CXLC_DIVIDE WHERE GUIA_CONTABLE_EJER LIKE '%2201%' GROUP BY TIPO_CXLC)
+                    AND TN.TIPO_CLC = 'TERCEROS'
+                    GROUP BY T.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY T.ID_TIPO_NOMINA
+                </prop>
+                <prop key="tdCxlcComplementoBusquedaCancelados">
+                    SELECT 
+                        C.CXLC_COMPLEMENTO, C.CXLC_COMPLEMENTO AS COMPLEMENTO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_COMPLEMENTO
+                    ORDER BY C.CXLC_COMPLEMENTO ASC
+                </prop>
+                <prop key="tdCxlcBusquedaCancelados">
+                    SELECT 
+                        C.CXLC, C.CXLC AS CLC
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_COMPLEMENTO = ?
+                    AND C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC
+                    ORDER BY C.CXLC ASC
+                </prop>
+                <prop key="tdCxlcByNominaOrigenBusquedaCancelados">
+                    SELECT 
+                        T.CXLC, T.CXLC || ' - ' || N.DESC_TIPO_NOMINA AS DESCRIPCION
+                    FROM 
+                        TD_CXLC T, TC_TIPO_NOMINA N, TD_SEC_CXLC S
+                    WHERE 
+                        T.ID_TIPO_NOMINA = ?
+                    AND T.CXLC_CICLO = ?
+                    AND T.CXLC_QNA_PAGO = ?
+                    AND T.CXLC_COMPLEMENTO = ?
+                    AND T.NOMINA_ORIGEN = ?
+                    AND N.ID_TIPO_NOMINA = T.ID_TIPO_NOMINA
+                    AND T.CXLC_CICLO = S.SEC_CXLC_CICLO
+                    AND T.CXLC = S.CXLC
+                    AND (TO_NUMBER(S.SEC_COMPROMISO) <![CDATA[>]]> 0 OR S.SEC_COMPROMISO IS NOT NULL)
+                    AND (S.SEC_DEVENGADO <![CDATA[>]]> 0 OR S.SEC_DEVENGADO IS NOT NULL)
+                    GROUP BY T.CXLC, N.DESC_TIPO_NOMINA
+                    ORDER BY 1
+                </prop>
+                
+                <prop key="tnCapturaPagoCancBusquedaCancelados">
+                    SELECT 
+                        Q.CPC_QNA_APLICA, Q.CPC_QNA_APLICA AS QNA_CANCELACION
+                    FROM 
+                        TN_CAPTURA_PAGO_CANC Q
+                    WHERE 
+                        Q.CPC_QNA_APLICA LIKE 
+                        (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S') || '%' 
+                    GROUP BY Q.CPC_QNA_APLICA
+                    ORDER BY Q.CPC_QNA_APLICA ASC
+                </prop>
+                
+                <prop key="canceladosProcesaTerceros_FONAC">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2278,2218) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND CN.ID_TIPO_NOMINA(+) = 'FO'
+                    AND CN.CXLCC_GUIA_CONT(+) IN (2218) 
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaTerceros_SINDICATO">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN c.cp_monto  - ( ( c.cp_monto*0.25 ) + ( ((c.cp_monto*0.75)*0.10)) ) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2218) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND CN.ID_TIPO_NOMINA(+) = 'SD'
+                    AND CN.CXLCC_GUIA_CONT(+) IN (2218) 
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaTerceros_CAJA_DE_AHORRO_SINDICAL">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN c.cp_monto  - ( ( c.cp_monto*0.25 ) + ( ((c.cp_monto*0.75)*0.10)) ) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2261) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND CN.ID_TIPO_NOMINA(+) = 'AH'
+                    AND CN.CXLCC_GUIA_CONT(+) IN (2261) 
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, 
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaTerceros_FSTSE">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.75)* 0.10) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2218) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND CN.ID_TIPO_NOMINA(+) = 'FS'
+                    AND CN.CXLCC_GUIA_CONT(+) IN (2218) 
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaTerceros_PENSION_ALIMENTICIA">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2219) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, 
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaTerceros_IMPUESTOS">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(C.CP_MONTO) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = 'C'
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2202,2226) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+) 
+                    AND CN.ID_TIPO_NOMINA(+) = 'IR'
+                    AND CN.CXLCC_GUIA_CONT(+) IN (2202,2226) 
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO) 
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaTerceros_OTROS">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND ##G.GUIA_CONTABLE_EJER## 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND ##CN.ID_TIPO_NOMINA(+)##
+                    AND ##CN.CXLCC_GUIA_CONT(+)## 
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, 
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                
+                <prop key="canceladosProcesaTerceros">
+                    SELECT * FROM (
+                        SELECT 
+                            H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                            H.ID_UNIDAD_NOM AS ID_UNIDAD, H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, H.ID_GRUPOPAGO_NOM, H.HP_RFC, 
+                            P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, COUNT(*) AS TOTAL, SUM(C.CP_MONTO) MONTO, CN.APLICADO
+                        FROM 
+                            TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_NOMINA T, TN_CAPTURA_PAGO_CANC P, TN_CXLC_CANCELADOS CN
+                        WHERE 
+                            H.ID_TIPO_NOMINA IN (SELECT ID_TIPO_NOMINA FROM TN_CXLC_DIVIDE D WHERE D.CXLC_DIV_CTA_CLABE = 0) 
+                        AND H.HP_NUM_PENSION = 0
+                        AND H.ID_SIT_PAGO = 'C'
+                        AND H.HP_FOLIO = C.CP_FOLIO
+                        AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO 
+                        AND C.ID_TIPO_CPTO = 'C' 
+                        AND ##C.ID_CPTO_PAGO##
+                        AND ##H.ID_EDO_NOM##
+                        AND H.HP_QNA_PAGO = T.NOM_QNA_CAPTURA
+                        AND H.ID_TIPO_NOMINA = T.ID_TIPO_NOMINA
+                        AND H.HP_NUM_COMPLEM = T.NOM_NUM_COMPLEM
+                        AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                        AND H.HP_FOLIO = P.CPC_FOLIO
+                        AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                        AND ##P.CPC_QNA_APLICA##
+                        AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                        AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                        AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                        AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                        AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                        GROUP BY 
+                            H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                            H.ID_UNIDAD_NOM, H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, H.ID_GRUPOPAGO_NOM, H.HP_RFC, 
+                            P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, CN.APLICADO
+                        ORDER BY 3,4,5
+                    )
+                </prop>
+                
+                
+                <!-- Proceso - Terceros Ajustes - Busqueda-->
+                <prop key="tdCxlcDivideBusquedaAjustes">
+                    SELECT 
+                        D.ID_TIPO_NOMINA, D.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS NOMINA_ORIGEN
+                    FROM 
+                        TN_CXLC_DIVIDE D, TC_TIPO_NOMINA TN
+                    WHERE
+                        D.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    GROUP BY D.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY D.ID_TIPO_NOMINA
+                </prop>
+                <prop key="tdCxlcCicloBusquedaAjustes">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                        TD_CXLC C          
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3  
+                </prop>
+                <prop key="tdSecCxlcCicloBusquedaAjustes">
+                    SELECT 
+                        SEC.SEC_CXLC_CICLO, SEC.SEC_CXLC_CICLO AS CICLO
+                    FROM 
+                        TD_SEC_CXLC SEC
+                    GROUP BY SEC.SEC_CXLC_CICLO
+                    ORDER BY SEC.SEC_CXLC_CICLO DESC
+                </prop>
+                <prop key="tdCxlcQnaPagoBusquedaAjustes">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tdCxlcTipoNominaBusquedaAjustes">
+                    SELECT 
+                        C.ID_TIPO_NOMINA, C.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC C, TC_TIPO_NOMINA TN
+                    WHERE 
+                        C.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND C.CXLC_QNA_PAGO = ?
+                    AND TN.TIPO_CLC = 'TERCEROS'
+                    AND TN.PERIODO_CLC = 'QUINCENAL'
+                    GROUP BY C.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcTipoNominaByNominaOrigenBusquedaAjustes">
+                    SELECT 
+                        T.ID_TIPO_NOMINA, T.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC T, TC_TIPO_NOMINA TN
+                    WHERE 
+                        T.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND T.CXLC_COMPLEMENTO = ?
+                    AND T.CXLC_CICLO = ?
+                    AND T.CXLC_QNA_PAGO = ?
+                    AND T.NOMINA_ORIGEN = ?
+                    --AND T.ID_TIPO_NOMINA NOT IN (SELECT TIPO_CXLC FROM TN_CXLC_DIVIDE WHERE GUIA_CONTABLE_EJER LIKE '%2201%' GROUP BY TIPO_CXLC)
+                    AND TN.TIPO_CLC = 'TERCEROS' 
+                    GROUP BY T.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY T.ID_TIPO_NOMINA
+                </prop>
+                <prop key="tdCxlcTipoNominaCompletoBusquedaAjustes">
+                    SELECT 
+                        C.ID_TIPO_NOMINA, C.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC C, TC_TIPO_NOMINA TN
+                    WHERE 
+                        C.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA ASC
+                </prop>
+                <!--prop key="tdCxlcComplementoBusquedaAjustes">
+                    SELECT 
+                        C.CXLC_COMPLEMENTO, C.CXLC_COMPLEMENTO AS COMPLEMENTO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_COMPLEMENTO
+                    ORDER BY C.CXLC_COMPLEMENTO ASC
+                </prop-->
+                <prop key="tdCxlcComplementoBusquedaAjustes">
+                    SELECT 
+                        C.CXLC_COMPLEMENTO, C.CXLC_COMPLEMENTO AS COMPLEMENTO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_COMPLEMENTO
+                    ORDER BY C.CXLC_COMPLEMENTO ASC
+                </prop>
+                
+                <prop key="busquedaClcProcesaTercerosAjustes_FONAC">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2218 AND S.ID_SINDICATO = 1) OR 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2278 AND S.ID_SINDICATO = 0) 
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO##
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2278,2218) 
+                        AND S.ID_SINDICATO IN (0,1) 
+                        AND C.CXLC = S.CXLC 
+                        AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTercerosAjustes_SINDICATO">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2218 AND S.ID_SINDICATO = 3)
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB')
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2218) 
+                        AND S.ID_SINDICATO IN (3) 
+                        AND C.CXLC = S.CXLC 
+                        AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTercerosAjustes_CAJA_DE_AHORRO_SINDICAL">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2261 AND S.ID_SINDICATO = 0)
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2261) 
+                        AND S.ID_SINDICATO IN (0)
+                        AND C.CXLC = S.CXLC 
+                        AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTercerosAjustes_FSTSE">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(
+                                CASE 
+                                    WHEN 
+                                        (S.SEC_GUIA_CONTABLE_EJER = 2218 AND S.ID_SINDICATO = 2) OR (S.ID_SINDICATO = 0) 
+                                    THEN C.CXLC_MONTO
+                                END) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2218) 
+                        AND S.ID_SINDICATO IN (0,2) 
+                        AND C.CXLC = S.CXLC 
+                        AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTercerosAjustes_PENSION_ALIMENTICIA">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                        SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO## 
+                        AND C.ID_TIPO_NOMINA IN ('GG')
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2219) 
+                        AND C.CXLC = S.CXLC 
+                        AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTercerosAjustes_IMPUESTOS">
+                    SELECT * FROM (
+                        SELECT C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                        SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO## 
+                        AND C.ID_TIPO_NOMINA IN ('GG')
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND S.SEC_GUIA_CONTABLE_EJER IN (2202, 2226) 
+                        AND C.CXLC = S.CXLC 
+                        AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                <prop key="busquedaClcProcesaTercerosAjustes_OTROS">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, 
+                            S.SEC_CXLC_TERCEROS, S.SEC_CXLC_TERCEROS AS TERCEROS_GRUPO, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                        SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE S.SEC_CXLC_CICLO = C.CXLC_CICLO 
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO## 
+                        AND C.ID_TIPO_NOMINA IN ('OR','CJ','SO','TG','EG','AG','GG','CG','VG','RV','TV','OB','TB') 
+                        AND C.CXLC_SITUACION = 'D' 
+                        AND C.CXLC <![CDATA[<]]> 20000 
+                        AND S.SEC_GUIA_CONTABLE_EJER <![CDATA[<>]]> 2201 
+                        AND ##S.SEC_GUIA_CONTABLE_EJER## 
+                        AND C.CXLC = S.CXLC 
+                        AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        GROUP BY C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 3,5,4)
+                </prop>
+                
+                <prop key="busquedaClcProcesaTercerosAjustes">
+                    SELECT * FROM (
+                        SELECT 
+                            C.NOMINA_ORIGEN, C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE 
+                            S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                        AND C.CXLC = S.CXLC     
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO##
+                        AND C.ID_TIPO_NOMINA IN (SELECT TN.ID_TIPO_NOMINA FROM TC_TIPO_NOMINA TN WHERE TN.TIPO_CLC = 'TERCEROS' AND TN.PERIODO_CLC IN ('QUINCENAL', 'MENSUAL')) 
+                        --AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        --AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        --AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        AND C.CXLC <![CDATA[<]]> 6000 
+                        GROUP BY C.NOMINA_ORIGEN, C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 4 DESC
+                    )
+                </prop>
+                
+                <!-- Proceso - Terceros Patronales - Busqueda -->
+                <prop key="tdCxlcTipoNominaBusquedaPatronalesAjustes">
+                    SELECT 
+                        T.ID_TIPO_NOMINA, T.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC T, TC_TIPO_NOMINA TN
+                    WHERE 
+                        T.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND T.CXLC_COMPLEMENTO = ?
+                    AND T.CXLC_CICLO = ?
+                    AND T.CXLC_QNA_PAGO = ?
+                    --AND T.ID_TIPO_NOMINA NOT IN (SELECT TIPO_CXLC FROM TN_CXLC_DIVIDE WHERE GUIA_CONTABLE_EJER LIKE '%2201%' GROUP BY TIPO_CXLC)
+                    AND (TN.TIPO_CLC = 'PATRONAL' OR TN.TIPO_CLC = 'PATROARCHI')
+                    GROUP BY T.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY T.ID_TIPO_NOMINA
+                </prop>
+                <prop key="busquedaClcProcesaPatronalesAjustes">
+                    SELECT * FROM (
+                        SELECT 
+                            C.NOMINA_ORIGEN, C.CXLC, C.CXLC AS CXLC_GRUPO, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO,
+                            SUM(S.SEC_MONTO) AS MONTO
+                        FROM TD_CXLC C, TD_SEC_CXLC S 
+                        WHERE 
+                            S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                        AND C.CXLC = S.CXLC     
+                        AND ##C.CXLC_CICLO##
+                        AND ##C.CXLC_QNA_PAGO## 
+                        AND ##C.ID_TIPO_NOMINA## 
+                        AND ##C.CXLC_COMPLEMENTO##
+                        AND C.ID_TIPO_NOMINA IN (SELECT TN.ID_TIPO_NOMINA FROM TC_TIPO_NOMINA TN WHERE (TN.TIPO_CLC = 'PATRONAL' OR TN.TIPO_CLC = 'PATROARCHI')) 
+                        --AND S.SEC_CXLC_TERCEROS <![CDATA[>]]> 0
+                        --AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_COMPROMISO <![CDATA[>]]> 0)
+                        --AND (S.SEC_COMPROMISO IS NOT NULL OR C.CXLC_DEVENGADO <![CDATA[>]]> 0)
+                        AND C.CXLC <![CDATA[<]]> 6000 
+                        GROUP BY C.NOMINA_ORIGEN, C.CXLC, C.CXLC_QNA_PAGO, C.ID_TIPO_NOMINA, C.CXLC_COMPLEMENTO, S.SEC_CXLC_TERCEROS, C.CXLC_COMPROMISO, C.CXLC_DEVENGADO
+                        ORDER BY 4 DESC
+                    )
+                </prop>
+                <prop key="tdCxlcBusquedaPatronalesCancelados">
+                    SELECT 
+                        T.CXLC, T.CXLC || ' - ' || N.DESC_TIPO_NOMINA AS DESCRIPCION
+                    FROM 
+                        TD_CXLC T, TC_TIPO_NOMINA N, TD_SEC_CXLC S
+                    WHERE 
+                        T.ID_TIPO_NOMINA = ?
+                    AND T.CXLC_CICLO = ?
+                    AND T.CXLC_QNA_PAGO = ?
+                    AND T.CXLC_COMPLEMENTO = ?
+                    AND N.ID_TIPO_NOMINA = T.ID_TIPO_NOMINA
+                    AND T.CXLC_CICLO = S.SEC_CXLC_CICLO
+                    AND T.CXLC = S.CXLC
+                    GROUP BY T.CXLC, N.DESC_TIPO_NOMINA
+                    ORDER BY 1
+                </prop>
+                <prop key="tcEstadoProcesaPatronalesCancelados">
+                    SELECT DISTINCT 
+                        H.ID_EDO_NOM, H.ID_EDO_NOM || ' - ' || E.DESC_ESTADO AS ESTADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TC_ESTADO E
+                    WHERE 
+                        H.HP_QNA_PAGO IN (201401, 201418)
+                    AND H.ID_TIPO_NOMINA IN (SELECT ID_TIPO_NOMINA FROM TN_CXLC_DIVIDE D WHERE D.CXLC_DIV_CTA_CLABE = 0)
+                    AND H.HP_NUM_PENSION = 0
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO 
+                    AND C.ID_TIPO_CPTO = 'C' 
+                    AND C.ID_CPTO_PAGO IN ('2N','EN') 
+                    AND H.ID_EDO_NOM = E.ID_EDO
+                    GROUP BY H.ID_EDO_NOM, H.ID_EDO_NOM, E.DESC_ESTADO
+                    ORDER BY H.ID_EDO_NOM
+                </prop>
+                
+                <prop key="canceladosProcesaPatronales_FONAC">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2278,2218) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaPatronales_SINDICATO">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2218) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaPatronales_CAJA_DE_AHORRO_SINDICAL">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2261) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, 
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaPatronales_FSTSE">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2218) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaPatronales_PENSION_ALIMENTICIA">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2219) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, 
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaPatronales_IMPUESTOS">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND G.GUIA_CONTABLE_EJER IN (2202,2216) 
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO) 
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO,
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                    UNION 
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM,H.HP_RFC, P.CPC_QNA_APLICA,P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        SUM(CASE WHEN G.GUIA_CONTABLE_EJER = 2218 THEN ((C.CP_MONTO * 0.25)) ELSE C.CP_MONTO END) AS MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TC_GUIA_CONTABLE G, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND C.ID_TIPO_CPTO = G.ID_TIPO_CPTO 
+                    AND C.ID_CPTO_PAGO = G.ID_CPTO_PAGO
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, G.GUIA_CONTABLE_EJER, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, 
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                <prop key="canceladosProcesaPatronales_OTROS">
+                    SELECT 
+                        H.HP_FOLIO, H.HP_QNA_PAGO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO AS QUINCENA_GRUPO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM,
+                        CASE WHEN H.ID_UNIDAD_NOM LIKE 'Z%' THEN H.ID_UNIDAD_PRE ELSE H.ID_UNIDAD_NOM END AS ID_UNIDAD,
+                        H.ID_EDO_NOM, C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, 
+                        COUNT(*) AS TOTAL,
+                        C.CP_MONTO MONTO, CN.APLICADO
+                    FROM 
+                        TN_HISTORICO_PAGO H, TN_CONCEPTO_PAGADO C, TN_CAPTURA_PAGO_CANC P, TN_CXLC_CANCELADOS CN
+                    WHERE 
+                        H.ID_SIT_PAGO = 'C' 
+                    
+                    AND C.ID_TIPO_CPTO = 'C' 
+                    AND C.ID_CPTO_PAGO IN ('2N','EN') 
+                    AND H.ID_EDO_NOM = '9'
+                    
+                    AND H.HP_FOLIO = C.CP_FOLIO
+                    AND H.HP_DIF_FOLIO = C.CP_DIF_FOLIO
+                    AND H.ID_SIT_PAGO = P.ID_SIT_PAGO
+                    AND H.HP_FOLIO = P.CPC_FOLIO
+                    AND H.HP_DIF_FOLIO = P.CPC_DIF_FOLIO
+                    AND ##P.CPC_QNA_APLICA##
+                    AND H.HP_NUM_COMPLEM <![CDATA[<>]]> 99 
+                    AND C.CP_FOLIO      = CN.CXLCC_FOLIO (+)
+                    AND C.CP_DIF_FOLIO  = CN.CXLCC_DIF_FOLIO(+)
+                    AND C.ID_TIPO_CPTO  = CN.ID_TIPO_CPTO(+)
+                    AND C.ID_CPTO_PAGO  = CN.ID_CPTO_PAGO(+)
+                    --AND H.ID_GRUPOPAGO_NOM IN (SELECT S.ID_GRUPOPAGO FROM TD_SEC_CXLC S WHERE 1=1 AND ##S.SEC_CXLC_CICLO## AND ##S.CXLC## GROUP BY S.ID_GRUPOPAGO)
+                    GROUP BY
+                        H.HP_FOLIO, H.HP_DIF_FOLIO, H.HP_QNA_PAGO, H.ID_TIPO_NOMINA, H.HP_NUM_COMPLEM, H.ID_UNIDAD_NOM, H.ID_UNIDAD_PRE, H.ID_EDO_NOM, 
+                        C.ID_TIPO_CPTO, C.ID_CPTO_PAGO, H.ID_GRUPOPAGO_NOM, H.HP_RFC, P.CPC_QNA_APLICA, P.CPC_ATENTA_NOTA, C.CP_MONTO, 
+                        CN.APLICADO
+                    ORDER BY 13,4,5,6,7,8,9,10,11,12,13,14
+                </prop>
+                
+                
+                <!-- Proceso - Manuales - Captura -->
+                <prop key="tdCxlcCicloProcesaManuales">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                        TD_CXLC C          
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tcTipoNominaProcesaManuales">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE 
+                        TN.TIPO_CLC = 'MANUAL'
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tcTipoNominaProcesaManualesArchivo">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    WHERE 
+                        TN.TIPO_CLC = 'MANARCHIVO' OR TN.TIPO_CLC = 'PATROARCHI'
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcProcesaManualFakeSql">
+                    SELECT * FROM (
+                        SELECT * FROM TD_CXLC C 
+                        WHERE C.CXLC_CICLO = (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S')
+                    ) WHERE ROWNUM <![CDATA[<]]> 2
+                </prop>
+                
+                
+                <!-- Herramientas - Filtros Consulta General -->
+                <prop key="tdCxlcCicloBusqueda">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                        TD_CXLC C          
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdSecCxlcCicloBusqueda">
+                    SELECT 
+                        SEC.SEC_CXLC_CICLO, SEC.SEC_CXLC_CICLO AS CICLO
+                    FROM 
+                        TD_SEC_CXLC SEC
+                    GROUP BY SEC.SEC_CXLC_CICLO
+                    ORDER BY SEC.SEC_CXLC_CICLO DESC
+                </prop>
+                <prop key="tdCxlcQnaPagoBusqueda">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tdCxlcTipoNominaBusqueda">
+                    SELECT 
+                        C.ID_TIPO_NOMINA, C.ID_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.ID_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcComplementoBusqueda">
+                    SELECT 
+                        C.CXLC_COMPLEMENTO, C.CXLC_COMPLEMENTO AS COMPLEMENTO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_COMPLEMENTO
+                    ORDER BY C.CXLC_COMPLEMENTO ASC
+                </prop>
+                
+                
+                
+                <!-- Herramientas - Registra Compromiso - Busqueda -->
+                <prop key="busquedaRegistraCompromiso">
+                    SELECT 
+                        C.CXLC_CICLO,
+                        C.CXLC AS CXLC_GRUPO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        S.SEC_COMPROMISO,
+                        C.CXLC_MONTO
+                    FROM 
+                        TD_CXLC C,
+                        TD_SEC_CXLC S
+                    WHERE
+                        C.CXLC = S.CXLC
+                    AND S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                    AND ##C.CXLC_CICLO##
+                    AND ##C.CXLC_QNA_PAGO##
+                    AND ##C.ID_TIPO_NOMINA##
+                    AND C.CXLC <![CDATA[<]]> 7000 
+                    AND C.CXLC_SITUACION = 'D'
+                    AND C.CXLC_COMPROMISO <![CDATA[>]]> 0
+                    AND (C.CXLC_DEVENGADO IS NULL OR C.CXLC_DEVENGADO = 0)
+                    AND (S.SEC_COMPROMISO IS NULL OR S.SEC_COMPROMISO = '')
+                    GROUP BY 
+                        C.CXLC_CICLO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        S.SEC_COMPROMISO,
+                        C.CXLC_MONTO
+                    ORDER BY C.CXLC_CICLO DESC, C.CXLC_QNA_PAGO DESC, C.CXLC
+                </prop>
+                
+                
+                
+                <!-- Herramientas - Registra Solicitud Pago - Busqueda -->
+                <prop key="busquedaRegistraSolicitudPago">
+                    SELECT 
+                        C.CXLC_CICLO,
+                        C.CXLC AS CXLC_GRUPO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_DEVENGADO,
+                        S.SEC_COMPROMISO,
+                        C.CXLC_MONTO
+                    FROM 
+                        TD_CXLC C,
+                        TD_SEC_CXLC S
+                    WHERE
+                        C.CXLC = S.CXLC
+                    AND S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                    AND ##C.CXLC_CICLO##
+                    AND ##C.CXLC_QNA_PAGO##
+                    AND ##C.ID_TIPO_NOMINA##
+                    AND C.CXLC <![CDATA[<]]> 7000 
+                    AND C.CXLC_SITUACION = 'D'
+                    AND C.CXLC_COMPROMISO <![CDATA[>]]> 0
+                    AND C.CXLC_DEVENGADO <![CDATA[>]]> 0
+                    AND (S.SEC_COMPROMISO IS NOT NULL OR S.SEC_COMPROMISO != '')
+                    AND (S.SEC_DEVENGADO IS NULL OR S.SEC_DEVENGADO = 0)
+                    GROUP BY 
+                        C.CXLC_CICLO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_DEVENGADO,
+                        S.SEC_COMPROMISO,
+                        C.CXLC_MONTO
+                    ORDER BY C.CXLC_CICLO DESC, C.CXLC_QNA_PAGO DESC, C.CXLC
+                </prop>
+                
+                
+                
+                <!-- Herramientas - Registra CLC -->
+                <prop key="tdCxlcCicloRegistraClc">                    
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS DESCRIPCION
+                        FROM 
+                            TD_CXLC C
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdCxlcQnaPagoRegistraClc">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS DESCRIPCION
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tdCxlcTipoNominaRegistraClc">
+                    SELECT 
+                        C.ID_TIPO_NOMINA, C.ID_TIPO_NOMINA AS DESCRIPCION
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.ID_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcComplementoRegistraClc">
+                    SELECT 
+                        C.CXLC_COMPLEMENTO, C.CXLC_COMPLEMENTO AS DESCRIPCION
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_COMPLEMENTO
+                    ORDER BY C.CXLC_COMPLEMENTO ASC
+                </prop>
+                <prop key="tdCxlcNumeroRegistraClc">
+                    SELECT 
+                        C.CXLC, C.CXLC AS NUM_CXLC
+                    FROM 
+                        TD_CXLC C,
+                        TD_SEC_CXLC S
+                    WHERE 
+                        C.CXLC_COMPLEMENTO = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    AND C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC = S.CXLC
+                    AND S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                    AND C.CXLC <![CDATA[<]]> 7000
+                    AND C.CXLC_SITUACION = 'D'
+                    AND (S.SEC_COMPROMISO IS NOT NULL OR S.SEC_COMPROMISO != '')
+                    AND (S.SEC_DEVENGADO <![CDATA[>]]> 0 OR S.SEC_DEVENGADO IS NOT NULL)
+                    GROUP BY C.CXLC, C.CXLC
+                    ORDER BY C.CXLC ASC
+                </prop>
+                
+                
+                <!-- Herramientas - Concilia CLC - Busqueda -->
+                <prop key="busquedaConciliaCLC">
+                    SELECT 
+                        C.CXLC_CICLO,
+                        C.CXLC AS CXLC_GRUPO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_DEVENGADO
+                    FROM 
+                        TD_CXLC C
+                    WHERE
+                        C.CXLC_CONCILIA_SICOP = 0 
+                    AND ##C.CXLC_CICLO##
+                    AND ##C.CXLC_QNA_PAGO##
+                    AND ##C.ID_TIPO_NOMINA##
+                    AND ##C.CXLC_COMPLEMENTO##
+                    AND ROWNUM <![CDATA[<]]> 200
+                    ORDER BY C.CXLC_CICLO DESC, C.CXLC_QNA_PAGO DESC
+                </prop>
+                
+                
+                <!-- Herramientas - Borra CLC - Busqueda -->
+                <prop key="tdCxlcCicloBusquedaBorraClc">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS CICLO
+                        FROM 
+                        TD_CXLC C          
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdCxlcQnaPagoBusquedaBorraClc">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tdCxlcTipoNominaBusquedaBorraClc">
+                    SELECT 
+                        C.ID_TIPO_NOMINA, C.ID_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.ID_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcComplementoBusquedaBorraClc">
+                    SELECT 
+                        C.CXLC_COMPLEMENTO, C.CXLC_COMPLEMENTO AS COMPLEMENTO
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_COMPLEMENTO
+                    ORDER BY C.CXLC_COMPLEMENTO ASC
+                </prop>
+                <prop key="tdCxlcSituacionBusquedaBorraClc">
+                    SELECT 
+                        C.CXLC_SITUACION, C.CXLC_SITUACION AS SITUACION
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_COMPLEMENTO = ?
+                    AND C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_SITUACION
+                    ORDER BY C.CXLC_SITUACION ASC
+                </prop>
+                <prop key="busquedaBorraCLC">                    
+                    SELECT
+                        C.CXLC_CICLO,
+                        C.CXLC AS CXLC_GRUPO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_SITUACION
+                    FROM TD_CXLC C, TN_CXLC_DIVIDE D 
+                    WHERE 
+                        C.ID_TIPO_NOMINA = D.TIPO_CXLC
+                    AND C.NOMINA_ORIGEN = D.ID_TIPO_NOMINA
+                    AND D.CXLC_DIV_CTA_CLABE = 1
+                    AND ##C.CXLC_CICLO##
+                    AND ##C.CXLC_QNA_PAGO##
+                    AND ##C.CXLC_COMPLEMENTO##
+                    AND ##C.CXLC_SITUACION##
+                    AND ##C.NOMINA_ORIGEN##
+                    AND ##D.ID_TIPO_NOMINA##
+                    UNION
+                    SELECT
+                        C1.CXLC_CICLO,
+                        C1.CXLC AS CXLC_GRUPO,
+                        C1.CXLC_QNA_PAGO,
+                        C1.CXLC,
+                        C1.ID_TIPO_NOMINA,
+                        C1.CXLC_COMPLEMENTO,
+                        C1.CXLC_SITUACION
+                    FROM TD_CXLC C1, TC_TIPO_NOMINA T1 
+                    WHERE  
+                        T1.TIPO_CLC LIKE 'MAN%'
+                    AND C1.ID_TIPO_NOMINA = T1.ID_TIPO_NOMINA            
+                    AND ##C1.CXLC_CICLO##
+                    AND ##C1.CXLC_QNA_PAGO##
+                    AND ##C1.CXLC_COMPLEMENTO##
+                    AND ##C1.CXLC_SITUACION##
+                    AND ##C1.ID_TIPO_NOMINA##
+                    AND C1.CXLC <![CDATA[>]]> 4999
+                </prop>
+                
+                <!--Herramientas - Busqueda Errores-->
+                <prop key="tdCxlcCicloBusquedaErrores">
+                    SELECT * FROM (
+                        SELECT 
+                            CE.CE_CICLO, CE.CE_CICLO AS CICLO
+                        FROM 
+                            TD_CXLC_ERROR CE
+                        GROUP BY CE.CE_CICLO
+                        ORDER BY CE.CE_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdCxlcQnaPagoBusquedaErrores">
+                    SELECT 
+                        CE.CE_QNA_PAGO, CE.CE_QNA_PAGO AS QNA_PAGO
+                    FROM 
+                        TD_CXLC_ERROR CE
+                    WHERE 
+                        CE.CE_CICLO = ?
+                    GROUP BY CE.CE_QNA_PAGO
+                    ORDER BY CE.CE_QNA_PAGO DESC 
+                </prop>
+                <prop key="tdCxlcTipoNominaBusquedaErrores">
+                    SELECT 
+                        CE.ID_TIPO_NOMINA, CE.ID_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TD_CXLC_ERROR CE
+                    WHERE 
+                        CE.CE_QNA_PAGO = ?
+                    GROUP BY CE.ID_TIPO_NOMINA
+                    ORDER BY CE.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcComplementoBusquedaErrores">
+                    SELECT 
+                        CE.CE_COMPLEMENTO, CE.CE_COMPLEMENTO AS COMPLEMENTO
+                    FROM 
+                        TD_CXLC_ERROR CE
+                    WHERE 
+                        CE.ID_TIPO_NOMINA = ?
+                    AND CE.CE_QNA_PAGO = ?
+                    GROUP BY CE.CE_COMPLEMENTO
+                    ORDER BY CE.CE_COMPLEMENTO ASC
+                </prop>
+                <prop key="busquedaErrores">
+                    SELECT 
+                        E.CE_SECUENCIA,
+                        E.CE_CICLO,
+                        E.CE_QNA_PAGO,
+                        E.ID_TIPO_NOMINA,
+                        E.CE_COMPLEMENTO,
+                        E.ID_CXLC_ERROR ||' - ' || CE.DESCRIBE_ERROR AS DESC_ERROR,
+                        E.ID_FOLIO,
+                        E.ID_TIPO_CPTO,
+                        E.ID_CPTO_PAGO,
+                        E.ID_UNIDAD_NOM,
+                        E.ID_EDO,
+                        NVL(E.CE_MONTO,0) AS ceMonto,
+                        E.CE_REVISADO,
+                        DECODE(E.CE_REVISADO, '0', 'NO REVISADO', 'REVISADO') AS REVISADO,
+                        E.USUARIO,
+                        E.FEC_MODIFICO
+                    FROM 
+                        TD_CXLC_ERROR E, TC_CXLC_ERROR CE
+                    WHERE
+                        E.ID_CXLC_ERROR = CE.ID_CXLC_ERROR
+                    AND ##E.CE_CICLO##
+                    AND ##E.CE_QNA_PAGO##
+                    AND ##E.ID_TIPO_NOMINA##
+                    AND ##E.CE_COMPLEMENTO##
+                    AND ##E.CE_REVISADO##
+                    AND ROWNUM <![CDATA[<]]> 200
+                    ORDER BY E.FEC_MODIFICO DESC
+                </prop>
+                
+                
+                <!-- Interfaz SICOP - Solicitud Compromiso - Beneficiarios -->
+                <prop key="solCompBeneficiariosPopUp">
+                    SELECT 
+                        BS.ID_BENE_SICOP,
+                        BS.DESC_BENE_SICOP,
+                        BS.BS_CTA_BANCARIA,
+                        BS.BS_TIPO_MONEDA,
+                        BS.BS_LEYENDA,
+                        BS.BS_TIPO_PAGO,
+                        BS.BS_TIPO_NOM,
+                        BS.BS_REF_1
+                    FROM 
+                        TC_BENEFICIARIO_SICOP BS
+                </prop>
+                <prop key="tdCxlcCicloSolCompClc">
+                    SELECT * FROM (
+                            SELECT 
+                            C.CXLC_CICLO, C.CXLC_CICLO AS DESCRIPCION
+                        FROM 
+                            TD_CXLC C
+                        GROUP BY C.CXLC_CICLO
+                        ORDER BY C.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="tdCxlcQnaPagoSolCompClc">
+                    SELECT 
+                        C.CXLC_QNA_PAGO, C.CXLC_QNA_PAGO AS DESCRIPCION
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_CICLO = ?
+                    GROUP BY C.CXLC_QNA_PAGO
+                    ORDER BY C.CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="tdCxlcTipoNominaSolCompClc">
+                    SELECT 
+                        C.ID_TIPO_NOMINA, C.ID_TIPO_NOMINA AS DESCRIPCION
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.ID_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="tdCxlcComplementoSolCompClc">
+                    SELECT 
+                        C.CXLC_COMPLEMENTO, C.CXLC_COMPLEMENTO AS DESCRIPCION
+                    FROM 
+                        TD_CXLC C
+                    WHERE 
+                        C.ID_TIPO_NOMINA = ?
+                    AND C.CXLC_QNA_PAGO = ?
+                    GROUP BY C.CXLC_COMPLEMENTO
+                    ORDER BY C.CXLC_COMPLEMENTO ASC
+                </prop>
+                <prop key="busquedaClcSolicitudCompromiso">
+                    SELECT * FROM (
+                        SELECT 
+                            C.CXLC_CICLO,
+                            C.CXLC AS CXLC_GRUPO,
+                            C.CXLC_QNA_PAGO,
+                            C.CXLC,
+                            C.ID_TIPO_NOMINA,
+                            C.CXLC_COMPLEMENTO,
+                            C.CXLC_COMPROMISO,
+                            C.CXLC_MONTO
+                        FROM 
+                            TD_CXLC C, TC_TIPO_NOMINA TN
+                        WHERE
+                            C.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                        AND (C.CXLC_COMPROMISO IS NULL OR C.CXLC_COMPROMISO = 0)
+                        ORDER BY C.CXLC ASC
+                    )
+                </prop>
+                
+                
+                 <!-- Interfaz SICOP - Solicitud Pago - Beneficiarios -->
+                <prop key="solPagoBeneficiariosPopUp">
+                    SELECT 
+                        BS.ID_BENE_SICOP,
+                        BS.DESC_BENE_SICOP,
+                        BS.BS_CTA_BANCARIA,
+                        BS.BS_TIPO_MONEDA,
+                        BS.BS_LEYENDA,
+                        BS.BS_TIPO_PAGO,
+                        BS.BS_TIPO_NOM
+                    FROM 
+                        TC_BENEFICIARIO_SICOP BS
+                </prop>
+                <prop key="busquedaClcSolicitudPago">
+                    SELECT 
+                        C.CXLC_CICLO,
+                        C.CXLC AS CXLC_GRUPO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        S.SEC_COMPROMISO,
+                        C.CXLC_MONTO
+                    FROM 
+                        TD_CXLC C, TC_TIPO_NOMINA TN, TD_SEC_CXLC S
+                    WHERE
+                        C.CXLC = S.CXLC
+                    AND S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                    AND C.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND C.CXLC_COMPROMISO <![CDATA[>]]> 0
+                    AND (C.CXLC_DEVENGADO IS NULL OR C.CXLC_DEVENGADO = 0)
+                    AND (S.SEC_COMPROMISO IS NOT NULL OR S.SEC_COMPROMISO != '')
+                    AND (S.SEC_DEVENGADO IS NULL OR S.SEC_DEVENGADO = 0)
+                    AND ##C.CXLC_CICLO##
+                    AND ##C.CXLC_QNA_PAGO##
+                    AND ##C.ID_TIPO_NOMINA##
+                    GROUP BY 
+                        C.CXLC_CICLO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        S.SEC_COMPROMISO,
+                        C.CXLC_MONTO
+                    ORDER BY C.CXLC ASC
+                </prop>
+                
+                
+                 <!-- Interfaz SICOP - Solicitud CLC - Beneficiarios -->
+                <prop key="solCLCBeneficiariosPopUp">
+                    SELECT 
+                        BS.ID_BENE_SICOP,
+                        BS.DESC_BENE_SICOP,
+                        BS.BS_CTA_BANCARIA,
+                        BS.BS_TIPO_MONEDA,
+                        BS.BS_LEYENDA,
+                        BS.BS_TIPO_PAGO,
+                        BS.BS_TIPO_NOM
+                    FROM 
+                        TC_BENEFICIARIO_SICOP BS
+                </prop>
+                <prop key="busquedaClcSolicitudCLC">                    
+                    SELECT 
+                        C.CXLC_CICLO,
+                        C.CXLC AS CXLC_GRUPO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        C.CXLC_MONTO
+                    FROM 
+                        TD_CXLC C, TC_TIPO_NOMINA TN, TD_SEC_CXLC S
+                    WHERE
+                        C.CXLC = S.CXLC
+                    AND S.SEC_CXLC_CICLO = C.CXLC_CICLO
+                    AND C.ID_TIPO_NOMINA = TN.ID_TIPO_NOMINA
+                    AND C.CXLC_COMPROMISO <![CDATA[>]]> 0
+                    AND C.CXLC_DEVENGADO <![CDATA[>]]> 0
+                    AND (S.SEC_COMPROMISO IS NOT NULL OR S.SEC_COMPROMISO != '')
+                    AND (S.SEC_DEVENGADO IS NOT NULL OR S.SEC_DEVENGADO > 0)
+                    AND ##C.CXLC_CICLO##
+                    AND ##C.CXLC_QNA_PAGO##
+                    AND ##C.ID_TIPO_NOMINA##
+                    GROUP BY 
+                        C.CXLC_CICLO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_COMPROMISO,
+                        C.CXLC_MONTO
+                    ORDER BY C.CXLC ASC
+                </prop>
+                
+                <!-- Consultas - Registra CLC -->
+                <prop key="consultaRegistroCLCBusqueda">                  
+                    select CXLC, CXLC as descrip
+                    from td_cxlc
+                    where 
+                        CXLC_COMPLEMENTO = ? 
+                    AND CXLC_CICLO = ? 
+                    and CXLC_QNA_PAGO = ?
+                    and ID_TIPO_NOMINA = ? 
+                    AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                <prop key="consultaRegistroCLC">
+                    SELECT 
+                        C.CXLC_CICLO,
+                        C.CXLC AS CXLC_GRUPO,
+                        C.CXLC_QNA_PAGO,
+                        C.CXLC,
+                        C.ID_TIPO_NOMINA,
+                        C.CXLC_COMPLEMENTO,
+                        C.CXLC_DEVENGADO
+                    FROM 
+                        TD_CXLC C
+                    WHERE
+                        1=1
+                    AND ##C.CXLC_CICLO##
+                    AND ##C.CXLC_QNA_PAGO##
+                    AND ##C.ID_TIPO_NOMINA##
+                    AND ##C.CXLC_COMPLEMENTO##
+                    AND ROWNUM <![CDATA[<]]> 200
+                    ORDER BY C.CXLC_CICLO DESC, C.CXLC_QNA_PAGO DESC
+                </prop>
+                
+                <!-- Consultas - Casos impuestos sobre nomina -->
+                <prop key="tdCxlcCicloBusquedaImpuestos">                  
+                    SELECT *
+                    FROM (
+                        SELECT
+                            H2NC_CICLO, H2NC_CICLO AS DESCRIPCION
+                        FROM 
+                            TN_HISTO_2N_CASOS
+                        GROUP BY H2NC_CICLO
+                        ORDER BY 1 DESC
+                        )WHERE ROWNUM <![CDATA[<]]> 3
+                </prop>
+                <prop key="consultaCasosImpNom">
+                    select H2NC_CICLO, ID_EDO, H2NC_CASOS, H2NC_MONTO
+                     from TN_HISTO_2N_CASOS 
+                     where 
+                        1=1 
+                     AND ##H2NC_CICLO## 
+                     AND ##H2NC_MES## 
+                     AND ROWNUM <![CDATA[<]]> 200                    
+                </prop>
+                <prop key="consultaMesImpNom">
+                select rownum as id, id_mes
+                from tc_mes_qna
+                order by qna_non
+                </prop>
+                
+                <!-- Consultas - Cxlcs Procesadas -->
+                <prop key="CxlcsProcesadas">                  
+                select cxlc_qna_pago, cxlc, cxlc_complemento, id_tipo_nomina, cxlc_monto
+                from td_cxlc
+                where 1= 1 
+                AND ##CXLC_CICLO## 
+                and ##CXLC_QNA_PAGO## 
+                and ##CXLC_COMPLEMENTO## 
+                and ##ID_TIPO_NOMINA##
+                and ##CXLC## 
+                AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                       
+               <prop key="clcProce">                  
+                select CXLC, CXLC as descrip
+                from td_cxlc
+                where 
+                CXLC_COMPLEMENTO = ? 
+                AND CXLC_CICLO = ? 
+                and CXLC_QNA_PAGO = ?
+                and ID_TIPO_NOMINA = ? 
+                AND ROWNUM <![CDATA[<]]> 200
+                </prop>
+                
+                <!-- Consultas - Cxlcs FONAC FSTSE y Sindicato -->
+                <prop key="fonacFstseSindic">
+                    SELECT * FROM (
+                        SELECT 
+                            T.CXLC_CICLO, T.CXLC_CICLO AS DES
+                        FROM 
+                            TD_CXLC T
+                        GROUP BY T.CXLC_CICLO
+                        ORDER BY T.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="sacafonacFstseSindic">
+                select c0.CXLC_QNA_PAGO, c0.ID_TIPO_NOMINA as nomina, TO_CHAR(c0.CXLC_COMPLEMENTO) as complemento, 
+                    c0.CXLC, 0, ' ', ' ' as cptopago, s.SEC_GUIA_CONTABLE_EJER,
+                    s.ID_SINDICATO, ' ' as grupopago, ' ' as rfc, 0 as qnaaplica, ' ', 0, sum(s.SEC_MONTO) monto,
+                    'NOMINAS DE FONAC (FO) ' as titulo
+                from TD_CXLC c0, TD_SEC_CXLC s
+                where ##c0.CXLC_CICLO##
+                    and ##c0.CXLC_QNA_PAGO##
+                    and c0.ID_TIPO_NOMINA in ('TG','TB','FO')
+                    and c0.CXLC_CICLO = s.SEC_CXLC_CICLO
+                    and c0.CXLC = s.CXLC
+                    and s.SEC_GUIA_CONTABLE_EJER in (2218,2278)
+                    and s.ID_SINDICATO in (0,1)
+                group by c0.CXLC_QNA_PAGO, c0.ID_TIPO_NOMINA, c0.CXLC_COMPLEMENTO, c0.CXLC, 0, ' ', ' ', s.SEC_GUIA_CONTABLE_EJER,
+                s.ID_SINDICATO, ' ', ' ', 0, ' ', 0
+                
+                UNION ALL
+                
+                select c2.CXLC_QNA_PAGO, c2.ID_TIPO_NOMINA as nomina, TO_CHAR(c2.CXLC_COMPLEMENTO) as complemento, 
+                    c2.CXLC, 0, ' ', ' ' as cptopago, s.SEC_GUIA_CONTABLE_EJER,
+                    s.ID_SINDICATO, ' ' as grupopago, ' ' as rfc, 0 as qnaaplica, ' ', 0, sum(s.SEC_MONTO) monto,
+                    'NOMINAS DE FSTSE (FS) ' as titulo
+                from TD_CXLC c2, TD_SEC_CXLC s
+                where ##c2.CXLC_CICLO##
+                    and ##c2.CXLC_QNA_PAGO##
+                    and c2.ID_TIPO_NOMINA in ('TG','TB','FS')
+                    and c2.CXLC_CICLO = s.SEC_CXLC_CICLO
+                    and c2.CXLC = s.CXLC
+                    and s.SEC_GUIA_CONTABLE_EJER in (2218,2278)
+                    and s.ID_SINDICATO in (2)
+                group by c2.CXLC_QNA_PAGO, c2.ID_TIPO_NOMINA, c2.CXLC_COMPLEMENTO, c2.CXLC, 0, ' ', ' ', s.SEC_GUIA_CONTABLE_EJER,
+                s.ID_SINDICATO, ' ', ' ', 0, ' ', 0
+                
+                UNION ALL
+                
+                select c3.CXLC_QNA_PAGO, c3.ID_TIPO_NOMINA as nomina, TO_CHAR(c3.CXLC_COMPLEMENTO) as complemento, 
+                    c3.CXLC, 0, ' ', ' ' as cptopago, s.SEC_GUIA_CONTABLE_EJER,
+                    s.ID_SINDICATO, ' ' as grupopago, ' ' as rfc, 0 as qnaaplica, ' ', 0, sum(s.SEC_MONTO) monto,
+                    'NOMINAS DE SINDICATO (SD) ' as titulo
+                from TD_CXLC c3, TD_SEC_CXLC s
+                where ##c3.CXLC_CICLO##
+                    and ##c3.CXLC_QNA_PAGO##
+                    and c3.ID_TIPO_NOMINA in ('TG','TB','SD')
+                    and c3.CXLC_CICLO = s.SEC_CXLC_CICLO
+                    and c3.CXLC = s.CXLC
+                    and s.SEC_GUIA_CONTABLE_EJER in (2218,2278)
+                    and s.ID_SINDICATO in (3)
+                group by c3.CXLC_QNA_PAGO, c3.ID_TIPO_NOMINA, c3.CXLC_COMPLEMENTO, c3.CXLC, 0, ' ', ' ', s.SEC_GUIA_CONTABLE_EJER,
+                s.ID_SINDICATO, ' ', ' ', 0, ' ', 0
+                
+                UNION ALL    
+                
+                SELECT h.HP_QNA_PAGO, h.ID_TIPO_NOMINA as nomina, h.HP_NUM_COMPLEM as complemento, 0, 
+                    h.ID_EDO_NOM, c.ID_TIPO_CPTO, c.ID_CPTO_PAGO as cptopago, g.GUIA_CONTABLE_EJER, 0, 
+                    h.ID_GRUPOPAGO_NOM as grupopago, h.HP_RFC as rfc, p0.CPC_QNA_APLICA as qnaaplica, p0.CPC_ATENTA_NOTA, count(*),
+                    sum(CASE WHEN g.GUIA_CONTABLE_EJER = 2218 THEN ((c.CP_MONTO * .25))
+                    ELSE c.CP_MONTO end) as monto, 'RECUPERACIONES FONAC (FO) ' as titulo
+                FROM TN_HISTORICO_PAGO h, TN_CONCEPTO_PAGADO c, TN_CAPTURA_PAGO_CANC p0, TC_GUIA_CONTABLE g
+                WHERE h.ID_SIT_PAGO = 'C'
+                    and h.HP_FOLIO = c.CP_FOLIO
+                    and h.HP_DIF_FOLIO = c.CP_DIF_FOLIO
+                    and h.ID_SIT_PAGO = p0.ID_SIT_PAGO
+                    and h.HP_FOLIO = p0.CPC_FOLIO
+                    and h.HP_DIF_FOLIO = p0.CPC_DIF_FOLIO
+                    and ##p0.CPC_QNA_APLICA##
+                    and c.ID_TIPO_CPTO = g.ID_TIPO_CPTO
+                    and c.ID_CPTO_PAGO = g.ID_CPTO_PAGO
+                    and g.GUIA_CONTABLE_EJER in (2278, 2218)
+                    and h.HP_NUM_COMPLEM != 99
+                GROUP BY h.HP_QNA_PAGO, h.ID_TIPO_NOMINA, h.HP_NUM_COMPLEM, CASE WHEN h.ID_UNIDAD_NOM like 'Z%' THEN h.ID_UNIDAD_PRE
+                    ELSE h.ID_UNIDAD_NOM end, h.ID_EDO_NOM, c.ID_TIPO_CPTO, 
+                    c.ID_CPTO_PAGO, g.GUIA_CONTABLE_EJER, h.ID_GRUPOPAGO_NOM, h.HP_RFC, p0.CPC_QNA_APLICA, p0.CPC_ATENTA_NOTA
+                
+                UNION ALL    
+                
+                SELECT h.HP_QNA_PAGO, h.ID_TIPO_NOMINA as nomina, h.HP_NUM_COMPLEM as complemento, 0, 
+                    h.ID_EDO_NOM, c.ID_TIPO_CPTO, c.ID_CPTO_PAGO as cptopago, g.GUIA_CONTABLE_EJER, 0, 
+                    h.ID_GRUPOPAGO_NOM as grupopago, h.HP_RFC as rfc, p2.CPC_QNA_APLICA as qnaaplica, p2.CPC_ATENTA_NOTA, count(*),
+                    sum(CASE WHEN g.GUIA_CONTABLE_EJER = 2218 THEN (((c.CP_MONTO * .75)*.10))
+                    ELSE c.CP_MONTO end) as monto, 'RECUPERACIONES FSTSE (FS) ' as titulo
+                FROM TN_HISTORICO_PAGO h, TN_CONCEPTO_PAGADO c, TN_CAPTURA_PAGO_CANC p2, TC_GUIA_CONTABLE g
+                WHERE h.ID_SIT_PAGO = 'C'
+                    and h.HP_FOLIO = c.CP_FOLIO
+                    and h.HP_DIF_FOLIO = c.CP_DIF_FOLIO
+                    and h.ID_SIT_PAGO = p2.ID_SIT_PAGO
+                    and h.HP_FOLIO = p2.CPC_FOLIO
+                    and h.HP_DIF_FOLIO = p2.CPC_DIF_FOLIO
+                    and ##p2.CPC_QNA_APLICA##
+                    and c.ID_TIPO_CPTO = g.ID_TIPO_CPTO
+                    and c.ID_CPTO_PAGO = g.ID_CPTO_PAGO
+                    and g.GUIA_CONTABLE_EJER in (2218)
+                    and h.HP_NUM_COMPLEM != 99
+                GROUP BY h.HP_QNA_PAGO, h.ID_TIPO_NOMINA, h.HP_NUM_COMPLEM, CASE WHEN h.ID_UNIDAD_NOM like 'Z%' THEN h.ID_UNIDAD_PRE
+                    ELSE h.ID_UNIDAD_NOM end, h.ID_EDO_NOM, c.ID_TIPO_CPTO, 
+                    c.ID_CPTO_PAGO, g.GUIA_CONTABLE_EJER, h.ID_GRUPOPAGO_NOM, h.HP_RFC, p2.CPC_QNA_APLICA, p2.CPC_ATENTA_NOTA
+                
+                UNION ALL    
+                
+                SELECT h.HP_QNA_PAGO, h.ID_TIPO_NOMINA as nomina, h.HP_NUM_COMPLEM as complemento, 0, 
+                    h.ID_EDO_NOM, c.ID_TIPO_CPTO, c.ID_CPTO_PAGO as cptopago, g.GUIA_CONTABLE_EJER, 0, 
+                    h.ID_GRUPOPAGO_NOM as grupopago, h.HP_RFC as rfc, p3.CPC_QNA_APLICA as qnaaplica, p3.CPC_ATENTA_NOTA, count(*),
+                    sum(CASE WHEN g.GUIA_CONTABLE_EJER = 2218 THEN c.CP_MONTO - ((c.CP_MONTO * .25) + (((c.CP_MONTO * .75)*.10)))
+                    ELSE c.CP_MONTO end) as monto, 'RECUPERACIONES SINDICATO (SD) ' as titulo
+                FROM TN_HISTORICO_PAGO h, TN_CONCEPTO_PAGADO c, TN_CAPTURA_PAGO_CANC p3, TC_GUIA_CONTABLE g
+                WHERE h.ID_SIT_PAGO = 'C'
+                    and h.HP_FOLIO = c.CP_FOLIO
+                    and h.HP_DIF_FOLIO = c.CP_DIF_FOLIO
+                    and h.ID_SIT_PAGO = p3.ID_SIT_PAGO
+                    and h.HP_FOLIO = p3.CPC_FOLIO
+                    and h.HP_DIF_FOLIO = p3.CPC_DIF_FOLIO
+                    and ##p3.CPC_QNA_APLICA##
+                    and c.ID_TIPO_CPTO = g.ID_TIPO_CPTO
+                    and c.ID_CPTO_PAGO = g.ID_CPTO_PAGO
+                    and g.GUIA_CONTABLE_EJER in (2218)
+                    and h.HP_NUM_COMPLEM != 99
+                GROUP BY h.HP_QNA_PAGO, h.ID_TIPO_NOMINA, h.HP_NUM_COMPLEM, CASE WHEN h.ID_UNIDAD_NOM like 'Z%' THEN h.ID_UNIDAD_PRE
+                    ELSE h.ID_UNIDAD_NOM end, h.ID_EDO_NOM, c.ID_TIPO_CPTO, 
+                    c.ID_CPTO_PAGO, g.GUIA_CONTABLE_EJER, h.ID_GRUPOPAGO_NOM, h.HP_RFC, p3.CPC_QNA_APLICA, p3.CPC_ATENTA_NOTA
+                </prop>
+               
+                
+                <!-- Consultas - Ejercido Cpto Pago -->
+                <prop key= "ejercidoCptoPago">
+                    select c.CXLC_CICLO,c.CXLC,c.ID_TIPO_NOMINA,c.CXLC_QNA_PAGO,c.CXLC_COMPLEMENTO,c.CXLC_SITUACION,
+                    s.SCC_FOLIO,s.SCC_DIF_FOLIO,s.SEC_CXLC,s.ID_UNIDAD,s.ID_UNIDAD_EJECUTO,
+                    s.ID_EDO,s.ID_FUNCION,s.ID_PROGRAMA,s.ID_ACT_INSTI,s.ID_ACT_PRIORITA,s.ID_ACT_INSTI_ESP,s.ID_PARTIDA,
+                    s.ID_TIPO_GASTO,s.ID_FUENTE_FINAN,s.SCC_GUIA_CONT_EJER,s.SCC_CLAVE_MOV,s.SCC_ID_SINDICATO,
+                    s.SCC_CODIGO_VERIF,s.ID_TIPO_CPTO,s.ID_CPTO_PAGO,s.ID_GRUPO_PAGO,s.SCC_CTA_CLABE,c.CXLC_MAESTRO_PTO,
+                    s.SCC_MONTO
+                    From td_cxlc c, td_sec_cxlc_cheque s
+                    Where s.SCC_CICLO = c.CXLC_CICLO
+                    AND s.CXLC = c.CXLC 
+                    AND ##c.CXLC_CICLO##
+                    AND ##c.CXLC_QNA_PAGO##
+                    AND ##c.ID_TIPO_NOMINA##
+                    AND ##c.CXLC_COMPLEMENTO##
+                    AND ##s.SCC_FOLIO##
+                    AND ROWNUM <![CDATA[<]]> 200       
+                </prop>
+                <prop key="cxlcCicloEjercidoCptoPago">
+                    SELECT * FROM (
+                        SELECT 
+                            T.CXLC_CICLO, T.CXLC_CICLO AS DES
+                        FROM 
+                            TD_CXLC T
+                        GROUP BY T.CXLC_CICLO
+                        ORDER BY T.CXLC_CICLO DESC
+                    ) WHERE ROWNUM  <![CDATA[<]]> 3 
+                </prop>
+                <prop key="cxlcQnaPagoEjercidoCptoPago">
+                    select CXLC_QNA_PAGO, CXLC_QNA_PAGO as descrip 
+                    from td_cxlc
+                    where CXLC_CICLO= ?
+                    group by CXLC_QNA_PAGO, CXLC_QNA_PAGO
+                    order by 1 
+                </prop>
+                <prop key="tipoNominaEjercidoCptoPago">
+                    select d.ID_TIPO_NOMINA, d.ID_TIPO_NOMINA as des
+                    from td_sec_cxlc_cheque c, td_cxlc d
+                    where c.SCC_CICLO = d.CXLC_CICLO
+                    and c.CXLC = d.CXLC
+                    and d.CXLC_QNA_PAGO = ?
+                    and d.CXLC_CICLO = ?
+                    group by d.ID_TIPO_NOMINA
+                    order by 1
+                </prop>
+                <prop key="complementoEjercidoCptoPago">
+                    select CXLC_COMPLEMENTO, CXLC_COMPLEMENTO as descrip 
+                    from td_cxlc
+                    where id_tipo_nomina = ?
+                    and CXLC_CICLO = ?
+                    and  CXLC_QNA_PAGO = ?
+                    group by CXLC_COMPLEMENTO, CXLC_COMPLEMENTO
+                    order by 1 
+                </prop>
+                <prop key="folioEjercidoCptoPago">
+                    select c.SCC_FOLIO, c.SCC_FOLIO as des 
+                    from td_sec_cxlc_cheque c, td_cxlc d
+                    where c.SCC_CICLO = d.CXLC_CICLO
+                    and c.CXLC = d.CXLC
+                    and d.CXLC_COMPLEMENTO = ?
+                    and d.CXLC_CICLO = ?
+                    and d.CXLC_QNA_PAGO = ?
+                    and d.ID_TIPO_NOMINA = ?
+                    group by c.SCC_FOLIO
+                    order by 1
+                </prop>
+                <prop key="listaBeneficiariosSICOP">
+                    select 
+                        id_bene_sicop idBeneSicop, bs_cta_bancaria bsCtaBancaria, desc_bene_sicop descrip,
+                        bs_tipo_moneda moneda, bs_tipo_pago bsTipoPago, bs_leyenda bsLeyenda, bs_ref_1 ref1,
+                        bs_ref_2 ref2, bs_tipo_nom tiponom, bs_rfc rfc, bs_origen_ppto origen,
+                        bs_tipo_erog eroga, bs_tipo_oper opera, usuario usuario, to_char(fec_modifico,'DD/MM/YYYY') fechamod
+                    from tc_beneficiario_sicop
+                    order by 1
+                </prop>
+                <prop key="tcTipoNominaBeneficiarios">
+                    SELECT 
+                        TN.ID_TIPO_NOMINA, TN.ID_TIPO_NOMINA || ' - ' || TN.DESC_TIPO_NOMINA AS TIPO_NOMINA
+                    FROM 
+                        TC_TIPO_NOMINA TN
+                    GROUP BY TN.ID_TIPO_NOMINA, TN.DESC_TIPO_NOMINA
+                    ORDER BY TN.ID_TIPO_NOMINA ASC
+                </prop>
+                <prop key="sacaciclotdcxlc">
+                    SELECT CXLC_CICLO AS ID, CXLC_CICLO AS CICLO
+                    FROM TD_CXLC
+                    WHERE CXLC_CICLO >= 2012
+                    GROUP BY CXLC_CICLO
+                    ORDER BY CXLC_CICLO DESC
+                </prop>
+                <prop key="sacaqnatdcxlc">
+                    SELECT CXLC_QNA_PAGO AS ID, CXLC_QNA_PAGO AS QUINCENA
+                    FROM TD_CXLC
+                    WHERE CXLC_CICLO = ?
+                    GROUP BY CXLC_QNA_PAGO
+                    ORDER BY CXLC_QNA_PAGO DESC
+                </prop>
+                <prop key="sacacomplementotdcxlc">
+                    SELECT CXLC_COMPLEMENTO AS ID, CXLC_COMPLEMENTO AS COMPLEMENTO
+                    FROM TD_CXLC
+                    WHERE CXLC_CICLO = ?
+                    AND CXLC_QNA_PAGO = ?
+                    GROUP BY CXLC_COMPLEMENTO
+                    ORDER BY CXLC_COMPLEMENTO
+                </prop>
+                <prop key="sacatipotncxlcdivide">
+                    select C.ID_TIPO_NOMINA AS ID, C.ID_TIPO_NOMINA as tiponom
+                    from TN_CXLC_DIVIDE C
+                    GROUP BY C.ID_TIPO_NOMINA
+                    ORDER BY C.ID_TIPO_NOMINA
+                </prop>
+                <prop key="sacaorigentdcxlc">
+                    SELECT CXLC_ORIGEN AS ID, CXLC_ORIGEN AS ORIGEN
+                    FROM TD_CXLC
+                    WHERE CXLC_CICLO = ?
+                      AND CXLC_QNA_PAGO = ?
+                      AND CXLC_COMPLEMENTO = ?
+                      AND NOMINA_ORIGEN = ?
+                    GROUP BY CXLC_ORIGEN
+                    ORDER BY CXLC_ORIGEN
+                </prop>
+                <prop key="llenaquincenal">
+                    SELECT TIPO_CXLC AS IDQ, TIPO_CXLC AS SELECCION_QUINCENAL
+                    FROM TN_CXLC_DIVIDE
+                    WHERE 1 = 1 
+                      AND ##ID_TIPO_NOMINA##
+                      AND PERIODO_TERCERO LIKE 'Quin%'
+                    GROUP BY TIPO_CXLC
+                    ORDER BY TIPO_CXLC ASC
+                </prop>
+                <prop key="llenamensual">
+                    SELECT TIPO_CXLC AS IDM, TIPO_CXLC AS SELECCION_MENSUAL
+                    FROM TN_CXLC_DIVIDE
+                    WHERE 1 = 1 
+                      AND ##ID_TIPO_NOMINA##
+                      AND PERIODO_TERCERO LIKE 'Men%'
+                    GROUP BY TIPO_CXLC
+                    ORDER BY TIPO_CXLC ASC
+                </prop>
+                <prop key="llenabimestral">
+                    SELECT TIPO_CXLC AS IDB, TIPO_CXLC AS SELECCION_BIMESTRAL
+                    FROM TN_CXLC_DIVIDE
+                    WHERE 1 = 1 
+                      AND ##ID_TIPO_NOMINA##
+                      AND PERIODO_TERCERO LIKE 'Bim%'
+                    GROUP BY TIPO_CXLC
+                    ORDER BY TIPO_CXLC ASC
+                </prop>
+
+            </props>
+        </property>
+    </bean>
+</beans>

@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CV" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="14"/>
+	<parameter name="PR_RFC" class="java.lang.String"/>
+	<parameter name="PR_CICLO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select p.plaza_rfc,
+       e.curp_empleado,
+       e.primer_apellido,
+       e.segundo_apellido,
+       e.nombre_empleado,
+       u.desc_unidad,
+       trim(i.inmueble_calle) ||' '|| i.inmueble_num_ext inmueble,
+       p.plaza_tel_of1,
+       p.plaza_conmut,
+       p.plaza_ext1,
+       e.e_mail_oficial,
+       p.id_puesto_nom,
+       case when s.nombre_puesto is not null then trim(s.nombre_puesto)
+            else pt.desc_puesto end nombre_puesto,
+       to_char(p.plaza_ini_cont, 'mm/yyyy') inicio_cargo,
+       to_char(p.plaza_fin_cont, 'mm/yyyy') final_cargo,
+       to_char(e.ingreso_dependencia , 'mm/yyyy') inicio_dependencia,
+       to_char(e.ingreso_gob_fed , 'mm/yyyy') inicio_gobierno,
+       n.desc_nivel_escolar,
+       c.desc_profn_carrera,
+       ie.desc_inst_educat,
+       to_char(el.exp_fec_inicial, 'mm/yyyy') inicio_trab,
+       to_char(el.exp_fec_final , 'mm/yyyy') final_trab,
+       el.exp_organizacion,
+       case when el.exp_sector = 'PUB' then 'Público'
+            when el.exp_sector = 'PRV' then 'Privado'
+            else 'S/D' end sector,
+       nc.desc_nivel_cargo,
+       ap.desc_act_prin
+from td_plaza p,
+     td_empleado e,
+     tc_inmueble i,
+     tc_unidad u,
+     tc_puesto pt,
+     td_escenario s,
+     tc_nivel_escolar n,
+     tc_profn_carrera c,
+     tc_inst_educat ie,
+     td_exp_experiencia_laboral el,
+     td_exp_antecedentes_academicos aa,
+     tc_nivel_cargo nc,
+     tc_act_principal ap
+where p.plaza_rfc = $P{PR_RFC}--'ROHG9102088T4'
+  and p.plaza_rfc = e.rfc_empleado
+  and p.id_unidad_nom = u.id_unidad
+  and u.uni_ciclo =$P{PR_CICLO} --2016
+  and p.id_inmueble = i.id_inmueble
+  and p.id_plaza = s.plaza_escenario(+)
+  and s.fin_escenario(+) = '31/12/2099'
+  and p.plaza_rfc = aa.rfc_empleado(+)
+  and aa.id_nivel_escolar = n.id_nivel_escolar(+)
+  and aa.id_prof_carrera = c.id_profn_carrera(+)
+  and aa.id_inst_educat = ie.id_inst_educat(+)
+  and e.rfc_empleado = el.rfc_empleado(+)
+  and el.id_nivel_cargo = nc.id_nivel_cargo(+)
+  and el.id_act_princ = ap.id_act_princ(+)
+  and p.id_puesto_nom = pt.id_puesto
+order by 22 asc]]>
+	</queryString>
+	<field name="PLAZA_RFC" class="java.lang.String"/>
+	<field name="CURP_EMPLEADO" class="java.lang.String"/>
+	<field name="PRIMER_APELLIDO" class="java.lang.String"/>
+	<field name="SEGUNDO_APELLIDO" class="java.lang.String"/>
+	<field name="NOMBRE_EMPLEADO" class="java.lang.String"/>
+	<field name="DESC_UNIDAD" class="java.lang.String"/>
+	<field name="INMUEBLE" class="java.lang.String"/>
+	<field name="PLAZA_TEL_OF1" class="java.lang.String"/>
+	<field name="PLAZA_CONMUT" class="java.lang.String"/>
+	<field name="PLAZA_EXT1" class="java.lang.String"/>
+	<field name="E_MAIL_OFICIAL" class="java.lang.String"/>
+	<field name="ID_PUESTO_NOM" class="java.lang.String"/>
+	<field name="NOMBRE_PUESTO" class="java.lang.String"/>
+	<field name="INICIO_CARGO" class="java.lang.String"/>
+	<field name="FINAL_CARGO" class="java.lang.String"/>
+	<field name="INICIO_DEPENDENCIA" class="java.lang.String"/>
+	<field name="INICIO_GOBIERNO" class="java.lang.String"/>
+	<field name="DESC_NIVEL_ESCOLAR" class="java.lang.String"/>
+	<field name="DESC_PROFN_CARRERA" class="java.lang.String"/>
+	<field name="DESC_INST_EDUCAT" class="java.lang.String"/>
+	<field name="INICIO_TRAB" class="java.lang.String"/>
+	<field name="FINAL_TRAB" class="java.lang.String"/>
+	<field name="EXP_ORGANIZACION" class="java.lang.String"/>
+	<field name="SECTOR" class="java.lang.String"/>
+	<field name="DESC_NIVEL_CARGO" class="java.lang.String"/>
+	<field name="DESC_ACT_PRIN" class="java.lang.String"/>
+	<group name="RFC">
+		<groupExpression><![CDATA[$F{PLAZA_RFC}]]></groupExpression>
+		<groupHeader>
+			<band height="517">
+				<rectangle radius="10">
+					<reportElement x="1" y="332" width="572" height="179"/>
+					<graphicElement>
+						<pen lineColor="#000000"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle radius="10">
+					<reportElement x="1" y="159" width="572" height="120"/>
+					<graphicElement>
+						<pen lineColor="#000000"/>
+					</graphicElement>
+				</rectangle>
+				<rectangle radius="10">
+					<reportElement x="1" y="0" width="571" height="107"/>
+				</rectangle>
+				<textField isBlankWhenNull="true">
+					<reportElement x="145" y="12" width="176" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PLAZA_RFC}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="17" y="12" width="28" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[RFC]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="320" y="12" width="36" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[CURP]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="370" y="12" width="203" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{CURP_EMPLEADO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="17" y="32" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Primer Apellido ]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="145" y="32" width="211" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PRIMER_APELLIDO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="17" y="52" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Segundo Apellido]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="17" y="72" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Nombre (s)]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="145" y="52" width="211" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SEGUNDO_APELLIDO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="145" y="72" width="211" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE_EMPLEADO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="10" y="126" width="218" height="18"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Área de adscripción]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="169" width="130" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Unidad Administrativa]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="189" width="130" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Edificio]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="209" width="130" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Teléfono de contacto]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="204" y="169" width="361" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_UNIDAD}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="204" y="189" width="361" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{INMUEBLE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="204" y="209" width="237" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PLAZA_TEL_OF1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="18" y="229" width="130" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Conmutador]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="204" y="229" width="146" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PLAZA_CONMUT}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="18" y="249" width="174" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Correo electrónico institucional]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="204" y="249" width="338" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{E_MAIL_OFICIAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="372" y="229" width="60" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Extensión]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="444" y="229" width="98" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{PLAZA_EXT1}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="10" y="297" width="220" height="18"/>
+					<textElement>
+						<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+					</textElement>
+					<text><![CDATA[Datos del cargo actual]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="338" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Puesto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="358" width="132" height="31"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Descripción del puesto]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="389" width="132" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Fecha de ingreso al cargo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="318" y="389" width="135" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Fecha final de cargo]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="161" y="338" width="257" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{ID_PUESTO_NOM}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="160" y="358" width="413" height="31"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{NOMBRE_PUESTO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="161" y="389" width="144" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{INICIO_CARGO}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="454" y="389" width="119" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{FINAL_CARGO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="18" y="409" width="142" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Fecha de ingreso a la SHCP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="318" y="409" width="135" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Fecha de ingreso a la APF]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="161" y="409" width="144" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{INICIO_DEPENDENCIA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="454" y="409" width="119" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{INICIO_GOBIERNO}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="18" y="429" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Nivel de estudio]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="161" y="429" width="171" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_NIVEL_ESCOLAR}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="18" y="449" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Grado de avance]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="469" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Carrera]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="18" y="489" width="100" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Egresado ]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="161" y="449" width="171" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_PROFN_CARRERA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="161" y="469" width="171" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_PROFN_CARRERA}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="161" y="489" width="171" height="20"/>
+					<textElement>
+						<font fontName="Arial" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{DESC_INST_EDUCAT}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="101" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="33" y="13" width="509" height="43"/>
+				<graphicElement>
+					<pen lineStyle="Solid" lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="182" y="26" width="204" height="18"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[TRAYECTORIA LABORAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="83" width="220" height="18"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Datos personales]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement isPrintRepeatedValues="false" x="10" y="0" width="220" height="18" printWhenGroupChanges="RFC"/>
+				<textElement>
+					<font fontName="Arial" size="12" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Trabajo(s) reciente(s)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="144" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="1" y="13" width="572" height="131"/>
+				<graphicElement>
+					<pen lineColor="#000000"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="14" y="50" width="128" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Institución o empresa]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="193" y="30" width="142" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INICIO_TRAB}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="335" y="30" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha de término]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="435" y="30" width="135" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{FINAL_TRAB}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="30" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Fecha de inicio]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="70" width="100" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Sector]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="90" width="162" height="20"/>
+				<textElement verticalAlignment="Top">
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[ Cargo o Puesto desempeñado]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="110" width="158" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Campo de experiencia]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="193" y="50" width="164" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_INST_EDUCAT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="193" y="70" width="164" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SECTOR}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="193" y="110" width="376" height="26"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_ACT_PRIN}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="193" y="90" width="164" height="20"/>
+				<textElement>
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DESC_NIVEL_CARGO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="31"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

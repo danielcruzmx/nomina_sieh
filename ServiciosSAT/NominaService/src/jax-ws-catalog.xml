@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="https://intgnominarecepcion.cloudapp.net/NominaRecepcion.svc?singleWsdl" uri="wsdl/intgnominarecepcion.cloudapp.net/NominaRecepcion.svc.singlewsdl.wsdl"/>
+    <system systemId="https://intgnominarecepcion.cloudapp.net/NominaConsulta.svc?singleWsdl" uri="wsdl/intgnominarecepcion.cloudapp.net/NominaConsulta.svc.singlewsdl.wsdl"/>
+    <system systemId="https://intgnominacancelacion.cloudapp.net/NominaCancelacion.svc?wsdl" uri="wsdl/intgnominacancelacion.cloudapp.net/NominaCancelacion.svc.wsdl"/>
+    <system systemId="https://intgnominacancelacion.cloudapp.net/NominaCancelacion.svc?xsd=xsd0" uri="wsdl/intgnominacancelacion.cloudapp.net/NominaCancelacion.svc.xsd_xsd0.xsd"/>
+    <system systemId="https://intgnominacancelacion.cloudapp.net/NominaCancelacion.svc?xsd=xsd1" uri="wsdl/intgnominacancelacion.cloudapp.net/NominaCancelacion.svc.xsd_xsd1.xsd"/>
+    <system systemId="https://intgnominacancelacion.cloudapp.net/NominaCancelacion.svc?singleWsdl" uri="wsdl/intgnominacancelacion.cloudapp.net/NominaCancelacion.svc.singlewsdl.wsdl"/>
+    <system systemId="https://nominarecepcionuat.cloudapp.net/NominaRecepcion.svc?wsdl" uri="wsdl/nominarecepcionuat.cloudapp.net/NominaRecepcion.svc.wsdl"/>
+    <system systemId="https://nominarecepcionuat.cloudapp.net/NominaRecepcion.svc?xsd=xsd0" uri="wsdl/nominarecepcionuat.cloudapp.net/NominaRecepcion.svc.xsd_xsd0.xsd"/>
+    <system systemId="https://nominarecepcionuat.cloudapp.net/NominaRecepcion.svc?xsd=xsd1" uri="wsdl/nominarecepcionuat.cloudapp.net/NominaRecepcion.svc.xsd_xsd1.xsd"/>
+    <system systemId="https://nominarecepcionuat.cloudapp.net/NominaConsulta.svc?wsdl" uri="wsdl/nominarecepcionuat.cloudapp.net/NominaConsulta.svc.wsdl"/>
+    <system systemId="https://nominarecepcionuat.cloudapp.net/NominaConsulta.svc?xsd=xsd0" uri="wsdl/nominarecepcionuat.cloudapp.net/NominaConsulta.svc.xsd_xsd0.xsd"/>
+    <system systemId="https://nominarecepcionuat.cloudapp.net/NominaConsulta.svc?xsd=xsd1" uri="wsdl/nominarecepcionuat.cloudapp.net/NominaConsulta.svc.xsd_xsd1.xsd"/>
+</catalog>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+
+<project name="SCM-application" basedir="." default="help">
+<!-- Define la ruta donde se encuentra el archivo de propiedades con la configuracion de la aplicacion: scm-application.properties -->
+     <property name="props.basedir"  value="."/>
+<!-- Define la ruta donde se encuentra el archivo xml con las macros para el script de mnto de la aplicacion: scm-macros-create-app.xml -->
+     <property name="macros.basedir" value="../../applibs/Build"/>
+
+<!-- Importa el archivo de propiedades de configuracion y la biblioteca de macros, scripts y tareas de ant --> 
+     <property file="${props.basedir}/scm-application.properties"/>
+     <import   file="${macros.basedir}/scm-macros-create-app.xml"/>
+
+<!-- Tarea para mostrar las opciones al usuario -->
+     <target name="help">
+        <echo>
+        ant [options] [deleteApplication] [createApplication] [updateApplication] [scaffolding]
+        deleteApplication - Tarea para eliminar una aplicacion existente
+        createApplication - Tarea para crear una aplicacion nueva
+        updateApplication - Tarea para actualizar una aplicacion existente con los ultimos cambios
+        scaffolding       - Tarea para generar el codigo de la capa de datos, modelo y CRUD de la base de datos
+        executeDatabase   - Tarea para ejecutar sentencias SQL de base de datos DML y DDL
+        </echo>
+     </target>
+
+<!-- Tarea para eliminar una aplicacion existente -->
+     <target name="deleteApplication">
+         <input message="Desea eliminar la aplicacion existente en: [${app.home}/${app.name}] de forma definitiva (y/n)?" validargs="y,n" addproperty="do.delete"/>
+         <if>
+            <equals arg1="${do.delete}" arg2="y"/>
+            <then>
+               <delete dir="${app.home}/${app.name}" verbose="true"/>
+            </then>
+         </if>
+     </target>
+
+<!-- Tarea para crear una aplicacion nueva -->
+     <target name="createApplication">
+        <scm-application>
+            <projects>
+                <scm-project-build/>
+                <scm-project-config/>
+                <scm-project-configdist/>
+                <scm-project-data/>
+                <scm-project-model/>
+                <scm-project-service/>
+                <scm-project-web/>
+                <!-- El atributo "name" debe coincidir con el sufijo de la propiedad "app.webCtxRoot" en el archivo: scm-application.properties -->
+                <!-- <scm-project-web name="WebAdmin"/> -->
+            </projects>
+        </scm-application>
+     </target>
+
+<!-- Tarea para actualizar una aplicacion existente con los ultimos cambios -->
+     <target name="updateApplication">
+        <scm-update-application>
+            <projects>
+                <scm-update-build/>
+                <scm-update-config/>
+                <scm-update-configdist/>
+                <scm-update-web/>
+                <!-- Si se omite el atributo "excludesIfNotPresent" o si se especifica con valor "false", entonces 
+                     agrega todo el contenido nuevo y actualiza el existente en el proyecto Web especificado, de lo contrario, 
+                     solo actualiza el contenido existente en dicho proyecto. -->
+                <!-- <scm-update-web name="WebAdmin" excludesIfNotPresent="true"/> -->
+            </projects>
+        </scm-update-application>
+     </target>
+
+<!-- Tarea para generar el codigo de la capa de datos, modelo y CRUD de la base de datos -->
+     <target name="scaffolding">
+        <scm-scaffolding-data/>
+        <scm-scaffolding-model/>
+     </target>
+
+<!-- Tarea para ejecutar sentencias SQL de base de datos DML y DDL -->
+     <target name="executeDatabase">
+        <echo>Execute database sql commands using [${db.file}]...</echo>
+        <sql driver="oracle.jdbc.driver.OracleDriver" url="${db.url}" userid="${db.usr}" password="${db.pwd}" print="yes" src="${db.file}"/>
+     </target>
+
+</project>

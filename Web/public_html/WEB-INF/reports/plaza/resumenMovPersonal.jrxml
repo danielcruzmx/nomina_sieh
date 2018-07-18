@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Movimientos de personal(alta,baja,preventiva,promocion)" printOrder="Horizontal" columnDirection="RTL" pageWidth="792" pageHeight="612" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="IMAGES_URI" class="java.lang.String"/>
+	<parameter name="PAR_CICLO" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="PAR_MES" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+CASE
+    WHEN JERARQUIA IS NULL AND DESC_GRUPO_PAGO IS NULL AND MEP_QNA_CAPTURA IS NULL THEN 'TOTAL'
+    WHEN JERARQUIA IS NULL AND DESC_GRUPO_PAGO IS NULL THEN TO_CHAR(MEP_QNA_CAPTURA)
+    WHEN JERARQUIA IS NULL THEN DESC_GRUPO_PAGO
+ELSE JERARQUIA END QUINCENACAPTURA,
+SUM(ALTA) ALTA, SUM(PROMOCION) PROMOCION,
+SUM(BAJA) BAJA, SUM(PREVENTIVA) PREVENTIVA, SUM(TOTAL) TOTAL,
+PKG_DATOS_DEPENDENCIA.FUNC_DOMICILIO() AS DOMICILIO,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_OM() AS UNI_OM,
+PKG_DATOS_DEPENDENCIA.FUNC_UNIDAD_RH() AS UNI_RH
+FROM
+(select MEP_QNA_CAPTURA, DESC_GRUPO_PAGO, JERARQUIA, ALTA, PROMOCION, BAJA, PREVENTIVA,
+        NVL(ALTA,0) + NVL(PROMOCION,0) + NVL(BAJA,0) + NVL(PREVENTIVA,0) TOTAL,
+        ID_NOMBRAMIENTO,ID_JERARQUIA
+from
+(select c.MEP_QNA_CAPTURA, c.ID_UNIDAD_NOM, u.DESC_UNIDAD,
+           c.ID_GRUPO_PAGO, upper(g.DESC_GRUPO_PAGO) DESC_GRUPO_PAGO,
+           c.ID_MOVTO_PERSONA, upper(m.DESC_MOVS_PERSONAL),
+           case when c.ID_MOVTO_PERSONA between 100 and 199 then 'ALTA'
+                   when c.ID_MOVTO_PERSONA between 200 and 299 then 'PROMOCION'
+                   when c.ID_MOVTO_PERSONA between 300 and 399 then 'BAJA'
+                   when c.ID_MOVTO_PERSONA = '415' then 'PREVENTIVA'
+            else 'NO DEFINIDO' end movtos,
+           c.ID_PLAZA, c.ID_PUESTO_NOM_ANT, upper(p.DESC_PUESTO),
+           a.ID_NIVEL_PTO, a.ID_NOMBRAMIENTO, upper(n.DESC_NOMBRAMIENTO),
+           a.ID_JERARQUIA,
+          case when a.ID_JERARQUIA = '7' and a.ID_NOMBRAMIENTO  = 'B' then 'OPERATIVO DE BASE'
+                  when a.ID_JERARQUIA = '7' and a.ID_NOMBRAMIENTO = 'C' then 'OPERATIVO DE CONFIANZA'
+          else upper(j.DESC_JERARQUIA) end JERARQUIA,
+           f.CODIGO_PUESTO, upper(f.NOMBRE_PUESTO), f.OBSERVACIONES,
+           c.MEP_RFC, c.MEP_NOMBRE , c.MEP_PRIMER_APELLIDO, c.MEP_SEGUNDO_APELLIDO,
+           to_char(c.MEP_INI_CONT,'dd/mm/Yyyy') fec_ini,
+           to_char(c.MEP_FIN_CONT,'dd/mm/Yyyy') ap_fin,
+           c.USUARIO , to_char(c.FEC_MODIFICO,'dd/mm/Yyyy') fec_modifica
+from tn_movtos_emp_pla c, tc_movs_personal m, tc_unidad u, tc_atributo_puesto a, tc_jerarquia j, tc_nombramiento n, tc_puesto p,
+         tc_grupo_pago g, td_escenario f
+where
+c.MEP_QNA_CAPTURA>=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_NON,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES}) AND
+c.MEP_QNA_CAPTURA<=(SELECT $P{PAR_CICLO}||TRIM(TO_CHAR(QNA_PAR,'09'))
+FROM TC_MES_QNA
+WHERE ID_MES=$P{PAR_MES})
+and c.ID_MOVTO_PERSONA = m.ID_MOVS_PERSONAL (+)
+and c.ID_UNIDAD_NOM = u.ID_UNIDAD (+)
+and u.UNI_CICLO = $P{PAR_CICLO}
+and c.ID_GRUPO_PAGO = g.ID_GRUPO_PAGO
+and c.ID_PUESTO_NOM = a.ID_ATRIBUTO_PUESTO (+)
+and TO_CHAR(a.AP_FIN,'DD/MM/YYYY')  = '01/01/2099'
+and a.ID_JERARQUIA = j.ID_JERARQUIA (+)
+and a.ID_NOMBRAMIENTO = n.ID_NOMBRAMIENTO (+)
+and (c.ID_MOVTO_PERSONA between 100 and 199 or c.ID_MOVTO_PERSONA
+                        between 200 and 299 or c.ID_MOVTO_PERSONA
+                        between 300 and 399 or c.ID_MOVTO_PERSONA = 415)
+--and c. . .QNA_CANCELA is null /*ya no existe la columna en la nueva tabla*/
+and c.ID_PUESTO_NOM = p.ID_PUESTO (+)
+and c.ID_PLAZA = f.PLAZA_ESCENARIO(+)
+and (f.fin_escenario = TO_DATE('31/12/2099','DD/MM/YYYY') OR f.fin_escenario is null)
+)
+PIVOT (COUNT(*) FOR movtos IN('ALTA' as ALTA,
+'PROMOCION' AS PROMOCION,
+'BAJA' AS BAJA,
+'PREVENTIVA' AS PREVENTIVA))
+)
+GROUP BY ROLLUP (MEP_QNA_CAPTURA, DESC_GRUPO_PAGO, JERARQUIA )
+order by MEP_QNA_CAPTURA||DESC_GRUPO_PAGO||JERARQUIA]]>
+	</queryString>
+	<field name="QUINCENACAPTURA" class="java.lang.String"/>
+	<field name="ALTA" class="java.math.BigDecimal"/>
+	<field name="PROMOCION" class="java.math.BigDecimal"/>
+	<field name="BAJA" class="java.math.BigDecimal"/>
+	<field name="PREVENTIVA" class="java.math.BigDecimal"/>
+	<field name="TOTAL" class="java.math.BigDecimal"/>
+	<field name="DOMICILIO" class="java.lang.String"/>
+	<field name="UNI_OM" class="java.lang.String"/>
+	<field name="UNI_RH" class="java.lang.String"/>
+	<background>
+		<band height="572" splitType="Stretch">
+			<image isLazy="true">
+				<reportElement x="175" y="110" width="400" height="420"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/FONDOAGUILA.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="50" splitType="Stretch">
+			<textField>
+				<reportElement x="515" y="10" width="239" height="12"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_OM}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="515" y="21" width="239" height="26"/>
+				<textElement textAlignment="Right">
+					<font fontName="Adobe Caslon Pro"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{UNI_RH}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement positionType="FixRelativeToBottom" x="5" y="5" width="120" height="40"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/LOGO_H.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="219" y="19" width="347" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Adobe Caslon Pro Bold" size="10" isBold="false" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Movimientos de personal (alta, baja, preventiva, promoción)]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="752" height="20" forecolor="#F0F0F0" backcolor="#F0F0F0"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="16" y="3" width="122" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quincena de captura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="3" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Alta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="359" y="3" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Baja]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="458" y="3" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Preventiva]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="554" y="3" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Promoción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="648" y="3" width="78" height="15"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Courier New" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="14" width="752" height="1" forecolor="#F0F0F0"/>
+			</line>
+			<textField isBlankWhenNull="false">
+				<reportElement x="16" y="0" width="173" height="13"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{QUINCENACAPTURA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="257" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{ALTA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="359" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{BAJA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="458" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PREVENTIVA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="554" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{PROMOCION}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="648" y="0" width="78" height="13"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="30" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="1" width="752" height="1" forecolor="#999999"/>
+			</line>
+			<textField isStretchWithOverflow="true" pattern="EEE dd/ MMM/yyyy HH:mm">
+				<reportElement x="640" y="15" width="105" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Top">
+					<font fontName="Adobe Caslon Pro" size="8" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame" isLazy="true">
+				<reportElement x="5" y="5" width="50" height="20"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{IMAGES_URI}+"/SIREH.jpg"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="95" y="6" width="600" height="20" forecolor="#999999"/>
+				<textElement textAlignment="Center">
+					<font fontName="Adobe Caslon Pro" size="7"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DOMICILIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0">
+				<reportElement x="650" y="5" width="60" height="10"/>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Hoja "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" pattern="#,##0">
+				<reportElement x="710" y="5" width="35" height="10"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Adobe Caslon Pro" size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="22" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<workbook>
+    <worksheet idx="0">
+      <section startRow="0" endRow="7">
+      	  <mapping cell="A8">encabezadoDTO.a</mapping>	
+      	  <mapping cell="B8">encabezadoDTO.b</mapping>
+      	  <mapping cell="C8">encabezadoDTO.c</mapping>
+      	  <mapping cell="D8">encabezadoDTO.d</mapping>
+      	  <mapping cell="E8">encabezadoDTO.e</mapping>
+      	  <mapping cell="F8">encabezadoDTO.f</mapping>
+      	  <mapping cell="G8">encabezadoDTO.g</mapping>
+        </section>
+        <loop startRow="8" endRow="8" items="notaDeMeritoDTO.listModel" var="p" varType="gob.shcp.sireh.model.merito.NotaDeMeritoDTO">
+            <section startRow="8" endRow="8">
+                <mapping row="8" col="0">p.consecutivo</mapping>
+                <mapping row="8" col="1">p.tdNmhRfcUnico</mapping>
+                <mapping row="8" col="2">p.nombreEmpleado</mapping>
+                <mapping row="8" col="3">p.idUnidad</mapping>
+                <mapping row="8" col="4">p.idPuesto</mapping>
+                <mapping row="8" col="5">p.idPlaza</mapping>
+                <mapping row="8" col="6">p.idNivelPto</mapping> 
+            </section> 
+             <loopbreakcondition>
+                    <rowcheck offset="0">
+                        <cellcheck offset="0"></cellcheck>
+                    </rowcheck>
+                </loopbreakcondition>
+        </loop>   
+    </worksheet>
+</workbook>

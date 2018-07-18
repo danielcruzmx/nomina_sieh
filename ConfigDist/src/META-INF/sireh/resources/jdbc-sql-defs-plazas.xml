@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.JdbcDAOQueriesHolder">
+        <property name="jdbcDAOQueryDefinitions">
+            <props>
+                <prop key="plazaEmpleadosMovtos">
+                    SELECT TC_SIT_PLAZA.DESC_SIT_PLAZA, TD_PLAZA.PLAZA_INI_CONT,
+                        TD_PLAZA.ID_SIT_PLAZA,
+                        TD_PLAZA.PLAZA_FIN_CONT, TD_PLAZA.PLAZA_INI_LIC, TD_PLAZA.PLAZA_FIN_LIC, TD_EMPLEADO.PRIMER_APELLIDO,
+                        TD_EMPLEADO.SEGUNDO_APELLIDO, TD_EMPLEADO.NOMBRE_EMPLEADO,
+                        TD_EMPLEADO.RFC_EMPLEADO, TD_EMPLEADO.CURP_EMPLEADO,
+                        TD_EMPLEADO.IMSS_ISSSTE, TD_EMPLEADO.INGRESO_GOB_FED,
+                        TD_EMPLEADO.INGRESO_DEPENDENCIA, TD_EMPLEADO.ID_TIPO_PAGO,
+                        TD_EMPLEADO.CLABE_EMPLEADO, TD_EMPLEADO.CALLE_PARTICULAR,
+                        TD_EMPLEADO.COLONIA_PARTICULAR, TD_EMPLEADO.TEL_PARTICULAR,
+                        TD_EMPLEADO.CODPOST_PARTICULAR, TD_EMPLEADO.ID_EDO_PARTICULAR,
+                        TD_EMPLEADO.ID_MUNI_PARTICULAR, TD_PLAZA.ID_PUESTO_NOM,
+                        TD_PLAZA.ID_PUESTO_NOM, TC_PUESTO.DESC_PUESTO, TD_PLAZA.ID_PLAZA,
+                        TD_PLAZA.ID_RANGO_NOM, TC_ATRIBUTO_PUESTO.ID_NIVEL_PTO,
+                        TD_PLAZA.ID_ZONA_ECO_NOM, TC_ESTADO.ID_EDO, TC_ESTADO.DESC_ESTADO,
+                        TC_MUNICIPIO.ID_MUNICIPIO, TC_MUNICIPIO.DESC_MUNICIPIO,
+                        TD_PLAZA.ID_GRUPO_PAGO, TC_GRUPO_PAGO.DESC_GRUPO_PAGO,
+                        TD_PLAZA.PLAZA_IMP_HONO, TD_PLAZA.ID_ZONA_DIST_NOM, TD_PLAZA.ID_UNIDAD_NOM
+                    FROM 
+                        TD_PLAZA LEFT OUTER JOIN TD_EMPLEADO ON TD_PLAZA.PLAZA_RFC = TD_EMPLEADO.RFC_EMPLEADO,
+                        TC_ATRIBUTO_PUESTO,
+                        TC_PUESTO,
+                        TC_ESTADO,
+                        TC_MUNICIPIO,
+                        TC_GRUPO_PAGO,
+                        TC_SIT_PLAZA
+                    WHERE 
+                        TD_PLAZA.ID_PUESTO_NOM = TC_PUESTO.ID_PUESTO
+                    AND TD_PLAZA.ID_PUESTO_NOM = TC_ATRIBUTO_PUESTO.ID_ATRIBUTO_PUESTO
+                    AND TD_PLAZA.ID_EDO_NOM = TC_ESTADO.ID_EDO
+                    AND TD_PLAZA.ID_EDO_NOM = TC_MUNICIPIO.ID_EDO
+                    AND TD_PLAZA.ID_MUNI_NOM = TC_MUNICIPIO.ID_MUNICIPIO
+                    AND TC_ATRIBUTO_PUESTO.AP_FIN = TO_DATE ('01/01/2099')
+                    AND TD_PLAZA.ID_GRUPO_PAGO = TC_GRUPO_PAGO.ID_GRUPO_PAGO
+                    AND TD_PLAZA.ID_SIT_PLAZA = TC_SIT_PLAZA.ID_SIT_PLAZA
+                    AND TD_PLAZA.ID_PLAZA = ?
+                </prop>
+                
+                <!--Plazas - Eventual - max idPlaza-->
+                <prop key="maxIdPlazaEventual">
+                    SELECT 
+                        MAX(ID_PLAZA) + 1 AS ID_PLAZA
+                    FROM 
+                        TD_PLAZA 
+                    WHERE 
+                        ID_PLAZA <![CDATA[>=]]> 70000 AND ID_PLAZA <![CDATA[<]]> 80000
+                </prop>
+                
+                <!--Plazas - Honorarios - max idPlaza-->
+                <prop key="maxIdPlazaHonorarios">
+                    SELECT 
+                        MAX(ID_PLAZA) + 1 AS ID_PLAZA
+                    FROM 
+                        TD_PLAZA 
+                    WHERE 
+                        ID_PLAZA <![CDATA[>=]]> 60000 AND ID_PLAZA <![CDATA[<]]> 70000
+                </prop>
+                
+                <!--Plaza Gestion - Consulta Linea - Detalle-->
+                <prop key="plazaGestionConsultaLinea">
+                    SELECT 
+                        P.ID_PLAZA,
+                        P.ID_SIT_PLAZA || '-' || SP.DESC_SIT_PLAZA 				    AS DESC_SIT_PLAZA,
+                        P.PLAZA_RFC,
+                        E.NOMBRE_EMPLEADO || ' ' || E.PRIMER_APELLIDO || ' ' || E.SEGUNDO_APELLIDO  AS NOMBRE_EMP,
+                        E.CURP_EMPLEADO, 
+                        P.PLAZA_CICLO, 
+                        P.PLAZA_RESPALDO,
+                        P.ID_GRUPO_PAGO || '-' || GP.DESC_GRUPO_PAGO                                AS DESC_GRUPO_PAGO,
+                        
+                        P.ID_UNIDAD_PRE || '-' || UP.DESC_UNIDAD 			            AS UNI_DESC_PRE,
+                        UP.DESC_UNIDAD_ABREV 						            AS UNI_DESC_ABR_PRE,
+                        P.ID_PUESTO_PRE || '-' || PP.DESC_PUESTO 				    AS DESC_PUESTO_PRE,
+                        P.ID_EDO_PRE || '-' || EP.DESC_ESTADO 				            AS DESC_ESTADO_PRE,
+                        P.ID_ZONA_ECO_PRE, 
+                        P.ID_RANGO_PRE, 
+                        P.ID_PROY_REDUCE_PRE,
+                        P.ID_PROY_AMPLIA_PRE, 
+                        AP.ID_NIVEL_PTO 					                    AS NIVEL_PTO_PRE,
+                        AP.ID_NOMBRAMIENTO || '-' || NP.DESC_NOMBRAMIENTO 		            AS DESC_NOMBRAMIENTO_PRE,
+                        AP.ID_JERARQUIA || '-' || JP.DESC_JERARQUIA 				    AS DESC_JERARQUIA_PRE,
+                        TP.TAB_SUELDO 								    AS TAB_SUELDO_PRE,
+                        TP.TAB_COMPENSACION 							    AS TAB_COMPENSACION_PRE,
+                        
+                        P.ID_UNIDAD_NOM || '-' || UN.DESC_UNIDAD 	                            AS UNI_DESC_NOM,
+                        UN.DESC_UNIDAD_ABREV  							    AS UNI_DESC_ABR_NOM,
+                        P.ID_PUESTO_NOM || '-' || PN.DESC_PUESTO 				    AS DESC_PUESTO_NOM,
+                        P.ID_EDO_NOM || '-' || EN.DESC_ESTADO 					    AS DESC_ESTADO_NOM,
+                        P.ID_MUNI_NOM || '-' || MN.DESC_MUNICIPIO 			            AS DESC_MUNICIPIO_NOM,
+                        P.ID_ZONA_ECO_NOM, 
+                        P.ID_RANGO_NOM, 
+                        P.ID_ZONA_DIST_NOM,
+                        P.PLAZA_IMP_HONO, 
+                        APN.ID_NIVEL_PTO 					                    AS ID_NIVEL_PTO_NOM,
+                        APN.ID_NOMBRAMIENTO || '-' || NN.DESC_NOMBRAMIENTO 	                    AS DESC_NOMBRAMIENTO_NOM,
+                        APN.ID_JERARQUIA || '-' || JP.DESC_JERARQUIA 			            AS DESC_JERARQUIA_NOM,
+                        TN.TAB_SUELDO 							            AS TAB_SUELDO_NOM,
+                        TN.TAB_COMPENSACION 							    AS TAB_COMPENSACION_NOM,
+                        
+                        P.ID_MOVTO_PERSONA || '-' || MP.DESC_MOVS_PERSONAL 		            AS DESC_MOVS_PERSONAL,
+                        P.PLAZA_ULTIMO_MOVTO, 
+                        P.PLAZA_INI_CONT, 
+                        P.PLAZA_FIN_CONT,
+                        P.PLAZA_INI_LIC, 
+                        P.PLAZA_FIN_LIC, 
+                        P.PLAZA_REFERENCIA, 
+                        P.PLAZA_QNA_CAPTURA, 
+                        P.USUARIO, P.FEC_MODIFICO,
+                        P.ID_TIPO_PLAZA || '-' || TPL.DESC_TIPO_PLAZA 				    AS DESC_TIPO_PLAZA,
+                        P.ID_SERV_PUB || '-' || TSP.DESC_TIPO_SERV_PUB 				    AS DESC_TIPO_SERV_PUB,
+                        P.ID_VACANCIA || '-' || TCV.DESC_VACANCIA 				    AS DESC_VACANCIA,
+                        P.ID_PTO_ESTRATEGICO, P.ID_NODO,
+                        ES.CODIGO_PUESTO || '-' || ES.NOMBRE_PUESTO 	                            AS NOMBRE_PUESTO,
+                        
+                        TCI.ID_INMUEBLE,
+                        TCI.INMUEBLE_CALLE,
+                        TCI.INMUEBLE_NUM_EXT,
+                        TCI.INMUEBLE_NUM_INT, 
+                        TCI.INMUEBLE_COLONIA
+                    FROM 
+                        TD_PLAZA P 
+                        LEFT JOIN TC_UNIDAD UP              ON P.ID_UNIDAD_PRE = UP.ID_UNIDAD
+                        LEFT JOIN TC_PUESTO PP              ON P.ID_PUESTO_PRE = PP.ID_PUESTO
+                        LEFT JOIN TC_ESTADO EP              ON P.ID_EDO_PRE = EP.ID_EDO
+                        LEFT JOIN TC_ATRIBUTO_PUESTO AP     ON P.ID_PUESTO_PRE = AP.ID_ATRIBUTO_PUESTO
+                        LEFT JOIN TC_NOMBRAMIENTO NP        ON AP.ID_NOMBRAMIENTO = NP.ID_NOMBRAMIENTO
+                        LEFT JOIN TC_JERARQUIA JP           ON AP.ID_JERARQUIA = JP.ID_JERARQUIA
+                        LEFT JOIN TC_TABULADOR TP           ON AP.ID_NIVEL_PTO = TP.ID_NIVEL_PTO
+                        
+                        LEFT JOIN TC_UNIDAD UN              ON P.ID_UNIDAD_NOM = UN.ID_UNIDAD
+                        LEFT JOIN TC_PUESTO PN              ON P.ID_PUESTO_NOM = PN.ID_PUESTO
+                        LEFT JOIN TC_ESTADO EN 	            ON P.ID_EDO_NOM = EN.ID_EDO
+                        LEFT JOIN TC_MUNICIPIO MN 	    ON P.ID_MUNI_NOM = MN.ID_MUNICIPIO
+                        LEFT JOIN TC_ATRIBUTO_PUESTO APN    ON P.ID_PUESTO_NOM = APN.ID_ATRIBUTO_PUESTO
+                        LEFT JOIN TC_NOMBRAMIENTO NN 	    ON APN.ID_NOMBRAMIENTO = NN.ID_NOMBRAMIENTO
+                        LEFT JOIN TC_JERARQUIA JN 	    ON APN.ID_JERARQUIA = JN.ID_JERARQUIA
+                        LEFT JOIN TC_TABULADOR TN	    ON APN.ID_NIVEL_PTO = TN.ID_NIVEL_PTO
+                        
+                        LEFT JOIN TC_SIT_PLAZA SP           ON P.ID_SIT_PLAZA = SP.ID_SIT_PLAZA
+                        LEFT JOIN TC_GRUPO_PAGO GP          ON P.ID_GRUPO_PAGO = GP.ID_GRUPO_PAGO
+                        LEFT JOIN TD_EMPLEADO E		    ON P.PLAZA_RFC = E.RFC_EMPLEADO
+                        LEFT JOIN TC_MOVS_PERSONAL MP       ON P.ID_MOVTO_PERSONA = MP.ID_MOVS_PERSONAL
+                        LEFT JOIN TC_TIPO_PLAZA TPL         ON P.ID_TIPO_PLAZA = TPL.ID_TIPO_PLAZA
+                        LEFT JOIN TC_TIPO_SERV_PUB TSP      ON P.ID_SERV_PUB = TSP.ID_SERV_PUB
+                        LEFT OUTER JOIN TD_ESCENARIO ES     ON P.ID_PLAZA = ES.PLAZA_ESCENARIO AND ES.FIN_ESCENARIO = '31/12/2099'
+                        
+                        LEFT OUTER JOIN TC_INMUEBLE TCI     ON P.ID_INMUEBLE = TCI.ID_INMUEBLE
+                        LEFT OUTER JOIN TC_ESTADO TCIE      ON TCI.ID_ESTADO_INMUEBLE = TCIE.ID_EDO
+                        LEFT OUTER JOIN TC_MUNICIPIO TCIM   ON TCI.ID_ESTADO_INMUEBLE = TCIM.ID_EDO AND TCI.ID_MUNICIPIO_INMUEBLE = TCIM.ID_MUNICIPIO
+                        LEFT OUTER JOIN TC_VACANCIA TCV     ON P.ID_VACANCIA = TCV.ID_VACANCIA
+                    WHERE
+                        P.ID_PLAZA = ?
+                        AND UP.UNI_CICLO = ? 
+                        AND TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099'
+                        AND TO_CHAR(TP.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        AND P.ID_ZONA_ECO_PRE = TP.ID_ZONA_ECON
+                        AND P.ID_RANGO_PRE = TP.ID_RANGO 
+                        AND UN.UNI_CICLO = ? 
+                        AND P.ID_EDO_NOM = MN.ID_EDO 
+                        AND TO_CHAR(APN.AP_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        AND TO_CHAR(TN.TAB_FIN,'DD-MM-YYYY') = '01-01-2099' 
+                        AND P.ID_ZONA_ECO_NOM = TN.ID_ZONA_ECON
+                        AND P.ID_RANGO_NOM = TN.ID_RANGO 
+                </prop>
+                
+                <prop key="plazaByRFCTo10">
+                    SELECT *
+                    FROM TD_PLAZA
+                    WHERE SUBSTR(PLAZA_RFC,0,10 )  =  SUBSTR(?,0,10 )
+                </prop>
+                <!-- Obtener el codigo de puesto sin espacios-->
+                <prop key="queryCodigoPuesto">
+                    SELECT *
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP 
+                    WHERE
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099'
+                    AND TRIM(AP.ID_ATRIBUTO_PUESTO) = ?
+                </prop>
+                <!-- Obtener el codigo de puesto sin TRIM-->
+                <prop key="queryCodigoPuestoConEspacios">
+                    SELECT *
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP 
+                    WHERE
+                        TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099'
+                    AND AP.ID_ATRIBUTO_PUESTO = ?
+                </prop>                
+                <prop key="queryTabulador">
+                    SELECT * 
+                    FROM 
+                        TC_ATRIBUTO_PUESTO AP, TC_TABULADOR TAB
+                    WHERE
+                        AP.ID_ATRIBUTO_PUESTO = ? 
+                    AND TAB.ID_NIVEL_PTO = AP.ID_NIVEL_PTO 
+                    AND TAB.ID_ZONA_ECON = ?
+                    AND TAB.ID_RANGO = '0' 
+                    AND TO_CHAR(TAB.TAB_FIN,'DD-MM-YYYY') = '01-01-2099'
+                    AND TO_CHAR(AP.AP_FIN,'DD-MM-YYYY') = '01-01-2099'
+                </prop>
+                <prop key="findBypotEscenario">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_ESCENARIO (?))
+                </prop>
+                <prop key="findBypotBajas">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_POT_BAJAS (?,?))
+                </prop>
+                <prop key="findBypotAltas">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_POT_ALTAS (?,?))
+                </prop>
+                <prop key="findBypotDirectorio">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_POT_DIRECTORIO (?,?))
+                </prop>
+                <prop key="findBypotInmueble">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_POT_INMUEBLE (?))
+                </prop>
+                <prop key="findBypotFuncion">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_POT_FUNCIONES (?))
+                </prop>
+                <prop key="findBypotRemuneraciones">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_POT_REMUNERA (?,?))
+                </prop>
+                <prop key="findBypotEstadistico">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_POT.FUNC_POT_ESTADISTICO (?))
+                </prop>
+                <prop key="findBypntEstructura">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_ESCENARIO (?,?))
+                </prop>
+                <prop key="findBypntRemuneracion">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_REMUNERA (?,?))
+                </prop>
+                <prop key="findBypntDirectorio">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_DIRECTORIO (?,?))
+                </prop>
+                <prop key="findBypntEstadistico">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_ESTADISTICO (?,?))
+                </prop>
+                <prop key="findBypntFuncion">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_FUNCIONES (?))
+                </prop>
+                <prop key="findBypntInmueble">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_INMUEBLE (?))
+                </prop>
+                <prop key="findBypntAltas">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_ALTAS (?,?))
+                </prop>
+                <prop key="findBypntBajas">                
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_BAJAS (?,?))
+                </prop>
+                <prop key="findBypntContratacionHonorarios">
+                    SELECT REGISTRO FROM TABLE (PKG_ARCHIVO_PNT.FUNC_POT_CONTRATO_HON (?))
+                </prop>
+                <prop key="consulta-plazas-Vigentes">
+                    SELECT REGISTRO FROM TABLE (FUNC_PLAZAS_VIGENTES ())
+                </prop>
+                <prop key="consulta-vacancias-plazas-candidatas">
+                    SELECT P.ID_PLAZA
+                      FROM TD_PLAZA P, TC_ATRIBUTO_PUESTO PT
+                     WHERE (P.ID_GRUPO_PAGO = 'E' OR P.ID_GRUPO_PAGO = 'J')
+                       AND P.ID_PUESTO_NOM = PT.ID_ATRIBUTO_PUESTO
+                       AND PT.AP_FIN = TO_DATE ('01/01/2099')
+                       AND PT.ID_JERARQUIA IN ('1', '2', '3', '4', '5', '6')
+                       AND P.ID_PLAZA = ?
+                </prop>
+                <prop key="consulta-tcpuestovacancia-excepcion">
+                    SELECT V.ID_PTO_DESTINO AS CLAVE,
+                           V.ID_PTO_DESTINO || ' - ' || P.DESC_PUESTO AS VALOR
+                      FROM TC_PUESTO_VACANCIA V, TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                     WHERE V.ID_PTO_ORIGEN = ?
+                       AND V.PTO_EXCEPCION = ?
+                       AND V.ID_PTO_DESTINO = P.ID_PUESTO
+                       AND P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO
+                       AND TO_CHAR (AP.AP_FIN, 'DD-MM-YYYY') = '01-01-2099'
+                       ORDER BY 1
+                </prop>
+                <prop key="consulta-tcpuestovacancia-administrar">
+                    SELECT P.ID_PUESTO AS CLAVE, P.ID_PUESTO || ' - ' || P.DESC_PUESTO AS VALOR
+                      FROM TC_PUESTO P, TC_ATRIBUTO_PUESTO AP
+                     WHERE P.ID_PUESTO = AP.ID_ATRIBUTO_PUESTO
+                       AND TO_CHAR (AP.AP_FIN, 'DD-MM-YYYY') = '01-01-2099'
+                       ORDER BY 1
+                </prop>
+                <prop key="consulta-plazaEnConcurso">
+                    SELECT P.ID_PLAZA , P.PLAZA_RFC, 
+                           TRIM(E.NOMBRE_EMPLEADO)||' '||
+                           TRIM(E.PRIMER_APELLIDO)||' '||
+                           TRIM(E.SEGUNDO_APELLIDO) NOMBRE_EMPLEADO, 
+                           C.ID_ETAPA,
+                           ES.CODIGO_PUESTO, 
+                           ES.NOMBRE_PUESTO,
+                           P.ID_UNIDAD_NOM||' '||U.DESC_UNIDAD DESC_UNIDAD, 
+                           P.ID_PUESTO_NOM, A.ID_NIVEL_PTO, P.ID_RANGO_NOM, 
+                           P.ID_SIT_PLAZA||' '||S.DESC_SIT_PLAZA DESC_SIT_PLAZA,
+                           C.ID_PLAZA ID_PLAZA_CONCURSO, C.ID_ESTATUS, C.FECHA_DESIERTA, C.FECHA_ETAPA
+                    FROM TD_PLAZA P, TD_EMPLEADO E, TC_ATRIBUTO_PUESTO A, TC_UNIDAD U,
+                         TD_ESCENARIO ES, TC_SIT_PLAZA S, TD_PLAZA_CONCURSO C         
+                    WHERE P.PLAZA_RFC = E.RFC_EMPLEADO(+)
+                      AND P.ID_UNIDAD_NOM <![CDATA[<>]]> 'G00'
+                      AND P.ID_UNIDAD_NOM NOT LIKE 'X%'
+                      AND p.ID_GRUPO_PAGO IN('E', 'J')
+                      AND P.ID_PLAZA = ES.PLAZA_ESCENARIO(+)
+                      AND ES.FIN_ESCENARIO(+) = '31/12/2099'  
+                      AND P.ID_UNIDAD_NOM = U.ID_UNIDAD
+                      AND U.UNI_CICLO = 2017  
+                      AND P.ID_PUESTO_NOM = A.ID_ATRIBUTO_PUESTO
+                      AND A.AP_FIN = '01/01/2099'
+                      AND P.ID_SIT_PLAZA = S.ID_SIT_PLAZA
+                      AND P.ID_PLAZA = C.ID_PLAZA(+)
+                      AND P.ID_PLAZA =  ?
+                    ORDER BY 1
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>

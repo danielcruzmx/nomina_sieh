@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:s="http://www.fsn.shcp.gob/schema/service"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                           http://www.fsn.shcp.gob/schema/service http://www.fsn.shcp.gob/schema/service/service.xsd">
+
+    <!-- QUERY DEFINITIONS -->
+    <bean class="gob.shcp.fsn.service.factory.holder.ViewComponentQueriesHolder">
+        <property name="viewComponentQueryDefinitions">
+            <props>
+                <!--SPC - Capacitación y certificación - Registro - Consulta de cursos-->
+                <prop key="tcCapCoordinacion-consultaCurso">
+                    SELECT ID_COORDINACION, ID_COORDINACION || ' - ' || DESC_COORDINACION
+                    FROM TC_CAP_COORDINACION
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_COORDINACION ASC
+                </prop>
+                <prop key="tcCapEjeTematico-consultaCurso">
+                    SELECT ID_EJE_TEMATICO, ID_EJE_TEMATICO || ' - ' || DESC_EJE_TEMATICO
+                    FROM TC_CAP_EJE_TEMATICO
+                    WHERE ID_STATUS = 'ACT'
+                    AND ##CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                    ORDER BY ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tcCapSubprograma-consultaCurso">
+                    SELECT ID_SUBPROGRAMA, ID_SUBPROGRAMA || ' - ' || DESC_SUBPROGRAMA
+                    FROM TC_CAP_SUBPROGRAMA
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_SUBPROGRAMA ASC
+                </prop>
+                <prop key="tcCapModalidad-consultaCurso">
+                    SELECT ID_MODALIDAD, ID_MODALIDAD || ' - ' || DESC_MODALIDAD
+                    FROM TC_CAP_MODALIDAD
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_MODALIDAD ASC
+                </prop>
+                <prop key="tcCapFinalidad-consultaCurso">
+                    SELECT ID_FINALIDAD, ID_FINALIDAD || ' - ' || DESC_FINALIDAD
+                    FROM TC_CAP_FINALIDAD
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_FINALIDAD ASC
+                </prop>
+                <prop key="tcCapControlCurso-consultaCurso">
+                    SELECT ID_CONTROL_CURSO, ID_CONTROL_CURSO || ' - ' || DESC_CONTROL_CURSO
+                    FROM TC_CAP_CONTROL_CURSO
+                    WHERE ID_STATUS = 'ACT'
+                </prop>
+                <prop key="tcCapProveedor-consultaCurso">
+                    SELECT ID_PROVEEDOR, ID_PROVEEDOR || ' - ' || DESC_PROVEEDOR
+                    FROM TC_CAP_PROVEEDOR
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_PROVEEDOR ASC
+                </prop>
+                <prop key="tcCapOperDgrh-consultaCurso">
+                   SELECT OPER.RFC_OPER_DGRH, OPER.RFC_OPER_DGRH || ' - ' || E.NOMBRE_EMPLEADO || ' ' || E.PRIMER_APELLIDO || ' ' || E.SEGUNDO_APELLIDO AS DESCRIPCION
+                     FROM TC_CAP_OPER_DGRH OPER, TD_EMPLEADO E, TD_PLAZA P, TC_UNIDAD U, TC_PUESTO PTO
+                    WHERE 1=1
+                      AND E.RFC_EMPLEADO = OPER.RFC_OPER_DGRH
+                      AND E.RFC_EMPLEADO = P.PLAZA_RFC
+                      AND E.ID_PLAZA_VIGENTE = P.ID_PLAZA
+                      AND U.ID_UNIDAD = P.ID_UNIDAD_NOM
+                      AND P.ID_PUESTO_NOM = PTO.ID_PUESTO 
+                      AND ##U.UNI_CICLO#=#OPERATIONAL_YEAR##
+                      AND OPER.ID_STATUS = 'ACT'
+                    GROUP BY RFC_OPER_DGRH, E.NOMBRE_EMPLEADO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO
+                    ORDER BY OPER.RFC_OPER_DGRH ASC
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Registro - Consulta de cursos - Registrar curso-->
+                <prop key="consultaCurso-registrarCurso">
+                    SELECT C.ID_CURSO AS ID_CURSOS,
+                           C.ID_COORDINACION || '-' || COO.DESC_COORDINACION AS COORDINACION, 
+                           C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS CURSO,
+                           ET.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS EJE_TEMATICO,
+                           SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+                           C.CURSO_DURACION AS DURACION,
+                           MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD AS MODALIDAD,
+                           FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD AS FINALIDAD,
+                           CC.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO AS ESTATUS,
+                           CC.ID_CONTROL_CURSO,
+                           PRO.ID_PROVEEDOR  || ' - ' || PRO.DESC_PROVEEDOR AS INST_EDUCAT
+                      FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_EJE_TEMATICO ET, TC_CAP_SUBPROGRAMA SUB, TC_CAP_MODALIDAD MOD, 
+                           TC_CAP_FINALIDAD FIN, TC_CAP_CONTROL_CURSO CC, TC_CAP_COORDINACION COO, TC_CAP_PROVEEDOR PRO
+                     WHERE 
+                           C.ID_COORDINACION = COO.ID_COORDINACION
+                       AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                       AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                       AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                       AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                       AND C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA(+)
+                       AND CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                       AND CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                       AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                       AND C.ID_PROVEEDOR = PRO.ID_PROVEEDOR
+                       AND ##C.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##ET.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##C.ID_COORDINACION##
+                       AND ##C.ID_PROVEEDOR##
+                       AND ##C.RFC_OPER_DGRH##
+                       AND ##C.ID_SUBPROGRAMA##
+                       AND ##C.ID_EJE_TEMATICO##
+                       AND ##CP.ID_MODALIDAD##
+                       AND ##C.CURSO_CLAVE##
+                       AND ##C.ID_CONTROL_CURSO##
+                       AND C.ID_CONTROL_CURSO IN ('REG','CAN','PRO','CON')
+                  GROUP BY C.ID_CURSO, C.CURSO_CLAVE, C.ID_COORDINACION, COO.DESC_COORDINACION, CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL,
+                           ET.ID_EJE_TEMATICO, ET.DESC_EJE_TEMATICO, SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA,
+                           C.CURSO_DURACION, MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD, 
+                           FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD, CC.ID_CONTROL_CURSO, CC.DESC_CONTROL_CURSO,
+                           PRO.ID_PROVEEDOR, PRO.DESC_PROVEEDOR
+                  ORDER BY 10 DESC, 5 ASC --ID_CONTROL_CURSO,SUBPROGRAMA
+                </prop>
+                <prop key="tcCapCoordinacion-registrarCurso">
+                    SELECT ID_COORDINACION, ID_COORDINACION || ' - ' || DESC_COORDINACION
+                    FROM TC_CAP_COORDINACION
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_COORDINACION ASC
+                </prop>
+                <prop key="tcCapEjeTematico-registrarCurso">
+                    SELECT ID_EJE_TEMATICO, ID_EJE_TEMATICO || ' - ' || DESC_EJE_TEMATICO
+                    FROM TC_CAP_EJE_TEMATICO
+                    WHERE ID_STATUS = 'ACT'
+                    AND ##CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                    ORDER BY ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tcCapEjeTematicoCertificacion-registrarCurso">
+                    SELECT ID_EJE_TEMATICO, ID_EJE_TEMATICO || ' - ' || DESC_EJE_TEMATICO
+                    FROM TC_CAP_EJE_TEMATICO
+                    WHERE ID_STATUS = 'ACT'
+                    AND ##CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                    AND ID_EJE_TEMATICO = 'CERT'
+                    ORDER BY ID_EJE_TEMATICO ASC
+                </prop>
+                <prop key="tcCapSubprograma-registrarCurso">
+                    SELECT ID_SUBPROGRAMA, ID_SUBPROGRAMA || ' - ' || DESC_SUBPROGRAMA
+                    FROM TC_CAP_SUBPROGRAMA
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_SUBPROGRAMA ASC
+                </prop>
+                
+                <prop key="tcCapModalidad-registrarCurso">
+                    SELECT ID_MODALIDAD, ID_MODALIDAD || ' - ' || DESC_MODALIDAD
+                    FROM TC_CAP_MODALIDAD
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_MODALIDAD ASC
+                </prop>
+                <prop key="tcCapModalidadCursoPrincipal-registrarCurso">                    
+                    SELECT MOD.ID_MODALIDAD, MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD
+                    FROM TC_CAP_CURSO_PRINCP CP, TC_CAP_MODALIDAD MOD
+                    WHERE CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                    AND CP.ID_EJE_TEMATICO = ?
+                    GROUP BY MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD
+                    ORDER BY MOD.ID_MODALIDAD ASC
+                </prop>
+                
+                <prop key="tcCapFinalidad-registrarCurso">
+                    SELECT ID_FINALIDAD, ID_FINALIDAD || ' - ' || DESC_FINALIDAD
+                    FROM TC_CAP_FINALIDAD
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_FINALIDAD ASC
+                </prop>
+                <prop key="tcCapFinalidadCursoPrincipal-registrarCurso">
+                    SELECT FIN.ID_FINALIDAD, FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD
+                    FROM TC_CAP_CURSO_PRINCP CP, TC_CAP_FINALIDAD FIN
+                    WHERE CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                    AND CP.ID_EJE_TEMATICO = ?
+                    AND CP.ID_MODALIDAD = ?
+                    GROUP BY FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD
+                    ORDER BY FIN.ID_FINALIDAD ASC
+                </prop>
+                
+                <prop key="tcCapCaracter-registrarCurso">
+                    SELECT ID_CARACTER, ID_CARACTER || ' - ' || DESC_CARACTER
+                    FROM TC_CAP_CARACTER
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_CARACTER ASC
+                </prop>
+                <prop key="tcCapCaracterCursoPrincipal-registrarCurso">
+                    SELECT CAR.ID_CARACTER, CAR.ID_CARACTER || ' - ' || CAR.DESC_CARACTER
+                    FROM TC_CAP_CURSO_PRINCP CP, TC_CAP_CARACTER CAR
+                    WHERE CP.ID_CARACTER = CAR.ID_CARACTER
+                    AND CAR.ID_STATUS = 'ACT'
+                    AND CP.ID_FINALIDAD = ?
+                    AND CP.ID_EJE_TEMATICO = ?
+                    AND CP.ID_MODALIDAD = ?
+                    GROUP BY CAR.ID_CARACTER, CAR.DESC_CARACTER
+                    ORDER BY CAR.ID_CARACTER ASC
+                </prop>
+                
+                <prop key="tcCapCursoPrincipal-registrarCurso">
+                    SELECT CP.ID_CURSO_PRINCIPAL, CP.ID_CURSO_PRINCIPAL || ' - ' || CP.DESC_CURSO_PRINCIPAL
+                    FROM TC_CAP_CURSO_PRINCP CP
+                    WHERE 1=1
+                    AND CP.ID_CARACTER = ?
+                    AND CP.ID_EJE_TEMATICO = ?
+                    AND CP.ID_MODALIDAD = ?
+                    AND CP.ID_FINALIDAD = ?
+                    GROUP BY CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL
+                    ORDER BY CP.ID_CURSO_PRINCIPAL ASC
+                </prop>
+                
+                <prop key="tcCapTipoCapacidad-registrarCurso">
+                    SELECT ID_TIPO_CAPACIDAD, ID_TIPO_CAPACIDAD || ' - ' || DESC_TIPO_CAPACIDAD
+                    FROM TC_CAP_TIPO_CAPAC
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_TIPO_CAPACIDAD ASC
+                </prop>
+                <prop key="tcCapNivelCurso-registrarCurso">
+                    SELECT ID_NIVEL_CURSO, ID_NIVEL_CURSO || ' - ' || DESC_NIVEL_CURSO
+                    FROM TC_CAP_NIVEL_CURSO
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_NIVEL_CURSO ASC
+                </prop>
+                <prop key="tcCapOperDgrh-registrarCurso">
+                   SELECT OPER.RFC_OPER_DGRH, OPER.RFC_OPER_DGRH || ' - ' || E.NOMBRE_EMPLEADO || ' ' || E.PRIMER_APELLIDO || ' ' || E.SEGUNDO_APELLIDO AS DESCRIPCION
+                     FROM TC_CAP_OPER_DGRH OPER, TD_EMPLEADO E, TD_PLAZA P, TC_UNIDAD U, TC_PUESTO PTO
+                    WHERE 1=1
+                      AND E.RFC_EMPLEADO = OPER.RFC_OPER_DGRH
+                      AND E.RFC_EMPLEADO = P.PLAZA_RFC
+                      AND E.ID_PLAZA_VIGENTE = P.ID_PLAZA
+                      AND U.ID_UNIDAD = P.ID_UNIDAD_NOM
+                      AND P.ID_PUESTO_NOM = PTO.ID_PUESTO 
+                      AND ##U.UNI_CICLO#=#OPERATIONAL_YEAR##
+                      AND OPER.ID_STATUS = 'ACT'
+                    GROUP BY RFC_OPER_DGRH, E.NOMBRE_EMPLEADO, E.PRIMER_APELLIDO, E.SEGUNDO_APELLIDO
+                    ORDER BY OPER.RFC_OPER_DGRH ASC
+                </prop>
+                <prop key="tcCapTipoInstEducat-registrarCurso">
+                    SELECT ID_TIPO_INST_EDUCAT, ID_TIPO_INST_EDUCAT || ' - ' || DESC_TIPO_INST_EDUCAT
+                    FROM TC_CAP_TIPO_INST_EDU
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_TIPO_INST_EDUCAT ASC
+                </prop>
+                <prop key="tcCapProveedor-registrarCurso">
+                    SELECT ID_PROVEEDOR, ID_PROVEEDOR || ' - ' || DESC_PROVEEDOR
+                    FROM TC_CAP_PROVEEDOR
+                    WHERE ID_STATUS = 'ACT' 
+                    AND ID_TIPO_INST_EDUCAT = ?
+                    ORDER BY ID_PROVEEDOR ASC
+                </prop>
+                <prop key="tcCapSituacionProveedor-registrarCurso">
+                    SELECT ID_SITUACION_PROVEEDOR, ID_SITUACION_PROVEEDOR || ' - ' || DESC_SITUACION_PROVEEDOR
+                    FROM TC_CAP_SIT_PROVEEDOR
+                    WHERE 1=1
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Registro - Consulta de cursos - Asignar calendario-->
+                <prop key="consultaCurso-asignarCalendario">
+                    SELECT C.ID_CURSO AS ID_CURSOS,
+                           C.ID_COORDINACION || '-' || COO.DESC_COORDINACION AS COORDINACION, 
+                           C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS CURSO,
+                           ET.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS EJE_TEMATICO,
+                           SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+                           C.CURSO_DURACION AS DURACION, C.CURSO_FEC_INI AS FECHA_INICIO, C.CURSO_FEC_FIN AS FECHA_TERMINO,
+                           MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD AS MODALIDAD,
+                           FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD AS FINALIDAD,
+                           C.ID_AULA || ' - ' || AU.DESC_AULA AS AULA,
+                           PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ',') AS HORARIO,
+                           CC.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO  AS ESTATUS,
+                           CC.ID_CONTROL_CURSO
+                      FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_EJE_TEMATICO ET, TC_CAP_SUBPROGRAMA SUB, TC_CAP_MODALIDAD MOD, 
+                           TC_CAP_FINALIDAD FIN, TC_CAP_CONTROL_CURSO CC, TC_CAP_COORDINACION COO, TC_CAP_AULA AU
+                     WHERE 
+                           C.ID_COORDINACION = COO.ID_COORDINACION
+                       AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                       AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                       AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                       AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                       AND C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA(+)
+                       AND C.ID_AULA = AU.ID_AULA(+)
+                       AND CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                       AND CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                       AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                       AND ##C.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##ET.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##C.ID_COORDINACION##
+                       AND ##CP.ID_MODALIDAD##
+                       AND ##C.ID_EJE_TEMATICO##
+                       AND ##C.ID_SUBPROGRAMA##
+                       AND ##C.CURSO_CLAVE##
+                       AND ##C.ID_CONTROL_CURSO##
+                       AND ##to_char(C.CURSO_FEC_INI, 'yyyy/mm/dd') >##
+                       AND ##to_char(C.CURSO_FEC_FIN, 'yyyy/mm/dd') <![CDATA[<]]>##
+                       AND ROWNUM <![CDATA[<]]> 200
+                       AND C.ID_CONTROL_CURSO IN ('REG','PRO', 'CON')
+                  GROUP BY C.ID_CURSO, C.CURSO_CLAVE, C.ID_COORDINACION, COO.DESC_COORDINACION, CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL,
+                           ET.ID_EJE_TEMATICO, ET.DESC_EJE_TEMATICO, SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA,
+                           C.CURSO_DURACION, C.CURSO_FEC_INI, C.CURSO_FEC_FIN, MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD, 
+                           FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD, C.ID_AULA, AU.DESC_AULA,
+                           PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ','), CC.ID_CONTROL_CURSO, CC.DESC_CONTROL_CURSO
+                </prop>
+                <prop key="tcCapSede-asignarCalendario">
+                    SELECT t.id_sede, t.id_sede || ' - ' || t.desc_sede desc_sede
+                    FROM tc_cap_sede t
+                    WHERE ID_STATUS = 'ACT' 
+                </prop>
+                <prop key="tcCapAula-asignarCalendario">
+                    SELECT t.id_aula, t.id_aula || ' - ' || t.desc_aula
+                    FROM tc_cap_aula t
+                    WHERE t.ID_STATUS = 'ACT' AND t.id_sede = ?
+                </prop>
+                <prop key="tcCapHorarioCurso-asignarCalendario">
+                    SELECT t.id_horario_curso, id_horario_curso || ' - ' || t.desc_horario_curso desc_horario_curso
+                      FROM tc_cap_horario_curso t
+                      WHERE ID_STATUS = 'ACT'
+                </prop>
+                <prop key="tcCapHorarioCurso-asignarCalendarioPorDia">
+                    SELECT t.id_horario_curso, t.desc_horario_curso desc_horario_curso
+                    FROM tc_cap_horario_curso t
+                    WHERE t.id_status = 'ACT'
+                </prop>
+                
+                <prop key="consultaCurso-asignarParticipante">
+                    SELECT C.ID_CURSO AS ID_CURSOS,
+                           C.ID_COORDINACION || '-' || COO.DESC_COORDINACION AS COORDINACION, 
+                           C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS CURSO,
+                           ET.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS EJE_TEMATICO,
+                           SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+                           C.CURSO_DURACION AS DURACION,
+                           MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD AS MODALIDAD,
+                           FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD AS FINALIDAD,
+                           CC.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO  AS ESTATUS,
+                           CC.ID_CONTROL_CURSO, 
+                           C.CURSO_FEC_INI AS FECHA_INICIO, C.CURSO_FEC_FIN AS FECHA_TERMINO,
+                           C.ID_SEDE || ' - ' ||  SE.DESC_SEDE AS SEDE, 
+                           C.ID_AULA || ' - ' ||  AU.DESC_AULA AS AULA,
+                           (SELECT PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ',') FROM DUAL) AS HORARIO, 
+                           C.CURSO_PARTICIPANTES AS PARTICIPANTES, AU.CUPO_MAXIMO_AULA
+                      FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_EJE_TEMATICO ET, TC_CAP_SUBPROGRAMA SUB, TC_CAP_MODALIDAD MOD, 
+                           TC_CAP_FINALIDAD FIN, TC_CAP_CONTROL_CURSO CC, TC_CAP_COORDINACION COO, TC_CAP_SEDE SE, TC_CAP_AULA AU
+                     WHERE 
+                           C.ID_COORDINACION = COO.ID_COORDINACION
+                       AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                       AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                       AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                       AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                       AND C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA(+)
+                       AND CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                       AND CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                       AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                       AND C.ID_SEDE = SE.ID_SEDE(+)
+                       AND C.ID_AULA = AU.ID_AULA(+)
+                       AND ##C.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##ET.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##C.ID_COORDINACION##
+                       AND ##C.ID_EJE_TEMATICO##
+                       AND ##C.ID_SUBPROGRAMA##
+                       AND ##C.CURSO_CLAVE##
+                       AND ##C.ID_CONTROL_CURSO##
+                       AND ##to_char(C.CURSO_FEC_INI, 'yyyy/mm/dd') >##
+                       AND ##to_char(C.CURSO_FEC_FIN, 'yyyy/mm/dd') <![CDATA[<]]>##
+                       AND ROWNUM <![CDATA[<]]> 200
+                       AND C.ID_CONTROL_CURSO IN ('CON', 'ENV', 'CUR')
+                  GROUP BY C.ID_CURSO, C.CURSO_CLAVE, C.ID_COORDINACION, COO.DESC_COORDINACION, CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL,
+                           ET.ID_EJE_TEMATICO, ET.DESC_EJE_TEMATICO, SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA,
+                           C.CURSO_DURACION, MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD, 
+                           FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD, CC.ID_CONTROL_CURSO, CC.DESC_CONTROL_CURSO, C.CURSO_FEC_INI, C.CURSO_FEC_FIN,
+                           C.ID_SEDE, SE.DESC_SEDE, 
+                           C.ID_AULA, AU.DESC_AULA,
+                           C.CURSO_PARTICIPANTES, AU.CUPO_MAXIMO_AULA
+                </prop>
+                <prop key="tcCapNotifCurso-asignarParticipante">
+                    SELECT N.ID_MODALIDAD, N.ID_MODALIDAD || ' - ' || M.DESC_MODALIDAD
+                      FROM TC_CAP_NOTIF_CURSO N, TC_CAP_MODALIDAD M
+                     WHERE M.ID_STATUS = 'ACT' AND N.ID_STATUS = 'ACT' AND M.ID_MODALIDAD = N.ID_MODALIDAD
+                      AND  ##CAP_NOTIF_CURSO_CICLO#=#OPERATIONAL_YEAR##
+                </prop>
+                <prop key="tcCapMotivoDesasigna-asignarParticipante">
+                    SELECT D.ID_MOTIVO_DESASIGNA_PARTIC CLAVE, D.ID_MOTIVO_DESASIGNA_PARTIC || ' - ' || D.DESC_MOTIVO_DESASIGNA_PARTIC DESCRIPCION
+                    FROM TC_CAP_MOT_DES_PART D
+                    WHERE D.ID_STATUS = 'ACT'
+                    ORDER BY D.ID_MOTIVO_DESASIGNA_PARTIC ASC
+                </prop>
+                <prop key="consultaCurso-asignarInstructor">
+                    SELECT  C.ID_CURSO AS ID_CURSOS,
+                            C.ID_COORDINACION || '-' || COO.DESC_COORDINACION AS COORDINACION, 
+                            C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS CURSO,
+                            ET.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS EJE_TEMATICO,
+                            SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+                            C.CURSO_DURACION AS DURACION,
+                            MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD AS MODALIDAD,
+                            FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD AS FINALIDAD,
+                            CC.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO  AS ESTATUS,
+                            CC.ID_CONTROL_CURSO, 
+                            C.CURSO_FEC_INI AS FECHA_INICIO, 
+                            C.CURSO_FEC_FIN AS FECHA_TERMINO,
+                            (SELECT PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ',') FROM DUAL) AS HORARIO,
+                            C.CURSO_PARTICIPANTES AS PARTICIPANTES
+                    FROM    TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_EJE_TEMATICO ET, TC_CAP_SUBPROGRAMA SUB, TC_CAP_MODALIDAD MOD, 
+                            TC_CAP_FINALIDAD FIN, TC_CAP_CONTROL_CURSO CC, TC_CAP_COORDINACION COO, TC_CAP_PROVEEDOR PRO
+                    WHERE   C.ID_COORDINACION = COO.ID_COORDINACION
+                            AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                            AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                            AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                            AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                            AND C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA(+)
+                            AND CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                            AND CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                            AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                            AND C.ID_PROVEEDOR = PRO.ID_PROVEEDOR
+                            AND ##C.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                            AND ##ET.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                            AND ##C.ID_COORDINACION##
+                            AND ##C.ID_PROVEEDOR##
+                            AND ##C.RFC_OPER_DGRH##
+                            AND ##CP.ID_MODALIDAD##
+                            AND ##C.ID_EJE_TEMATICO##
+                            AND ##C.ID_SUBPROGRAMA##
+                            AND ##C.CURSO_CLAVE##
+                            AND ##C.ID_CONTROL_CURSO##
+                            AND ##to_char(C.CURSO_FEC_INI, 'yyyy/mm/dd') >##
+                            AND ##to_char(C.CURSO_FEC_FIN, 'yyyy/mm/dd') <![CDATA[<]]>##
+                            AND C.ID_CONTROL_CURSO IN ('CON', 'CUR', 'EVR', 'EVP', 'ENV')
+                            GROUP BY C.ID_CURSO, C.CURSO_CLAVE, C.ID_COORDINACION, COO.DESC_COORDINACION, CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL,
+                               ET.ID_EJE_TEMATICO, ET.DESC_EJE_TEMATICO, SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA,
+                               C.CURSO_DURACION, MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD, 
+                               FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD, CC.ID_CONTROL_CURSO, CC.DESC_CONTROL_CURSO, C.CURSO_FEC_INI, C.CURSO_FEC_FIN,
+                               C.ID_SEDE, C.ID_AULA, C.CURSO_PARTICIPANTES
+                            order by 1
+                </prop>
+                <prop key="tnCapCurso-AsignarInstructor-listaInstructores">
+                    select  id_instructor clave, 
+                            id_instructor||' - '|| trim(NOMBRE_INSTRUCTOR)||' '|| trim(trim(primer_apellido)||' '||
+                            trim(segundo_apellido)) valor
+                    from    tc_cap_instructor
+                    where   ##id_proveedor##
+                            and ID_STATUS = 'ACT'
+                            and id_instructor not in (  
+                                                        select  c.id_instructor_titular 
+                                                        from    tn_cap_curso c, tc_cap_instructor i, tn_cap_cal_curso cc
+                                                        where   ##cc.id_curso##
+                                                                and ID_STATUS = 'ACT'
+                                                                and c.id_instructor_titular is not null
+                                                                and c.id_instructor_titular = i.id_instructor
+                                                                and c.id_curso = cc.id_curso
+                                                                and to_char(cc.fecha, 'ddmmyyyy')||cc.id_horario_curso_inicial||cc.id_horario_curso_final in (select to_char(c1.fecha, 'ddmmyyyy') || c1.id_horario_curso_inicial || c1.id_horario_curso_final
+                                                                                                                                                              from tn_cap_cal_curso c1
+                                                                                                                                                              where c1.ID_CURSO = c.id_curso)
+                                                        union
+                                                        select  c.id_instructor_suplente 
+                                                        from    tn_cap_curso c, tc_cap_instructor i, tn_cap_cal_curso cc
+                                                        where   ## cc.id_curso ##
+                                                                and ID_STATUS = 'ACT'
+                                                                and c.id_instructor_suplente is not null
+                                                                and c.id_instructor_suplente = i.id_instructor
+                                                                and c.id_curso = cc.id_curso
+                                                                and to_char(cc.fecha, 'ddmmyyyy')||cc.id_horario_curso_inicial||cc.id_horario_curso_final in (select to_char(c2.fecha, 'ddmmyyyy') || c2.id_horario_curso_inicial || c2.id_horario_curso_final
+                                                                                                                                                              from tn_cap_cal_curso c2
+                                                                                                                                                              where c2.ID_CURSO = c.id_curso)
+                                                       )
+                            order by 1
+                </prop>
+                <prop key="tnCapCurso-AsignarInstructor-motivoDesasignaInstructor">
+                    SELECT  MDI.ID_MOTIVO_DESASIGNA_INSTR,  MDI.ID_MOTIVO_DESASIGNA_INSTR || ' - ' || MDI.DESC_MOTIVO_DESASIGNA_INSTR
+                    FROM    TC_CAP_MOT_DES_INSTR MDI
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Registro - Consulta de cursos - Consulta contrato-->
+                <prop key="tnCapContratoCurso-ciclo-consultaContrato">
+                    SELECT (CICLO - LEVEL) +1 , (CICLO - LEVEL) +1 AS CICLO
+                    FROM (SELECT SUBSTR(RC_QNA_CAPTURA,0,4) CICLO FROM TN_REG_CONTROL WHERE TN_REG_CONTROL.RC_VIGENTE = 'S') 
+                    CONNECT BY LEVEL <![CDATA[<]]> 3
+                </prop>
+                <prop key="tcCapProveedor-consultaContrato">
+                    SELECT ID_PROVEEDOR, ID_PROVEEDOR || ' - ' || DESC_PROVEEDOR
+                    FROM TC_CAP_PROVEEDOR
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_PROVEEDOR ASC
+                </prop>
+                <prop key="tcCapTipoContratacion-consultaContrato">
+                    SELECT ID_TIPO_CONTRATACION, ID_TIPO_CONTRATACION || ' - ' || DESC_TIPO_CONTRATACION
+                    FROM TC_CAP_TIPO_CONTRATA
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_TIPO_CONTRATACION ASC
+                </prop>
+                <prop key="tcCapSituacionContrato-consultaContrato">
+                    SELECT ID_SITUACION_CONTRATO, ID_SITUACION_CONTRATO || ' - ' || DESC_SITUACION_CONTRATO
+                    FROM TC_CAP_SIT_CONTRATO
+                    WHERE 1=1
+                    ORDER BY ID_SITUACION_CONTRATO ASC
+                </prop>
+                <prop key="consultaContrato-altaContrato">
+                    SELECT CC.ID_CONTRATO_CURSO AS ID_CONTRATOS, CC.ID_CONTRATO_CURSO, CC.CONTRATO_CURSO_NUMERO, 
+                           CC.CONTRATO_CURSO_CICLO,
+                           TC.ID_TIPO_CONTRATACION, TC.ID_TIPO_CONTRATACION || ' - ' || TC.DESC_TIPO_CONTRATACION AS TIPO_CONTRATACION,
+                           CC.CONTRATO_CURSO_REP1, CC.CONTRATO_CURSO_ADMINISTRADOR, 
+                           NVL(CC.CONTRATO_CURSO_MONTO, 0) AS CONTRATO_CURSO_MONTO, 
+                           CC.CONTRATO_CURSO_FECHA_ADJUD, TO_CHAR(CC.CONTRATO_CURSO_FECHA_ADJUD,'DD/MM/YYYY') AS FECHA_ADJUD,
+                           CC.CONTRATO_CURSO_FECHA_CONTR, TO_CHAR(CC.CONTRATO_CURSO_FECHA_CONTR,'DD/MM/YYYY') AS FECHA_CONTR,
+                           CC.USUARIO, CC.FEC_MODIFICO,
+                           SC.ID_SITUACION_CONTRATO,
+                           SC.ID_SITUACION_CONTRATO || ' - ' || SC.DESC_SITUACION_CONTRATO AS SITUACION
+                      FROM TN_CAP_CONTRATO_CUR CC, TC_CAP_SIT_CONTRATO SC, TC_CAP_TIPO_CONTRATA TC
+                     WHERE CC.ID_TIPO_CONTRATACION = TC.ID_TIPO_CONTRATACION
+                       AND TC.ID_STATUS = 'ACT'
+                       AND CC.ID_SITUACION_CONTRATO = SC.ID_SITUACION_CONTRATO
+                       AND ##CC.ID_CONTRATO_CURSO##
+                       AND ##CC.CONTRATO_CURSO_CICLO##
+                       AND ##CC.ID_TIPO_CONTRATACION##
+                       AND ##CC.ID_SITUACION_CONTRATO##
+                  ORDER BY 5 DESC, 3 ASC
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Registro - Consulta de cursos - Alta contrato-->
+                <prop key="tcCapTipoInstEducat-altaContrato">
+                    SELECT ID_TIPO_INST_EDUCAT, ID_TIPO_INST_EDUCAT || ' - ' || DESC_TIPO_INST_EDUCAT
+                    FROM TC_CAP_TIPO_INST_EDU
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_TIPO_INST_EDUCAT ASC
+                </prop>
+                <prop key="tcCapProveedor-altaContrato">
+                    SELECT ID_PROVEEDOR, ID_PROVEEDOR || ' - ' || DESC_PROVEEDOR
+                    FROM TC_CAP_PROVEEDOR
+                    WHERE 1=1
+                    AND ID_TIPO_INST_EDUCAT = ?
+                    ORDER BY ID_PROVEEDOR ASC
+                </prop>
+                <prop key="tcCapTipoContratacion-altaContrato">
+                    SELECT ID_TIPO_CONTRATACION, ID_TIPO_CONTRATACION || ' - ' || DESC_TIPO_CONTRATACION
+                    FROM TC_CAP_TIPO_CONTRATA
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_TIPO_CONTRATACION ASC
+                </prop>
+                <prop key="tcCapSituacionContrato-altaContrato">
+                    SELECT ID_SITUACION_CONTRATO, ID_SITUACION_CONTRATO || ' - ' || DESC_SITUACION_CONTRATO
+                    FROM TC_CAP_SIT_CONTRATO
+                    WHERE 1=1
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Registro - Consulta de cursos - Asignar contrato-->
+                <prop key="consultaCurso-asignarContrato">
+                    SELECT C.ID_CURSO AS ID_CURSOS,
+                           C.ID_COORDINACION || '-' || COO.DESC_COORDINACION AS COORDINACION, 
+                           C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS CURSO,
+                           ET.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS EJE_TEMATICO,
+                           SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+                           C.CURSO_DURACION AS DURACION,
+                           MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD AS MODALIDAD,
+                           FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD AS FINALIDAD,
+                           CC.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO  AS ESTATUS,
+                           CC.ID_CONTROL_CURSO
+                      FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_EJE_TEMATICO ET, TC_CAP_SUBPROGRAMA SUB, TC_CAP_MODALIDAD MOD, 
+                           TC_CAP_FINALIDAD FIN, TC_CAP_CONTROL_CURSO CC, TC_CAP_COORDINACION COO
+                     WHERE 
+                           C.ID_COORDINACION = COO.ID_COORDINACION
+                       AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                       AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                       AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                       AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                       AND C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA(+)
+                       AND CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                       AND CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                       AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                       AND ##C.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##ET.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##C.ID_COORDINACION##
+                       AND ##C.ID_EJE_TEMATICO##
+                       AND ##C.ID_SUBPROGRAMA##
+                       AND ##C.CURSO_CLAVE##
+                       AND ##C.ID_CONTROL_CURSO##
+                       AND C.ID_CONTROL_CURSO IN ('CON','PRO','CUR','EVR','EVP')
+                  GROUP BY C.ID_CURSO, C.CURSO_CLAVE, C.ID_COORDINACION, COO.DESC_COORDINACION, CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL,
+                           ET.ID_EJE_TEMATICO, ET.DESC_EJE_TEMATICO, SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA,
+                           C.CURSO_DURACION, MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD, 
+                           FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD, CC.ID_CONTROL_CURSO, CC.DESC_CONTROL_CURSO
+                  ORDER BY 10 DESC, 5 ASC --ID_CONTROL_CURSO,SUBPROGRAMA
+                </prop>
+                <prop key="consultaContratosValidos-asignarContrato">
+                    SELECT CC.ID_CONTRATO_CURSO AS ID_CONTRATOS, CC.ID_CONTRATO_CURSO, CC.CONTRATO_CURSO_NUMERO, 
+                           P.ID_PROVEEDOR, P.ID_PROVEEDOR || ' - ' || P.DESC_PROVEEDOR AS PROVEEDOR, 
+                           CC.CONTRATO_CURSO_CICLO,
+                           CC.CONTRATO_CURSO_REPRESENTANTE, CC.CONTRATO_CURSO_ADMINISTRADOR, 
+                           NVL(CC.CONTRATO_CURSO_MONTO, 0) AS CONTRATO_CURSO_MONTO, 
+                           CC.CONTRATO_CURSO_FECHA_ADJUD, TO_CHAR(CC.CONTRATO_CURSO_FECHA_ADJUD,'DD/MM/YYYY') AS FECHA_ADJUD,
+                           CC.CONTRATO_CURSO_FECHA_CONTR, TO_CHAR(CC.CONTRATO_CURSO_FECHA_CONTR,'DD/MM/YYYY') AS FECHA_CONTR,
+                           CC.USUARIO, CC.FEC_MODIFICO,
+                           SC.ID_SITUACION_CONTRATO,
+                           SC.ID_SITUACION_CONTRATO || ' - ' || SC.DESC_SITUACION_CONTRATO AS SITUACION
+                      FROM TN_CAP_CONTRATO_CUR CC, TC_CAP_PROVEEDOR P, TC_CAP_SIT_CONTRATO SC 
+                     WHERE CC.ID_PROVEEDOR = P.ID_PROVEEDOR
+                       AND P.ID_STATUS = 'ACT'
+                       AND CC.ID_SITUACION_CONTRATO = SC.ID_SITUACION_CONTRATO
+                       AND ##CC.CONTRATO_CURSO_CICLO#=#OPERATIONAL_YEAR##
+                       AND ##CC.ID_PROVEEDOR##
+                       AND ##CC.ID_SITUACION_CONTRATO##
+                  ORDER BY 6 DESC, 3 ASC, 5 ASC
+                </prop>
+                <prop key="tcCapSituacionFactura-asignarContrato">
+                    SELECT ID_SITUACION_FACTURA, ID_SITUACION_FACTURA || ' - ' || DESC_SITUACION_FACTURA
+                    FROM TC_CAP_SIT_FACTURA
+                    WHERE 1=1
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Seguimiento - Carga de constancias-->
+                <prop key="spc:Capacitacion-seguimiento-constancias-pageList">
+                    SELECT  P.ID_CURSO as idCurso,
+                            P.RFC_EMPLEADO as rfcEmpleado, 
+                            P.PARTICIPANTE_ACUSE as participanteAcuse,
+                            P.PARTICIPANTE_ACUSE_FIRMADO AS participanteAcuseFirmado,
+                            U.ID_UNIDAD || ' - ' || U.DESC_UNIDAD as unidad,
+                            P.ID_NIVEL_PTO as nivel,
+                            P.PARTICIPANTE_NOMBRE as nombre, 
+                            P.PARTICIPANTE_PRIMER_APELLIDO as primerApellido,
+                            P.PARTICIPANTE_SEGUNDO_APELLIDO as segundoApellido
+                    FROM    TN_CAP_CURSO C, TN_CAP_PARTICIPANTE P, 
+                            TC_CAP_UNIDAD_COORD UC, TC_UNIDAD U, 
+                            TC_CAP_COORDINACION CO
+                    WHERE   C.ID_CURSO = P.ID_CURSO
+                            AND ##P.ID_CURSO##
+                            AND U.ID_UNIDAD = UC.ID_UNIDAD
+                            AND U.UNI_CICLO = UC.UNI_CICLO
+                            AND CO.ID_COORDINACION = UC.ID_COORDINACION
+                            AND CO.ID_COORDINACION = C.ID_COORDINACION
+                            AND C.ID_CURSO = P.ID_CURSO
+                </prop>
+                <prop key="tnCapCurso-unidades-reportes">
+                    SELECT  ID_UNIDAD AS ID, ID_UNIDAD ||' - '|| DESC_UNIDAD AS DESCRIPCION
+                    FROM    TC_UNIDAD
+                    WHERE   ##id_unidad#SIREHUNIDAD#PRIMARY##
+                            AND UNI_CICLO = ?
+                </prop>                
+                
+                <!--SPC - Capacitación y certificación - Consultas - Consulta de PAC-->        
+                <prop key="tnCapCurso-ciclo-Consulta-PAC">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Consultas - Consulta de Presupuesto-->        
+                <prop key="tnCapCurso-ciclo-Consulta-Presupuesto">
+                    SELECT C.CICLO_EJE_TEMATICO, C.CICLO_EJE_TEMATICO AS ID
+                    FROM TN_CAP_CURSO C
+                    WHERE C.ID_CONTROL_CURSO IN ('CON','CUR','EVR','EVP','CER')
+                    GROUP BY C.CICLO_EJE_TEMATICO
+                    ORDER BY C.CICLO_EJE_TEMATICO DESC
+                </prop>                  
+                
+                <!--SPC - Capacitación y certificación - Seguimiento - Evaluacion de reaccion-->
+                <prop key="consultaCursosEvaluar-evaluacionReaccion">
+                    SELECT C.ID_CURSO AS ID_CURSOS,
+                           C.ID_COORDINACION || '-' || COO.DESC_COORDINACION AS COORDINACION, 
+                           CP.ID_CURSO_PRINCIPAL || ' - ' || CP.DESC_CURSO_PRINCIPAL AS CURSO,
+                           ET.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS EJE_TEMATICO,
+                           SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+                           C.CURSO_DURACION AS DURACION, C.CURSO_FEC_INI AS FECHA_INICIO, C.CURSO_FEC_FIN AS FECHA_TERMINO,
+                           MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD AS MODALIDAD,
+                           FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD AS FINALIDAD,
+                           C.ID_AULA || ' - ' || AU.DESC_AULA AS AULA,
+                           PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ',') AS HORARIO,
+                           CC.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO AS ESTATUS,
+                           CC.ID_CONTROL_CURSO,
+                           PRO.ID_PROVEEDOR  || ' - ' || PRO.DESC_PROVEEDOR AS INST_EDUCAT
+                      FROM TN_CAP_CURSO C, TC_CAP_CURSO_PRINCP CP, TC_CAP_EJE_TEMATICO ET, TC_CAP_SUBPROGRAMA SUB, TC_CAP_MODALIDAD MOD, 
+                           TC_CAP_AULA AU, TC_CAP_HORARIO_CURSO HC,
+                           TC_CAP_FINALIDAD FIN, TC_CAP_CONTROL_CURSO CC, TC_CAP_COORDINACION COO, TC_CAP_PROVEEDOR PRO
+                     WHERE 
+                           C.ID_COORDINACION = COO.ID_COORDINACION
+                       AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                       AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                       AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                       AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                       AND C.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA(+)
+                       AND CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                       AND CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                       AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                       AND C.ID_PROVEEDOR = PRO.ID_PROVEEDOR
+                       AND C.ID_AULA = AU.ID_AULA(+)
+                       AND ##C.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##ET.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                       AND ##C.ID_COORDINACION##
+                       AND ##C.ID_SUBPROGRAMA##
+                       AND ##CP.ID_MODALIDAD##
+                       AND ##C.CURSO_CLAVE##
+                       AND ##C.CURSO_FEC_INI##
+                       AND ##C.CURSO_FEC_FIN##
+                       AND ##C.ID_CONTROL_CURSO##
+                       AND ROWNUM <![CDATA[<]]> 200
+                       AND C.ID_CONTROL_CURSO IN ('CUR', 'EVP', 'EVR')
+                  GROUP BY C.ID_CURSO, C.ID_COORDINACION, COO.DESC_COORDINACION, CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL,
+                           ET.ID_EJE_TEMATICO, ET.DESC_EJE_TEMATICO, SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA,
+                           C.CURSO_DURACION, C.CURSO_FEC_INI, C.CURSO_FEC_FIN, MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD, 
+                           FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD, C.ID_AULA, AU.DESC_AULA,
+                           PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ','), CC.ID_CONTROL_CURSO, CC.DESC_CONTROL_CURSO,
+                           PRO.ID_PROVEEDOR, PRO.DESC_PROVEEDOR
+                  ORDER BY 10 DESC, 5 ASC --ID_CONTROL_CURSO,SUBPROGRAMA            
+                </prop>
+                
+                <!--SPC - Capacitación y certificación - Seguimiento y Control - Consulta Bitácora-->
+                <prop key="tcCapMovto-consultaBitacora">
+                    SELECT ID_CAP_MOVTO, ID_CAP_MOVTO || ' - ' || DESC_CAP_MOVTO
+                    FROM TC_CAP_MOVTO
+                    WHERE ID_STATUS = 'ACT'
+                    ORDER BY ID_CAP_MOVTO ASC
+                </prop>
+                <prop key="consultaBitacora-cursoParticipante">                
+                     SELECT BI.ID_CAP_MOVTO,  BI.ID_CAP_MOVTO AS ID_MOVTOS,
+                            MOVTO.ID_CAP_MOVTO || ' - ' || MOVTO.DESC_CAP_MOVTO DESC_MOVTO,
+                            BI.ID_CURSO,
+                            BI.ID_COORDINACION || '-' || COO.DESC_COORDINACION AS DESC_COORDINACION, 
+                            CP.ID_CURSO_PRINCIPAL || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESC_CURSO,
+                            ET.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS EJE_TEMATICO,
+                            SUB.ID_SUBPROGRAMA || ' - ' || SUB.DESC_SUBPROGRAMA AS SUBPROGRAMA,
+                            BI.CURSO_DURACION AS DURACION, 
+                            BI.CURSO_FEC_INI AS FECHA_INICIO, BI.CURSO_FEC_FIN AS FECHA_TERMINO,
+                            MOD.ID_MODALIDAD || ' - ' || MOD.DESC_MODALIDAD AS MODALIDAD,
+                            FIN.ID_FINALIDAD || ' - ' || FIN.DESC_FINALIDAD AS FINALIDAD,
+                            BI.ID_AULA || ' - ' || AU.DESC_AULA AS AULA,
+                            BI.ID_HORARIO_CURSO || ' - ' ||  HC.DESC_HORARIO_CURSO AS HORARIO,
+                            PRO.ID_PROVEEDOR  || ' - ' || PRO.DESC_PROVEEDOR AS INST_EDUCAT,
+                            CC.ID_CONTROL_CURSO,
+                            CC.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO AS ESTATUS_CURSO,
+                            BI.USUARIO, BI.FEC_MODIFICO
+                       FROM TN_CAP_BITACORA_CURSO BI, TC_CAP_MOVTO MOVTO, 
+                            TC_CAP_CURSO_PRINCP CP, TC_CAP_EJE_TEMATICO ET, TC_CAP_SUBPROGRAMA SUB, TC_CAP_MODALIDAD MOD, 
+                            TC_CAP_AULA AU, TC_CAP_HORARIO_CURSO HC, TC_CAP_FINALIDAD FIN, TC_CAP_PROVEEDOR PRO,
+                            TC_CAP_CONTROL_CURSO CC, TC_CAP_COORDINACION COO
+                       WHERE BI.ID_CAP_MOVTO = MOVTO.ID_CAP_MOVTO
+                         AND BI.ID_COORDINACION = COO.ID_COORDINACION
+                         AND BI.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                         AND BI.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                         AND BI.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                         AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                         AND BI.ID_SUBPROGRAMA = SUB.ID_SUBPROGRAMA(+)
+                         AND CP.ID_MODALIDAD = MOD.ID_MODALIDAD
+                         AND CP.ID_FINALIDAD = FIN.ID_FINALIDAD
+                         AND BI.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                         AND BI.ID_PROVEEDOR = PRO.ID_PROVEEDOR
+                         AND BI.ID_AULA = AU.ID_AULA(+)
+                         AND BI.ID_HORARIO_CURSO = HC.ID_HORARIO_CURSO(+)
+                        AND ##BI.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                        AND ##ET.CICLO_EJE_TEMATICO#=#OPERATIONAL_YEAR##
+                        AND ##BI.ID_CAP_MOVTO##
+                        AND ##BI.USUARIO##
+                        AND ROWNUM <![CDATA[<]]> 200
+                    GROUP BY BI.ID_CAP_MOVTO, MOVTO.ID_CAP_MOVTO, MOVTO.DESC_CAP_MOVTO, 
+                             BI.ID_CURSO, BI.ID_COORDINACION, COO.DESC_COORDINACION, CP.ID_CURSO_PRINCIPAL, CP.DESC_CURSO_PRINCIPAL,
+                             ET.ID_EJE_TEMATICO, ET.DESC_EJE_TEMATICO, SUB.ID_SUBPROGRAMA, SUB.DESC_SUBPROGRAMA,
+                             BI.CURSO_DURACION, BI.CURSO_FEC_INI, BI.CURSO_FEC_FIN, MOD.ID_MODALIDAD, MOD.DESC_MODALIDAD, 
+                             FIN.ID_FINALIDAD, FIN.DESC_FINALIDAD, BI.ID_AULA, AU.DESC_AULA,
+                             BI.ID_HORARIO_CURSO, HC.DESC_HORARIO_CURSO, CC.ID_CONTROL_CURSO, CC.DESC_CONTROL_CURSO,
+                             PRO.ID_PROVEEDOR, PRO.DESC_PROVEEDOR,
+                             BI.USUARIO, BI.FEC_MODIFICO
+                    ORDER BY BI.FEC_MODIFICO DESC
+                </prop>
+                <prop key="spc-capcer-consultas-secuenciaEmpleados-cursosByEmpleadoPager">
+                    SELECT  C.ID_CURSO AS ID_CURSO,
+                            C.ID_COORDINACION || ' - ' || CO.DESC_COORDINACION AS COORDINACION_CURSO,
+                            C.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESCRIPCION_CURSO,
+                            C.ID_SUBPROGRAMA || ' - ' || S.DESC_SUBPROGRAMA AS SUBPROGRAMA_CURSO,
+                            C.CURSO_DURACION AS DURACION_CURSO,
+                            C.CURSO_FEC_INI AS FECHA_INICIO_CURSO,
+                            C.CURSO_FEC_FIN AS FECHA_TERMINO_CURSO,
+                            C.CURSO_PARTICIPANTES AS PARTICIPANTES_CURSO,
+                            MO.ID_MODALIDAD || ' - ' || MO.DESC_MODALIDAD AS MODALIDAD_CURSO,
+                            FI.ID_FINALIDAD || ' - ' || FI.DESC_FINALIDAD AS FINALIDAD_CURSO,
+                            C.ID_SEDE || ' - ' ||  SE.DESC_SEDE AS SEDE_CURSO,
+                            C.ID_AULA || ' - ' ||  AU.DESC_AULA AS AULA_CURSO,
+                            (SELECT PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(C.ID_CURSO, ',') FROM DUAL) AS HORARIO_CURSO, 
+                            C.ID_CONTROL_CURSO || ' - ' || CC.DESC_CONTROL_CURSO AS ESTATUS_CURSO
+                    FROM    TN_CAP_PARTICIPANTE P, TN_CAP_CURSO C, TC_CAP_COORDINACION CO, TC_CAP_SIT_PARTICIPA SP,
+                            TC_CAP_CURSO_PRINCP CP, TC_CAP_SUBPROGRAMA S, TC_CAP_CONTROL_CURSO CC, TC_CAP_AULA AU, 
+                            TC_CAP_SEDE SE, TC_CAP_MODALIDAD MO, TC_CAP_FINALIDAD FI
+                    WHERE   ##P.RFC_EMPLEADO##
+                            AND P.ID_CURSO = C.ID_CURSO
+                            AND C.ID_COORDINACION = CO.ID_COORDINACION
+                            AND P.ID_SITUACION_PARTICIPANTE = SP.ID_SITUACION_PARTICIPANTE
+                            AND C.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                            AND C.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                            AND C.ID_TIPO_CURSO = CP.ID_TIPO_CURSO
+                            AND C.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                            AND C.ID_SUBPROGRAMA = S.ID_SUBPROGRAMA(+)
+                            AND C.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                            AND C.ID_SEDE = SE.ID_SEDE(+)
+                            AND C.ID_AULA = AU.ID_AULA(+)
+                            AND CP.ID_MODALIDAD = MO.ID_MODALIDAD
+                            AND CP.ID_FINALIDAD = FI.ID_FINALIDAD
+                            ORDER BY FECHA_INICIO_CURSO
+                </prop>
+                <prop key="spc-capcer-consultas-secuenciaEmpleados-cursoParticipantesPager">
+                    SELECT  P.ID_UNIDAD || ' - ' || UC.DESC_UNIDAD AS DESC_UNIDAD,
+                            P.ID_NIVEL_PTO,
+                            P.RFC_EMPLEADO,
+                            P.PARTICIPANTE_NOMBRE,
+                            P.PARTICIPANTE_PRIMER_APELLIDO,
+                            P.PARTICIPANTE_SEGUNDO_APELLIDO,
+                            CASE WHEN P.PARTICIPANTE_EMAIL IS NULL THEN 'email no regiatrado'
+                            ELSE P.PARTICIPANTE_EMAIL END PARTICIPANTE_EMAIL,
+                            CASE WHEN P.PARTICIPANTE_NOTIFICACION IS NULL THEN ' sin notificacion '
+                            ELSE TO_CHAR(P.PARTICIPANTE_NOTIFICACION,'DD/MM/YYYY') END PARTICIPANTE_NOTIFICACION,
+                            CASE WHEN P.PARTICIPANTE_OBSERVACIONES IS NULL THEN ' sin observaciones '
+                            ELSE P.PARTICIPANTE_OBSERVACIONES END PARTICIPANTE_OBSERVACIONES
+                    FROM    TN_CAP_PARTICIPANTE P, TC_CAP_UNIDAD_COORD UC
+                    WHERE   ##P.ID_CURSO##
+                            AND P.ID_UNIDAD = UC.ID_UNIDAD
+                </prop>
+                <prop key="spcCapcerConsultasCursosInstructores">
+                    SELECT  INS.ID_INSTRUCTOR AS CLAVE, INS.ID_INSTRUCTOR || ' - ' || INS.NOMBRE_INSTRUCTOR || ' ' || INS.PRIMER_APELLIDO || ' ' || INS.SEGUNDO_APELLIDO AS VALOR
+                    FROM    TC_CAP_INSTRUCTOR INS, TC_CAP_PROVEEDOR PRO
+                    WHERE   PRO.ID_STATUS = 'ACT'
+                            AND INS.ID_STATUS = 'ACT'
+                            AND PRO.ID_PROVEEDOR = ?
+                            AND INS.ID_PROVEEDOR = PRO.ID_PROVEEDOR
+                            GROUP BY INS.ID_INSTRUCTOR, INS.PRIMER_APELLIDO, INS.SEGUNDO_APELLIDO, INS.NOMBRE_INSTRUCTOR 
+                            ORDER BY INS.NOMBRE_INSTRUCTOR
+                </prop>
+                <prop key="spcCapcerConsultasCursosProveedores">
+                    SELECT  PRO.ID_PROVEEDOR AS CLAVE, PRO.ID_PROVEEDOR || ' - ' || PRO.DESC_PROVEEDOR AS VALOR
+                    FROM    TC_CAP_PROVEEDOR PRO
+                    WHERE   PRO.ID_STATUS = 'ACT'
+                            GROUP BY PRO.ID_PROVEEDOR, PRO.DESC_PROVEEDOR
+                            ORDER BY PRO.DESC_PROVEEDOR
+                </prop>
+                <prop key="spcCapcerConsultasCursosInstructorPager">
+                    SELECT  CU.ID_CURSO,
+                            CU.ID_COORDINACION || ' - ' || CO.DESC_COORDINACION AS DESC_COORDINACION,
+                            CU.CURSO_CLAVE || ' - ' || CP.DESC_CURSO_PRINCIPAL AS DESC_CURSO_PRINCIPAL,
+                            CP.ID_EJE_TEMATICO || ' - ' || ET.DESC_EJE_TEMATICO AS DESC_EJE_TEMATICO,
+                            CU.ID_NIVEL_CURSO || ' - ' || NC.DESC_NIVEL_CURSO AS DESC_NIVEL_CURSO,
+                            CP.ID_MODALIDAD || ' - ' || MO.DESC_MODALIDAD AS DESC_MODALIDAD,
+                            CP.ID_FINALIDAD || ' - ' || FI.DESC_FINALIDAD AS DESC_FINALIDAD,
+                            CP.ID_CARACTER || ' - ' || CA.DESC_CARACTER AS DESC_CARACTER,
+                            CU.CURSO_FEC_INI,
+                            CU.CURSO_FEC_FIN,
+                            SU.DESC_SUBPROGRAMA,
+                            CU.CURSO_DURACION,
+                            AU.DESC_AULA AS DESC_AULA_CURSO,
+                            CU.CURSO_PARTICIPANTES,
+                            CC.DESC_CONTROL_CURSO,
+                            (SELECT PKG_CAPCER_CONSULTAS.FUNC_HORARIOS(CU.ID_CURSO, ',') FROM DUAL) AS HORARIO_CURSO
+                    FROM    TN_CAP_CURSO CU, TC_CAP_CURSO_PRINCP CP, TC_CAP_COORDINACION CO, TC_CAP_EJE_TEMATICO ET, 
+                            TC_CAP_NIVEL_CURSO NC, TC_CAP_MODALIDAD MO, TC_CAP_FINALIDAD FI, TC_CAP_CARACTER CA,
+                            TC_CAP_SUBPROGRAMA SU, TC_CAP_AULA AU, TC_CAP_CONTROL_CURSO CC
+                    WHERE   ##CU.ID_INSTRUCTOR_TITULAR##
+                            AND ##CU.ID_INSTRUCTOR_SUPLENTE##
+                            AND CU.CICLO_EJE_TEMATICO = CP.CICLO_EJE_TEMATICO
+                            AND CU.ID_CURSO_PRINCIPAL = CP.ID_CURSO_PRINCIPAL
+                            AND CU.ID_EJE_TEMATICO = CP.ID_EJE_TEMATICO
+                            AND CU.ID_COORDINACION = CO.ID_COORDINACION
+                            AND CP.ID_EJE_TEMATICO = ET.ID_EJE_TEMATICO
+                            AND CU.ID_NIVEL_CURSO = NC.ID_NIVEL_CURSO
+                            AND CP.ID_MODALIDAD = MO.ID_MODALIDAD
+                            AND CP.ID_FINALIDAD = FI.ID_FINALIDAD
+                            AND CP.ID_CARACTER = CA.ID_CARACTER
+                            AND CU.ID_SUBPROGRAMA = SU.ID_SUBPROGRAMA
+                            AND CU.ID_AULA = AU.ID_AULA
+                            AND CU.ID_CONTROL_CURSO = CC.ID_CONTROL_CURSO
+                            ORDER BY CU.CURSO_FEC_INI
+                </prop>
+            </props>
+        </property>
+    </bean>
+</beans>
